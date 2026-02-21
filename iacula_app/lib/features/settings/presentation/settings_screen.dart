@@ -24,6 +24,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   late TextEditingController _oraMediaTimeController;
 
   String _language = 'pt-br';
+  bool _autostart = true;
   bool _soundEnabled = true;
   double _soundVolume = 0.35;
   bool _laudesEnabled = false;
@@ -63,6 +64,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _oraMediaTimeController.text = settings.oraMediaTime;
 
     _language = settings.language;
+    _autostart = settings.autostart;
     _soundEnabled = settings.liturgyReminderSoundEnabled;
     _soundVolume = settings.liturgyReminderSoundVolume;
     _laudesEnabled = settings.laudesEnabled;
@@ -129,6 +131,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             const SizedBox(height: 12),
             SwitchListTile(
+              value: _autostart,
+              title: const Text('Autostart (mobile limitado)'),
+              subtitle: const Text('Mantido para paridade com desktop'),
+              onChanged: null,
+            ),
+            const SizedBox(height: 8),
+            SwitchListTile(
               value: _soundEnabled,
               title: const Text('Som no lembrete liturgico'),
               onChanged: (v) => setState(() => _soundEnabled = v),
@@ -193,7 +202,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final settings = Settings(
       intervalMinutes: int.parse(_intervalController.text),
       durationSeconds: int.parse(_durationController.text),
-      autostart: true,
+      autostart: _autostart,
       language: _language,
       liturgyReminderSoundEnabled: _soundEnabled,
       liturgyReminderSoundVolume: _soundVolume,
