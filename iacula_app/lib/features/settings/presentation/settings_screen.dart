@@ -17,12 +17,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController _intervalController;
-  late TextEditingController _durationController;
   late TextEditingController _laudesTimeController;
   late TextEditingController _vespersTimeController;
   late TextEditingController _complineTimeController;
   late TextEditingController _oraMediaTimeController;
 
+  int _durationSeconds = Settings.defaults.durationSeconds;
   String _language = 'pt-br';
   bool _autostart = true;
   bool _soundEnabled = true;
@@ -39,7 +39,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   void initState() {
     super.initState();
     _intervalController = TextEditingController();
-    _durationController = TextEditingController();
     _laudesTimeController = TextEditingController();
     _vespersTimeController = TextEditingController();
     _complineTimeController = TextEditingController();
@@ -57,7 +56,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   void _apply(Settings settings) {
     _intervalController.text = settings.intervalMinutes.toString();
-    _durationController.text = settings.durationSeconds.toString();
+    _durationSeconds = settings.durationSeconds;
     _laudesTimeController.text = settings.laudesTime;
     _vespersTimeController.text = settings.vespersTime;
     _complineTimeController.text = settings.complineTime;
@@ -76,7 +75,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   void dispose() {
     _intervalController.dispose();
-    _durationController.dispose();
     _laudesTimeController.dispose();
     _vespersTimeController.dispose();
     _complineTimeController.dispose();
@@ -108,15 +106,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
             const SizedBox(height: 12),
-            TextFormField(
-              controller: _durationController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Duracao (segundos)'),
-              validator: (v) {
-                final n = int.tryParse(v ?? '');
-                if (n == null || n < 5 || n > 30) return 'Use 5..30';
-                return null;
-              },
+            const ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text('Duracao (desktop apenas)'),
+              subtitle: Text('No mobile, o tempo do banner e controlado pelo sistema operacional.'),
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
@@ -201,7 +194,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     final settings = Settings(
       intervalMinutes: int.parse(_intervalController.text),
-      durationSeconds: int.parse(_durationController.text),
+      durationSeconds: _durationSeconds,
       autostart: _autostart,
       language: _language,
       liturgyReminderSoundEnabled: _soundEnabled,

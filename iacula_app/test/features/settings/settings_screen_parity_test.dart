@@ -45,7 +45,12 @@ void main() {
     }
 
     expect(find.text('Intervalo (minutos)'), findsOneWidget);
-    expect(find.text('Duracao (segundos)'), findsOneWidget);
+    expect(find.text('Duracao (desktop apenas)'), findsOneWidget);
+    expect(
+      find.text('No mobile, o tempo do banner e controlado pelo sistema operacional.'),
+      findsOneWidget,
+    );
+    expect(find.text('Duracao (segundos)'), findsNothing);
     expect(find.text('Idioma'), findsOneWidget);
     expect(find.text('Autostart (mobile limitado)'), findsOneWidget);
     expect(find.text('Som no lembrete liturgico'), findsOneWidget);
