@@ -1,4 +1,4 @@
-﻿enum ReminderEventType {
+enum ReminderEventType {
   quoteInterval,
   angelusNoon,
   laudes,
@@ -6,6 +6,12 @@
   compline,
   oraMedia,
   customMeditationAlarm,
+}
+
+enum NotificationRouteTarget {
+  home,
+  prayer,
+  alarm,
 }
 
 final class ReminderEvent {
@@ -17,6 +23,7 @@ final class ReminderEvent {
     required this.withVibration,
     required this.isAlarm,
     this.repeatDaily = false,
+    this.routeTarget = NotificationRouteTarget.alarm,
   });
 
   final ReminderEventType type;
@@ -26,6 +33,7 @@ final class ReminderEvent {
   final bool withVibration;
   final bool isAlarm;
   final bool repeatDaily;
+  final NotificationRouteTarget routeTarget;
 
   ReminderEvent copyWith({
     ReminderEventType? type,
@@ -35,6 +43,7 @@ final class ReminderEvent {
     bool? withVibration,
     bool? isAlarm,
     bool? repeatDaily,
+    NotificationRouteTarget? routeTarget,
   }) {
     return ReminderEvent(
       type: type ?? this.type,
@@ -44,6 +53,7 @@ final class ReminderEvent {
       withVibration: withVibration ?? this.withVibration,
       isAlarm: isAlarm ?? this.isAlarm,
       repeatDaily: repeatDaily ?? this.repeatDaily,
+      routeTarget: routeTarget ?? this.routeTarget,
     );
   }
 
@@ -56,6 +66,7 @@ final class ReminderEvent {
       'withVibration': withVibration,
       'isAlarm': isAlarm,
       'repeatDaily': repeatDaily,
+      'routeTarget': routeTarget.name,
     };
   }
 
@@ -66,6 +77,12 @@ final class ReminderEvent {
       orElse: () => ReminderEventType.quoteInterval,
     );
 
+    final routeTargetName = map['routeTarget']?.toString();
+    final routeTarget = NotificationRouteTarget.values.firstWhere(
+      (e) => e.name == routeTargetName,
+      orElse: () => _defaultRouteForType(type),
+    );
+
     return ReminderEvent(
       type: type,
       title: map['title']?.toString() ?? 'Iacula',
@@ -74,6 +91,19 @@ final class ReminderEvent {
       withVibration: map['withVibration'] == true,
       isAlarm: map['isAlarm'] == true,
       repeatDaily: map['repeatDaily'] == true,
+      routeTarget: routeTarget,
     );
+  }
+
+  static NotificationRouteTarget _defaultRouteForType(ReminderEventType type) {
+    return switch (type) {
+      ReminderEventType.quoteInterval => NotificationRouteTarget.home,
+      ReminderEventType.angelusNoon => NotificationRouteTarget.prayer,
+      ReminderEventType.laudes ||
+      ReminderEventType.vespers ||
+      ReminderEventType.compline ||
+      ReminderEventType.oraMedia ||
+      ReminderEventType.customMeditationAlarm => NotificationRouteTarget.alarm,
+    };
   }
 }

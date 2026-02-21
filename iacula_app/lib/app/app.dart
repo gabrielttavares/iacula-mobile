@@ -36,15 +36,15 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
         final nav = _navigatorKey.currentState;
         if (nav == null) return;
 
-        switch (event.event.type) {
-          case ReminderEventType.quoteInterval:
+        switch (event.event.routeTarget) {
+          case NotificationRouteTarget.home:
             nav.pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const HomeScreen()),
               (route) => false,
             );
             return;
 
-          case ReminderEventType.angelusNoon:
+          case NotificationRouteTarget.prayer:
             final settings = await ref.read(getSettingsUseCaseProvider).call();
             final prayer = await ref.read(getPrayerUseCaseProvider).call(language: settings.language);
             nav.push(
@@ -54,11 +54,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
             );
             return;
 
-          case ReminderEventType.laudes:
-          case ReminderEventType.vespers:
-          case ReminderEventType.compline:
-          case ReminderEventType.oraMedia:
-          case ReminderEventType.customMeditationAlarm:
+          case NotificationRouteTarget.alarm:
             nav.push(
               MaterialPageRoute(
                 builder: (_) => AlarmScreen(

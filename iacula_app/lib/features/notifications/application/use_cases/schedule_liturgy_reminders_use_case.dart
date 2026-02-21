@@ -21,6 +21,7 @@ final class ScheduleLiturgyRemindersUseCase {
           withVibration: true,
           isAlarm: true,
           repeatDaily: true,
+          routeTarget: NotificationRouteTarget.alarm,
         ),
       );
     }
@@ -35,6 +36,7 @@ final class ScheduleLiturgyRemindersUseCase {
           withVibration: true,
           isAlarm: true,
           repeatDaily: true,
+          routeTarget: NotificationRouteTarget.alarm,
         ),
       );
     }
@@ -49,6 +51,7 @@ final class ScheduleLiturgyRemindersUseCase {
           withVibration: true,
           isAlarm: true,
           repeatDaily: true,
+          routeTarget: NotificationRouteTarget.alarm,
         ),
       );
     }
@@ -63,6 +66,7 @@ final class ScheduleLiturgyRemindersUseCase {
           withVibration: true,
           isAlarm: true,
           repeatDaily: true,
+          routeTarget: NotificationRouteTarget.alarm,
         ),
       );
     }

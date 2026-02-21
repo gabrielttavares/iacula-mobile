@@ -36,6 +36,7 @@ final class ScheduleCoreRemindersUseCase {
         scheduledAt: quoteAt,
         withVibration: true,
         isAlarm: false,
+        routeTarget: NotificationRouteTarget.home,
       ),
     );
     await _lastDeliveredCardRepository.save(
@@ -52,6 +53,7 @@ final class ScheduleCoreRemindersUseCase {
         withVibration: true,
         isAlarm: true,
         repeatDaily: true,
+        routeTarget: NotificationRouteTarget.prayer,
       ),
     );
   }
