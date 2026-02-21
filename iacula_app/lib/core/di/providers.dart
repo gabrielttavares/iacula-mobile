@@ -6,6 +6,8 @@ import '../../features/liturgical/domain/services/liturgical_season_service.dart
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
 import '../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
+import '../../features/notifications/domain/repositories/last_delivered_card_repository.dart';
+import '../../features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import '../../features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
 import '../../features/prayers/application/use_cases/get_prayer_use_case.dart';
 import '../../features/prayers/domain/repositories/prayer_content_repository.dart';
@@ -50,6 +52,10 @@ final prayerContentRepositoryProvider = Provider<PrayerContentRepository>((ref) 
 
 final notificationSchedulerRepositoryProvider = Provider<NotificationSchedulerRepository>((ref) {
   return InMemoryNotificationSchedulerRepository();
+});
+
+final lastDeliveredCardRepositoryProvider = Provider<LastDeliveredCardRepository>((ref) {
+  return InMemoryLastDeliveredCardRepository();
 });
 
 final mediaCatalogRepositoryProvider = Provider<MediaCatalogRepository>((ref) {

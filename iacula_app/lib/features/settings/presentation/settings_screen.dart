@@ -211,7 +211,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
     await schedulerRepo.cancelAll();
-    await ScheduleCoreRemindersUseCase(schedulerRepo).call(settings);
+    await ScheduleCoreRemindersUseCase(
+      schedulerRepo,
+      quoteFetcher: ({required String language, required DateTime now}) {
+        return ref.read(getNextQuoteUseCaseProvider).call(language: language, now: now);
+      },
+      lastDeliveredCardRepository: ref.read(lastDeliveredCardRepositoryProvider),
+    ).call(settings);
     await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(settings);
 
     if (mounted) {

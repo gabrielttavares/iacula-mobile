@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../settings/domain/entities/settings.dart';
 import '../../settings/presentation/settings_screen.dart';
@@ -161,7 +162,19 @@ class _QuoteCard extends StatelessWidget {
 
 final _dashboardProvider = FutureProvider<_DashboardData>((ref) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
-  final quote = await ref.watch(getNextQuoteUseCaseProvider).call(language: settings.language);
+  final lastDeliveredCardRepo = ref.watch(lastDeliveredCardRepositoryProvider);
+  final lastDeliveredCard = await lastDeliveredCardRepo.load();
+
+  Quote quote;
+  if (lastDeliveredCard != null) {
+    quote = lastDeliveredCard.toQuote();
+  } else {
+    quote = await ref.watch(getNextQuoteUseCaseProvider).call(language: settings.language);
+    await lastDeliveredCardRepo.save(
+      LastDeliveredCard.fromQuote(quote, deliveredAt: DateTime.now()),
+    );
+  }
+
   return _DashboardData(settings: settings, quote: quote);
 });
 

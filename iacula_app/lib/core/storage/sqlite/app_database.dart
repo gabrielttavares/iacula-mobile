@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -56,6 +56,35 @@ final class AppDatabase {
             last_day INTEGER NOT NULL
           )
         ''');
+
+        await db.execute('''
+          CREATE TABLE last_delivered_card (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            quote_text TEXT NOT NULL,
+            theme TEXT NOT NULL,
+            season TEXT NOT NULL,
+            image_path TEXT,
+            feast TEXT,
+            feast_name TEXT,
+            delivered_at TEXT NOT NULL
+          )
+        ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS last_delivered_card (
+              id INTEGER PRIMARY KEY CHECK (id = 1),
+              quote_text TEXT NOT NULL,
+              theme TEXT NOT NULL,
+              season TEXT NOT NULL,
+              image_path TEXT,
+              feast TEXT,
+              feast_name TEXT,
+              delivered_at TEXT NOT NULL
+            )
+          ''');
+        }
       },
     );
   }

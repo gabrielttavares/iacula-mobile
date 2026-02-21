@@ -6,9 +6,12 @@ import 'package:http/http.dart' as http;
 
 import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/remote_liturgical_season_service.dart';
+import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
+import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
+import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_quote_indices_repository.dart';
 import '../../features/settings/infrastructure/repositories/sqlite_settings_repository.dart';
 import '../../features/storage/domain/entities/media_asset.dart';
@@ -27,8 +30,19 @@ final class AppBootstrap {
 
     final settingsRepo = SqliteSettingsRepository(db);
     final indicesRepo = SqliteQuoteIndicesRepository(db);
+    final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
     final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(isarStore);
+    final httpClient = http.Client();
+    final liturgicalSeasonService = RemoteLiturgicalSeasonService(
+      httpClient: httpClient,
+      cacheRepository: liturgicalCacheRepo,
+    );
+    final quoteUseCase = GetNextQuoteUseCase(
+      contentRepository: const AssetQuoteContentRepository(),
+      indicesRepository: indicesRepo,
+      liturgicalSeasonService: liturgicalSeasonService,
+    );
 
     await _seedMediaCatalog(mediaRepo);
 
@@ -39,7 +53,13 @@ final class AppBootstrap {
     await scheduler.cancelAll();
 
     try {
-      await ScheduleCoreRemindersUseCase(scheduler).call(currentSettings);
+      await ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher: ({required String language, required DateTime now}) {
+          return quoteUseCase.call(language: language, now: now);
+        },
+        lastDeliveredCardRepository: lastDeliveredCardRepo,
+      ).call(currentSettings);
       await ScheduleLiturgyRemindersUseCase(scheduler).call(currentSettings);
     } on PlatformException catch (e, st) {
       developer.log(
@@ -60,10 +80,11 @@ final class AppBootstrap {
     return [
       settingsRepositoryProvider.overrideWithValue(settingsRepo),
       quoteIndicesRepositoryProvider.overrideWithValue(indicesRepo),
+      lastDeliveredCardRepositoryProvider.overrideWithValue(lastDeliveredCardRepo),
       mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
       liturgicalSeasonCacheRepositoryProvider.overrideWithValue(liturgicalCacheRepo),
       notificationSchedulerRepositoryProvider.overrideWithValue(scheduler),
-      httpClientProvider.overrideWithValue(http.Client()),
+      httpClientProvider.overrideWithValue(httpClient),
       liturgicalSeasonServiceProvider.overrideWith((ref) {
         return RemoteLiturgicalSeasonService(
           httpClient: ref.watch(httpClientProvider),
