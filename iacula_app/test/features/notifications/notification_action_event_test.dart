@@ -22,4 +22,25 @@ void main() {
     expect(restored.event.type, ReminderEventType.laudes);
     expect(restored.event.repeatDaily, isTrue);
   });
+
+  test('preserves quote banner copy and home route through payload roundtrip', () {
+    final event = ReminderEvent(
+      type: ReminderEventType.quoteInterval,
+      title: 'Iacula',
+      body: 'Sede santos, porque eu sou santo.',
+      scheduledAt: DateTime(2026, 2, 21, 10, 15),
+      withVibration: true,
+      isAlarm: false,
+      routeTarget: NotificationRouteTarget.home,
+    );
+
+    final payload = NotificationActionEvent(actionId: null, event: event).toPayload();
+    final restored = NotificationActionEvent.fromPayload(payload);
+
+    expect(restored, isNotNull);
+    expect(restored!.event.type, ReminderEventType.quoteInterval);
+    expect(restored.event.title, event.title);
+    expect(restored.event.body, event.body);
+    expect(restored.event.routeTarget, NotificationRouteTarget.home);
+  });
 }
