@@ -1,0 +1,46 @@
+name: iacula_app
+description: "Iacula Flutter mobile app"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^2.6.1
+  http: ^1.2.2
+  sqflite: ^2.4.2
+  path: ^1.9.1
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  flutter_local_notifications: ^19.4.2
+  timezone: ^0.10.1
+  vibration: ^3.1.3
+  google_fonts: ^6.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.13
+  isar_generator: ^3.1.0+1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/seed/quotes/en/
+    - assets/seed/quotes/la/
+    - assets/seed/quotes/pt-br/
+    - assets/seed/prayers/en/
+    - assets/seed/prayers/la/
+    - assets/seed/prayers/pt-br/
+    - assets/seed/images/
+    - assets/seed/audio/
+
+
+dependency_overrides:
+  isar_flutter_libs:
+    path: third_party/isar_flutter_libs
