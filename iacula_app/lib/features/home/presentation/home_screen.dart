@@ -15,55 +15,56 @@ class HomeScreen extends ConsumerWidget {
     final dashboard = ref.watch(_dashboardProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Iacula'),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SettingsScreen()),
-              );
-              ref.invalidate(_dashboardProvider);
-            },
-            icon: const Icon(Icons.tune_rounded),
-          ),
-        ],
-      ),
       body: SafeArea(
         child: dashboard.when(
           data: (data) {
-            return DecoratedBox(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFF7F1E6), Color(0xFFEDE2CF)],
-                ),
-              ),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 460),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          'Ultima jaculatoria',
-                          style: Theme.of(context).textTheme.labelSmall,
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 460),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(width: 48), // Spacer to balance the icon
+                          Text(
+                            'I A C U L A',
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  letterSpacing: 4.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                          Opacity(
+                            opacity: 0.5,
+                            child: IconButton(
+                              onPressed: () async {
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                                );
+                                ref.invalidate(_dashboardProvider);
+                              },
+                              icon: const Icon(Icons.tune_rounded),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Ultima jaculatoria',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontStyle: FontStyle.italic,
+                          color: const Color(0xFF837562).withValues(alpha: 0.8),
                         ),
-                        const SizedBox(height: 10),
-                        Expanded(
-                          child: _QuoteCard(quote: data.quote),
-                        ),
-                        const SizedBox(height: 14),
-                        Text(
-                          'Idioma: ${data.settings.language.toUpperCase()} • Intervalo: ${data.settings.intervalMinutes} min',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: _QuoteCard(quote: data.quote),
+                      ),
+                    ],
                   ),
                 ),
               ),
