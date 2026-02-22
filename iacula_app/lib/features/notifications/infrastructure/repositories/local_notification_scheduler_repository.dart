@@ -30,7 +30,7 @@ final class LocalNotificationSchedulerRepository implements NotificationSchedule
     _singleton = this;
     tzdata.initializeTimeZones();
 
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const android = AndroidInitializationSettings('@drawable/ic_notification');
     const ios = DarwinInitializationSettings();
 
     await _plugin.initialize(
