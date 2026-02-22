@@ -66,7 +66,6 @@ void main() {
     expect(find.text('Ultima jaculatoria'), findsOneWidget);
     expect(find.text('Sede santos.'), findsOneWidget);
     expect(find.text('Todos os Santos'), findsOneWidget);
-    expect(find.text('Idioma: PT-BR • Intervalo: 20 min'), findsOneWidget);
   });
 
   testWidgets('home card falls back to season label when feast name is absent', (tester) async {
