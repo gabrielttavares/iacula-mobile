@@ -25,11 +25,14 @@ class MeditationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: const Color(0xFF25211D),
+      color: colorScheme.surface,
       elevation: 4,
-      shadowColor: Colors.black.withValues(alpha: 0.4),
+      shadowColor: Colors.black.withValues(alpha: 0.05),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -40,18 +43,18 @@ class MeditationCard extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              Icon(platformIcon, color: const Color(0xFFD6BA8E), size: 32),
+              Icon(platformIcon, color: colorScheme.primary, size: 32),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   title,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: const Color(0xFFF8EFE1),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios_rounded, color: Color(0xFF837562), size: 16),
+              Icon(Icons.arrow_forward_ios_rounded, color: colorScheme.onSurface.withValues(alpha: 0.5), size: 16),
             ],
           ),
         ),

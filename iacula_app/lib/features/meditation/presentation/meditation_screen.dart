@@ -7,18 +7,11 @@ class MeditationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1A17),
       appBar: AppBar(
         title: Text(
           'Meditação Diária',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: const Color(0xFFD6BA8E),
-              ),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-        backgroundColor: Colors.transparent,
-        foregroundColor: const Color(0xFFD6BA8E),
-        elevation: 0,
-        centerTitle: true,
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 16),
