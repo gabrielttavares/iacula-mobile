@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
-import '../../../core/presentation/widgets/app_drawer.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../settings/domain/entities/settings.dart';
@@ -16,7 +15,6 @@ class HomeScreen extends ConsumerWidget {
     final dashboard = ref.watch(_dashboardProvider);
 
     return Scaffold(
-      drawer: const AppDrawer(),
       body: SafeArea(
         child: dashboard.when(
           data: (data) {
@@ -31,12 +29,7 @@ class HomeScreen extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Builder(
-                            builder: (context) => IconButton(
-                              icon: const Icon(Icons.menu_rounded),
-                              onPressed: () => Scaffold.of(context).openDrawer(),
-                            ),
-                          ),
+                          const SizedBox(width: 48),
                           Text(
                             'I A C U L A',
                             style: Theme.of(context).textTheme.labelSmall?.copyWith(

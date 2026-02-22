@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/di/providers.dart';
+import '../core/presentation/shell_screen.dart';
 import '../core/theme/app_theme.dart';
-import '../features/home/presentation/home_screen.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
@@ -39,7 +39,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
         switch (event.event.routeTarget) {
           case NotificationRouteTarget.home:
             nav.pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              MaterialPageRoute(builder: (_) => const ShellScreen()),
               (route) => false,
             );
             return;
@@ -82,7 +82,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
-      home: const HomeScreen(),
+      home: const ShellScreen(),
     );
   }
 }
