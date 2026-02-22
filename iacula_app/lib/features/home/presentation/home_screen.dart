@@ -33,7 +33,7 @@ class HomeScreen extends ConsumerWidget {
                             'Olá, Pedro',
                             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black, // Or use colorScheme.onSurface
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                           ),
                           Opacity(
@@ -65,8 +65,7 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      SizedBox(
-                        height: 300,
+                      Expanded(
                         child: _QuoteCard(quote: data.quote),
                       ),
                     ],
@@ -161,12 +160,15 @@ class _QuoteCard extends StatelessWidget {
               const DecoratedBox(
                 decoration: BoxDecoration(color: Color(0xFF3D3125)),
               ),
-            const DecoratedBox(
+            DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Color(0xAA000000), Color(0xE6000000)],
+                  colors: [
+                    Colors.black.withValues(alpha: 0.67),
+                    Colors.black.withValues(alpha: 0.9),
+                  ],
                 ),
               ),
             ),
