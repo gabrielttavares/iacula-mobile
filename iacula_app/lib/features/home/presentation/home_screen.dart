@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
-import '../../../core/presentation/widgets/app_drawer.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../settings/domain/entities/settings.dart';
@@ -16,7 +15,6 @@ class HomeScreen extends ConsumerWidget {
     final dashboard = ref.watch(_dashboardProvider);
 
     return Scaffold(
-      drawer: const AppDrawer(),
       body: SafeArea(
         child: dashboard.when(
           data: (data) {
@@ -31,17 +29,11 @@ class HomeScreen extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Builder(
-                            builder: (context) => IconButton(
-                              icon: const Icon(Icons.menu_rounded),
-                              onPressed: () => Scaffold.of(context).openDrawer(),
-                            ),
-                          ),
                           Text(
-                            'I A C U L A',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  letterSpacing: 4.0,
-                                  fontWeight: FontWeight.w600,
+                            'Olá, Pedro',
+                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                           ),
                           Opacity(
@@ -59,15 +51,20 @@ class HomeScreen extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 24),
-                      Text(
-                        'Ultima jaculatoria',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          fontStyle: FontStyle.italic,
-                          color: const Color(0xFF837562).withValues(alpha: 0.8),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
+                        child: Row(
+                          children: const [
+                            _QuickActionCard(icon: Icons.menu_book, title: 'Orações'),
+                            SizedBox(width: 12),
+                            _QuickActionCard(icon: Icons.adjust, title: 'Rosário'),
+                            SizedBox(width: 12),
+                            _QuickActionCard(icon: Icons.calendar_today, title: 'Novenas'),
+                          ],
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 24),
                       Expanded(
                         child: _QuoteCard(quote: data.quote),
                       ),
@@ -87,6 +84,45 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
+class _QuickActionCard extends StatelessWidget {
+  const _QuickActionCard({required this.icon, required this.title});
+
+  final IconData icon;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _QuoteCard extends StatelessWidget {
   const _QuoteCard({required this.quote});
 
@@ -98,17 +134,17 @@ class _QuoteCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -124,12 +160,15 @@ class _QuoteCard extends StatelessWidget {
               const DecoratedBox(
                 decoration: BoxDecoration(color: Color(0xFF3D3125)),
               ),
-            const DecoratedBox(
+            DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Color(0xAA000000), Color(0xE6000000)],
+                  colors: [
+                    Colors.black.withValues(alpha: 0.67),
+                    Colors.black.withValues(alpha: 0.9),
+                  ],
                 ),
               ),
             ),

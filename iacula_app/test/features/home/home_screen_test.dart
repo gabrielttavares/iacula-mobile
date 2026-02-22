@@ -63,7 +63,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Ultima jaculatoria'), findsOneWidget);
+    expect(find.text('Olá, Pedro'), findsOneWidget);
     expect(find.text('Sede santos.'), findsOneWidget);
     expect(find.text('Todos os Santos'), findsOneWidget);
   });

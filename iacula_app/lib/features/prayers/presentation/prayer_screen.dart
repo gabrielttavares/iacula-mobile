@@ -22,7 +22,7 @@ class PrayerScreen extends StatelessWidget {
             Image.asset(
               prayer.imagePath!,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
             ),
           DecoratedBox(
             decoration: const BoxDecoration(
@@ -49,7 +49,7 @@ class PrayerScreen extends StatelessWidget {
                   Expanded(
                     child: ListView.separated(
                       itemCount: prayer.verses.length + 1,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      separatorBuilder: (context, index) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         if (index == prayer.verses.length) {
                           return Text(
