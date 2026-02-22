@@ -9,8 +9,13 @@ class MeditationScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1A17),
       appBar: AppBar(
-        title: const Text('Meditação Diária'),
-        backgroundColor: const Color(0xFF1E1A17),
+        title: Text(
+          'Meditação Diária',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: const Color(0xFFD6BA8E),
+              ),
+        ),
+        backgroundColor: Colors.transparent,
         foregroundColor: const Color(0xFFD6BA8E),
         elevation: 0,
         centerTitle: true,

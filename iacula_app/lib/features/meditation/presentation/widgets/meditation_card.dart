@@ -13,51 +13,46 @@ class MeditationCard extends StatelessWidget {
     required this.url,
   });
 
-  Future<void> _launchUrl() async {
-    if (!await launchUrl(Uri.parse(url))) {
-      debugPrint('Could not launch $url');
+  Future<void> _launchUrl(BuildContext context) async {
+    final parsedUrl = Uri.parse(url);
+    if (!await launchUrl(parsedUrl)) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível abrir o link.')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFF25211D),
+      color: const Color(0xFF25211D),
+      elevation: 4,
+      shadowColor: Colors.black.withValues(alpha: 0.4),
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: _launchUrl,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Icon(platformIcon, color: const Color(0xFFD6BA8E), size: 32),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      color: Color(0xFFF8EFE1),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => _launchUrl(context),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Icon(platformIcon, color: const Color(0xFFD6BA8E), size: 32),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: const Color(0xFFF8EFE1),
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
-                const Icon(Icons.arrow_forward_ios_rounded, color: Color(0xFF837562), size: 16),
-              ],
-            ),
+              ),
+              const Icon(Icons.arrow_forward_ios_rounded, color: Color(0xFF837562), size: 16),
+            ],
           ),
         ),
       ),
