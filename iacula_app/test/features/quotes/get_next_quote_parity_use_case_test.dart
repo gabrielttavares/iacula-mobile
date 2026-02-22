@@ -31,6 +31,8 @@ class _FakeQuoteContentRepository implements QuoteContentRepository {
   final List<String> images;
   final List<String> feastQuotes;
   final String? feastImage;
+  String? lastFeastQuotesSlug;
+  String? lastFeastImageSlug;
 
   @override
   Future<Map<String, DayQuotes>> loadQuotes({required String language, required LiturgicalSeason season}) async {
@@ -43,10 +45,16 @@ class _FakeQuoteContentRepository implements QuoteContentRepository {
   }
 
   @override
-  Future<List<String>> loadFeastQuotes(String feastSlug) async => feastQuotes;
+  Future<List<String>> loadFeastQuotes(String feastSlug) async {
+    lastFeastQuotesSlug = feastSlug;
+    return feastQuotes;
+  }
 
   @override
-  Future<String?> getFeastImagePath(String feastSlug) async => feastImage;
+  Future<String?> getFeastImagePath(String feastSlug) async {
+    lastFeastImageSlug = feastSlug;
+    return feastImage;
+  }
 }
 
 class _FakeIndicesRepository implements QuoteIndicesRepository {
@@ -122,5 +130,36 @@ void main() {
     expect(quote.text, 'Sazonal');
     expect(quote.imagePath, 'img-ordinary-1');
     expect(quote.feast, isNull);
+  });
+
+  test('uses canonical feast slug for feast quote and image lookups', () async {
+    final repo = _FakeIndicesRepository();
+    final content = _FakeQuoteContentRepository(
+      seasonal: {
+        '1': const DayQuotes(day: 'Domingo', theme: 'Tema comum', quotes: ['Sazonal']),
+      },
+      images: ['img-ordinary-1'],
+      feastQuotes: const ['Vinde, Espirito Santo'],
+      feastImage: 'img-feast',
+    );
+    final useCase = GetNextQuoteUseCase(
+      contentRepository: content,
+      indicesRepository: repo,
+      liturgicalSeasonService: _FakeSeasonService(
+        const LiturgicalContext(
+          season: LiturgicalSeason.easter,
+          rank: LiturgicalRank.solemnity,
+          feast: 'pentecost',
+          feastName: 'domingo de pentecostes',
+          apiQuotes: <String>[],
+        ),
+      ),
+    );
+
+    final quote = await useCase.call(language: 'pt-br', now: DateTime(2026, 5, 24));
+
+    expect(quote.feast, 'pentecost');
+    expect(content.lastFeastQuotesSlug, 'pentecost');
+    expect(content.lastFeastImageSlug, 'pentecost');
   });
 }

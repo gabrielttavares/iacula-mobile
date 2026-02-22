@@ -35,9 +35,30 @@ void main() {
     final context = await service.getCurrentContext(date: DateTime(2026, 11, 1));
 
     expect(context.rank.name, 'solemnity');
-    expect(context.feastName, isNotEmpty);
-    expect(context.feast, isNotEmpty);
+    expect(context.feastName, 'todos os santos');
+    expect(context.feast, 'all-saints');
     expect(context.apiQuotes, contains('Antifona de entrada'));
     expect(context.apiQuotes, contains('Refrao do salmo'));
+  });
+
+  test('canonicalizes pentecost context slug and preserves feast name', () async {
+    final client = MockClient((_) async {
+      return http.Response(
+        '{"cor":"Vermelho","liturgia":"Domingo de Pentecostes, Solenidade"}',
+        200,
+      );
+    });
+
+    final service = RemoteLiturgicalSeasonService(
+      httpClient: client,
+      cacheRepository: _InMemoryCache(),
+      baseUrl: 'https://example.com/v2',
+    );
+
+    final context = await service.getCurrentContext(date: DateTime(2026, 5, 24));
+
+    expect(context.rank.name, 'solemnity');
+    expect(context.feast, 'pentecost');
+    expect(context.feastName, 'domingo de pentecostes');
   });
 }

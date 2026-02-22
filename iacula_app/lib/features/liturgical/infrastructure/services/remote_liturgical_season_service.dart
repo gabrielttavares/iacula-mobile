@@ -35,6 +35,22 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
     'santos-pedro-e-paulo-apostolos': 'sts-peter-paul',
     'bem-aventurada-virgem-maria-da-conceicao-aparecida-padroeira-do-brasil': 'our-lady-aparecida',
   };
+  static const List<({List<String> keywords, String slug})> _feastPatterns = [
+    (keywords: <String>['domingo de ramos'], slug: 'palm-sunday'),
+    (keywords: <String>['semana santa', 'ceia do senhor'], slug: 'holy-thursday'),
+    (keywords: <String>['paixao do senhor'], slug: 'good-friday'),
+    (keywords: <String>['vigilia pascal'], slug: 'easter-vigil'),
+    (keywords: <String>['domingo de pascoa'], slug: 'easter-sunday'),
+    (keywords: <String>['pentecostes'], slug: 'pentecost'),
+    (keywords: <String>['santissima trindade'], slug: 'holy-trinity'),
+    (keywords: <String>['corpo e sangue de cristo'], slug: 'corpus-christi'),
+    (keywords: <String>['todos os santos'], slug: 'all-saints'),
+    (keywords: <String>['imaculada conceicao'], slug: 'immaculate-conception'),
+    (keywords: <String>['assuncao'], slug: 'assumption'),
+    (keywords: <String>['sao jose'], slug: 'st-joseph'),
+    (keywords: <String>['santos pedro e paulo'], slug: 'sts-peter-paul'),
+    (keywords: <String>['aparecida'], slug: 'our-lady-aparecida'),
+  ];
 
   @override
   Future<LiturgicalSeason> getCurrentSeason({DateTime? date}) async {
@@ -120,6 +136,12 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
     final normalizedCor = _normalizeText(cor ?? '');
     final normalizedLiturgy = _normalizeText(liturgia ?? '');
 
+    if (normalizedLiturgy.contains('semana santa') ||
+        normalizedLiturgy.contains('paixao do senhor') ||
+        normalizedLiturgy.contains('paixao')) {
+      return LiturgicalSeason.lent;
+    }
+
     switch (normalizedCor) {
       case 'verde':
       case 'vermelho':
@@ -148,17 +170,11 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
   }
 
   String? _detectFeast(String normalizedLiturgy, LiturgicalRank rank, String feastName) {
-    if (normalizedLiturgy.contains('todos os santos')) {
-      return 'all-saints';
-    }
-    if (normalizedLiturgy.contains('pentecostes')) {
-      return 'pentecost';
-    }
-    if (normalizedLiturgy.contains('santissima trindade')) {
-      return 'holy-trinity';
-    }
-    if (normalizedLiturgy.contains('corpo e sangue de cristo')) {
-      return 'corpus-christi';
+    for (final pattern in _feastPatterns) {
+      final hasMatch = pattern.keywords.every(normalizedLiturgy.contains);
+      if (hasMatch) {
+        return pattern.slug;
+      }
     }
 
     if (rank == LiturgicalRank.solemnity || rank == LiturgicalRank.feast) {
