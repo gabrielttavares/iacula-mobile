@@ -38,6 +38,7 @@ final class WorkmanagerBackgroundSyncGateway implements BackgroundSyncGateway {
 
   static void _callbackDispatcher() {
     Workmanager().executeTask((task, inputData) async {
+      await BackgroundSyncScheduler.runBackgroundTask(task, inputData);
       return true;
     });
   }
@@ -50,7 +51,25 @@ final class BackgroundSyncScheduler {
   static const String periodicTaskId = 'iacula_sync_periodic_v1';
   static const String periodicTaskName = 'iacula.sync.periodic';
 
+  static Future<void> Function(String task, Map<String, dynamic>? inputData)?
+  _taskRunner;
+
   final BackgroundSyncGateway _gateway;
+
+  static void configureTaskRunner(
+    Future<void> Function(String task, Map<String, dynamic>? inputData) runner,
+  ) {
+    _taskRunner = runner;
+  }
+
+  static Future<void> runBackgroundTask(
+    String task,
+    Map<String, dynamic>? inputData,
+  ) async {
+    final runner = _taskRunner;
+    if (runner == null) return;
+    await runner(task, inputData);
+  }
 
   Future<void> register() async {
     try {

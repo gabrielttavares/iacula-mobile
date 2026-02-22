@@ -26,6 +26,7 @@ import '../../features/storage/domain/entities/media_asset.dart';
 import '../../features/storage/domain/repositories/media_catalog_repository.dart';
 import '../../features/storage/infrastructure/repositories/isar_media_catalog_repository.dart';
 import '../../features/sync/domain/repositories/sync_orchestrator.dart';
+import '../../features/sync/infrastructure/repositories/isar_sync_state_repository.dart';
 import '../../features/sync/infrastructure/repositories/supabase_spiritual_sync_repository.dart';
 import '../../features/sync/infrastructure/services/default_sync_orchestrator.dart';
 import '../config/app_env.dart';
@@ -116,6 +117,7 @@ final class AppBootstrap {
 
         syncOrchestrator = DefaultSyncOrchestrator(
           authRepository: authRepository,
+          syncStateRepository: IsarSyncStateRepository(spiritualStore),
           modules: [
             SyncModuleAdapter(
               module: SpiritualModule.planOfLife,

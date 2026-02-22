@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../spiritual_data/domain/entities/spiritual_entry.dart';
@@ -75,23 +78,28 @@ final class SupabaseSpiritualSyncRepository implements SyncRepository {
     required this.module,
     required this.table,
     required SpiritualSyncGateway gateway,
-  }) : _gateway = gateway;
+    int maxRetries = 2,
+    Future<void> Function(Duration delay)? retryDelay,
+  }) : _gateway = gateway,
+       _maxRetries = maxRetries,
+       _retryDelay = retryDelay ?? Future<void>.delayed;
 
   @override
   final SpiritualModule module;
 
   final String table;
   final SpiritualSyncGateway _gateway;
+  final int _maxRetries;
+  final Future<void> Function(Duration delay) _retryDelay;
 
   @override
   Future<List<SpiritualEntry>> pullChanges({
     required DateTime? since,
     required String userId,
   }) async {
-    final rows = await _gateway.fetchChangedRows(
-      table: table,
-      userId: userId,
-      since: since,
+    final rows = await _withRetry(
+      () =>
+          _gateway.fetchChangedRows(table: table, userId: userId, since: since),
     );
     return rows
         .map((row) => _fromRow(row, module: module))
@@ -106,14 +114,33 @@ final class SupabaseSpiritualSyncRepository implements SyncRepository {
     final rows = localChanges
         .map((entry) => _toRow(entry, userId: userId))
         .toList(growable: false);
-    final responseRows = await _gateway.upsertRows(
-      table: table,
-      userId: userId,
-      rows: rows,
+    final responseRows = await _withRetry(
+      () => _gateway.upsertRows(table: table, userId: userId, rows: rows),
     );
     return responseRows
         .map((row) => _fromRow(row, module: module))
         .toList(growable: false);
+  }
+
+  Future<T> _withRetry<T>(Future<T> Function() op) async {
+    var attempt = 0;
+    while (true) {
+      try {
+        return await op();
+      } catch (error) {
+        if (!_isTransient(error) || attempt >= _maxRetries) {
+          rethrow;
+        }
+
+        attempt += 1;
+        final delayMs = 200 * attempt;
+        await _retryDelay(Duration(milliseconds: delayMs));
+      }
+    }
+  }
+
+  bool _isTransient(Object error) {
+    return error is TimeoutException || error is SocketException;
   }
 
   static SpiritualEntry _fromRow(

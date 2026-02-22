@@ -88,12 +88,30 @@ void main() {
     },
   );
 
-  test('propagates transient gateway failures', () async {
+  test('retries transient timeout and succeeds on third attempt', () async {
+    final gateway = _FlakyGateway();
+    final repo = SupabaseSpiritualSyncRepository(
+      module: SpiritualModule.prayerIntention,
+      table: 'prayer_intention_entries',
+      gateway: gateway,
+      maxRetries: 2,
+      retryDelay: (_) async {},
+    );
+
+    final pulled = await repo.pullChanges(since: null, userId: 'user-1');
+
+    expect(gateway.pullCalls, 3);
+    expect(pulled.single.id, 'ok');
+  });
+
+  test('propagates transient gateway failures after retries', () async {
     final gateway = _FakeGateway(error: TimeoutException('timeout'));
     final repo = SupabaseSpiritualSyncRepository(
       module: SpiritualModule.prayerIntention,
       table: 'prayer_intention_entries',
       gateway: gateway,
+      maxRetries: 1,
+      retryDelay: (_) async {},
     );
 
     expect(
@@ -146,5 +164,44 @@ final class _FakeGateway implements SpiritualSyncGateway {
     lastPushUserId = userId;
     lastPushedRows = rows;
     return pushedResponseRows;
+  }
+}
+
+final class _FlakyGateway implements SpiritualSyncGateway {
+  int pullCalls = 0;
+
+  @override
+  Future<List<Map<String, dynamic>>> fetchChangedRows({
+    required String table,
+    required String userId,
+    required DateTime? since,
+  }) async {
+    pullCalls += 1;
+    if (pullCalls < 3) {
+      throw TimeoutException('temporary timeout');
+    }
+
+    return <Map<String, dynamic>>[
+      {
+        'id': 'ok',
+        'user_id': userId,
+        'title': null,
+        'body': 'Recovered',
+        'schedule_json': null,
+        'created_at': '2026-02-22T10:00:00.000Z',
+        'updated_at': '2026-02-22T10:01:00.000Z',
+        'deleted_at': null,
+        'device_id': null,
+      },
+    ];
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> upsertRows({
+    required String table,
+    required String userId,
+    required List<Map<String, dynamic>> rows,
+  }) async {
+    return rows;
   }
 }
