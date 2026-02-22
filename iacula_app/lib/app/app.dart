@@ -28,6 +28,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final syncService = ref.read(connectivitySyncServiceProvider);
       syncService.start();
+      final backgroundSyncScheduler = ref.read(backgroundSyncSchedulerProvider);
+      unawaited(backgroundSyncScheduler.register());
       unawaited(ref.read(syncOrchestratorProvider).syncAll());
 
       final scheduler = ref.read(notificationSchedulerRepositoryProvider);
@@ -50,11 +52,11 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
 
           case NotificationRouteTarget.prayer:
             final settings = await ref.read(getSettingsUseCaseProvider).call();
-            final prayer = await ref.read(getPrayerUseCaseProvider).call(language: settings.language);
+            final prayer = await ref
+                .read(getPrayerUseCaseProvider)
+                .call(language: settings.language);
             nav.push(
-              MaterialPageRoute(
-                builder: (_) => PrayerScreen(prayer: prayer),
-              ),
+              MaterialPageRoute(builder: (_) => PrayerScreen(prayer: prayer)),
             );
             return;
 

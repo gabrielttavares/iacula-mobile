@@ -3,20 +3,32 @@ import 'dart:developer' as developer;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
+import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
 import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/remote_liturgical_season_service.dart';
-import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
+import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_quote_indices_repository.dart';
 import '../../features/settings/infrastructure/repositories/sqlite_settings_repository.dart';
+import '../../features/spiritual_data/domain/entities/spiritual_entry.dart';
+import '../../features/spiritual_data/infrastructure/repositories/isar_spiritual_entry_repositories.dart';
+import '../../features/spiritual_data/infrastructure/storage/spiritual_data_encryption_key_provider.dart';
+import '../../features/spiritual_data/infrastructure/storage/spiritual_data_isar_store.dart';
 import '../../features/storage/domain/entities/media_asset.dart';
 import '../../features/storage/domain/repositories/media_catalog_repository.dart';
 import '../../features/storage/infrastructure/repositories/isar_media_catalog_repository.dart';
+import '../../features/sync/domain/repositories/sync_orchestrator.dart';
+import '../../features/sync/infrastructure/repositories/supabase_spiritual_sync_repository.dart';
+import '../../features/sync/infrastructure/services/default_sync_orchestrator.dart';
+import '../config/app_env.dart';
 import '../di/providers.dart';
 import '../storage/isar/isar_store.dart';
 import '../storage/sqlite/app_database.dart';
@@ -25,6 +37,8 @@ final class AppBootstrap {
   const AppBootstrap._();
 
   static Future<List<Override>> createProductionOverrides() async {
+    final env = AppEnv.fromDartDefines();
+
     final db = AppDatabase.instance;
     final isarStore = IsarStore.instance;
 
@@ -77,14 +91,94 @@ final class AppBootstrap {
       );
     }
 
-    return [
+    AuthRepository authRepository = InMemoryAuthRepository();
+    SyncOrchestrator syncOrchestrator = const _BootstrapNoopSyncOrchestrator();
+    SupabaseClient? supabaseClient;
+
+    if (env.authSyncEnabled && env.hasSupabase) {
+      try {
+        await Supabase.initialize(
+          url: env.supabaseUrl!,
+          anonKey: env.supabaseAnonKey!,
+        );
+
+        supabaseClient = Supabase.instance.client;
+        authRepository = SupabaseAuthRepository(supabaseClient);
+
+        final localKeyProvider = SpiritualDataEncryptionKeyProvider(
+          store: FlutterSecureKvStore(),
+        );
+        final spiritualStore = SpiritualDataIsarStore(
+          keyProvider: localKeyProvider,
+        );
+
+        final gateway = SupabaseSpiritualSyncGateway(supabaseClient);
+
+        syncOrchestrator = DefaultSyncOrchestrator(
+          authRepository: authRepository,
+          modules: [
+            SyncModuleAdapter(
+              module: SpiritualModule.planOfLife,
+              localRepository: IsarPlanOfLifeSpiritualEntryRepository(
+                spiritualStore,
+              ),
+              remoteRepository: SupabaseSpiritualSyncRepository(
+                module: SpiritualModule.planOfLife,
+                table: 'plan_of_life_entries',
+                gateway: gateway,
+              ),
+            ),
+            SyncModuleAdapter(
+              module: SpiritualModule.examination,
+              localRepository: IsarExaminationSpiritualEntryRepository(
+                spiritualStore,
+              ),
+              remoteRepository: SupabaseSpiritualSyncRepository(
+                module: SpiritualModule.examination,
+                table: 'examination_entries',
+                gateway: gateway,
+              ),
+            ),
+            SyncModuleAdapter(
+              module: SpiritualModule.prayerIntention,
+              localRepository: IsarPrayerIntentionSpiritualEntryRepository(
+                spiritualStore,
+              ),
+              remoteRepository: SupabaseSpiritualSyncRepository(
+                module: SpiritualModule.prayerIntention,
+                table: 'prayer_intention_entries',
+                gateway: gateway,
+              ),
+            ),
+          ],
+        );
+      } catch (error, st) {
+        developer.log(
+          'Supabase auth/sync bootstrap failed. Falling back to local-only mode.',
+          name: 'AppBootstrap',
+          error: error,
+          stackTrace: st,
+        );
+        authRepository = InMemoryAuthRepository();
+        syncOrchestrator = const _BootstrapNoopSyncOrchestrator();
+      }
+    }
+
+    final overrides = <Override>[
+      appEnvProvider.overrideWithValue(env),
       settingsRepositoryProvider.overrideWithValue(settingsRepo),
       quoteIndicesRepositoryProvider.overrideWithValue(indicesRepo),
-      lastDeliveredCardRepositoryProvider.overrideWithValue(lastDeliveredCardRepo),
+      lastDeliveredCardRepositoryProvider.overrideWithValue(
+        lastDeliveredCardRepo,
+      ),
       mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
-      liturgicalSeasonCacheRepositoryProvider.overrideWithValue(liturgicalCacheRepo),
+      liturgicalSeasonCacheRepositoryProvider.overrideWithValue(
+        liturgicalCacheRepo,
+      ),
       notificationSchedulerRepositoryProvider.overrideWithValue(scheduler),
       httpClientProvider.overrideWithValue(httpClient),
+      authRepositoryProvider.overrideWithValue(authRepository),
+      syncOrchestratorProvider.overrideWithValue(syncOrchestrator),
       liturgicalSeasonServiceProvider.overrideWith((ref) {
         return RemoteLiturgicalSeasonService(
           httpClient: ref.watch(httpClientProvider),
@@ -92,15 +186,24 @@ final class AppBootstrap {
         );
       }),
     ];
+
+    if (supabaseClient != null) {
+      overrides.add(supabaseClientProvider.overrideWithValue(supabaseClient));
+    }
+
+    return overrides;
   }
 
-  static Future<void> _seedMediaCatalog(MediaCatalogRepository mediaRepo) async {
+  static Future<void> _seedMediaCatalog(
+    MediaCatalogRepository mediaRepo,
+  ) async {
     final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
     final assets = manifest.listAssets();
 
     final media = <MediaAsset>[];
     for (final key in assets) {
-      if (!key.startsWith('assets/seed/images/') && !key.startsWith('assets/seed/audio/')) {
+      if (!key.startsWith('assets/seed/images/') &&
+          !key.startsWith('assets/seed/audio/')) {
         continue;
       }
 
@@ -110,4 +213,14 @@ final class AppBootstrap {
 
     await mediaRepo.upsertAll(media);
   }
+}
+
+final class _BootstrapNoopSyncOrchestrator implements SyncOrchestrator {
+  const _BootstrapNoopSyncOrchestrator();
+
+  @override
+  Future<void> syncAll() async {}
+
+  @override
+  Future<void> syncModule(String module) async {}
 }

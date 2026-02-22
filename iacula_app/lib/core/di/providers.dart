@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
 
 import '../../features/auth/domain/entities/auth_user.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
@@ -28,15 +29,26 @@ import '../../features/settings/infrastructure/repositories/in_memory_settings_r
 import '../../features/storage/domain/repositories/media_catalog_repository.dart';
 import '../../features/storage/infrastructure/repositories/in_memory_media_catalog_repository.dart';
 import '../../features/sync/domain/repositories/sync_orchestrator.dart';
+import '../../features/sync/infrastructure/services/background_sync_scheduler.dart';
 import '../../features/sync/infrastructure/services/connectivity_sync_service.dart';
+import '../config/app_env.dart';
+
+final appEnvProvider = Provider<AppEnv>((ref) => AppEnv.fromDartDefines());
+
+final supabaseClientProvider = Provider<SupabaseClient?>((ref) {
+  return null;
+});
 
 final httpClientProvider = Provider<http.Client>((ref) => http.Client());
 
-final liturgicalSeasonCacheRepositoryProvider = Provider<LiturgicalSeasonCacheRepository>((ref) {
-  return InMemoryLiturgicalSeasonCacheRepository();
-});
+final liturgicalSeasonCacheRepositoryProvider =
+    Provider<LiturgicalSeasonCacheRepository>((ref) {
+      return InMemoryLiturgicalSeasonCacheRepository();
+    });
 
-final liturgicalSeasonServiceProvider = Provider<LiturgicalSeasonService>((ref) {
+final liturgicalSeasonServiceProvider = Provider<LiturgicalSeasonService>((
+  ref,
+) {
   return const FallbackLiturgicalSeasonService();
 });
 
@@ -52,17 +64,21 @@ final quoteIndicesRepositoryProvider = Provider<QuoteIndicesRepository>((ref) {
   return InMemoryQuoteIndicesRepository();
 });
 
-final prayerContentRepositoryProvider = Provider<PrayerContentRepository>((ref) {
+final prayerContentRepositoryProvider = Provider<PrayerContentRepository>((
+  ref,
+) {
   return const AssetPrayerContentRepository();
 });
 
-final notificationSchedulerRepositoryProvider = Provider<NotificationSchedulerRepository>((ref) {
-  return InMemoryNotificationSchedulerRepository();
-});
+final notificationSchedulerRepositoryProvider =
+    Provider<NotificationSchedulerRepository>((ref) {
+      return InMemoryNotificationSchedulerRepository();
+    });
 
-final lastDeliveredCardRepositoryProvider = Provider<LastDeliveredCardRepository>((ref) {
-  return InMemoryLastDeliveredCardRepository();
-});
+final lastDeliveredCardRepositoryProvider =
+    Provider<LastDeliveredCardRepository>((ref) {
+      return InMemoryLastDeliveredCardRepository();
+    });
 
 final mediaCatalogRepositoryProvider = Provider<MediaCatalogRepository>((ref) {
   return InMemoryMediaCatalogRepository();
@@ -84,13 +100,27 @@ final connectivityProvider = Provider<Connectivity>((ref) {
   return Connectivity();
 });
 
-final connectivitySyncServiceProvider = Provider<ConnectivitySyncService>((ref) {
+final connectivitySyncServiceProvider = Provider<ConnectivitySyncService>((
+  ref,
+) {
   final service = ConnectivitySyncService(
     connectivity: ref.watch(connectivityProvider),
     orchestrator: ref.watch(syncOrchestratorProvider),
   );
   ref.onDispose(service.dispose);
   return service;
+});
+
+final backgroundSyncGatewayProvider = Provider<BackgroundSyncGateway>((ref) {
+  return const WorkmanagerBackgroundSyncGateway();
+});
+
+final backgroundSyncSchedulerProvider = Provider<BackgroundSyncScheduler>((
+  ref,
+) {
+  return BackgroundSyncScheduler(
+    gateway: ref.watch(backgroundSyncGatewayProvider),
+  );
 });
 
 final getSettingsUseCaseProvider = Provider<GetSettingsUseCase>((ref) {
