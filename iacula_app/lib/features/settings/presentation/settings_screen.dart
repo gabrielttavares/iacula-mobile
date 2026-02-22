@@ -106,12 +106,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
             const SizedBox(height: 12),
-            const ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text('Duracao (desktop apenas)'),
-              subtitle: Text('No mobile, o tempo do banner e controlado pelo sistema operacional.'),
-            ),
-            const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               initialValue: _language,
               decoration: const InputDecoration(labelText: 'Idioma'),
@@ -123,13 +117,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onChanged: (v) => setState(() => _language = v ?? 'pt-br'),
             ),
             const SizedBox(height: 12),
-            SwitchListTile(
-              value: _autostart,
-              title: const Text('Autostart (mobile limitado)'),
-              subtitle: const Text('Mantido para paridade com desktop'),
-              onChanged: null,
-            ),
-            const SizedBox(height: 8),
             SwitchListTile(
               value: _soundEnabled,
               title: const Text('Som no lembrete liturgico'),
