@@ -19,91 +19,97 @@ class PlanItemRow extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final disabledColor = theme.disabledColor;
 
-    return GestureDetector(
-      onTap: () => onToggle(!isCompleted),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-        padding: const EdgeInsets.all(12.0),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: () => onToggle(!isCompleted),
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // Placeholder rounded image/icon container
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.spa_outlined, // A generic icon
-                color: colorScheme.onPrimaryContainer,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 16),
-            // Center (Title + Subtitle)
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 300),
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                          color: isCompleted ? disabledColor : colorScheme.onSurface,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          decoration: isCompleted ? TextDecoration.lineThrough : null,
-                          decorationColor: disabledColor,
-                        ) ??
-                        TextStyle(
-                          color: isCompleted ? disabledColor : colorScheme.onSurface,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          decoration: isCompleted ? TextDecoration.lineThrough : null,
-                        ),
-                    child: Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Diariamente',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: disabledColor,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Right (AnimatedCheckbox + Icons.more_horiz)
-            Row(
-              mainAxisSize: MainAxisSize.min,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
               children: [
-                AnimatedCheckbox(value: isCompleted),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.more_horiz,
-                  color: disabledColor,
+                // Placeholder rounded image/icon container
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.spa_outlined, // A generic icon
+                    color: colorScheme.onPrimaryContainer,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Center (Title + Subtitle)
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AnimatedDefaultTextStyle(
+                        duration: const Duration(milliseconds: 300),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                              color: isCompleted ? disabledColor : colorScheme.onSurface,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              decoration: isCompleted ? TextDecoration.lineThrough : null,
+                              decorationColor: disabledColor,
+                            ) ??
+                            TextStyle(
+                              color: isCompleted ? disabledColor : colorScheme.onSurface,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              decoration: isCompleted ? TextDecoration.lineThrough : null,
+                            ),
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Diariamente',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: disabledColor,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Right (AnimatedCheckbox + Icons.more_horiz)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AnimatedCheckbox(value: isCompleted),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.more_horiz,
+                      color: disabledColor,
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

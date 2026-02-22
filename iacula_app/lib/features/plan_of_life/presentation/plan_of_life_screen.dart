@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 import 'widgets/plan_item_row.dart';
 
+class PlanSection {
+  final String title;
+  final IconData icon;
+  final List<Map<String, dynamic>> items;
+
+  PlanSection({
+    required this.title,
+    required this.icon,
+    required this.items,
+  });
+}
+
 class PlanOfLifeScreen extends StatefulWidget {
   const PlanOfLifeScreen({super.key});
 
@@ -9,18 +21,36 @@ class PlanOfLifeScreen extends StatefulWidget {
 }
 
 class _PlanOfLifeScreenState extends State<PlanOfLifeScreen> {
-  // Mocked state: List of Map with title and isCompleted
-  final List<Map<String, dynamic>> _planItems = [
-    {'title': 'Oferecimento de obras', 'isCompleted': false},
-    {'title': 'Leitura do Santo Evangelho', 'isCompleted': false},
-    {'title': 'Leitura espiritual', 'isCompleted': false},
-    {'title': 'Angelus (Anjo do Senhor)', 'isCompleted': false},
-    {'title': 'Oração mental (ou meditação)', 'isCompleted': false},
-    {'title': 'Visita ao Santíssimo', 'isCompleted': false},
-    {'title': 'Terço', 'isCompleted': false},
-    {'title': 'Santa Missa', 'isCompleted': false},
-    {'title': '3 Ave-Marias antes de deitar', 'isCompleted': false},
-    {'title': 'Exame de consciência', 'isCompleted': false},
+  // Mocked state: List of sections with items
+  final List<PlanSection> _sections = [
+    PlanSection(
+      title: 'Manhã',
+      icon: Icons.wb_sunny_outlined,
+      items: [
+        {'title': 'Oferecimento de obras', 'isCompleted': false},
+        {'title': 'Leitura do Santo Evangelho', 'isCompleted': false},
+        {'title': 'Leitura espiritual', 'isCompleted': false},
+        {'title': 'Angelus (Anjo do Senhor)', 'isCompleted': false},
+      ],
+    ),
+    PlanSection(
+      title: 'Tarde',
+      icon: Icons.cloud_outlined,
+      items: [
+        {'title': 'Oração mental (ou meditação)', 'isCompleted': false},
+        {'title': 'Visita ao Santíssimo', 'isCompleted': false},
+        {'title': 'Terço', 'isCompleted': false},
+        {'title': 'Santa Missa', 'isCompleted': false},
+      ],
+    ),
+    PlanSection(
+      title: 'Noite',
+      icon: Icons.nights_stay_outlined,
+      items: [
+        {'title': '3 Ave-Marias antes de deitar', 'isCompleted': false},
+        {'title': 'Exame de consciência', 'isCompleted': false},
+      ],
+    ),
   ];
 
   final List<Map<String, String>> _mockDates = [
@@ -35,9 +65,9 @@ class _PlanOfLifeScreenState extends State<PlanOfLifeScreen> {
 
   int _selectedDateIndex = 1;
 
-  void _toggleItem(int index, bool newValue) {
+  void _toggleItem(int sectionIndex, int itemIndex, bool newValue) {
     setState(() {
-      _planItems[index]['isCompleted'] = newValue;
+      _sections[sectionIndex].items[itemIndex]['isCompleted'] = newValue;
     });
   }
 
@@ -137,29 +167,24 @@ class _PlanOfLifeScreenState extends State<PlanOfLifeScreen> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: _planItems.length + 3, // 3 headers: Manhã, Tarde, Noite
+                itemCount: _sections.length,
                 padding: const EdgeInsets.only(bottom: 32.0, top: 8.0),
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return _buildSectionHeader('Manhã', Icons.wb_sunny_outlined, theme);
-                  }
-                  if (index == 4) {
-                    return _buildSectionHeader('Tarde', Icons.cloud_outlined, theme);
-                  }
-                  if (index == 10) {
-                    return _buildSectionHeader('Noite', Icons.nights_stay_outlined, theme);
-                  }
-
-                  // Adjust index mapping based on headers
-                  int itemIndex = index - 1; // offset by 1 for first header
-                  if (index > 4) itemIndex -= 1; // offset by 2 for second header
-                  if (index > 10) itemIndex -= 1; // offset by 3 for third header
-
-                  final item = _planItems[itemIndex];
-                  return PlanItemRow(
-                    title: item['title'] as String,
-                    isCompleted: item['isCompleted'] as bool,
-                    onToggle: (bool newValue) => _toggleItem(itemIndex, newValue),
+                itemBuilder: (context, sectionIndex) {
+                  final section = _sections[sectionIndex];
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader(section.title, section.icon, theme),
+                      ...section.items.asMap().entries.map((entry) {
+                        final itemIndex = entry.key;
+                        final item = entry.value;
+                        return PlanItemRow(
+                          title: item['title'] as String,
+                          isCompleted: item['isCompleted'] as bool,
+                          onToggle: (bool newValue) => _toggleItem(sectionIndex, itemIndex, newValue),
+                        );
+                      }),
+                    ],
                   );
                 },
               ),
