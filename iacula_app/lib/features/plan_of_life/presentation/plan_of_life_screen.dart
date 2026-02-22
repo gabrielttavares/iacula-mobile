@@ -31,20 +31,14 @@ class _PlanOfLifeScreenState extends State<PlanOfLifeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1A17), // Match the dark warm theme
       appBar: AppBar(
         title: Text(
           'Plano de Vida',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: const Color(0xFFD6BA8E),
-                fontWeight: FontWeight.w600,
-              ),
+          style: theme.textTheme.titleMedium,
         ),
-        backgroundColor: const Color(0xFF1E1A17),
-        iconTheme: const IconThemeData(color: Color(0xFFD6BA8E)),
-        elevation: 0,
-        centerTitle: true,
       ),
       body: SafeArea(
         child: Column(
@@ -54,10 +48,7 @@ class _PlanOfLifeScreenState extends State<PlanOfLifeScreen> {
               child: Text(
                 'Acompanhe e renove diariamente o seu compromisso de vida espiritual.',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF837562),
-                      height: 1.5,
-                    ),
+                style: theme.textTheme.bodyMedium,
               ),
             ),
             const SizedBox(height: 8),

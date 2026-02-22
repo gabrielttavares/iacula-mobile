@@ -16,17 +16,18 @@ class PlanItemRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final dividerColor = theme.dividerColor;
+    final disabledColor = theme.disabledColor;
     
     return InkWell(
       onTap: () => onToggle(!isCompleted),
-      splashColor: const Color(0xFF3D3125).withValues(alpha: 0.3),
-      highlightColor: Colors.transparent,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: const Color(0xFF837562).withValues(alpha: 0.15),
+              color: dividerColor.withValues(alpha: 0.5),
               width: 1,
             ),
           ),
@@ -38,17 +39,17 @@ class PlanItemRow extends StatelessWidget {
                 duration: const Duration(milliseconds: 300),
                 style: theme.textTheme.bodyLarge?.copyWith(
                       color: isCompleted
-                          ? const Color(0xFF837562).withValues(alpha: 0.7)
-                          : const Color(0xFFF8EFE1),
+                          ? disabledColor
+                          : colorScheme.onSurface,
                       fontSize: 16,
                       decoration:
                           isCompleted ? TextDecoration.lineThrough : null,
-                      decorationColor: const Color(0xFF837562).withValues(alpha: 0.7),
+                      decorationColor: disabledColor,
                     ) ??
                     TextStyle(
                       color: isCompleted
-                          ? const Color(0xFF837562).withValues(alpha: 0.7)
-                          : const Color(0xFFF8EFE1),
+                          ? disabledColor
+                          : colorScheme.onSurface,
                       fontSize: 16,
                       decoration:
                           isCompleted ? TextDecoration.lineThrough : null,
@@ -59,7 +60,6 @@ class PlanItemRow extends StatelessWidget {
             const SizedBox(width: 16),
             AnimatedCheckbox(
               value: isCompleted,
-              onChanged: onToggle,
             ),
           ],
         ),
