@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../features/meditation/presentation/meditation_screen.dart';
+import '../../../features/plan_of_life/presentation/plan_of_life_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -62,7 +63,15 @@ class AppDrawer extends StatelessWidget {
                   _DrawerItem(
                     icon: Icons.checklist_rounded,
                     title: 'Plano de Vida',
-                    onTap: () => Navigator.pop(context),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PlanOfLifeScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
