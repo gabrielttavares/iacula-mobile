@@ -14,9 +14,14 @@ void onDidReceiveBackgroundNotificationResponse(NotificationResponse response) {
   LocalNotificationSchedulerRepository.handleNotificationResponse(response);
 }
 
-final class LocalNotificationSchedulerRepository implements NotificationSchedulerRepository {
-  LocalNotificationSchedulerRepository({FlutterLocalNotificationsPlugin? plugin})
-      : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
+final class LocalNotificationSchedulerRepository
+    implements NotificationSchedulerRepository {
+  LocalNotificationSchedulerRepository({
+    FlutterLocalNotificationsPlugin? plugin,
+  }) : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
+
+  static const _smallIcon = 'ic_notification';
+  static const _largeIcon = 'ic_notification_large';
 
   final FlutterLocalNotificationsPlugin _plugin;
   final _controller = StreamController<NotificationActionEvent>.broadcast();
@@ -30,19 +35,26 @@ final class LocalNotificationSchedulerRepository implements NotificationSchedule
     _singleton = this;
     tzdata.initializeTimeZones();
 
-    const android = AndroidInitializationSettings('@drawable/ic_notification');
+    const android = AndroidInitializationSettings(_smallIcon);
     const ios = DarwinInitializationSettings();
 
     await _plugin.initialize(
       const InitializationSettings(android: android, iOS: ios),
       onDidReceiveNotificationResponse: handleNotificationResponse,
-      onDidReceiveBackgroundNotificationResponse: onDidReceiveBackgroundNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse:
+          onDidReceiveBackgroundNotificationResponse,
     );
 
-    final androidImpl = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    final androidImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     await androidImpl?.requestNotificationsPermission();
 
-    final iosImpl = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+    final iosImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
     await iosImpl?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
@@ -59,26 +71,33 @@ final class LocalNotificationSchedulerRepository implements NotificationSchedule
     }
   }
 
-  @override
-  Future<void> schedule(ReminderEvent event) async {
-    final id = _idForType(event.type);
-
+  static AndroidNotificationDetails buildAndroidNotificationDetails(
+    ReminderEvent event,
+  ) {
     final actions = event.isAlarm
         ? <AndroidNotificationAction>[
-            const AndroidNotificationAction(NotificationActionEvent.openAction, 'Abrir'),
+            const AndroidNotificationAction(
+              NotificationActionEvent.openAction,
+              'Abrir',
+            ),
             const AndroidNotificationAction(
               NotificationActionEvent.snooze10Action,
               'Adiar 10 min',
             ),
           ]
         : <AndroidNotificationAction>[
-            const AndroidNotificationAction(NotificationActionEvent.openAction, 'Abrir'),
+            const AndroidNotificationAction(
+              NotificationActionEvent.openAction,
+              'Abrir',
+            ),
           ];
 
-    final androidDetails = AndroidNotificationDetails(
-      _channelId(event.type),
-      _channelName(event.type),
-      channelDescription: _channelDescription(event.type),
+    return AndroidNotificationDetails(
+      _channelIdForType(event.type),
+      _channelNameForType(event.type),
+      channelDescription: _channelDescriptionForType(event.type),
+      icon: _smallIcon,
+      largeIcon: const DrawableResourceAndroidBitmap(_largeIcon),
       importance: Importance.max,
       priority: Priority.high,
       fullScreenIntent: event.isAlarm,
@@ -88,6 +107,12 @@ final class LocalNotificationSchedulerRepository implements NotificationSchedule
       visibility: NotificationVisibility.public,
       actions: actions,
     );
+  }
+
+  @override
+  Future<void> schedule(ReminderEvent event) async {
+    final id = _idForType(event.type);
+    final androidDetails = buildAndroidNotificationDetails(event);
 
     const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
@@ -95,9 +120,15 @@ final class LocalNotificationSchedulerRepository implements NotificationSchedule
       presentBadge: true,
     );
 
-    final details = NotificationDetails(android: androidDetails, iOS: iosDetails);
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
     final scheduled = tz.TZDateTime.from(event.scheduledAt, tz.local);
-    final payload = NotificationActionEvent(actionId: null, event: event).toPayload();
+    final payload = NotificationActionEvent(
+      actionId: null,
+      event: event,
+    ).toPayload();
     final repeat = event.repeatDaily ? DateTimeComponents.time : null;
 
     try {
@@ -151,32 +182,38 @@ final class LocalNotificationSchedulerRepository implements NotificationSchedule
     };
   }
 
-  String _channelId(ReminderEventType type) {
+  static String _channelIdForType(ReminderEventType type) {
     return switch (type) {
       ReminderEventType.quoteInterval => 'quotes_reminder',
       ReminderEventType.angelusNoon => 'angelus_noon',
-      ReminderEventType.laudes || ReminderEventType.vespers || ReminderEventType.compline || ReminderEventType.oraMedia =>
-        'liturgy_hours_alarm',
+      ReminderEventType.laudes ||
+      ReminderEventType.vespers ||
+      ReminderEventType.compline ||
+      ReminderEventType.oraMedia => 'liturgy_hours_alarm',
       ReminderEventType.customMeditationAlarm => 'custom_meditation_alarm',
     };
   }
 
-  String _channelName(ReminderEventType type) {
+  static String _channelNameForType(ReminderEventType type) {
     return switch (type) {
       ReminderEventType.quoteInterval => 'Jaculatorias',
       ReminderEventType.angelusNoon => 'Angelus',
-      ReminderEventType.laudes || ReminderEventType.vespers || ReminderEventType.compline || ReminderEventType.oraMedia =>
-        'Liturgia das Horas',
+      ReminderEventType.laudes ||
+      ReminderEventType.vespers ||
+      ReminderEventType.compline ||
+      ReminderEventType.oraMedia => 'Liturgia das Horas',
       ReminderEventType.customMeditationAlarm => 'Meditacao',
     };
   }
 
-  String _channelDescription(ReminderEventType type) {
+  static String _channelDescriptionForType(ReminderEventType type) {
     return switch (type) {
       ReminderEventType.quoteInterval => 'Lembretes de jaculatorias',
       ReminderEventType.angelusNoon => 'Lembrete do meio-dia',
-      ReminderEventType.laudes || ReminderEventType.vespers || ReminderEventType.compline || ReminderEventType.oraMedia =>
-        'Alarmes da Liturgia das Horas',
+      ReminderEventType.laudes ||
+      ReminderEventType.vespers ||
+      ReminderEventType.compline ||
+      ReminderEventType.oraMedia => 'Alarmes da Liturgia das Horas',
       ReminderEventType.customMeditationAlarm => 'Alarmes de meditacao',
     };
   }
