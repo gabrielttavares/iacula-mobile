@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../liturgia_diaria/presentation/liturgia_screen.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../settings/domain/entities/settings.dart';
@@ -31,9 +32,12 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'Olá, Pedro',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                           ),
                           Opacity(
@@ -41,7 +45,9 @@ class HomeScreen extends ConsumerWidget {
                             child: IconButton(
                               onPressed: () async {
                                 await Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                                  MaterialPageRoute(
+                                    builder: (_) => const SettingsScreen(),
+                                  ),
                                 );
                                 ref.invalidate(_dashboardProvider);
                               },
@@ -56,18 +62,31 @@ class HomeScreen extends ConsumerWidget {
                         clipBehavior: Clip.none,
                         child: Row(
                           children: const [
-                            _QuickActionCard(icon: Icons.menu_book, title: 'Orações'),
+                            _QuickActionCard(
+                              icon: Icons.menu_book,
+                              title: 'Orações',
+                            ),
                             SizedBox(width: 12),
-                            _QuickActionCard(icon: Icons.adjust, title: 'Rosário'),
+                            _QuickActionCard(
+                              icon: Icons.adjust,
+                              title: 'Rosário',
+                            ),
                             SizedBox(width: 12),
-                            _QuickActionCard(icon: Icons.calendar_today, title: 'Novenas'),
+                            _QuickActionCard(
+                              icon: Icons.auto_stories,
+                              title: 'Liturgia Diária',
+                              routeName: LiturgiaScreen.routeName,
+                            ),
+                            SizedBox(width: 12),
+                            _QuickActionCard(
+                              icon: Icons.calendar_today,
+                              title: 'Novenas',
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Expanded(
-                        child: _QuoteCard(quote: data.quote),
-                      ),
+                      Expanded(child: _QuoteCard(quote: data.quote)),
                     ],
                   ),
                 ),
@@ -75,7 +94,10 @@ class HomeScreen extends ConsumerWidget {
             );
           },
           error: (error, stack) => Center(
-            child: Text('Erro: $error', style: Theme.of(context).textTheme.bodyLarge),
+            child: Text(
+              'Erro: $error',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
         ),
@@ -85,39 +107,52 @@ class HomeScreen extends ConsumerWidget {
 }
 
 class _QuickActionCard extends StatelessWidget {
-  const _QuickActionCard({required this.icon, required this.title});
+  const _QuickActionCard({
+    required this.icon,
+    required this.title,
+    this.routeName,
+  });
 
   final IconData icon;
   final String title;
+  final String? routeName;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 8),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-          ),
-        ],
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: routeName == null
+          ? null
+          : () {
+              Navigator.of(context).pushNamed(routeName!);
+            },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -182,17 +217,17 @@ class _QuoteCard extends StatelessWidget {
                       child: Text(
                         quote.text,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: const Color(0xFFF8EFE1),
-                              height: 1.65,
-                            ),
+                          color: const Color(0xFFF8EFE1),
+                          height: 1.65,
+                        ),
                       ),
                     ),
                   ),
                   Text(
                     label,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xD8D6BA8E),
-                        ),
+                      color: const Color(0xD8D6BA8E),
+                    ),
                   ),
                 ],
               ),
@@ -228,7 +263,9 @@ final _dashboardProvider = FutureProvider<_DashboardData>((ref) async {
   if (lastDeliveredCard != null) {
     quote = lastDeliveredCard.toQuote();
   } else {
-    quote = await ref.watch(getNextQuoteUseCaseProvider).call(language: settings.language);
+    quote = await ref
+        .watch(getNextQuoteUseCaseProvider)
+        .call(language: settings.language);
     await lastDeliveredCardRepo.save(
       LastDeliveredCard.fromQuote(quote, deliveredAt: DateTime.now()),
     );
@@ -238,10 +275,7 @@ final _dashboardProvider = FutureProvider<_DashboardData>((ref) async {
 });
 
 final class _DashboardData {
-  const _DashboardData({
-    required this.settings,
-    required this.quote,
-  });
+  const _DashboardData({required this.settings, required this.quote});
 
   final Settings settings;
   final Quote quote;

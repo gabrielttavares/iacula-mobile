@@ -6,11 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/di/providers.dart';
 import '../core/presentation/shell_screen.dart';
 import '../core/theme/app_theme.dart';
-import '../features/sync/infrastructure/services/background_sync_scheduler.dart';
+import '../features/liturgia_diaria/presentation/liturgia_screen.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
 import '../features/prayers/presentation/prayer_screen.dart';
+import '../features/sync/infrastructure/services/background_sync_scheduler.dart';
 
 class IaculaApp extends ConsumerStatefulWidget {
   const IaculaApp({super.key});
@@ -93,6 +94,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      routes: {LiturgiaScreen.routeName: (_) => const LiturgiaScreen()},
       home: const ShellScreen(),
     );
   }

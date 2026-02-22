@@ -6,6 +6,10 @@ import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
 import '../../features/auth/domain/entities/auth_user.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
+import '../../features/liturgia_diaria/application/use_cases/get_liturgy_period_use_case.dart';
+import '../../features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
+import '../../features/liturgia_diaria/infrastructure/repositories/liturgia_cache_repository.dart';
+import '../../features/liturgia_diaria/infrastructure/services/liturgia_api_service.dart';
 import '../../features/liturgical/domain/repositories/liturgical_season_cache_repository.dart';
 import '../../features/liturgical/domain/services/liturgical_season_service.dart';
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
@@ -40,6 +44,16 @@ final supabaseClientProvider = Provider<SupabaseClient?>((ref) {
 });
 
 final httpClientProvider = Provider<http.Client>((ref) => http.Client());
+
+final liturgiaApiServiceProvider = Provider<LiturgiaApiService>((ref) {
+  return LiturgiaApiService(httpClient: ref.watch(httpClientProvider));
+});
+
+final liturgiaCacheRepositoryProvider = Provider<LiturgiaRepository>((ref) {
+  return LiturgiaCacheRepository(
+    apiService: ref.watch(liturgiaApiServiceProvider),
+  );
+});
 
 final liturgicalSeasonCacheRepositoryProvider =
     Provider<LiturgicalSeasonCacheRepository>((ref) {
@@ -144,6 +158,12 @@ final getPrayerUseCaseProvider = Provider<GetPrayerUseCase>((ref) {
     prayerRepository: ref.watch(prayerContentRepositoryProvider),
     liturgicalSeasonService: ref.watch(liturgicalSeasonServiceProvider),
   );
+});
+
+final getLiturgyPeriodUseCaseProvider = Provider<GetLiturgyPeriodUseCase>((
+  ref,
+) {
+  return GetLiturgyPeriodUseCase(ref.watch(liturgiaCacheRepositoryProvider));
 });
 
 final class _NoopSyncOrchestrator implements SyncOrchestrator {
