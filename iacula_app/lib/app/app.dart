@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/di/providers.dart';
 import '../core/theme/app_theme.dart';
 import '../features/home/presentation/home_screen.dart';
+import '../features/sync/infrastructure/services/background_sync_scheduler.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
@@ -26,6 +27,16 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final syncService = ref.read(connectivitySyncServiceProvider);
+      syncService.start();
+      BackgroundSyncScheduler.configureTaskRunner((task, inputData) async {
+        await ref.read(syncOrchestratorProvider).syncAll();
+      });
+
+      final backgroundSyncScheduler = ref.read(backgroundSyncSchedulerProvider);
+      unawaited(backgroundSyncScheduler.register());
+      unawaited(ref.read(syncOrchestratorProvider).syncAll());
+
       final scheduler = ref.read(notificationSchedulerRepositoryProvider);
       final handler = HandleNotificationActionUseCase(scheduler);
 
@@ -46,11 +57,11 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
 
           case NotificationRouteTarget.prayer:
             final settings = await ref.read(getSettingsUseCaseProvider).call();
-            final prayer = await ref.read(getPrayerUseCaseProvider).call(language: settings.language);
+            final prayer = await ref
+                .read(getPrayerUseCaseProvider)
+                .call(language: settings.language);
             nav.push(
-              MaterialPageRoute(
-                builder: (_) => PrayerScreen(prayer: prayer),
-              ),
+              MaterialPageRoute(builder: (_) => PrayerScreen(prayer: prayer)),
             );
             return;
 

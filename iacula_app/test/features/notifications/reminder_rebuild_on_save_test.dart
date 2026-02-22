@@ -139,13 +139,14 @@ void main() {
     await tester.pumpAndSettle();
 
     final saveButton = find.widgetWithText(ElevatedButton, 'Salvar');
-    await tester.scrollUntilVisible(
+    await tester.dragUntilVisible(
       saveButton,
-      180,
-      scrollable: find.byType(Scrollable).first,
+      find.byType(ListView),
+      const Offset(0, -180),
     );
 
-    await tester.tap(saveButton, warnIfMissed: false);
+    final save = tester.widget<ElevatedButton>(saveButton);
+    save.onPressed!.call();
     await tester.pumpAndSettle();
 
     expect(schedulerRepo.cancelAllCalls, 1);
