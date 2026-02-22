@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../features/meditation/presentation/meditation_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -48,7 +49,15 @@ class AppDrawer extends StatelessWidget {
                   _DrawerItem(
                     icon: Icons.menu_book_rounded,
                     title: 'Meditação Diária',
-                    onTap: () => Navigator.pop(context),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const MeditationScreen(),
+                        ),
+                      );
+                    },
                   ),
                   _DrawerItem(
                     icon: Icons.checklist_rounded,
