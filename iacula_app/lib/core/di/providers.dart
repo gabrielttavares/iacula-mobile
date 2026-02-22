@@ -1,12 +1,16 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
+import '../../features/auth/domain/entities/auth_user.dart';
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
 import '../../features/liturgical/domain/repositories/liturgical_season_cache_repository.dart';
 import '../../features/liturgical/domain/services/liturgical_season_service.dart';
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
-import '../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
 import '../../features/notifications/domain/repositories/last_delivered_card_repository.dart';
+import '../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import '../../features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
 import '../../features/prayers/application/use_cases/get_prayer_use_case.dart';
@@ -23,6 +27,8 @@ import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../features/settings/infrastructure/repositories/in_memory_settings_repository.dart';
 import '../../features/storage/domain/repositories/media_catalog_repository.dart';
 import '../../features/storage/infrastructure/repositories/in_memory_media_catalog_repository.dart';
+import '../../features/sync/domain/repositories/sync_orchestrator.dart';
+import '../../features/sync/infrastructure/services/connectivity_sync_service.dart';
 
 final httpClientProvider = Provider<http.Client>((ref) => http.Client());
 
@@ -62,6 +68,31 @@ final mediaCatalogRepositoryProvider = Provider<MediaCatalogRepository>((ref) {
   return InMemoryMediaCatalogRepository();
 });
 
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  return InMemoryAuthRepository();
+});
+
+final authStateProvider = StreamProvider<AuthUser?>((ref) {
+  return ref.watch(authRepositoryProvider).authStateChanges();
+});
+
+final syncOrchestratorProvider = Provider<SyncOrchestrator>((ref) {
+  return const _NoopSyncOrchestrator();
+});
+
+final connectivityProvider = Provider<Connectivity>((ref) {
+  return Connectivity();
+});
+
+final connectivitySyncServiceProvider = Provider<ConnectivitySyncService>((ref) {
+  final service = ConnectivitySyncService(
+    connectivity: ref.watch(connectivityProvider),
+    orchestrator: ref.watch(syncOrchestratorProvider),
+  );
+  ref.onDispose(service.dispose);
+  return service;
+});
+
 final getSettingsUseCaseProvider = Provider<GetSettingsUseCase>((ref) {
   return GetSettingsUseCase(ref.watch(settingsRepositoryProvider));
 });
@@ -84,3 +115,13 @@ final getPrayerUseCaseProvider = Provider<GetPrayerUseCase>((ref) {
     liturgicalSeasonService: ref.watch(liturgicalSeasonServiceProvider),
   );
 });
+
+final class _NoopSyncOrchestrator implements SyncOrchestrator {
+  const _NoopSyncOrchestrator();
+
+  @override
+  Future<void> syncAll() async {}
+
+  @override
+  Future<void> syncModule(String module) async {}
+}

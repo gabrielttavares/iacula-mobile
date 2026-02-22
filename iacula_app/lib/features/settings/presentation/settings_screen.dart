@@ -1,7 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../auth/presentation/apple_sign_in_visibility.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../domain/entities/settings.dart';
@@ -22,9 +24,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   late TextEditingController _complineTimeController;
   late TextEditingController _oraMediaTimeController;
 
-  int _durationSeconds = Settings.defaults.durationSeconds;
   String _language = 'pt-br';
-  bool _autostart = true;
   bool _soundEnabled = true;
   double _soundVolume = 0.35;
   bool _laudesEnabled = false;
@@ -56,14 +56,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   void _apply(Settings settings) {
     _intervalController.text = settings.intervalMinutes.toString();
-    _durationSeconds = settings.durationSeconds;
     _laudesTimeController.text = settings.laudesTime;
     _vespersTimeController.text = settings.vespersTime;
     _complineTimeController.text = settings.complineTime;
     _oraMediaTimeController.text = settings.oraMediaTime;
 
     _language = settings.language;
-    _autostart = settings.autostart;
     _soundEnabled = settings.liturgyReminderSoundEnabled;
     _soundVolume = settings.liturgyReminderSoundVolume;
     _laudesEnabled = settings.laudesEnabled;
@@ -110,7 +108,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               initialValue: _language,
               decoration: const InputDecoration(labelText: 'Idioma'),
               items: const [
-                DropdownMenuItem(value: 'pt-br', child: Text('Portugues')), 
+                DropdownMenuItem(value: 'pt-br', child: Text('Portugues')),
                 DropdownMenuItem(value: 'en', child: Text('English')),
                 DropdownMenuItem(value: 'la', child: Text('Latin')),
               ],
@@ -135,6 +133,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             _moduleRow('Vesperas', _vespersEnabled, (v) => setState(() => _vespersEnabled = v), _vespersTimeController),
             _moduleRow('Completas', _complineEnabled, (v) => setState(() => _complineEnabled = v), _complineTimeController),
             _moduleRow('Ora Media', _oraMediaEnabled, (v) => setState(() => _oraMediaEnabled = v), _oraMediaTimeController),
+            const SizedBox(height: 12),
+            _buildAuthSyncSection(context),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _saving ? null : _save,
@@ -174,6 +174,56 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  Widget _buildAuthSyncSection(BuildContext context) {
+    final authState = ref.watch(authStateProvider);
+    final authRepo = ref.read(authRepositoryProvider);
+    final user = authState.valueOrNull;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('Sincronizacao opcional', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 6),
+            Text(
+              user == null
+                  ? 'Entre para sincronizar seus dados espirituais entre dispositivos.'
+                  : 'Conectado como ${user.email}.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Sincronizacao automatica quando online.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 10),
+            if (user == null) ...[
+              OutlinedButton(
+                onPressed: () => authRepo.signInWithGoogle(),
+                child: const Text('Continuar com Google'),
+              ),
+              OutlinedButton(
+                onPressed: () => authRepo.signInWithMicrosoft(),
+                child: const Text('Continuar com Outlook'),
+              ),
+              if (isAppleSignInAvailable(defaultTargetPlatform))
+                OutlinedButton(
+                  onPressed: () => authRepo.signInWithApple(),
+                  child: const Text('Continuar com Apple'),
+                ),
+            ] else
+              OutlinedButton(
+                onPressed: () => authRepo.signOut(),
+                child: const Text('Sair da conta'),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -181,8 +231,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     final settings = Settings(
       intervalMinutes: int.parse(_intervalController.text),
-      durationSeconds: _durationSeconds,
-      autostart: _autostart,
+      durationSeconds: Settings.defaults.durationSeconds,
+      autostart: Settings.defaults.autostart,
       language: _language,
       liturgyReminderSoundEnabled: _soundEnabled,
       liturgyReminderSoundVolume: _soundVolume,
@@ -216,4 +266,3 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 }
-

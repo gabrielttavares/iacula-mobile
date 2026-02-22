@@ -26,6 +26,10 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final syncService = ref.read(connectivitySyncServiceProvider);
+      syncService.start();
+      unawaited(ref.read(syncOrchestratorProvider).syncAll());
+
       final scheduler = ref.read(notificationSchedulerRepositoryProvider);
       final handler = HandleNotificationActionUseCase(scheduler);
 
