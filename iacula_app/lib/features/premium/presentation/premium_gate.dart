@@ -29,7 +29,7 @@ class PremiumGate extends ConsumerWidget {
         return lockedFallback ?? _LockedFallback(feature: feature);
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => lockedFallback ?? _LockedFallback(feature: feature),
+      error: (error, stackTrace) => lockedFallback ?? _LockedFallback(feature: feature),
     );
   }
 

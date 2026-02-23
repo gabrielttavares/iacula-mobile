@@ -55,19 +55,6 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-  Future<void> pumpUntil(
-    WidgetTester tester,
-    Finder finder, {
-    int maxTicks = 30,
-  }) async {
-    for (var i = 0; i < maxTicks; i++) {
-      await tester.pump(const Duration(milliseconds: 50));
-      if (finder.evaluate().isNotEmpty) {
-        return;
-      }
-    }
-  }
-
   testWidgets('free user tapping premium tab opens premium gate modal', (tester) async {
     final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
     final purchaseService = _FakePurchaseService();

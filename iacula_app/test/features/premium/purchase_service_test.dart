@@ -7,12 +7,10 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 final class _FakeInAppPurchaseStore implements InAppPurchaseStore {
   _FakeInAppPurchaseStore({
     required this.queryResponse,
-    this.buyResult = true,
     this.throwOnRestore = false,
   });
 
   final ProductDetailsResponse queryResponse;
-  final bool buyResult;
   final bool throwOnRestore;
   final StreamController<List<PurchaseDetails>> _purchases =
       StreamController<List<PurchaseDetails>>.broadcast();
@@ -25,7 +23,7 @@ final class _FakeInAppPurchaseStore implements InAppPurchaseStore {
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
     lastPurchaseParam = purchaseParam;
-    return buyResult;
+    return true;
   }
 
   @override

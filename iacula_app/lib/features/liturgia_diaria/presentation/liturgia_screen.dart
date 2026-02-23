@@ -51,7 +51,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   scrollDirection: Axis.horizontal,
                   itemCount: days.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  separatorBuilder: (context, index) => const SizedBox(width: 8),
                   itemBuilder: (context, index) {
                     final day = days[index];
                     final selectedChip = index == _selectedIndex;

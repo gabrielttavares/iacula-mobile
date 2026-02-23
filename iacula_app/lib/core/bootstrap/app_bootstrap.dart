@@ -15,6 +15,7 @@ import '../../features/notifications/application/use_cases/schedule_liturgy_remi
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/plan_of_life/application/use_cases/seed_default_items_use_case.dart';
+import '../../features/premium/domain/repositories/premium_repository.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/premium/infrastructure/supabase_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
@@ -97,7 +98,7 @@ final class AppBootstrap {
     }
 
     AuthRepository authRepository = InMemoryAuthRepository();
-    var premiumRepository = localPremiumRepo;
+    PremiumRepository premiumRepository = localPremiumRepo;
     SyncOrchestrator syncOrchestrator = const _BootstrapNoopSyncOrchestrator();
     SupabaseClient? supabaseClient;
 

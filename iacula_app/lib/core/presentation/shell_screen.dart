@@ -8,7 +8,6 @@ import '../../features/premium/presentation/premium_gate.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/meditation/presentation/meditation_screen.dart';
 import '../../features/plan_of_life/presentation/plan_of_life_screen.dart';
-import '../../features/premium/presentation/paywall_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 
 class ShellScreen extends ConsumerStatefulWidget {

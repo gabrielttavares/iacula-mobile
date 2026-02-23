@@ -99,8 +99,9 @@ final class LiturgiaApiService {
     final fromIso = data['data']?.toString() ?? data['date']?.toString();
     if (fromIso != null) {
       final parsed = DateTime.tryParse(fromIso);
-      if (parsed != null)
+      if (parsed != null) {
         return DateTime(parsed.year, parsed.month, parsed.day);
+      }
     }
 
     final day = int.tryParse('${data['dia'] ?? ''}');
