@@ -46,6 +46,6 @@ void main() {
 
     await expectVisible('Sincronizacao opcional');
     await expectVisible('Continuar com Google');
-    await expectVisible('Continuar com Outlook');
+    await expectVisible('Continuar com Microsoft');
   });
 }

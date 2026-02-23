@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/premium/application/premium_bloc.dart';
 
+import '../../auth/presentation/auth_action_sheet.dart';
+
 const premiumLifetimeProductId = 'premium_lifetime';
 
 class PaywallScreen extends ConsumerStatefulWidget {
@@ -130,14 +132,22 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         },
                   child: const Text('Restaurar compras'),
                 ),
-                if (authUser == null) ...[
-                  const SizedBox(height: 10),
-                  TextButton(
-                    onPressed: () =>
-                        ref.read(authRepositoryProvider).signInWithGoogle(),
-                    child: const Text('Entrar com Google'),
-                  ),
-                ],
+                const SizedBox(height: 24),
+                AuthActionSheet(
+                  compact: true,
+                  title: authUser == null ? 'Acesse sua conta' : 'Conta',
+                  subtitle: authUser == null
+                      ? 'Faça login para comprar ou restaurar o Iacula Premium.'
+                      : 'Você está conectado e pronto para usar os recursos Premium.',
+                  signedInEmail: authUser?.email,
+                  onGoogle: () =>
+                      ref.read(authRepositoryProvider).signInWithGoogle(),
+                  onMicrosoft: () =>
+                      ref.read(authRepositoryProvider).signInWithMicrosoft(),
+                  onApple: () =>
+                      ref.read(authRepositoryProvider).signInWithApple(),
+                  onSignOut: () => ref.read(authRepositoryProvider).signOut(),
+                ),
               ],
             ),
           ),

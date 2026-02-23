@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
-import '../../auth/presentation/apple_sign_in_visibility.dart';
+import '../../auth/presentation/auth_action_sheet.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../domain/entities/settings.dart';
@@ -96,7 +96,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             TextFormField(
               controller: _intervalController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Intervalo (minutos)'),
+              decoration: const InputDecoration(
+                labelText: 'Intervalo (minutos)',
+              ),
               validator: (v) {
                 final n = int.tryParse(v ?? '');
                 if (n == null || n < 1 || n > 60) return 'Use 1..60';
@@ -126,13 +128,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               divisions: 20,
               value: _soundVolume,
               label: (_soundVolume * 100).round().toString(),
-              onChanged: _soundEnabled ? (v) => setState(() => _soundVolume = v) : null,
+              onChanged: _soundEnabled
+                  ? (v) => setState(() => _soundVolume = v)
+                  : null,
             ),
             const SizedBox(height: 12),
-            _moduleRow('Laudes', _laudesEnabled, (v) => setState(() => _laudesEnabled = v), _laudesTimeController),
-            _moduleRow('Vesperas', _vespersEnabled, (v) => setState(() => _vespersEnabled = v), _vespersTimeController),
-            _moduleRow('Completas', _complineEnabled, (v) => setState(() => _complineEnabled = v), _complineTimeController),
-            _moduleRow('Ora Media', _oraMediaEnabled, (v) => setState(() => _oraMediaEnabled = v), _oraMediaTimeController),
+            _moduleRow(
+              'Laudes',
+              _laudesEnabled,
+              (v) => setState(() => _laudesEnabled = v),
+              _laudesTimeController,
+            ),
+            _moduleRow(
+              'Vesperas',
+              _vespersEnabled,
+              (v) => setState(() => _vespersEnabled = v),
+              _vespersTimeController,
+            ),
+            _moduleRow(
+              'Completas',
+              _complineEnabled,
+              (v) => setState(() => _complineEnabled = v),
+              _complineTimeController,
+            ),
+            _moduleRow(
+              'Ora Media',
+              _oraMediaEnabled,
+              (v) => setState(() => _oraMediaEnabled = v),
+              _oraMediaTimeController,
+            ),
             const SizedBox(height: 12),
             _buildAuthSyncSection(context),
             const SizedBox(height: 24),
@@ -179,48 +203,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final authRepo = ref.read(authRepositoryProvider);
     final user = authState.valueOrNull;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text('Sincronizacao opcional', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 6),
-            Text(
-              user == null
-                  ? 'Entre para sincronizar seus dados espirituais entre dispositivos.'
-                  : 'Conectado como ${user.email}.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Sincronizacao automatica quando online.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 10),
-            if (user == null) ...[
-              OutlinedButton(
-                onPressed: () => authRepo.signInWithGoogle(),
-                child: const Text('Continuar com Google'),
-              ),
-              OutlinedButton(
-                onPressed: () => authRepo.signInWithMicrosoft(),
-                child: const Text('Continuar com Outlook'),
-              ),
-              if (isAppleSignInAvailable(defaultTargetPlatform))
-                OutlinedButton(
-                  onPressed: () => authRepo.signInWithApple(),
-                  child: const Text('Continuar com Apple'),
-                ),
-            ] else
-              OutlinedButton(
-                onPressed: () => authRepo.signOut(),
-                child: const Text('Sair da conta'),
-              ),
-          ],
-        ),
-      ),
+    return AuthActionSheet(
+      title: 'Sincronizacao opcional',
+      subtitle:
+          'Entre para sincronizar seus dados espirituais entre dispositivos.\nSincronizacao automatica quando online.',
+      signedInEmail: user?.email,
+      onGoogle: () => authRepo.signInWithGoogle(),
+      onMicrosoft: () => authRepo.signInWithMicrosoft(),
+      onApple: () => authRepo.signInWithApple(),
+      onSignOut: () => authRepo.signOut(),
     );
   }
 
@@ -253,15 +244,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await ScheduleCoreRemindersUseCase(
       schedulerRepo,
       quoteFetcher: ({required String language, required DateTime now}) {
-        return ref.read(getNextQuoteUseCaseProvider).call(language: language, now: now);
+        return ref
+            .read(getNextQuoteUseCaseProvider)
+            .call(language: language, now: now);
       },
-      lastDeliveredCardRepository: ref.read(lastDeliveredCardRepositoryProvider),
+      lastDeliveredCardRepository: ref.read(
+        lastDeliveredCardRepositoryProvider,
+      ),
     ).call(settings);
     await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(settings);
 
     if (mounted) {
       setState(() => _saving = false);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Configuracoes salvas')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Configuracoes salvas')));
       Navigator.of(context).pop(true);
     }
   }
