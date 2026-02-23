@@ -18,6 +18,7 @@ If `AUTH_SYNC_ENABLED` is false (or URL/key are missing), app stays local-only.
 1. `001_create_spiritual_data_tables.sql`
 2. `002_enable_rls_and_policies.sql`
 3. `003_updated_at_trigger.sql`
+4. `004_create_user_premium_table.sql`
 
 Apply using Supabase SQL Editor or migration tooling.
 
@@ -42,5 +43,6 @@ Tables:
 - `plan_of_life_entries`
 - `examination_entries`
 - `prayer_intention_entries`
+- `user_premium`
 
-All support soft-delete via `deleted_at` for tombstone sync.
+Spiritual entry tables support soft-delete via `deleted_at` for tombstone sync.
