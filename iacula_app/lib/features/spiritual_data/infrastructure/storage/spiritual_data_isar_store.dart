@@ -5,6 +5,7 @@ import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/storage/isar/examination_entry_doc.dart';
+import '../../../../core/storage/isar/plan_completion_doc.dart';
 import '../../../../core/storage/isar/plan_of_life_entry_doc.dart';
 import '../../../../core/storage/isar/prayer_intention_entry_doc.dart';
 import '../../../../core/storage/isar/sync_state_doc.dart';
@@ -42,6 +43,7 @@ final class SpiritualDataIsarStore {
     _isar = await _openIsar(
       schemas: <CollectionSchema<dynamic>>[
         PlanOfLifeEntryDocSchema,
+        PlanCompletionDocSchema,
         ExaminationEntryDocSchema,
         PrayerIntentionEntryDocSchema,
         SyncStateDocSchema,

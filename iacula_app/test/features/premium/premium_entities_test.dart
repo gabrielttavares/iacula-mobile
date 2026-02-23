@@ -8,6 +8,8 @@ void main() {
       PremiumFeature.meditation,
       PremiumFeature.planOfLife,
       PremiumFeature.settings,
+      PremiumFeature.rosary,
+      PremiumFeature.novenas,
     ]);
   });
 

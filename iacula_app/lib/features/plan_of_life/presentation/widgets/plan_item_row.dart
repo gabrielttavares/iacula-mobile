@@ -58,55 +58,32 @@ class PlanItemRow extends StatelessWidget {
                 const SizedBox(width: 16),
                 // Center (Title + Subtitle)
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 300),
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                              color: isCompleted ? disabledColor : colorScheme.onSurface,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              decoration: isCompleted ? TextDecoration.lineThrough : null,
-                              decorationColor: disabledColor,
-                            ) ??
-                            TextStyle(
-                              color: isCompleted ? disabledColor : colorScheme.onSurface,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              decoration: isCompleted ? TextDecoration.lineThrough : null,
-                            ),
-                        child: Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                  child: AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 300),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                          color: isCompleted ? disabledColor : colorScheme.onSurface,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          decoration: isCompleted ? TextDecoration.lineThrough : null,
+                          decorationColor: disabledColor,
+                        ) ??
+                        TextStyle(
+                          color: isCompleted ? disabledColor : colorScheme.onSurface,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          decoration: isCompleted ? TextDecoration.lineThrough : null,
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Diariamente',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: disabledColor,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
+                    child: Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
-                // Right (AnimatedCheckbox + Icons.more_horiz)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AnimatedCheckbox(value: isCompleted),
-                    const SizedBox(width: 8),
-                    Icon(
-                      Icons.more_horiz,
-                      color: disabledColor,
-                    ),
-                  ],
-                ),
+                // Right (AnimatedCheckbox)
+                AnimatedCheckbox(value: isCompleted),
+                const SizedBox(width: 4),
               ],
             ),
           ),

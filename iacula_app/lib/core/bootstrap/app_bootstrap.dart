@@ -14,6 +14,7 @@ import '../../features/notifications/application/use_cases/schedule_core_reminde
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
+import '../../features/plan_of_life/application/use_cases/seed_default_items_use_case.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/premium/infrastructure/supabase_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
@@ -100,6 +101,19 @@ final class AppBootstrap {
     SyncOrchestrator syncOrchestrator = const _BootstrapNoopSyncOrchestrator();
     SupabaseClient? supabaseClient;
 
+    // Always create local spiritual store
+    final localKeyProvider = SpiritualDataEncryptionKeyProvider(
+      store: FlutterSecureKvStore(),
+    );
+    final spiritualStore = SpiritualDataIsarStore(
+      keyProvider: localKeyProvider,
+    );
+
+    // Seed default plan of life items
+    await SeedDefaultItemsUseCase(
+      IsarPlanOfLifeSpiritualEntryRepository(spiritualStore),
+    ).call();
+
     if (env.authSyncEnabled && env.hasSupabase) {
       try {
         await Supabase.initialize(
@@ -113,13 +127,6 @@ final class AppBootstrap {
           localRepository: localPremiumRepo,
           authRepository: authRepository,
           remoteGateway: SupabasePremiumGateway(supabaseClient),
-        );
-
-        final localKeyProvider = SpiritualDataEncryptionKeyProvider(
-          store: FlutterSecureKvStore(),
-        );
-        final spiritualStore = SpiritualDataIsarStore(
-          keyProvider: localKeyProvider,
         );
 
         final gateway = SupabaseSpiritualSyncGateway(supabaseClient);
@@ -192,6 +199,8 @@ final class AppBootstrap {
       httpClientProvider.overrideWithValue(httpClient),
       authRepositoryProvider.overrideWithValue(authRepository),
       syncOrchestratorProvider.overrideWithValue(syncOrchestrator),
+      spiritualDataKeyProvider.overrideWithValue(localKeyProvider),
+      spiritualDataIsarStoreProvider.overrideWithValue(spiritualStore),
       liturgicalSeasonServiceProvider.overrideWith((ref) {
         return RemoteLiturgicalSeasonService(
           httpClient: ref.watch(httpClientProvider),

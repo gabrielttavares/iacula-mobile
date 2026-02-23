@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/di/providers.dart';
+import '../../features/premium/domain/entities/premium_feature.dart';
+import '../../features/premium/presentation/premium_gate.dart';
 
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/meditation/presentation/meditation_screen.dart';
@@ -37,13 +39,13 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
           if (_premiumIndexes.contains(index)) {
             final status = ref.read(premiumStatusProvider).valueOrNull;
             if (status?.isPremium != true) {
-              await Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const PaywallScreen()));
-              final updatedStatus = ref.read(premiumStatusProvider).valueOrNull;
-              if (updatedStatus?.isPremium != true) {
-                return;
-              }
+              final feature = switch (index) {
+                1 => PremiumFeature.meditation,
+                2 => PremiumFeature.planOfLife,
+                _ => PremiumFeature.settings,
+              };
+              PremiumGate.showModal(context, feature: feature);
+              return;
             }
           }
 

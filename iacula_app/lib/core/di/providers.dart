@@ -39,6 +39,20 @@ import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../features/settings/infrastructure/repositories/in_memory_settings_repository.dart';
 import '../../features/storage/domain/repositories/media_catalog_repository.dart';
 import '../../features/storage/infrastructure/repositories/in_memory_media_catalog_repository.dart';
+
+import '../../features/spiritual_data/domain/repositories/spiritual_entry_repository.dart';
+import '../../features/spiritual_data/infrastructure/repositories/isar_spiritual_entry_repositories.dart';
+import '../../features/spiritual_data/infrastructure/storage/spiritual_data_encryption_key_provider.dart';
+import '../../features/spiritual_data/infrastructure/storage/spiritual_data_isar_store.dart';
+import '../../features/plan_of_life/domain/repositories/plan_completion_repository.dart';
+import '../../features/plan_of_life/infrastructure/repositories/isar_plan_completion_repository.dart';
+import '../../features/plan_of_life/application/use_cases/get_daily_plan_use_case.dart';
+import '../../features/plan_of_life/application/use_cases/toggle_item_use_case.dart';
+import '../../features/plan_of_life/application/use_cases/add_plan_item_use_case.dart';
+import '../../features/plan_of_life/application/use_cases/update_plan_item_use_case.dart';
+import '../../features/plan_of_life/application/use_cases/delete_plan_item_use_case.dart';
+import '../../features/plan_of_life/application/plan_of_life_notifier.dart';
+
 import '../../features/sync/domain/repositories/sync_orchestrator.dart';
 import '../../features/sync/infrastructure/services/background_sync_scheduler.dart';
 import '../../features/sync/infrastructure/services/connectivity_sync_service.dart';
@@ -203,6 +217,58 @@ final getLiturgyPeriodUseCaseProvider = Provider<GetLiturgyPeriodUseCase>((
   ref,
 ) {
   return GetLiturgyPeriodUseCase(ref.watch(liturgiaCacheRepositoryProvider));
+});
+
+// -- Spiritual Data / Plan of Life Providers --
+
+final spiritualDataKeyProvider = Provider<EncryptionKeyProvider>((ref) {
+  return SpiritualDataEncryptionKeyProvider(store: FlutterSecureKvStore());
+});
+
+final spiritualDataIsarStoreProvider = Provider<SpiritualDataIsarStore>((ref) {
+  return SpiritualDataIsarStore(keyProvider: ref.watch(spiritualDataKeyProvider));
+});
+
+final planOfLifeEntryRepositoryProvider = Provider<SpiritualEntryRepository>((ref) {
+  return IsarPlanOfLifeSpiritualEntryRepository(ref.watch(spiritualDataIsarStoreProvider));
+});
+
+final planCompletionRepositoryProvider = Provider<PlanCompletionRepository>((ref) {
+  return IsarPlanCompletionRepository(ref.watch(spiritualDataIsarStoreProvider));
+});
+
+final getDailyPlanUseCaseProvider = Provider<GetDailyPlanUseCase>((ref) {
+  return GetDailyPlanUseCase(
+    ref.watch(planOfLifeEntryRepositoryProvider),
+    ref.watch(planCompletionRepositoryProvider),
+  );
+});
+
+final toggleItemUseCaseProvider = Provider<ToggleItemUseCase>((ref) {
+  return ToggleItemUseCase(ref.watch(planCompletionRepositoryProvider));
+});
+
+final addPlanItemUseCaseProvider = Provider<AddPlanItemUseCase>((ref) {
+  return AddPlanItemUseCase(ref.watch(planOfLifeEntryRepositoryProvider));
+});
+
+final updatePlanItemUseCaseProvider = Provider<UpdatePlanItemUseCase>((ref) {
+  return UpdatePlanItemUseCase(ref.watch(planOfLifeEntryRepositoryProvider));
+});
+
+final deletePlanItemUseCaseProvider = Provider<DeletePlanItemUseCase>((ref) {
+  return DeletePlanItemUseCase(ref.watch(planOfLifeEntryRepositoryProvider));
+});
+
+final planOfLifeNotifierProvider =
+    StateNotifierProvider<PlanOfLifeNotifier, PlanOfLifeState>((ref) {
+  return PlanOfLifeNotifier(
+    getDailyPlan: ref.watch(getDailyPlanUseCaseProvider),
+    toggleItem: ref.watch(toggleItemUseCaseProvider),
+    addItem: ref.watch(addPlanItemUseCaseProvider),
+    updateItem: ref.watch(updatePlanItemUseCaseProvider),
+    deleteItem: ref.watch(deletePlanItemUseCaseProvider),
+  );
 });
 
 final class _NoopSyncOrchestrator implements SyncOrchestrator {

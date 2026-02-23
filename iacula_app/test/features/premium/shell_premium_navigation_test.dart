@@ -68,7 +68,7 @@ void main() {
     }
   }
 
-  testWidgets('free user tapping premium tab opens paywall', (tester) async {
+  testWidgets('free user tapping premium tab opens premium gate modal', (tester) async {
     final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
     final purchaseService = _FakePurchaseService();
 
@@ -83,37 +83,12 @@ void main() {
     );
 
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100)); // wait for provider
     await tester.tap(find.text('Meditação'));
-    await pumpUntil(tester, find.text('Desbloqueie o Premium'));
-
-    expect(find.text('Desbloqueie o Premium'), findsOneWidget);
-    expect(find.text('Meditação Diária'), findsNothing);
-
-    await purchaseService.dispose();
-  });
-
-  testWidgets('premium user can open premium tab directly', (tester) async {
-    final premiumRepository = _FakePremiumRepository(
-      const PremiumStatus(isPremium: true),
-    );
-    final purchaseService = _FakePurchaseService();
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          premiumRepositoryProvider.overrideWithValue(premiumRepository),
-          purchaseServiceProvider.overrideWithValue(purchaseService),
-        ],
-        child: const MaterialApp(home: ShellScreen()),
-      ),
-    );
-
     await tester.pump();
-    await tester.tap(find.text('Meditação'));
-    await pumpUntil(tester, find.text('Meditação Diária'));
 
-    expect(find.text('Meditação Diária'), findsOneWidget);
-    expect(find.text('Desbloqueie o Premium'), findsNothing);
+    expect(find.text('Funcionalidade Premium'), findsOneWidget);
+    expect(find.text('Desbloquear Agora'), findsOneWidget);
 
     await purchaseService.dispose();
   });

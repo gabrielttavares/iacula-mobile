@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../liturgia_diaria/presentation/liturgia_screen.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
+import '../../premium/domain/entities/premium_feature.dart';
+import '../../premium/presentation/premium_gate.dart';
+import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../settings/domain/entities/settings.dart';
 import '../../settings/presentation/settings_screen.dart';
@@ -61,26 +64,33 @@ class HomeScreen extends ConsumerWidget {
                         scrollDirection: Axis.horizontal,
                         clipBehavior: Clip.none,
                         child: Row(
-                          children: const [
+                          children: [
                             _QuickActionCard(
                               icon: Icons.menu_book,
                               title: 'Orações',
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) => const PrayerCollectionsScreen()),
+                                );
+                              },
                             ),
-                            SizedBox(width: 12),
+                            const SizedBox(width: 12),
                             _QuickActionCard(
                               icon: Icons.adjust,
                               title: 'Rosário',
+                              onTap: () => PremiumGate.showModal(context, feature: PremiumFeature.rosary),
                             ),
-                            SizedBox(width: 12),
+                            const SizedBox(width: 12),
                             _QuickActionCard(
                               icon: Icons.auto_stories,
                               title: 'Liturgia Diária',
-                              routeName: LiturgiaScreen.routeName,
+                              onTap: () => Navigator.of(context).pushNamed(LiturgiaScreen.routeName),
                             ),
-                            SizedBox(width: 12),
+                            const SizedBox(width: 12),
                             _QuickActionCard(
                               icon: Icons.calendar_today,
                               title: 'Novenas',
+                              onTap: () => PremiumGate.showModal(context, feature: PremiumFeature.novenas),
                             ),
                           ],
                         ),
@@ -110,22 +120,18 @@ class _QuickActionCard extends StatelessWidget {
   const _QuickActionCard({
     required this.icon,
     required this.title,
-    this.routeName,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
-  final String? routeName;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
-      onTap: routeName == null
-          ? null
-          : () {
-              Navigator.of(context).pushNamed(routeName!);
-            },
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
