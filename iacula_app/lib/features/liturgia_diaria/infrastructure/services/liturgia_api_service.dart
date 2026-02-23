@@ -40,7 +40,10 @@ final class LiturgiaApiService {
 
       final decoded = jsonDecode(response.body);
       final nodes = _extractDayNodes(decoded);
-      return nodes.map(_parseDay).toList(growable: false);
+      final baseDate = DateTime.now();
+      return nodes.asMap().entries.map((entry) {
+        return _parseDay(entry.value, entry.key, baseDate);
+      }).toList(growable: false);
     } catch (_) {
       return const <LiturgyDay>[];
     }
@@ -84,9 +87,9 @@ final class LiturgiaApiService {
         map.containsKey('leituras');
   }
 
-  LiturgyDay _parseDay(Map<String, dynamic> data) {
+  LiturgyDay _parseDay(Map<String, dynamic> data, int index, DateTime baseDate) {
     return LiturgyDay(
-      date: _parseDate(data),
+      date: _parseDate(data, index, baseDate),
       title: _text(data['liturgia'], fallback: 'Liturgia diária'),
       color: _parseColor(data['cor']?.toString()),
       prayers: _parsePrayers(data['oracoes']),
@@ -95,7 +98,7 @@ final class LiturgiaApiService {
     );
   }
 
-  DateTime _parseDate(Map<String, dynamic> data) {
+  DateTime _parseDate(Map<String, dynamic> data, int index, DateTime baseDate) {
     final fromIso = data['data']?.toString() ?? data['date']?.toString();
     if (fromIso != null) {
       final parsed = DateTime.tryParse(fromIso);
@@ -111,8 +114,8 @@ final class LiturgiaApiService {
       return DateTime(year, month, day);
     }
 
-    final now = DateTime.now();
-    return DateTime(now.year, now.month, now.day);
+    final normalizedBase = DateTime(baseDate.year, baseDate.month, baseDate.day);
+    return normalizedBase.add(Duration(days: index));
   }
 
   LiturgyColor _parseColor(String? raw) {

@@ -106,4 +106,64 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('date chips display distinct dates for each day in period', (
+    tester,
+  ) async {
+    final repository = _FakeLiturgiaRepository([
+      LiturgyDay(
+        date: DateTime(2026, 2, 22),
+        title: 'Sunday',
+        color: LiturgyColor.green,
+        prayers: const LiturgyPrayer(
+          collect: 'Coleta',
+          offering: 'Oferendas',
+          communion: 'Comunhao',
+        ),
+        readings: const [],
+        antiphons: const LiturgyAntiphons(entry: 'Antifona'),
+      ),
+      LiturgyDay(
+        date: DateTime(2026, 2, 23),
+        title: 'Monday',
+        color: LiturgyColor.red,
+        prayers: const LiturgyPrayer(
+          collect: 'Coleta 2',
+          offering: 'Oferendas 2',
+          communion: 'Comunhao 2',
+        ),
+        readings: const [],
+        antiphons: const LiturgyAntiphons(entry: 'Antifona 2'),
+      ),
+      LiturgyDay(
+        date: DateTime(2026, 2, 24),
+        title: 'Tuesday',
+        color: LiturgyColor.purple,
+        prayers: const LiturgyPrayer(
+          collect: 'Coleta 3',
+          offering: 'Oferendas 3',
+          communion: 'Comunhao 3',
+        ),
+        readings: const [],
+        antiphons: const LiturgyAntiphons(entry: 'Antifona 3'),
+      ),
+    ]);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          liturgiaCacheRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: const MaterialApp(home: LiturgiaScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Dom 22/02'), findsOneWidget);
+    expect(find.text('Seg 23/02'), findsOneWidget);
+    expect(find.text('Ter 24/02'), findsOneWidget);
+
+    final chipLabels = find.byType(ChoiceChip).evaluate();
+    expect(chipLabels.length, 3);
+  });
 }
