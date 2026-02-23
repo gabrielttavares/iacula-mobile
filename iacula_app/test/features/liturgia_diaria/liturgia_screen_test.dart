@@ -30,6 +30,87 @@ final class _FakeLiturgiaRepository implements LiturgiaRepository {
 }
 
 void main() {
+  testWidgets('applies light theme roles instead of hardcoded dark palette', (tester) async {
+    final repository = _FakeLiturgiaRepository([
+      LiturgyDay(
+        date: DateTime(2026, 2, 22),
+        title: '7o Domingo do Tempo Comum',
+        color: LiturgyColor.green,
+        prayers: const LiturgyPrayer(
+          collect: 'Coleta 1',
+          offering: 'Oferendas 1',
+          communion: 'Comunhao 1',
+        ),
+        readings: const [
+          LiturgyReading(
+            reference: 'Ref 1',
+            title: 'Primeira leitura',
+            text: 'Texto 1',
+          ),
+        ],
+        antiphons: const LiturgyAntiphons(entry: 'Antifona entrada 1'),
+      ),
+    ]);
+
+    final testTheme = ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color(0xFFEFEFEF),
+      colorScheme: const ColorScheme.light(
+        onSurface: Color(0xFF111111),
+        onSurfaceVariant: Color(0xFF222222),
+        outline: Color(0xFF888888),
+      ),
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          liturgiaCacheRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          theme: testTheme,
+          home: const LiturgiaScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Scaffold background should be from theme, not hardcoded 0xFF13100D
+    final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
+    expect(scaffold.backgroundColor, null); // when null, it uses theme default
+
+    // Title should use onSurface color (0xFF111111) instead of white
+    final titleText = tester.widget<Text>(find.text('7o Domingo do Tempo Comum'));
+    expect(titleText.style?.color, const Color(0xFF111111));
+
+    // _Line base style should use onSurfaceVariant (0xFF222222) instead of beige
+    final richText = tester.widget<RichText>(
+      find.byWidgetPredicate((widget) => widget is RichText && widget.text.toPlainText().contains('Coleta: ')),
+    );
+    expect(richText.text.style?.color, const Color(0xFF222222));
+
+    // Day chip should use outline color (0xFF888888 with alpha) instead of white24
+    final chip = tester.widget<ChoiceChip>(find.byType(ChoiceChip).first);
+    expect(chip.side?.color, equals(Colors.green)); // The first is selected, so it uses accent color
+    
+    // Check unselected chip for outline color
+    final repositoryWithTwoDays = _FakeLiturgiaRepository([
+      LiturgyDay(date: DateTime(2026, 2, 22), title: 'Day 1', color: LiturgyColor.green, prayers: const LiturgyPrayer(collect: '', offering: '', communion: ''), readings: const [], antiphons: const LiturgyAntiphons()),
+      LiturgyDay(date: DateTime(2026, 2, 23), title: 'Day 2', color: LiturgyColor.red, prayers: const LiturgyPrayer(collect: '', offering: '', communion: ''), readings: const [], antiphons: const LiturgyAntiphons()),
+    ]);
+    
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [liturgiaCacheRepositoryProvider.overrideWithValue(repositoryWithTwoDays)],
+        child: MaterialApp(theme: testTheme, home: const LiturgiaScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+    
+    final chips = tester.widgetList<ChoiceChip>(find.byType(ChoiceChip)).toList();
+    expect(chips[1].side?.color, const Color(0xFF888888).withValues(alpha: 0.24));
+  });
+
   testWidgets('renders liturgy details and switches selected day', (
     tester,
   ) async {

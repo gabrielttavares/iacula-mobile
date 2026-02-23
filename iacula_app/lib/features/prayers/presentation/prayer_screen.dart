@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import '../domain/entities/prayer.dart';
 
 class PrayerScreen extends StatelessWidget {
-  const PrayerScreen({
-    super.key,
-    required this.prayer,
-  });
+  const PrayerScreen({super.key, required this.prayer});
 
   final Prayer prayer;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF13100D),
       appBar: AppBar(title: Text(prayer.title)),
       body: Stack(
         fit: StackFit.expand,
@@ -22,14 +21,18 @@ class PrayerScreen extends StatelessWidget {
             Image.asset(
               prayer.imagePath!,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+              errorBuilder: (context, error, stackTrace) =>
+                  const SizedBox.shrink(),
             ),
           DecoratedBox(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xA6000000), Color(0xEA0F0C09)],
+                colors: [
+                  colorScheme.surface.withValues(alpha: 0.65),
+                  colorScheme.surface.withValues(alpha: 0.95),
+                ],
               ),
             ),
           ),
@@ -41,21 +44,22 @@ class PrayerScreen extends StatelessWidget {
                 children: [
                   Text(
                     prayer.title,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.white,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Expanded(
                     child: ListView.separated(
                       itemCount: prayer.verses.length + 1,
-                      separatorBuilder: (context, index) => const SizedBox(height: 12),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         if (index == prayer.verses.length) {
                           return Text(
                             prayer.prayer,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: const Color(0xFFF6EEE1),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
                               height: 1.5,
                             ),
                           );
@@ -67,8 +71,8 @@ class PrayerScreen extends StatelessWidget {
                           children: [
                             Text(
                               verse.verse,
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Colors.white,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: colorScheme.onSurface,
                                 height: 1.5,
                               ),
                             ),
@@ -76,8 +80,8 @@ class PrayerScreen extends StatelessWidget {
                               const SizedBox(height: 4),
                               Text(
                                 verse.response,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: const Color(0xFFE5D5BE),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
                                   fontStyle: FontStyle.italic,
                                   height: 1.45,
                                 ),

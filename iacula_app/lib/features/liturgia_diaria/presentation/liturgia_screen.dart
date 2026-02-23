@@ -23,9 +23,10 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
   @override
   Widget build(BuildContext context) {
     final asyncDays = ref.watch(_liturgyPeriodProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF13100D),
       appBar: AppBar(title: const Text('Liturgia Diária')),
       body: asyncDays.when(
         data: (days) {
@@ -51,7 +52,8 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   scrollDirection: Axis.horizontal,
                   itemCount: days.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 8),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 8),
                   itemBuilder: (context, index) {
                     final day = days[index];
                     final selectedChip = index == _selectedIndex;
@@ -60,7 +62,9 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                       selected: selectedChip,
                       selectedColor: accent.withValues(alpha: 0.22),
                       side: BorderSide(
-                        color: selectedChip ? accent : Colors.white24,
+                        color: selectedChip
+                            ? accent
+                            : colorScheme.outline.withValues(alpha: 0.24),
                       ),
                       onSelected: (_) {
                         setState(() {
@@ -77,11 +81,10 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                   children: [
                     Text(
                       selected.title,
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Container(height: 3, color: accent),
@@ -222,7 +225,7 @@ class _ReadingsBlock extends StatelessWidget {
             Text(
               reading.title,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -285,9 +288,9 @@ class _Line extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 6),
       child: RichText(
         text: TextSpan(
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: const Color(0xFFF6EEE1)),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           children: [
             TextSpan(
               text: '$label: ',
