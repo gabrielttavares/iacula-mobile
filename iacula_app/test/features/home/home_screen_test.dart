@@ -65,6 +65,39 @@ final class _FakeLiturgiaRepository implements LiturgiaRepository {
   }
 }
 
+Widget _buildApp({
+  required _FakeSettingsRepository settingsRepo,
+  required _FakeLastDeliveredCardRepository lastCardRepo,
+  _FakeLiturgiaRepository? liturgiaRepo,
+  Map<String, WidgetBuilder>? routes,
+}) {
+  return ProviderScope(
+    overrides: [
+      settingsRepositoryProvider.overrideWithValue(settingsRepo),
+      lastDeliveredCardRepositoryProvider.overrideWithValue(lastCardRepo),
+      if (liturgiaRepo != null)
+        liturgiaCacheRepositoryProvider.overrideWithValue(liturgiaRepo),
+    ],
+    child: MaterialApp(
+      routes: routes ?? const {},
+      home: const HomeScreen(),
+    ),
+  );
+}
+
+_FakeSettingsRepository _defaultSettingsRepo() =>
+    _FakeSettingsRepository(Settings.defaults);
+
+_FakeLastDeliveredCardRepository _defaultLastCardRepo() =>
+    _FakeLastDeliveredCardRepository(
+      LastDeliveredCard(
+        quoteText: 'Permanecei em mim.',
+        theme: 'Conversao',
+        season: 'lent',
+        deliveredAt: DateTime(2026, 2, 21, 11, 0),
+      ),
+    );
+
 void main() {
   testWidgets('home card renders last delivered quote and feast label', (
     tester,
@@ -84,13 +117,7 @@ void main() {
     );
 
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-          lastDeliveredCardRepositoryProvider.overrideWithValue(lastCardRepo),
-        ],
-        child: const MaterialApp(home: HomeScreen()),
-      ),
+      _buildApp(settingsRepo: settingsRepo, lastCardRepo: lastCardRepo),
     );
     await tester.pumpAndSettle();
 
@@ -102,23 +129,10 @@ void main() {
   testWidgets(
     'home card falls back to season label when feast name is absent',
     (tester) async {
-      final settingsRepo = _FakeSettingsRepository(Settings.defaults);
-      final lastCardRepo = _FakeLastDeliveredCardRepository(
-        LastDeliveredCard(
-          quoteText: 'Permanecei em mim.',
-          theme: 'Conversao',
-          season: 'lent',
-          deliveredAt: DateTime(2026, 2, 21, 11, 0),
-        ),
-      );
-
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            settingsRepositoryProvider.overrideWithValue(settingsRepo),
-            lastDeliveredCardRepositoryProvider.overrideWithValue(lastCardRepo),
-          ],
-          child: const MaterialApp(home: HomeScreen()),
+        _buildApp(
+          settingsRepo: _defaultSettingsRepo(),
+          lastCardRepo: _defaultLastCardRepo(),
         ),
       );
       await tester.pumpAndSettle();
@@ -129,29 +143,12 @@ void main() {
   );
 
   testWidgets('quick action opens Liturgia Diária screen', (tester) async {
-    final settingsRepo = _FakeSettingsRepository(Settings.defaults);
-    final lastCardRepo = _FakeLastDeliveredCardRepository(
-      LastDeliveredCard(
-        quoteText: 'Permanecei em mim.',
-        theme: 'Conversao',
-        season: 'lent',
-        deliveredAt: DateTime(2026, 2, 21, 11, 0),
-      ),
-    );
-
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-          lastDeliveredCardRepositoryProvider.overrideWithValue(lastCardRepo),
-          liturgiaCacheRepositoryProvider.overrideWithValue(
-            _FakeLiturgiaRepository(),
-          ),
-        ],
-        child: MaterialApp(
-          routes: {LiturgiaScreen.routeName: (_) => const LiturgiaScreen()},
-          home: const HomeScreen(),
-        ),
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+        liturgiaRepo: _FakeLiturgiaRepository(),
+        routes: {LiturgiaScreen.routeName: (_) => const LiturgiaScreen()},
       ),
     );
     await tester.pumpAndSettle();
@@ -164,4 +161,89 @@ void main() {
     expect(find.byType(LiturgiaScreen), findsOneWidget);
     expect(find.text('Domingo'), findsOneWidget);
   });
+
+  testWidgets(
+    'quick-action row contains only three free actions',
+    (tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          settingsRepo: _defaultSettingsRepo(),
+          lastCardRepo: _defaultLastCardRepo(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Free quick-actions present
+      expect(find.text('Orações'), findsOneWidget);
+      expect(find.text('Novenas'), findsOneWidget);
+      expect(find.text('Liturgia Diária'), findsOneWidget);
+
+      // Rosário NOT in quick-action row (it's in premium section)
+      // Find the horizontal scroll row and verify Rosário is not a descendant
+      final quickActionRow = find.byType(SingleChildScrollView).first;
+      expect(
+        find.descendant(of: quickActionRow, matching: find.text('Rosário')),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets(
+    'premium section shows Rosário card below quote',
+    (tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          settingsRepo: _defaultSettingsRepo(),
+          lastCardRepo: _defaultLastCardRepo(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Premium heading exists
+      expect(find.text('Premium'), findsOneWidget);
+
+      // Rosário exists on the page (in premium section)
+      expect(find.text('Rosário'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'tapping Rosário in premium section opens premium modal',
+    (tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          settingsRepo: _defaultSettingsRepo(),
+          lastCardRepo: _defaultLastCardRepo(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Rosário'));
+      await tester.tap(find.text('Rosário'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Funcionalidade Premium'), findsOneWidget);
+      expect(find.text('Desbloquear Agora'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'tapping Novenas opens free placeholder screen',
+    (tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          settingsRepo: _defaultSettingsRepo(),
+          lastCardRepo: _defaultLastCardRepo(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Novenas'));
+      await tester.tap(find.text('Novenas'));
+      await tester.pumpAndSettle();
+
+      // Novenas placeholder screen has AppBar with 'Novenas' and body 'Em breve...'
+      expect(find.text('Em breve...'), findsOneWidget);
+    },
+  );
 }
