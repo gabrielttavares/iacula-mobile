@@ -76,9 +76,13 @@ class HomeScreen extends ConsumerWidget {
                             ),
                             const SizedBox(width: 12),
                             _QuickActionCard(
-                              icon: Icons.adjust,
-                              title: 'Rosário',
-                              onTap: () => PremiumGate.showModal(context, feature: PremiumFeature.rosary),
+                              icon: Icons.calendar_today,
+                              title: 'Novenas',
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) => const _NovenasPlaceholderScreen()),
+                                );
+                              },
                             ),
                             const SizedBox(width: 12),
                             _QuickActionCard(
@@ -86,17 +90,20 @@ class HomeScreen extends ConsumerWidget {
                               title: 'Liturgia Diária',
                               onTap: () => Navigator.of(context).pushNamed(LiturgiaScreen.routeName),
                             ),
-                            const SizedBox(width: 12),
-                            _QuickActionCard(
-                              icon: Icons.calendar_today,
-                              title: 'Novenas',
-                              onTap: () => PremiumGate.showModal(context, feature: PremiumFeature.novenas),
-                            ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Expanded(child: _QuoteCard(quote: data.quote)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(child: _QuoteCard(quote: data.quote)),
+                            const SizedBox(height: 24),
+                            _PremiumSection(),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -257,6 +264,96 @@ class _QuoteCard extends StatelessWidget {
       default:
         return 'tempo comum';
     }
+  }
+}
+
+class _NovenasPlaceholderScreen extends StatelessWidget {
+  const _NovenasPlaceholderScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Novenas')),
+      body: const Center(child: Text('Em breve...')),
+    );
+  }
+}
+
+class _PremiumCardData {
+  const _PremiumCardData({
+    required this.icon,
+    required this.title,
+    required this.feature,
+  });
+
+  final IconData icon;
+  final String title;
+  final PremiumFeature feature;
+}
+
+const _premiumCards = [
+  _PremiumCardData(
+    icon: Icons.adjust,
+    title: 'Rosário',
+    feature: PremiumFeature.rosary,
+  ),
+];
+
+class _PremiumSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Premium',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 12),
+        for (final card in _premiumCards)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () => PremiumGate.showModal(context, feature: card.feature),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Icon(card.icon, size: 20, color: Theme.of(context).colorScheme.primary),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        card.title,
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    Icon(Icons.lock_outline, size: 16, color: Colors.black38),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
 
