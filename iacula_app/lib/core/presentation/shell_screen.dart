@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/di/providers.dart';
 
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/meditation/presentation/meditation_screen.dart';
 import '../../features/plan_of_life/presentation/plan_of_life_screen.dart';
+import '../../features/premium/presentation/paywall_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 
-class ShellScreen extends StatefulWidget {
+class ShellScreen extends ConsumerStatefulWidget {
   const ShellScreen({super.key});
 
   @override
-  State<ShellScreen> createState() => _ShellScreenState();
+  ConsumerState<ShellScreen> createState() => _ShellScreenState();
 }
 
-class _ShellScreenState extends State<ShellScreen> {
+class _ShellScreenState extends ConsumerState<ShellScreen> {
   int _currentIndex = 0;
+  static const _premiumIndexes = <int>{1, 2, 3};
 
   final List<Widget> _screens = const [
     HomeScreen(),
@@ -25,13 +30,23 @@ class _ShellScreenState extends State<ShellScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) {
+        onTap: (index) async {
+          if (_premiumIndexes.contains(index)) {
+            final status = ref.read(premiumStatusProvider).valueOrNull;
+            if (status?.isPremium != true) {
+              await Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const PaywallScreen()));
+              final updatedStatus = ref.read(premiumStatusProvider).valueOrNull;
+              if (updatedStatus?.isPremium != true) {
+                return;
+              }
+            }
+          }
+
           setState(() {
             _currentIndex = index;
           });

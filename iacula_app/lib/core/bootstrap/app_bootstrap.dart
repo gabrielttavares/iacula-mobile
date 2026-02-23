@@ -14,6 +14,8 @@ import '../../features/notifications/application/use_cases/schedule_core_reminde
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
+import '../../features/premium/infrastructure/isar_premium_repository.dart';
+import '../../features/premium/infrastructure/supabase_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_quote_indices_repository.dart';
@@ -47,6 +49,7 @@ final class AppBootstrap {
     final indicesRepo = SqliteQuoteIndicesRepository(db);
     final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
+    final localPremiumRepo = IsarPremiumRepository(store: isarStore);
     final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(isarStore);
     final httpClient = http.Client();
     final liturgicalSeasonService = RemoteLiturgicalSeasonService(
@@ -93,6 +96,7 @@ final class AppBootstrap {
     }
 
     AuthRepository authRepository = InMemoryAuthRepository();
+    var premiumRepository = localPremiumRepo;
     SyncOrchestrator syncOrchestrator = const _BootstrapNoopSyncOrchestrator();
     SupabaseClient? supabaseClient;
 
@@ -105,6 +109,11 @@ final class AppBootstrap {
 
         supabaseClient = Supabase.instance.client;
         authRepository = SupabaseAuthRepository(supabaseClient);
+        premiumRepository = SyncedPremiumRepository(
+          localRepository: localPremiumRepo,
+          authRepository: authRepository,
+          remoteGateway: SupabasePremiumGateway(supabaseClient),
+        );
 
         final localKeyProvider = SpiritualDataEncryptionKeyProvider(
           store: FlutterSecureKvStore(),
@@ -162,6 +171,7 @@ final class AppBootstrap {
           stackTrace: st,
         );
         authRepository = InMemoryAuthRepository();
+        premiumRepository = localPremiumRepo;
         syncOrchestrator = const _BootstrapNoopSyncOrchestrator();
       }
     }
@@ -174,6 +184,7 @@ final class AppBootstrap {
         lastDeliveredCardRepo,
       ),
       mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
+      premiumRepositoryProvider.overrideWithValue(premiumRepository),
       liturgicalSeasonCacheRepositoryProvider.overrideWithValue(
         liturgicalCacheRepo,
       ),
