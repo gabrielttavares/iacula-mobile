@@ -29,7 +29,8 @@ class PremiumGate extends ConsumerWidget {
         return lockedFallback ?? _LockedFallback(feature: feature);
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stackTrace) => lockedFallback ?? _LockedFallback(feature: feature),
+      error: (error, stackTrace) =>
+          lockedFallback ?? _LockedFallback(feature: feature),
     );
   }
 
@@ -43,7 +44,10 @@ class PremiumGate extends ConsumerWidget {
     };
   }
 
-  static void showModal(BuildContext context, {required PremiumFeature feature}) {
+  static void showModal(
+    BuildContext context, {
+    required PremiumFeature feature,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -66,22 +70,26 @@ class _LockedFallback extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.lock_outline_rounded, size: 48, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.lock_outline_rounded,
+              size: 48,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(height: 16),
             Text(
               'Funcionalidade Premium',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
-              '${_label(feature)} está disponível após o pagamento único de R\$ 29,90.',
+              '${_label(feature)} está disponível após o pagamento único de R\$ 39,90.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 32),
             FilledButton(
@@ -140,7 +148,9 @@ class _PremiumGateModal extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 24),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -154,17 +164,17 @@ class _PremiumGateModal extends StatelessWidget {
             Text(
               'Funcionalidade Premium',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
-              '${_LockedFallback._label(feature)} está disponível após o pagamento único de R\$ 29,90.',
+              '${_LockedFallback._label(feature)} está disponível após o pagamento único de R\$ 39,90.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 32),
             FilledButton(

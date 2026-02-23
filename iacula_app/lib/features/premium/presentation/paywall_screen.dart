@@ -67,7 +67,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Acesso vitalicio por R\$ 29,90.',
+                  'Acesso vitalicio por R\$ 39,90.',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 20),
@@ -107,7 +107,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                               );
                         },
                   child: Text(
-                    isLoading ? 'Processando...' : 'Comprar por R\$ 29,90',
+                    isLoading ? 'Processando...' : 'Comprar por R\$ 39,90',
                   ),
                 ),
                 const SizedBox(height: 10),
