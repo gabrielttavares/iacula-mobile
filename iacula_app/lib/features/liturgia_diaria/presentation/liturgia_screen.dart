@@ -60,11 +60,19 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                     return ChoiceChip(
                       label: Text(_dayLabel(day.date)),
                       selected: selectedChip,
-                      selectedColor: accent.withValues(alpha: 0.22),
+                      showCheckmark: false,
+                      backgroundColor: Colors.white,
+                      selectedColor: colorScheme.primary,
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                        color: selectedChip ? Colors.white : colorScheme.primary,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                       side: BorderSide(
-                        color: selectedChip
-                            ? accent
-                            : colorScheme.outline.withValues(alpha: 0.24),
+                        color: colorScheme.primary,
                       ),
                       onSelected: (_) {
                         setState(() {
@@ -127,18 +135,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
   }
 
   Color _accentColor(LiturgyColor color) {
-    switch (color) {
-      case LiturgyColor.red:
-        return Colors.red;
-      case LiturgyColor.purple:
-        return Colors.purple;
-      case LiturgyColor.pink:
-        return Colors.pink;
-      case LiturgyColor.white:
-        return Colors.amber;
-      case LiturgyColor.green:
-        return Colors.green;
-    }
+    return Theme.of(context).colorScheme.primary;
   }
 
   String _dayLabel(DateTime date) {

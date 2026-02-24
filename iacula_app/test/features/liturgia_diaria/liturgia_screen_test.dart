@@ -89,26 +89,9 @@ void main() {
     );
     expect(richText.text.style?.color, const Color(0xFF222222));
 
-    // Day chip should use outline color (0xFF888888 with alpha) instead of white24
+    // All day chips now use colorScheme.primary for their border
     final chip = tester.widget<ChoiceChip>(find.byType(ChoiceChip).first);
-    expect(chip.side?.color, equals(Colors.green)); // The first is selected, so it uses accent color
-    
-    // Check unselected chip for outline color
-    final repositoryWithTwoDays = _FakeLiturgiaRepository([
-      LiturgyDay(date: DateTime(2026, 2, 22), title: 'Day 1', color: LiturgyColor.green, prayers: const LiturgyPrayer(collect: '', offering: '', communion: ''), readings: const [], antiphons: const LiturgyAntiphons()),
-      LiturgyDay(date: DateTime(2026, 2, 23), title: 'Day 2', color: LiturgyColor.red, prayers: const LiturgyPrayer(collect: '', offering: '', communion: ''), readings: const [], antiphons: const LiturgyAntiphons()),
-    ]);
-    
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [liturgiaCacheRepositoryProvider.overrideWithValue(repositoryWithTwoDays)],
-        child: MaterialApp(theme: testTheme, home: const LiturgiaScreen()),
-      ),
-    );
-    await tester.pumpAndSettle();
-    
-    final chips = tester.widgetList<ChoiceChip>(find.byType(ChoiceChip)).toList();
-    expect(chips[1].side?.color, const Color(0xFF888888).withValues(alpha: 0.24));
+    expect(chip.side?.color, testTheme.colorScheme.primary);
   });
 
   testWidgets('renders liturgy details and switches selected day', (

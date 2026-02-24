@@ -9,6 +9,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Início'), findsOneWidget);
-    expect(find.text('Olá, Pedro'), findsOneWidget);
+    expect(find.text('Design Course'), findsOneWidget);
   });
 }
