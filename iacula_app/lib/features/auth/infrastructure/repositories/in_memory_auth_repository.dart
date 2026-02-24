@@ -3,8 +3,24 @@ import 'dart:async';
 import '../../domain/entities/auth_user.dart';
 import '../../domain/repositories/auth_repository.dart';
 
+/// Development-only auth repository that creates fake local users.
+///
+/// Used when Supabase is unavailable or not configured.
+/// Sign-in "succeeds" instantly with hardcoded credentials:
+/// - Google: `local@google.dev`
+/// - Microsoft: `local@outlook.dev`
+/// - Apple: `local@apple.dev`
+///
+/// **This should never be active in production builds.**
+/// See [SupabaseAuthRepository] for the real implementation.
 final class InMemoryAuthRepository implements AuthRepository {
-  InMemoryAuthRepository({AuthUser? seed}) : _value = seed;
+  InMemoryAuthRepository({AuthUser? seed}) : _value = seed {
+    assert(() {
+      // ignore: avoid_print
+      print('\u26a0\ufe0f  InMemoryAuthRepository active \u2014 auth is mocked');
+      return true;
+    }());
+  }
 
   AuthUser? _value;
   final _controller = StreamController<AuthUser?>.broadcast();
