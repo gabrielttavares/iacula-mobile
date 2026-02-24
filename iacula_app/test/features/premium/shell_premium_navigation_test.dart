@@ -55,7 +55,9 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-  testWidgets('free user tapping premium tab opens premium gate modal', (tester) async {
+  testWidgets('free user tapping Meditação tab opens premium gate modal', (
+    tester,
+  ) async {
     final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
     final purchaseService = _FakePurchaseService();
 
@@ -79,4 +81,41 @@ void main() {
 
     await purchaseService.dispose();
   });
+
+  testWidgets(
+    'free user tapping Perfil tab navigates directly without premium gate',
+    (tester) async {
+      final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
+      final purchaseService = _FakePurchaseService();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            premiumRepositoryProvider.overrideWithValue(premiumRepository),
+            purchaseServiceProvider.overrideWithValue(purchaseService),
+          ],
+          child: const MaterialApp(home: ShellScreen()),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100)); // wait for provider
+
+      // Tap on the Perfil tab
+      await tester.tap(find.text('Perfil'));
+      await tester.pump();
+
+      // Verify premium modal is NOT shown
+      expect(find.text('Funcionalidade Premium'), findsNothing);
+      expect(find.text('Desbloquear Agora'), findsNothing);
+
+      // Verify bottom navigation state updated to index 3
+      final bottomNav = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
+      expect(bottomNav.currentIndex, 3);
+
+      await purchaseService.dispose();
+    },
+  );
 }

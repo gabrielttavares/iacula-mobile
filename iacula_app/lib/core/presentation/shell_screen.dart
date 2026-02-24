@@ -19,7 +19,7 @@ class ShellScreen extends ConsumerStatefulWidget {
 
 class _ShellScreenState extends ConsumerState<ShellScreen> {
   int _currentIndex = 0;
-  static const _premiumIndexes = <int>{1, 2, 3};
+  static const _premiumIndexes = <int>{1, 2};
 
   final List<Widget> _screens = const [
     HomeScreen(),
@@ -38,11 +38,9 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
           if (_premiumIndexes.contains(index)) {
             final status = ref.read(premiumStatusProvider).valueOrNull;
             if (status?.isPremium != true) {
-              final feature = switch (index) {
-                1 => PremiumFeature.meditation,
-                2 => PremiumFeature.planOfLife,
-                _ => PremiumFeature.settings,
-              };
+              final feature = index == 1
+                  ? PremiumFeature.meditation
+                  : PremiumFeature.planOfLife;
               PremiumGate.showModal(context, feature: feature);
               return;
             }
