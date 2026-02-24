@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
@@ -21,20 +21,22 @@ final class _FakeSettingsRepository implements SettingsRepository {
 }
 
 void main() {
-  testWidgets('settings explains sync is automatic when online', (tester) async {
+  testWidgets('settings explains sync is automatic when online', (
+    tester,
+  ) async {
     final settingsRepo = _FakeSettingsRepository(Settings.defaults);
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
+        overrides: [settingsRepositoryProvider.overrideWithValue(settingsRepo)],
+        child: const CupertinoApp(home: SettingsScreen()),
       ),
     );
     await tester.pumpAndSettle();
 
-    final finder = find.text('Entre para sincronizar seus dados espirituais entre dispositivos.\nSincronizacao automatica quando online.');
+    final finder = find.text(
+      'Entre para sincronizar seus dados espirituais entre dispositivos.\nSincronizacao automatica quando online.',
+    );
     for (var i = 0; i < 24 && finder.evaluate().isEmpty; i++) {
       await tester.drag(find.byType(ListView), const Offset(0, -180));
       await tester.pumpAndSettle();

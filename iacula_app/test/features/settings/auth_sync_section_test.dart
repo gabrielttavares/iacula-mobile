@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
@@ -21,15 +21,15 @@ final class _FakeSettingsRepository implements SettingsRepository {
 }
 
 void main() {
-  testWidgets('settings screen shows optional auth sync section', (tester) async {
+  testWidgets('settings screen shows optional auth sync section', (
+    tester,
+  ) async {
     final repo = _FakeSettingsRepository(Settings.defaults);
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(repo),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
+        overrides: [settingsRepositoryProvider.overrideWithValue(repo)],
+        child: const CupertinoApp(home: SettingsScreen()),
       ),
     );
 

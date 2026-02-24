@@ -1,9 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iacula_app/core/di/providers.dart';
-import 'package:iacula_app/features/premium/application/premium_bloc.dart';
+
+import '../../../core/di/providers.dart';
+import '../../../core/presentation/widgets/iacula_buttons.dart';
+import '../../../core/theme/cupertino_tokens.dart';
+import '../application/premium_bloc.dart';
 
 const premiumLifetimeProductId = 'premium_lifetime';
 
@@ -22,17 +25,25 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   void initState() {
     super.initState();
     final bloc = ref.read(premiumBlocProvider);
-    _stateSub = bloc.states.listen((state) {
-      if (!mounted) {
-        return;
-      }
+    _stateSub = bloc.states.listen((state) async {
+      if (!mounted) return;
 
       if (state is PremiumUnlocked) {
         Navigator.of(context).pop(true);
       } else if (state is PremiumError) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(state.message)));
+        await showCupertinoDialog<void>(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text('Erro'),
+            content: Text(state.message),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
       }
     });
   }
@@ -64,50 +75,53 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 
     ref.listen(authStateProvider, _onAuthTransition);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Premium')),
-      body: SafeArea(
+    return CupertinoPageScaffold(
+      backgroundColor: IaculaColors.background,
+      child: SafeArea(
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 520),
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                Text(
+                const Text(
                   'Desbloqueie o Premium',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: IaculaText.sectionTitle,
                 ),
                 const SizedBox(height: 10),
-                Text(
+                const Text(
                   'Acesso vitalicio por R\$ 39,90.',
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: IaculaText.secondary,
                 ),
                 const SizedBox(height: 20),
+                _featureTile(CupertinoIcons.play_circle, 'Meditacao diaria'),
                 _featureTile(
-                  context,
-                  Icons.play_circle_outline,
-                  'Meditacao diaria',
+                  CupertinoIcons.check_mark_circled,
+                  'Plano de Vida',
                 ),
-                _featureTile(context, Icons.checklist, 'Plano de Vida'),
                 _featureTile(
-                  context,
-                  Icons.tune_rounded,
+                  CupertinoIcons.slider_horizontal_3,
                   'Configuracoes premium',
                 ),
                 const SizedBox(height: 20),
                 if (authUser == null) ...[
-                  _GoogleSignInButton(
-                    isLoading: isLoading,
-                    onPressed: () async {
-                      setState(() => _pendingPurchaseAfterSignIn = true);
-                      await ref.read(authRepositoryProvider).signInWithGoogle();
-                    },
+                  IaculaPrimaryPillButton(
+                    label: isLoading ? 'Processando...' : 'Entrar para comprar',
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            setState(() => _pendingPurchaseAfterSignIn = true);
+                            await ref
+                                .read(authRepositoryProvider)
+                                .signInWithGoogle();
+                          },
                   ),
                   const SizedBox(height: 10),
                 ] else ...[
-                  ElevatedButton(
+                  IaculaPrimaryPillButton(
+                    label: isLoading
+                        ? 'Processando...'
+                        : 'Comprar por R\$ 39,90',
                     onPressed: isLoading
                         ? null
                         : () async {
@@ -119,12 +133,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                   ),
                                 );
                           },
-                    child: Text(
-                      isLoading ? 'Processando...' : 'Comprar por R\$ 39,90',
-                    ),
                   ),
                   const SizedBox(height: 10),
-                  OutlinedButton(
+                  IaculaSecondaryPillButton(
+                    label: 'Restaurar compras',
                     onPressed: isLoading
                         ? null
                         : () async {
@@ -132,9 +144,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                 .read(premiumBlocProvider)
                                 .add(const RestorePurchases());
                           },
-                    child: const Text('Restaurar compras'),
                   ),
-                  const SizedBox(height: 24),
                 ],
               ],
             ),
@@ -144,31 +154,21 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _featureTile(BuildContext context, IconData icon, String label) {
+  Widget _featureTile(IconData icon, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary),
+          Icon(icon, color: IaculaColors.primaryButton),
           const SizedBox(width: 10),
-          Text(label, style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            label,
+            style: IaculaText.secondary.copyWith(
+              color: IaculaColors.textPrimary,
+            ),
+          ),
         ],
       ),
-    );
-  }
-}
-
-class _GoogleSignInButton extends StatelessWidget {
-  const _GoogleSignInButton({required this.isLoading, required this.onPressed});
-
-  final bool isLoading;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      child: Text(isLoading ? 'Processando...' : 'Entrar para comprar'),
     );
   }
 }

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
+import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/prayer.dart';
 
 class PrayerScreen extends StatelessWidget {
@@ -9,12 +10,9 @@ class PrayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Scaffold(
-      appBar: AppBar(title: Text(prayer.title)),
-      body: Stack(
+    return CupertinoPageScaffold(
+      backgroundColor: IaculaColors.background,
+      child: Stack(
         fit: StackFit.expand,
         children: [
           if (prayer.imagePath != null)
@@ -30,36 +28,43 @@ class PrayerScreen extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  colorScheme.surface.withValues(alpha: 0.65),
-                  colorScheme.surface.withValues(alpha: 0.95),
+                  CupertinoColors.white.withValues(alpha: 0.65),
+                  CupertinoColors.white.withValues(alpha: 0.95),
                 ],
               ),
             ),
           ),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(IaculaSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    prayer.title,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      color: colorScheme.onSurface,
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(CupertinoIcons.back, size: 18),
+                        SizedBox(width: 4),
+                        Text('Orações'),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  Text(prayer.title, style: IaculaText.sectionTitle),
+                  const SizedBox(height: IaculaSpacing.sm),
                   Expanded(
                     child: ListView.separated(
+                      physics: const BouncingScrollPhysics(),
                       itemCount: prayer.verses.length + 1,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 12),
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         if (index == prayer.verses.length) {
                           return Text(
                             prayer.prayer,
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
+                            style: IaculaText.secondary.copyWith(
+                              color: IaculaColors.textSecondary,
                               height: 1.5,
                             ),
                           );
@@ -71,8 +76,8 @@ class PrayerScreen extends StatelessWidget {
                           children: [
                             Text(
                               verse.verse,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: colorScheme.onSurface,
+                              style: IaculaText.secondary.copyWith(
+                                color: IaculaColors.textPrimary,
                                 height: 1.5,
                               ),
                             ),
@@ -80,8 +85,8 @@ class PrayerScreen extends StatelessWidget {
                               const SizedBox(height: 4),
                               Text(
                                 verse.response,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
+                                style: IaculaText.secondary.copyWith(
+                                  color: IaculaColors.textSecondary,
                                   fontStyle: FontStyle.italic,
                                   height: 1.45,
                                 ),

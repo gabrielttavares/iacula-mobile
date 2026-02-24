@@ -1,4 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+
+import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/theme/cupertino_tokens.dart';
 import 'widgets/meditation_card.dart';
 
 class MeditationScreen extends StatelessWidget {
@@ -6,32 +9,46 @@ class MeditationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Meditação Diária',
-          style: Theme.of(context).textTheme.titleMedium,
+    return const CupertinoPageScaffold(
+      backgroundColor: IaculaColors.background,
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(IaculaSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IaculaLargeTitle('Meditação'),
+              SizedBox(height: IaculaSpacing.md),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      MeditationCard(
+                        title: 'Padre Cléber Eduardo dos Santos Dias',
+                        platformIcon: CupertinoIcons.mic,
+                        url: 'https://soundcloud.com/praedicaverbum',
+                      ),
+                      SizedBox(height: 12),
+                      MeditationCard(
+                        title: 'Homilia Diária Padre Paulo Ricardo',
+                        platformIcon: CupertinoIcons.play_circle,
+                        url:
+                            'https://www.youtube.com/@padrepauloricardo/videos',
+                      ),
+                      SizedBox(height: 12),
+                      MeditationCard(
+                        title: 'Padre Pedro Willemsens',
+                        platformIcon: CupertinoIcons.play_circle,
+                        url: 'https://www.youtube.com/@meditacoespadrepedro',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        children: const [
-          MeditationCard(
-            title: 'Padre Cléber Eduardo dos Santos Dias',
-            platformIcon: Icons.podcasts_rounded,
-            url: 'https://soundcloud.com/praedicaverbum',
-          ),
-          MeditationCard(
-            title: 'Homilia Diária Padre Paulo Ricardo',
-            platformIcon: Icons.play_circle_fill_rounded,
-            url: 'https://www.youtube.com/@padrepauloricardo/videos',
-          ),
-          MeditationCard(
-            title: 'Padre Pedro Willemsens',
-            platformIcon: Icons.play_circle_fill_rounded,
-            url: 'https://www.youtube.com/@meditacoespadrepedro',
-          ),
-        ],
       ),
     );
   }

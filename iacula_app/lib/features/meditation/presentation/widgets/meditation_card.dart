@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MeditationCard extends StatelessWidget {
-  final String title;
-  final IconData platformIcon;
-  final String url;
+import '../../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../../core/theme/cupertino_tokens.dart';
 
+class MeditationCard extends StatelessWidget {
   const MeditationCard({
     super.key,
     required this.title,
@@ -13,50 +12,46 @@ class MeditationCard extends StatelessWidget {
     required this.url,
   });
 
+  final String title;
+  final IconData platformIcon;
+  final String url;
+
   Future<void> _launchUrl(BuildContext context) async {
     final parsedUrl = Uri.parse(url);
-    if (!await launchUrl(parsedUrl)) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Não foi possível abrir o link.')),
+    if (!await launchUrl(parsedUrl) && context.mounted) {
+      await showCupertinoDialog<void>(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: const Text('Erro'),
+          content: const Text('Não foi possível abrir o link.'),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: colorScheme.surface,
-      elevation: 4,
-      shadowColor: Colors.black.withValues(alpha: 0.05),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => _launchUrl(context),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Icon(platformIcon, color: colorScheme.primary, size: 32),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  title,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-              ),
-              Icon(Icons.arrow_forward_ios_rounded, color: colorScheme.onSurface.withValues(alpha: 0.5), size: 16),
-            ],
-          ),
+    return GestureDetector(
+      onTap: () => _launchUrl(context),
+      child: IaculaSoftCard(
+        radius: 16,
+        child: Row(
+          children: [
+            Icon(platformIcon, color: IaculaColors.primaryButton, size: 28),
+            const SizedBox(width: 16),
+            Expanded(child: Text(title, style: IaculaText.cardTitle)),
+            const Icon(
+              CupertinoIcons.chevron_right,
+              color: IaculaColors.textSecondary,
+              size: 16,
+            ),
+          ],
         ),
       ),
     );

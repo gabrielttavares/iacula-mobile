@@ -1,12 +1,18 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/presentation/widgets/iacula_section_header.dart';
+import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/daily_liturgy.dart';
 
 final _liturgyPeriodProvider = FutureProvider<List<LiturgyDay>>((ref) {
   return ref.watch(getLiturgyPeriodUseCaseProvider).call(days: 7);
 });
+
+enum _LiturgySegment { prayers, readings, antiphons }
 
 class LiturgiaScreen extends ConsumerStatefulWidget {
   const LiturgiaScreen({super.key});
@@ -19,125 +25,182 @@ class LiturgiaScreen extends ConsumerStatefulWidget {
 
 class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
   int _selectedIndex = 0;
+  _LiturgySegment _segment = _LiturgySegment.prayers;
 
   @override
   Widget build(BuildContext context) {
     final asyncDays = ref.watch(_liturgyPeriodProvider);
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Liturgia Diária')),
-      body: asyncDays.when(
-        data: (days) {
-          if (days.isEmpty) {
-            return const Center(
-              child: Text('Liturgia indisponível no momento.'),
-            );
-          }
+    return CupertinoPageScaffold(
+      backgroundColor: IaculaColors.background,
+      child: SafeArea(
+        child: asyncDays.when(
+          data: (days) {
+            if (days.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Liturgia indisponível no momento.',
+                  style: IaculaText.secondary,
+                ),
+              );
+            }
 
-          if (_selectedIndex >= days.length) {
-            _selectedIndex = 0;
-          }
-          final selected = days[_selectedIndex];
-          final accent = _accentColor(selected.color);
+            if (_selectedIndex >= days.length) {
+              _selectedIndex = 0;
+            }
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 64,
-                child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: days.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final day = days[index];
-                    final selectedChip = index == _selectedIndex;
-                    return ChoiceChip(
-                      label: Text(_dayLabel(day.date)),
-                      selected: selectedChip,
-                      selectedColor: accent.withValues(alpha: 0.22),
-                      side: BorderSide(
-                        color: selectedChip
-                            ? accent
-                            : colorScheme.outline.withValues(alpha: 0.24),
+            final selected = days[_selectedIndex];
+            final accent = _accentColor(selected.color);
+
+            return Padding(
+              padding: const EdgeInsets.all(IaculaSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const IaculaLargeTitle('Liturgia'),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () =>
+                            _showCalendarSheet(context, selected.date),
+                        child: const Text(
+                          'Calendário',
+                          style: TextStyle(
+                            color: IaculaColors.primaryButton,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                      onSelected: (_) {
-                        setState(() {
-                          _selectedIndex = index;
-                        });
+                    ],
+                  ),
+                  const SizedBox(height: IaculaSpacing.md),
+                  SizedBox(
+                    height: 44,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final day = days[index];
+                        final selectedDay = index == _selectedIndex;
+                        return GestureDetector(
+                          onTap: () => setState(() => _selectedIndex = index),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: selectedDay
+                                  ? accent.withValues(alpha: 0.18)
+                                  : CupertinoColors.white,
+                              border: Border.all(
+                                color: selectedDay
+                                    ? accent
+                                    : const Color(0x26000000),
+                              ),
+                            ),
+                            child: Text(
+                              _dayLabel(day.date),
+                              style: TextStyle(
+                                color: selectedDay
+                                    ? IaculaColors.textPrimary
+                                    : IaculaColors.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        );
                       },
-                    );
-                  },
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-                  children: [
-                    Text(
-                      selected.title,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.w700,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(width: IaculaSpacing.sm),
+                      itemCount: days.length,
+                    ),
+                  ),
+                  const SizedBox(height: IaculaSpacing.md),
+                  CupertinoSlidingSegmentedControl<_LiturgySegment>(
+                    groupValue: _segment,
+                    children: const {
+                      _LiturgySegment.prayers: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text('Orações'),
+                      ),
+                      _LiturgySegment.readings: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text('Leituras'),
+                      ),
+                      _LiturgySegment.antiphons: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text('Antífonas'),
+                      ),
+                    },
+                    onValueChanged: (segment) {
+                      if (segment != null) {
+                        setState(() => _segment = segment);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: IaculaSpacing.md),
+                  Text(selected.title, style: IaculaText.sectionTitle),
+                  const SizedBox(height: IaculaSpacing.sm),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: IaculaSoftCard(
+                        child: _SegmentedContent(
+                          day: selected,
+                          segment: _segment,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Container(height: 3, color: accent),
-                    const SizedBox(height: 16),
-                    _SectionHeader(
-                      icon: Icons.volunteer_activism_outlined,
-                      title: 'Orações',
-                      accent: accent,
-                    ),
-                    _PrayerBlock(day: selected),
-                    const SizedBox(height: 16),
-                    _SectionHeader(
-                      icon: Icons.menu_book_outlined,
-                      title: 'Leituras',
-                      accent: accent,
-                    ),
-                    _ReadingsBlock(day: selected, accent: accent),
-                    const SizedBox(height: 16),
-                    _SectionHeader(
-                      icon: Icons.auto_awesome,
-                      title: 'Antífonas',
-                      accent: accent,
-                    ),
-                    _AntiphonsBlock(day: selected),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          );
-        },
-        error: (error, _) => Center(
-          child: Text(
-            'Erro ao carregar liturgia: $error',
-            style: Theme.of(context).textTheme.bodyMedium,
+            );
+          },
+          error: (error, _) => Center(
+            child: Text(
+              'Erro ao carregar liturgia: $error',
+              style: IaculaText.secondary,
+            ),
           ),
+          loading: () => const Center(child: CupertinoActivityIndicator()),
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
       ),
+    );
+  }
+
+  void _showCalendarSheet(BuildContext context, DateTime selectedDate) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (context) {
+        return _CalendarModal(initialDate: selectedDate);
+      },
     );
   }
 
   Color _accentColor(LiturgyColor color) {
     switch (color) {
       case LiturgyColor.red:
-        return Colors.red;
+        return const Color(0xFFD94D4D);
       case LiturgyColor.purple:
-        return Colors.purple;
+        return const Color(0xFF7A55A3);
       case LiturgyColor.pink:
-        return Colors.pink;
+        return const Color(0xFFC65B86);
       case LiturgyColor.white:
-        return Colors.amber;
+        return const Color(0xFFC29A32);
       case LiturgyColor.green:
-        return Colors.green;
+        return const Color(0xFF3C8D53);
     }
   }
 
@@ -148,134 +211,78 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.icon,
-    required this.title,
-    required this.accent,
-  });
-
-  final IconData icon;
-  final String title;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, color: accent, size: 18),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: accent,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PrayerBlock extends StatelessWidget {
-  const _PrayerBlock({required this.day});
+class _SegmentedContent extends StatelessWidget {
+  const _SegmentedContent({required this.day, required this.segment});
 
   final LiturgyDay day;
+  final _LiturgySegment segment;
 
   @override
   Widget build(BuildContext context) {
-    final extras = day.prayers.extra;
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _Line(label: 'Coleta', text: day.prayers.collect),
-          _Line(label: 'Oferendas', text: day.prayers.offering),
-          _Line(label: 'Comunhão', text: day.prayers.communion),
-          for (final extra in extras) _Line(label: 'Extra', text: extra),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReadingsBlock extends StatelessWidget {
-  const _ReadingsBlock({required this.day, required this.accent});
-
-  final LiturgyDay day;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    if (day.readings.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 8),
-        child: _Line(label: 'Leituras', text: 'Sem leituras disponíveis.'),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final reading in day.readings) ...[
-            Text(
-              reading.title,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 4),
-            _Line(
-              label: reading.reference.isEmpty ? 'Texto' : reading.reference,
-              text: reading.text,
-            ),
-            if (reading.response != null && reading.response!.isNotEmpty)
-              _Line(label: 'Resposta', text: reading.response!),
-            const SizedBox(height: 8),
-            Divider(color: accent.withValues(alpha: 0.35)),
-            const SizedBox(height: 8),
+    switch (segment) {
+      case _LiturgySegment.prayers:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const IaculaSectionHeader(title: 'Orações'),
+            const SizedBox(height: IaculaSpacing.sm),
+            _Line(label: 'Coleta', text: day.prayers.collect),
+            _Line(label: 'Oferendas', text: day.prayers.offering),
+            _Line(label: 'Comunhão', text: day.prayers.communion),
+            for (final extra in day.prayers.extra)
+              _Line(label: 'Extra', text: extra),
           ],
-        ],
-      ),
-    );
-  }
-}
-
-class _AntiphonsBlock extends StatelessWidget {
-  const _AntiphonsBlock({required this.day});
-
-  final LiturgyDay day;
-
-  @override
-  Widget build(BuildContext context) {
-    final lines = <_Line>[
-      if (day.antiphons.entry != null)
-        _Line(label: 'Entrada', text: day.antiphons.entry!),
-      if (day.antiphons.communion != null)
-        _Line(label: 'Comunhão', text: day.antiphons.communion!),
-      for (final extra in day.antiphons.extra)
-        _Line(label: 'Extra', text: extra),
-    ];
-
-    if (lines.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 8),
-        child: _Line(label: 'Antífonas', text: 'Sem antífonas disponíveis.'),
-      );
+        );
+      case _LiturgySegment.readings:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const IaculaSectionHeader(title: 'Leituras'),
+            const SizedBox(height: IaculaSpacing.sm),
+            if (day.readings.isEmpty)
+              const _Line(label: 'Leituras', text: 'Sem leituras disponíveis.')
+            else
+              for (final reading in day.readings) ...[
+                Text(reading.title, style: IaculaText.cardTitle),
+                const SizedBox(height: 4),
+                _Line(
+                  label: reading.reference.isEmpty
+                      ? 'Texto'
+                      : reading.reference,
+                  text: reading.text,
+                ),
+                if (reading.response?.isNotEmpty == true)
+                  _Line(label: 'Resposta', text: reading.response!),
+                const SizedBox(height: IaculaSpacing.sm),
+              ],
+          ],
+        );
+      case _LiturgySegment.antiphons:
+        final hasAntiphons =
+            day.antiphons.entry != null ||
+            day.antiphons.communion != null ||
+            day.antiphons.extra.isNotEmpty;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const IaculaSectionHeader(title: 'Antífonas'),
+            const SizedBox(height: IaculaSpacing.sm),
+            if (!hasAntiphons)
+              const _Line(
+                label: 'Antífonas',
+                text: 'Sem antífonas disponíveis.',
+              )
+            else ...[
+              if (day.antiphons.entry != null)
+                _Line(label: 'Entrada', text: day.antiphons.entry!),
+              if (day.antiphons.communion != null)
+                _Line(label: 'Comunhão', text: day.antiphons.communion!),
+              for (final extra in day.antiphons.extra)
+                _Line(label: 'Extra', text: extra),
+            ],
+          ],
+        );
     }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: lines,
-      ),
-    );
   }
 }
 
@@ -289,20 +296,134 @@ class _Line extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: RichText(
-        text: TextSpan(
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+      child: Text(
+        '$label: $text',
+        style: IaculaText.secondary.copyWith(color: IaculaColors.textPrimary),
+      ),
+    );
+  }
+}
+
+class _CalendarModal extends StatefulWidget {
+  const _CalendarModal({required this.initialDate});
+
+  final DateTime initialDate;
+
+  @override
+  State<_CalendarModal> createState() => _CalendarModalState();
+}
+
+class _CalendarModalState extends State<_CalendarModal> {
+  late DateTime _visibleMonth;
+
+  @override
+  void initState() {
+    super.initState();
+    _visibleMonth = DateTime(widget.initialDate.year, widget.initialDate.month);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        height: 430,
+        padding: const EdgeInsets.all(IaculaSpacing.md),
+        decoration: const BoxDecoration(
+          color: CupertinoColors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Selecionar data',
+                style: IaculaText.cardTitle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: IaculaSpacing.md),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      setState(() {
+                        _visibleMonth = DateTime(
+                          _visibleMonth.year,
+                          _visibleMonth.month - 1,
+                        );
+                      });
+                    },
+                    child: const Icon(CupertinoIcons.chevron_left),
+                  ),
+                  Text(
+                    '${_monthName(_visibleMonth.month)} ${_visibleMonth.year}',
+                    style: IaculaText.cardTitle,
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      setState(() {
+                        _visibleMonth = DateTime(
+                          _visibleMonth.year,
+                          _visibleMonth.month + 1,
+                        );
+                      });
+                    },
+                    child: const Icon(CupertinoIcons.chevron_right),
+                  ),
+                ],
+              ),
+              const SizedBox(height: IaculaSpacing.sm),
+              Expanded(
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 35,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                    childAspectRatio: 1.1,
+                  ),
+                  itemBuilder: (context, index) {
+                    final day = index + 1;
+                    return Center(
+                      child: Text(
+                        day <= 31 ? '$day' : '',
+                        style: IaculaText.secondary,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              CupertinoButton.filled(
+                borderRadius: BorderRadius.circular(26),
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Confirmar'),
+              ),
+            ],
           ),
-          children: [
-            TextSpan(
-              text: '$label: ',
-              style: const TextStyle(fontWeight: FontWeight.w700),
-            ),
-            TextSpan(text: text),
-          ],
         ),
       ),
     );
+  }
+
+  String _monthName(int month) {
+    const names = <String>[
+      'Janeiro',
+      'Fevereiro',
+      'Março',
+      'Abril',
+      'Maio',
+      'Junho',
+      'Julho',
+      'Agosto',
+      'Setembro',
+      'Outubro',
+      'Novembro',
+      'Dezembro',
+    ];
+    return names[(month - 1).clamp(0, 11)];
   }
 }
