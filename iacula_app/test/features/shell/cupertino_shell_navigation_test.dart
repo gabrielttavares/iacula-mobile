@@ -23,7 +23,7 @@ void main() {
 
     expect(find.byType(CupertinoTabScaffold), findsOneWidget);
     expect(find.text('Início'), findsOneWidget);
-    expect(find.text('Meditação'), findsOneWidget);
+    expect(find.text('Homilias'), findsOneWidget);
     expect(find.text('Plano de vida'), findsOneWidget);
     expect(find.text('Favoritos'), findsOneWidget);
     expect(find.text('Perfil'), findsOneWidget);

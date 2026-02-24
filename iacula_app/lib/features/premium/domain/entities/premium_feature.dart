@@ -1,3 +1,3 @@
-enum PremiumFeature { meditation, planOfLife, settings, rosary, novenas }
+enum PremiumFeature { meditation, planOfLife }
 
 enum PremiumAccessLevel { free, premium }

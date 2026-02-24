@@ -8,7 +8,6 @@ import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
-import 'package:iacula_app/features/premium/presentation/premium_gate.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
 
@@ -97,8 +96,6 @@ _FakeLastDeliveredCardRepository _defaultLastCardRepo() =>
     );
 
 void main() {
-  setUp(() => PremiumGate.debugPremiumBypass = false);
-
   testWidgets('home follows required section order', (tester) async {
     await tester.pumpWidget(
       _buildApp(

@@ -7,9 +7,6 @@ void main() {
     expect(PremiumFeature.values, [
       PremiumFeature.meditation,
       PremiumFeature.planOfLife,
-      PremiumFeature.settings,
-      PremiumFeature.rosary,
-      PremiumFeature.novenas,
     ]);
   });
 

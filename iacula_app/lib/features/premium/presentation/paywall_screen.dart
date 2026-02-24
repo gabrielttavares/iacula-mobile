@@ -91,14 +91,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   style: IaculaText.secondary,
                 ),
                 const SizedBox(height: 20),
-                _featureTile(CupertinoIcons.play_circle, 'Meditação diária'),
+                _featureTile(CupertinoIcons.play_circle, 'Homilias diárias'),
                 _featureTile(
                   CupertinoIcons.check_mark_circled,
                   'Plano de vida',
-                ),
-                _featureTile(
-                  CupertinoIcons.slider_horizontal_3,
-                  'Recursos avançados',
                 ),
                 const SizedBox(height: 20),
                 if (authUser == null) ...[

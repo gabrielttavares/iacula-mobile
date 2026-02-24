@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
@@ -17,8 +16,6 @@ class PremiumGate extends ConsumerWidget {
     super.key,
   });
 
-  static bool debugPremiumBypass = kDebugMode;
-
   final PremiumFeature feature;
   final Widget child;
   final Widget? lockedFallback;
@@ -29,9 +26,7 @@ class PremiumGate extends ConsumerWidget {
 
     return status.when(
       data: (value) {
-        if (debugPremiumBypass ||
-            !_isPremiumFeature(feature) ||
-            value.isPremium) {
+        if (!_isPremiumFeature(feature) || value.isPremium) {
           return child;
         }
 
@@ -45,11 +40,7 @@ class PremiumGate extends ConsumerWidget {
 
   static bool _isPremiumFeature(PremiumFeature value) {
     return switch (value) {
-      PremiumFeature.meditation ||
-      PremiumFeature.planOfLife ||
-      PremiumFeature.settings ||
-      PremiumFeature.rosary ||
-      PremiumFeature.novenas => true,
+      PremiumFeature.meditation || PremiumFeature.planOfLife => true,
     };
   }
 
@@ -57,7 +48,6 @@ class PremiumGate extends ConsumerWidget {
     BuildContext context, {
     required PremiumFeature feature,
   }) {
-    if (debugPremiumBypass) return;
     showCupertinoModalPopup<void>(
       context: context,
       builder: (context) => _PremiumGateModal(feature: feature),
@@ -115,10 +105,7 @@ class _LockedFallback extends StatelessWidget {
   static String _label(PremiumFeature value) {
     return switch (value) {
       PremiumFeature.meditation => 'A Meditação',
-      PremiumFeature.planOfLife => 'O Plano de vida',
-      PremiumFeature.settings => 'As Configurações',
-      PremiumFeature.rosary => 'O Rosário',
-      PremiumFeature.novenas => 'As Novenas',
+      PremiumFeature.planOfLife => 'O Plano de Vida',
     };
   }
 }

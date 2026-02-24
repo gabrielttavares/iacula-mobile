@@ -39,15 +39,13 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
         inactiveColor: const Color(0xFF6E6E73),
         onTap: (index) async {
           if (_premiumIndexes.contains(index)) {
-            if (!PremiumGate.debugPremiumBypass) {
-              final status = ref.read(premiumStatusProvider).valueOrNull;
-              if (status?.isPremium != true) {
-                final feature = index == 1
-                    ? PremiumFeature.meditation
-                    : PremiumFeature.planOfLife;
-                PremiumGate.showModal(context, feature: feature);
-                return;
-              }
+            final status = ref.read(premiumStatusProvider).valueOrNull;
+            if (status?.isPremium != true) {
+              final feature = index == 1
+                  ? PremiumFeature.meditation
+                  : PremiumFeature.planOfLife;
+              PremiumGate.showModal(context, feature: feature);
+              return;
             }
           }
 
@@ -62,7 +60,7 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.play_circle),
-            label: 'Meditação',
+            label: 'Homilias',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.check_mark_circled),
