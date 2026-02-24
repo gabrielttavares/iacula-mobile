@@ -30,44 +30,94 @@ class HomeScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Template Header
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Olá, Pedro',
-                            style: Theme.of(context).textTheme.headlineMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                          ),
-                          Opacity(
-                            opacity: 0.5,
-                            child: IconButton(
-                              onPressed: () async {
-                                await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const SettingsScreen(),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Choose your',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   ),
-                                );
-                                ref.invalidate(_dashboardProvider);
-                              },
-                              icon: const Icon(Icons.tune_rounded),
+                                ),
+                                Text(
+                                  'Design Course',
+                                  style: Theme.of(context).textTheme.headlineSmall,
+                                ),
+                              ],
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                              );
+                              ref.invalidate(_dashboardProvider);
+                            },
+                            child: Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.person,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 16),
+                      // Search Bar (Dummy)
+                      Container(
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8FAFB),
+                          borderRadius: BorderRadius.circular(13),
+                        ),
+                        child: const Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  'Search for course',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Color(0xFFB9BABC),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: Icon(Icons.search, color: Color(0xFFB9BABC)),
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 24),
+                      // Category title
+                      Text(
+                        'Category',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 16),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         clipBehavior: Clip.none,
                         child: Row(
                           children: [
                             _QuickActionCard(
-                              icon: Icons.menu_book,
                               title: 'Orações',
+                              isSelected: true,
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(builder: (_) => const PrayerCollectionsScreen()),
@@ -76,7 +126,6 @@ class HomeScreen extends ConsumerWidget {
                             ),
                             const SizedBox(width: 12),
                             _QuickActionCard(
-                              icon: Icons.calendar_today,
                               title: 'Novenas',
                               onTap: () {
                                 Navigator.of(context).push(
@@ -86,7 +135,6 @@ class HomeScreen extends ConsumerWidget {
                             ),
                             const SizedBox(width: 12),
                             _QuickActionCard(
-                              icon: Icons.auto_stories,
                               title: 'Liturgia Diária',
                               onTap: () => Navigator.of(context).pushNamed(LiturgiaScreen.routeName),
                             ),
@@ -125,46 +173,38 @@ class HomeScreen extends ConsumerWidget {
 
 class _QuickActionCard extends StatelessWidget {
   const _QuickActionCard({
-    required this.icon,
     required this.title,
     this.onTap,
+    this.isSelected = false,
   });
 
-  final IconData icon;
   final String title;
   final VoidCallback? onTap;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final surface = Theme.of(context).colorScheme.surface;
+
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          color: isSelected ? primary : surface,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: primary),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-          ],
+        child: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+            letterSpacing: 0.27,
+            color: isSelected ? surface : primary,
+          ),
         ),
       ),
     );
@@ -302,51 +342,68 @@ const _premiumCards = [
 class _PremiumSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Premium',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          'Popular Course',
+          style: theme.textTheme.headlineSmall,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         for (final card in _premiumCards)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: 16),
             child: InkWell(
               borderRadius: BorderRadius.circular(16),
               onTap: () => PremiumGate.showModal(context, feature: card.feature),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color(0xFFF8FAFB),
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
                 ),
                 child: Row(
                   children: [
-                    Icon(card.icon, size: 20, color: Theme.of(context).colorScheme.primary),
-                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(card.icon, size: 24, color: colorScheme.primary),
+                    ),
+                    const SizedBox(width: 16),
                     Expanded(
-                      child: Text(
-                        card.title,
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            card.title,
+                            style: theme.textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '24 lesson',
+                            style: theme.textTheme.labelSmall,
+                          ),
+                        ],
                       ),
                     ),
-                    Icon(Icons.lock_outline, size: 16, color: Colors.black38),
+                    Row(
+                      children: [
+                        Text(
+                          '4.3',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        Icon(Icons.star, color: colorScheme.primary, size: 20),
+                      ],
+                    ),
                   ],
                 ),
               ),

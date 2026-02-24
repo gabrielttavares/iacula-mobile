@@ -121,7 +121,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Olá, Pedro'), findsOneWidget);
+    expect(find.text('Choose your'), findsOneWidget);
+    expect(find.text('Design Course'), findsOneWidget);
     expect(find.text('Sede santos.'), findsOneWidget);
     expect(find.text('Todos os Santos'), findsOneWidget);
   });
@@ -141,6 +142,30 @@ void main() {
       expect(find.text('tempo da quaresma'), findsOneWidget);
     },
   );
+
+  testWidgets('renders search bar dummy', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Search for course'), findsOneWidget);
+  });
+
+  testWidgets('renders Category section title', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Category'), findsOneWidget);
+  });
 
   testWidgets('quick action opens Liturgia Diária screen', (tester) async {
     await tester.pumpWidget(
@@ -199,8 +224,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Premium heading exists
-      expect(find.text('Premium'), findsOneWidget);
+      // Popular Course heading exists
+      expect(find.text('Popular Course'), findsOneWidget);
 
       // Rosário exists on the page (in premium section)
       expect(find.text('Rosário'), findsOneWidget);
