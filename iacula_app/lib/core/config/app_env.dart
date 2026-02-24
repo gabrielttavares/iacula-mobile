@@ -17,7 +17,7 @@ final class AppEnv {
     const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
     const authSyncEnabled = String.fromEnvironment(
       'AUTH_SYNC_ENABLED',
-      defaultValue: 'false',
+      defaultValue: 'true',
     );
 
     return AppEnv(
