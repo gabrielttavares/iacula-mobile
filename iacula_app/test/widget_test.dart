@@ -1,4 +1,5 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:iacula_app/app/app.dart';
@@ -8,6 +9,7 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: IaculaApp()));
     await tester.pumpAndSettle();
 
+    expect(find.byType(CupertinoApp), findsOneWidget);
     expect(find.text('Início'), findsOneWidget);
     expect(find.text('Olá, Pedro'), findsOneWidget);
   });

@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/di/providers.dart';
@@ -51,7 +52,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
         switch (event.event.routeTarget) {
           case NotificationRouteTarget.home:
             nav.pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const ShellScreen()),
+              CupertinoPageRoute(builder: (_) => const ShellScreen()),
               (route) => false,
             );
             return;
@@ -62,13 +63,13 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
                 .read(getPrayerUseCaseProvider)
                 .call(language: settings.language);
             nav.push(
-              MaterialPageRoute(builder: (_) => PrayerScreen(prayer: prayer)),
+              CupertinoPageRoute(builder: (_) => PrayerScreen(prayer: prayer)),
             );
             return;
 
           case NotificationRouteTarget.alarm:
             nav.push(
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (_) => AlarmScreen(
                   title: event.event.title,
                   body: event.event.body,
@@ -89,11 +90,17 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return CupertinoApp(
       title: 'Iacula',
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      localizationsDelegates: const [
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('pt', 'BR'), Locale('en'), Locale('la')],
       routes: {LiturgiaScreen.routeName: (_) => const LiturgiaScreen()},
       home: const ShellScreen(),
     );
