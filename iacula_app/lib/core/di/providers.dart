@@ -53,9 +53,14 @@ import '../../features/plan_of_life/application/use_cases/update_plan_item_use_c
 import '../../features/plan_of_life/application/use_cases/delete_plan_item_use_case.dart';
 import '../../features/plan_of_life/application/plan_of_life_notifier.dart';
 
+import '../../features/spiritual_data/domain/entities/spiritual_entry.dart';
 import '../../features/sync/domain/repositories/sync_orchestrator.dart';
+import '../../features/sync/domain/repositories/sync_state_repository.dart';
+import '../../features/sync/infrastructure/repositories/isar_sync_state_repository.dart';
+import '../../features/sync/infrastructure/repositories/supabase_spiritual_sync_repository.dart';
 import '../../features/sync/infrastructure/services/background_sync_scheduler.dart';
 import '../../features/sync/infrastructure/services/connectivity_sync_service.dart';
+import '../../features/sync/infrastructure/services/default_sync_orchestrator.dart';
 import '../config/app_env.dart';
 import '../storage/isar/isar_store.dart';
 
@@ -233,8 +238,26 @@ final planOfLifeEntryRepositoryProvider = Provider<SpiritualEntryRepository>((re
   return IsarPlanOfLifeSpiritualEntryRepository(ref.watch(spiritualDataIsarStoreProvider));
 });
 
+final examinationEntryRepositoryProvider = Provider<SpiritualEntryRepository>((ref) {
+  return IsarExaminationSpiritualEntryRepository(ref.watch(spiritualDataIsarStoreProvider));
+});
+
+final prayerIntentionEntryRepositoryProvider = Provider<SpiritualEntryRepository>((ref) {
+  return IsarPrayerIntentionSpiritualEntryRepository(ref.watch(spiritualDataIsarStoreProvider));
+});
+
 final planCompletionRepositoryProvider = Provider<PlanCompletionRepository>((ref) {
   return IsarPlanCompletionRepository(ref.watch(spiritualDataIsarStoreProvider));
+});
+
+final syncStateRepositoryProvider = Provider<SyncStateRepository>((ref) {
+  return IsarSyncStateRepository(ref.watch(spiritualDataIsarStoreProvider));
+});
+
+final spiritualSyncGatewayProvider = Provider<SpiritualSyncGateway?>((ref) {
+  final client = ref.watch(supabaseClientProvider);
+  if (client == null) return null;
+  return SupabaseSpiritualSyncGateway(client);
 });
 
 final getDailyPlanUseCaseProvider = Provider<GetDailyPlanUseCase>((ref) {
