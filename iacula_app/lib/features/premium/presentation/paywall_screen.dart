@@ -43,13 +43,16 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     super.dispose();
   }
 
-  void _onAuthTransition(AsyncValue<dynamic>? previous, AsyncValue<dynamic> next) {
+  void _onAuthTransition(
+    AsyncValue<dynamic>? previous,
+    AsyncValue<dynamic> next,
+  ) {
     final user = next.valueOrNull;
     if (user != null && _pendingPurchaseAfterSignIn) {
       _pendingPurchaseAfterSignIn = false;
-      ref.read(premiumBlocProvider).add(
-        const PurchasePremium(productId: premiumLifetimeProductId),
-      );
+      ref
+          .read(premiumBlocProvider)
+          .add(const PurchasePremium(productId: premiumLifetimeProductId));
     }
   }
 
@@ -99,9 +102,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     isLoading: isLoading,
                     onPressed: () async {
                       setState(() => _pendingPurchaseAfterSignIn = true);
-                      await ref
-                          .read(authRepositoryProvider)
-                          .signInWithGoogle();
+                      await ref.read(authRepositoryProvider).signInWithGoogle();
                     },
                   ),
                   const SizedBox(height: 10),
@@ -119,9 +120,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                 );
                           },
                     child: Text(
-                      isLoading
-                          ? 'Processando...'
-                          : 'Comprar por R\$ 29,90',
+                      isLoading ? 'Processando...' : 'Comprar por R\$ 39,90',
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -160,10 +159,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
 }
 
 class _GoogleSignInButton extends StatelessWidget {
-  const _GoogleSignInButton({
-    required this.isLoading,
-    required this.onPressed,
-  });
+  const _GoogleSignInButton({required this.isLoading, required this.onPressed});
 
   final bool isLoading;
   final VoidCallback onPressed;

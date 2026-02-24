@@ -53,7 +53,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Entrar para comprar'), findsOneWidget);
-      expect(find.text('Comprar por R\$ 29,90'), findsNothing);
+      expect(find.text('Comprar por R\$ 39,90'), findsNothing);
       expect(find.text('Restaurar compras'), findsNothing);
     });
 
@@ -65,7 +65,9 @@ void main() {
           overrides: [
             premiumRepositoryProvider.overrideWithValue(premiumRepository),
             authStateProvider.overrideWith(
-              (ref) => Stream.value(const AuthUser(id: '1', email: 'user@example.com')),
+              (ref) => Stream.value(
+                const AuthUser(id: '1', email: 'user@example.com'),
+              ),
             ),
           ],
           child: const MaterialApp(home: PaywallScreen()),
@@ -74,7 +76,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Comprar por R\$ 29,90'), findsOneWidget);
+      expect(find.text('Comprar por R\$ 39,90'), findsOneWidget);
       expect(find.text('Restaurar compras'), findsOneWidget);
       expect(find.text('Entrar para comprar'), findsNothing);
     });

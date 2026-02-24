@@ -69,9 +69,7 @@ Widget _buildPaywall({
       premiumRepositoryProvider.overrideWithValue(premium),
       purchaseServiceProvider.overrideWithValue(purchase),
       if (initialUser != null)
-        authStateProvider.overrideWith(
-          (ref) => Stream.value(initialUser),
-        ),
+        authStateProvider.overrideWith((ref) => Stream.value(initialUser)),
     ],
     child: const MaterialApp(home: PaywallScreen()),
   );
@@ -93,71 +91,64 @@ void main() {
 
       // Shows login CTA, not purchase CTA
       expect(find.text('Entrar para comprar'), findsOneWidget);
-      expect(find.text('Comprar por R\$ 29,90'), findsNothing);
+      expect(find.text('Comprar por R\$ 39,90'), findsNothing);
 
       // Tap login CTA — should not dispatch purchase
       await tester.tap(find.text('Entrar para comprar'));
       await tester.pumpAndSettle();
 
       // No snackbar with old error message
-      expect(
-        find.text('Entre em uma conta antes de comprar.'),
-        findsNothing,
-      );
+      expect(find.text('Entre em uma conta antes de comprar.'), findsNothing);
     },
   );
 
-  testWidgets(
-    'authenticated paywall enables normal purchase flow',
-    (tester) async {
-      const user = AuthUser(id: 'u1', email: 'u1@x.dev');
-      final auth = InMemoryAuthRepository(seed: user);
-      final purchase = _FakePurchaseService();
+  testWidgets('authenticated paywall enables normal purchase flow', (
+    tester,
+  ) async {
+    const user = AuthUser(id: 'u1', email: 'u1@x.dev');
+    final auth = InMemoryAuthRepository(seed: user);
+    final purchase = _FakePurchaseService();
 
-      await tester.pumpWidget(
-        _buildPaywall(
-          authRepo: auth,
-          purchaseService: purchase,
-          initialUser: user,
-        ),
-      );
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(
+      _buildPaywall(
+        authRepo: auth,
+        purchaseService: purchase,
+        initialUser: user,
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      // Shows purchase CTA
-      expect(find.text('Comprar por R\$ 29,90'), findsOneWidget);
-      expect(find.text('Entrar para comprar'), findsNothing);
+    // Shows purchase CTA
+    expect(find.text('Comprar por R\$ 39,90'), findsOneWidget);
+    expect(find.text('Entrar para comprar'), findsNothing);
 
-      // Tap purchase CTA
-      await tester.tap(find.text('Comprar por R\$ 29,90'));
-      await tester.pumpAndSettle();
+    // Tap purchase CTA
+    await tester.tap(find.text('Comprar por R\$ 39,90'));
+    await tester.pumpAndSettle();
 
-      // Purchase service was called
-      expect(purchase.purchaseCallCount, 1);
-    },
-  );
+    // Purchase service was called
+    expect(purchase.purchaseCallCount, 1);
+  });
 
-  testWidgets(
-    'pending purchase auto-resumes after login',
-    (tester) async {
-      final auth = InMemoryAuthRepository(); // unauthenticated
-      final purchase = _FakePurchaseService();
+  testWidgets('pending purchase auto-resumes after login', (tester) async {
+    final auth = InMemoryAuthRepository(); // unauthenticated
+    final purchase = _FakePurchaseService();
 
-      await tester.pumpWidget(
-        _buildPaywall(authRepo: auth, purchaseService: purchase),
-      );
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(
+      _buildPaywall(authRepo: auth, purchaseService: purchase),
+    );
+    await tester.pumpAndSettle();
 
-      // Tap login CTA to set pending intent and trigger sign-in
-      await tester.tap(find.text('Entrar para comprar'));
-      await tester.pumpAndSettle();
+    // Tap login CTA to set pending intent and trigger sign-in
+    await tester.tap(find.text('Entrar para comprar'));
+    await tester.pumpAndSettle();
 
-      // signInWithGoogle sets user and emits on authStateChanges,
-      // which triggers the pending purchase auto-resume
-      // Give time for the listener to fire
-      await tester.pumpAndSettle();
+    // signInWithGoogle sets user and emits on authStateChanges,
+    // which triggers the pending purchase auto-resume
+    // Give time for the listener to fire
+    await tester.pumpAndSettle();
 
-      // Purchase should have been auto-dispatched
-      expect(purchase.purchaseCallCount, 1);
-    },
-  );
+    // Purchase should have been auto-dispatched
+    expect(purchase.purchaseCallCount, 1);
+  });
 }
