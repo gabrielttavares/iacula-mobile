@@ -1,4 +1,3 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
@@ -6,10 +5,10 @@ import 'package:iacula_app/features/notifications/infrastructure/repositories/lo
 
 void main() {
   group('LocalNotificationSchedulerRepository Android details', () {
-    test('uses explicit small and large icons for quote reminders', () {
+    test('uses small icon only (no large icon) for quote reminders', () {
       final event = ReminderEvent(
         type: ReminderEventType.quoteInterval,
-        title: 'Iacula',
+        title: '',
         body: 'Quote body',
         scheduledAt: DateTime(2026, 2, 22, 8),
         withVibration: true,
@@ -22,11 +21,7 @@ void main() {
           );
 
       expect(details.icon, 'ic_notification');
-      expect(details.largeIcon, isA<DrawableResourceAndroidBitmap>());
-      expect(
-        (details.largeIcon! as DrawableResourceAndroidBitmap).data,
-        'ic_notification_large',
-      );
+      expect(details.largeIcon, isNull);
       expect(details.channelId, 'quotes_reminder');
       expect(details.actions, hasLength(1));
       expect(details.actions!.first.title, 'Abrir');

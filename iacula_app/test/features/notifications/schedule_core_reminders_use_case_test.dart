@@ -8,7 +8,8 @@ import 'package:iacula_app/features/notifications/infrastructure/repositories/in
 import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 
-final class _InMemoryLastDeliveredCardRepository implements LastDeliveredCardRepository {
+final class _InMemoryLastDeliveredCardRepository
+    implements LastDeliveredCardRepository {
   LastDeliveredCard? value;
 
   @override
@@ -21,38 +22,47 @@ final class _InMemoryLastDeliveredCardRepository implements LastDeliveredCardRep
 }
 
 void main() {
-  test('schedules quote reminder with quote text and stores last delivered card', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository();
-    final lastCardRepo = _InMemoryLastDeliveredCardRepository();
+  test(
+    'schedules quote reminder with quote text and stores last delivered card',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final lastCardRepo = _InMemoryLastDeliveredCardRepository();
 
-    final useCase = ScheduleCoreRemindersUseCase(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return const Quote(
-          text: 'Sede santos, porque eu sou santo.',
-          dayOfWeek: 1,
-          theme: 'todos os santos',
-          season: LiturgicalSeason.ordinary,
-          imagePath: 'assets/seed/images/ordinary/1/E.jpg',
-          feast: 'all-saints',
-          feastName: 'todos os santos',
-        );
-      },
-      lastDeliveredCardRepository: lastCardRepo,
-    );
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return const Quote(
+                text: 'Sede santos, porque eu sou santo.',
+                dayOfWeek: 1,
+                theme: 'todos os santos',
+                season: LiturgicalSeason.ordinary,
+                imagePath: 'assets/seed/images/ordinary/1/E.jpg',
+                feast: 'all-saints',
+                feastName: 'todos os santos',
+              );
+            },
+        lastDeliveredCardRepository: lastCardRepo,
+      );
 
-    final settings = Settings.defaults.copyWith(intervalMinutes: 15, language: 'pt-br');
-    final now = DateTime(2026, 2, 21, 10, 0);
+      final settings = Settings.defaults.copyWith(
+        intervalMinutes: 15,
+        language: 'pt-br',
+      );
+      final now = DateTime(2026, 2, 21, 10, 0);
 
-    await useCase(settings, now: now);
+      await useCase(settings, now: now);
 
-    final quoteEvent = scheduler.events.firstWhere((e) => e.type == ReminderEventType.quoteInterval);
-    expect(quoteEvent.title, 'Iacula');
-    expect(quoteEvent.body, 'Sede santos, porque eu sou santo.');
+      final quoteEvent = scheduler.events.firstWhere(
+        (e) => e.type == ReminderEventType.quoteInterval,
+      );
+      expect(quoteEvent.title, '');
+      expect(quoteEvent.body, 'Sede santos, porque eu sou santo.');
 
-    final lastCard = await lastCardRepo.load();
-    expect(lastCard, isNotNull);
-    expect(lastCard!.quoteText, 'Sede santos, porque eu sou santo.');
-    expect(lastCard.feastName, 'todos os santos');
-  });
+      final lastCard = await lastCardRepo.load();
+      expect(lastCard, isNotNull);
+      expect(lastCard!.quoteText, 'Sede santos, porque eu sou santo.');
+      expect(lastCard.feastName, 'todos os santos');
+    },
+  );
 }

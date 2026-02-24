@@ -21,7 +21,6 @@ final class LocalNotificationSchedulerRepository
   }) : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
   static const _smallIcon = 'ic_notification';
-  static const _largeIcon = 'ic_notification_large';
 
   final FlutterLocalNotificationsPlugin _plugin;
   final _controller = StreamController<NotificationActionEvent>.broadcast();
@@ -97,7 +96,6 @@ final class LocalNotificationSchedulerRepository
       _channelNameForType(event.type),
       channelDescription: _channelDescriptionForType(event.type),
       icon: _smallIcon,
-      largeIcon: const DrawableResourceAndroidBitmap(_largeIcon),
       importance: Importance.max,
       priority: Priority.high,
       fullScreenIntent: event.isAlarm,
