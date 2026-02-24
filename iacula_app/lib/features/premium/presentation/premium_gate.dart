@@ -1,6 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/widgets/iacula_buttons.dart';
+import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/premium_feature.dart';
 import 'paywall_screen.dart';
 
@@ -28,7 +32,7 @@ class PremiumGate extends ConsumerWidget {
 
         return lockedFallback ?? _LockedFallback(feature: feature);
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CupertinoActivityIndicator()),
       error: (error, stackTrace) =>
           lockedFallback ?? _LockedFallback(feature: feature),
     );
@@ -48,10 +52,8 @@ class PremiumGate extends ConsumerWidget {
     BuildContext context, {
     required PremiumFeature feature,
   }) {
-    showModalBottomSheet(
+    showCupertinoModalPopup<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => _PremiumGateModal(feature: feature),
     );
   }
@@ -67,46 +69,38 @@ class _LockedFallback extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.lock_outline_rounded,
-              size: 48,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Funcionalidade Premium',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '${_label(feature)} está disponível após o pagamento único de R\$ 39,90.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+        child: IaculaSoftCard(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                CupertinoIcons.lock,
+                size: 48,
+                color: IaculaColors.primaryButton,
               ),
-            ),
-            const SizedBox(height: 32),
-            FilledButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const PaywallScreen()),
-                );
-              },
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+              const SizedBox(height: 16),
+              const Text(
+                'Funcionalidade Premium',
+                textAlign: TextAlign.center,
+                style: IaculaText.sectionTitle,
               ),
-              child: const Text('Desbloquear Agora'),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                '${_label(feature)} está disponível após o pagamento único de R\$ 39,90.',
+                textAlign: TextAlign.center,
+                style: IaculaText.secondary,
+              ),
+              const SizedBox(height: 24),
+              IaculaPrimaryPillButton(
+                label: 'Desbloquear Agora',
+                onPressed: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(builder: (_) => const PaywallScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -130,80 +124,54 @@ class _PremiumGateModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: 48,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 24),
-                decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(2),
-                ),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: CupertinoColors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(
+                CupertinoIcons.lock,
+                size: 48,
+                color: IaculaColors.primaryButton,
               ),
-            ),
-            Icon(
-              Icons.lock_outline_rounded,
-              size: 48,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Funcionalidade Premium',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '${_LockedFallback._label(feature)} está disponível após o pagamento único de R\$ 39,90.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              const SizedBox(height: 16),
+              const Text(
+                'Funcionalidade Premium',
+                textAlign: TextAlign.center,
+                style: IaculaText.sectionTitle,
               ),
-            ),
-            const SizedBox(height: 32),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(context); // Close modal
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const PaywallScreen()),
-                );
-              },
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+              const SizedBox(height: 12),
+              Text(
+                '${_LockedFallback._label(feature)} está disponível após o pagamento único de R\$ 39,90.',
+                textAlign: TextAlign.center,
+                style: IaculaText.secondary,
               ),
-              child: const Text('Desbloquear Agora'),
-            ),
-            const SizedBox(height: 12),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+              const SizedBox(height: 24),
+              IaculaPrimaryPillButton(
+                label: 'Desbloquear Agora',
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(builder: (_) => const PaywallScreen()),
+                  );
+                },
               ),
-              child: const Text('Mais tarde'),
-            ),
-          ],
+              const SizedBox(height: 12),
+              IaculaSecondaryPillButton(
+                label: 'Mais tarde',
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

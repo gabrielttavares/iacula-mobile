@@ -6,8 +6,33 @@ final class GetLiturgyPeriodUseCase {
 
   final LiturgiaRepository _repository;
 
-  Future<List<LiturgyDay>> call({int days = 7}) {
+  Future<List<LiturgyDay>> call({int days = 7, DateTime? anchorDate}) async {
     final safeDays = days.clamp(1, 7);
-    return _repository.getLiturgyPeriod(safeDays);
+    if (anchorDate == null) {
+      return _repository.getLiturgyPeriod(safeDays);
+    }
+
+    final normalizedAnchor = DateTime(
+      anchorDate.year,
+      anchorDate.month,
+      anchorDate.day,
+    );
+    final start = normalizedAnchor.subtract(Duration(days: safeDays ~/ 2));
+
+    final period = <LiturgyDay>[];
+    for (var index = 0; index < safeDays; index++) {
+      final date = start.add(Duration(days: index));
+      final day = await _repository.getLiturgyForDate(date);
+      if (day != null) {
+        period.add(day);
+      }
+    }
+
+    if (period.isEmpty) {
+      return _repository.getLiturgyPeriod(safeDays);
+    }
+
+    period.sort((a, b) => a.date.compareTo(b.date));
+    return period;
   }
 }

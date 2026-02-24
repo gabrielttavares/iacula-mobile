@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
@@ -67,7 +68,15 @@ void main() {
           premiumRepositoryProvider.overrideWithValue(premiumRepository),
           purchaseServiceProvider.overrideWithValue(purchaseService),
         ],
-        child: const MaterialApp(home: ShellScreen()),
+        child: const CupertinoApp(
+          localizationsDelegates: [
+            GlobalCupertinoLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: [Locale('pt', 'BR'), Locale('en')],
+          home: ShellScreen(),
+        ),
       ),
     );
 
@@ -94,7 +103,15 @@ void main() {
             premiumRepositoryProvider.overrideWithValue(premiumRepository),
             purchaseServiceProvider.overrideWithValue(purchaseService),
           ],
-          child: const MaterialApp(home: ShellScreen()),
+          child: const CupertinoApp(
+            localizationsDelegates: [
+              GlobalCupertinoLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: [Locale('pt', 'BR'), Locale('en')],
+            home: ShellScreen(),
+          ),
         ),
       );
 
@@ -109,11 +126,11 @@ void main() {
       expect(find.text('Funcionalidade Premium'), findsNothing);
       expect(find.text('Desbloquear Agora'), findsNothing);
 
-      // Verify bottom navigation state updated to index 3
-      final bottomNav = tester.widget<BottomNavigationBar>(
-        find.byType(BottomNavigationBar),
+      // Verify tab bar state updated to profile index (4)
+      final tabBar = tester.widget<CupertinoTabBar>(
+        find.byType(CupertinoTabBar),
       );
-      expect(bottomNav.currentIndex, 3);
+      expect(tabBar.currentIndex, 4);
 
       await purchaseService.dispose();
     },

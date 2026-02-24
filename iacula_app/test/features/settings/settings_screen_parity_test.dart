@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
@@ -21,15 +21,15 @@ final class _FakeSettingsRepository implements SettingsRepository {
 }
 
 void main() {
-  testWidgets('settings screen shows parity controls from desktop', (tester) async {
+  testWidgets('settings screen shows parity controls from desktop', (
+    tester,
+  ) async {
     final repo = _FakeSettingsRepository(Settings.defaults);
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(repo),
-        ],
-        child: const MaterialApp(home: SettingsScreen()),
+        overrides: [settingsRepositoryProvider.overrideWithValue(repo)],
+        child: const CupertinoApp(home: SettingsScreen()),
       ),
     );
 
@@ -46,7 +46,12 @@ void main() {
 
     expect(find.text('Intervalo (minutos)'), findsOneWidget);
     expect(find.text('Duracao (desktop apenas)'), findsNothing);
-    expect(find.text('No mobile, o tempo do banner e controlado pelo sistema operacional.'), findsNothing);
+    expect(
+      find.text(
+        'No mobile, o tempo do banner e controlado pelo sistema operacional.',
+      ),
+      findsNothing,
+    );
     expect(find.text('Duracao (segundos)'), findsNothing);
     expect(find.text('Idioma'), findsOneWidget);
     expect(find.text('Autostart (mobile limitado)'), findsNothing);

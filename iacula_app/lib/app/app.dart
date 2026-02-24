@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/di/providers.dart';
@@ -10,7 +11,9 @@ import '../features/liturgia_diaria/presentation/liturgia_screen.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
+import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/prayers/presentation/prayer_screen.dart';
+import '../features/settings/domain/entities/settings.dart';
 import '../features/sync/infrastructure/services/background_sync_scheduler.dart';
 
 class IaculaApp extends ConsumerStatefulWidget {
@@ -23,10 +26,12 @@ class IaculaApp extends ConsumerStatefulWidget {
 class _IaculaAppState extends ConsumerState<IaculaApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   StreamSubscription? _actionsSub;
+  Settings? _settings;
 
   @override
   void initState() {
     super.initState();
+    _loadSettings();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final syncService = ref.read(connectivitySyncServiceProvider);
       syncService.start();
@@ -51,7 +56,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
         switch (event.event.routeTarget) {
           case NotificationRouteTarget.home:
             nav.pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const ShellScreen()),
+              CupertinoPageRoute(builder: (_) => const ShellScreen()),
               (route) => false,
             );
             return;
@@ -62,13 +67,13 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
                 .read(getPrayerUseCaseProvider)
                 .call(language: settings.language);
             nav.push(
-              MaterialPageRoute(builder: (_) => PrayerScreen(prayer: prayer)),
+              CupertinoPageRoute(builder: (_) => PrayerScreen(prayer: prayer)),
             );
             return;
 
           case NotificationRouteTarget.alarm:
             nav.push(
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (_) => AlarmScreen(
                   title: event.event.title,
                   body: event.event.body,
@@ -87,15 +92,35 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
     super.dispose();
   }
 
+  Future<void> _loadSettings() async {
+    final settings = await ref.read(getSettingsUseCaseProvider).call();
+    if (mounted) {
+      setState(() => _settings = settings);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final settings = _settings;
+    return CupertinoApp(
       title: 'Iacula',
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      localizationsDelegates: const [
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('pt', 'BR'), Locale('en'), Locale('la')],
       routes: {LiturgiaScreen.routeName: (_) => const LiturgiaScreen()},
-      home: const ShellScreen(),
+      home: settings == null
+          ? const CupertinoPageScaffold(
+              child: Center(child: CupertinoActivityIndicator()),
+            )
+          : settings.onboardingCompleted
+          ? const ShellScreen()
+          : const OnboardingScreen(),
     );
   }
 }

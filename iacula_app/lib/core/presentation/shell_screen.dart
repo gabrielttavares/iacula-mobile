@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/di/providers.dart';
@@ -8,7 +8,8 @@ import '../../features/premium/presentation/premium_gate.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/meditation/presentation/meditation_screen.dart';
 import '../../features/plan_of_life/presentation/plan_of_life_screen.dart';
-import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/favorites/presentation/favorites_screen.dart';
+import '../../features/profile/presentation/profile_screen.dart';
 
 class ShellScreen extends ConsumerStatefulWidget {
   const ShellScreen({super.key});
@@ -21,19 +22,21 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
   int _currentIndex = 0;
   static const _premiumIndexes = <int>{1, 2};
 
-  final List<Widget> _screens = const [
+  static const _screens = <Widget>[
     HomeScreen(),
     MeditationScreen(),
     PlanOfLifeScreen(),
-    SettingsScreen(),
+    FavoritesScreen(),
+    ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: BottomNavigationBar(
+    return CupertinoTabScaffold(
+      tabBar: CupertinoTabBar(
         currentIndex: _currentIndex,
+        activeColor: const Color(0xFF111111),
+        inactiveColor: const Color(0xFF6E6E73),
         onTap: (index) async {
           if (_premiumIndexes.contains(index)) {
             final status = ref.read(premiumStatusProvider).valueOrNull;
@@ -50,26 +53,32 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
             _currentIndex = index;
           });
         },
-        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
+            icon: Icon(CupertinoIcons.house),
             label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.play_circle_outline),
+            icon: Icon(CupertinoIcons.play_circle),
             label: 'Meditação',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.checklist),
-            label: 'Plano de Vida',
+            icon: Icon(CupertinoIcons.check_mark_circled),
+            label: 'Plano de vida',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
+            icon: Icon(CupertinoIcons.bookmark),
+            label: 'Favoritos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.person),
             label: 'Perfil',
           ),
         ],
       ),
+      tabBuilder: (context, index) {
+        return CupertinoTabView(builder: (_) => _screens[index]);
+      },
     );
   }
 }

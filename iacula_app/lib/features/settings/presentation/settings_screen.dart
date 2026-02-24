@@ -1,8 +1,11 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/presentation/widgets/iacula_section_header.dart';
+import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/theme/cupertino_tokens.dart';
 import '../../auth/presentation/auth_action_sheet.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
@@ -16,8 +19,6 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  final _formKey = GlobalKey<FormState>();
-
   late TextEditingController _intervalController;
   late TextEditingController _laudesTimeController;
   late TextEditingController _vespersTimeController;
@@ -31,6 +32,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _vespersEnabled = false;
   bool _complineEnabled = false;
   bool _oraMediaEnabled = false;
+  bool _onboardingCompleted = false;
 
   bool _loading = true;
   bool _saving = false;
@@ -48,13 +50,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _load() async {
     final settings = await ref.read(getSettingsUseCaseProvider).call();
-    _apply(settings);
-    if (mounted) {
-      setState(() => _loading = false);
-    }
-  }
-
-  void _apply(Settings settings) {
     _intervalController.text = settings.intervalMinutes.toString();
     _laudesTimeController.text = settings.laudesTime;
     _vespersTimeController.text = settings.vespersTime;
@@ -68,6 +63,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _vespersEnabled = settings.vespersEnabled;
     _complineEnabled = settings.complineEnabled;
     _oraMediaEnabled = settings.oraMediaEnabled;
+    _onboardingCompleted = settings.onboardingCompleted;
+
+    if (mounted) {
+      setState(() => _loading = false);
+    }
   }
 
   @override
@@ -83,84 +83,120 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const CupertinoPageScaffold(
+        child: Center(child: CupertinoActivityIndicator()),
+      );
     }
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Configuracoes')),
-      body: Form(
-        key: _formKey,
+    return CupertinoPageScaffold(
+      backgroundColor: IaculaColors.background,
+      child: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(IaculaSpacing.md),
           children: [
-            TextFormField(
-              controller: _intervalController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Intervalo (minutos)',
+            const IaculaLargeTitle('Configurações'),
+            const SizedBox(height: IaculaSpacing.lg),
+            const IaculaSectionHeader(title: 'Dados da conta'),
+            const SizedBox(height: IaculaSpacing.sm),
+            IaculaSoftCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _fieldLabel('Intervalo (minutos)'),
+                  CupertinoTextField(
+                    controller: _intervalController,
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: IaculaSpacing.md),
+                  _fieldLabel('Idioma'),
+                  const SizedBox(height: 8),
+                  CupertinoSlidingSegmentedControl<String>(
+                    groupValue: _language,
+                    children: const {
+                      'pt-br': Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text('Portugues'),
+                      ),
+                      'en': Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text('English'),
+                      ),
+                      'la': Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text('Latin'),
+                      ),
+                    },
+                    onValueChanged: (value) {
+                      if (value != null) {
+                        setState(() => _language = value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: IaculaSpacing.md),
+                  _switchRow(
+                    title: 'Som no lembrete liturgico',
+                    value: _soundEnabled,
+                    onChanged: (v) => setState(() => _soundEnabled = v),
+                  ),
+                  CupertinoSlider(
+                    min: 0,
+                    max: 1,
+                    divisions: 20,
+                    value: _soundVolume,
+                    onChanged: _soundEnabled
+                        ? (v) => setState(() => _soundVolume = v)
+                        : null,
+                  ),
+                ],
               ),
-              validator: (v) {
-                final n = int.tryParse(v ?? '');
-                if (n == null || n < 1 || n > 60) return 'Use 1..60';
-                return null;
-              },
             ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              initialValue: _language,
-              decoration: const InputDecoration(labelText: 'Idioma'),
-              items: const [
-                DropdownMenuItem(value: 'pt-br', child: Text('Portugues')),
-                DropdownMenuItem(value: 'en', child: Text('English')),
-                DropdownMenuItem(value: 'la', child: Text('Latin')),
-              ],
-              onChanged: (v) => setState(() => _language = v ?? 'pt-br'),
+            const SizedBox(height: IaculaSpacing.lg),
+            const IaculaSectionHeader(title: 'Segurança'),
+            const SizedBox(height: IaculaSpacing.sm),
+            IaculaSoftCard(
+              child: Column(
+                children: [
+                  _moduleRow(
+                    'Laudes',
+                    _laudesEnabled,
+                    (v) => setState(() => _laudesEnabled = v),
+                    _laudesTimeController,
+                  ),
+                  _moduleRow(
+                    'Vesperas',
+                    _vespersEnabled,
+                    (v) => setState(() => _vespersEnabled = v),
+                    _vespersTimeController,
+                  ),
+                  _moduleRow(
+                    'Completas',
+                    _complineEnabled,
+                    (v) => setState(() => _complineEnabled = v),
+                    _complineTimeController,
+                  ),
+                  _moduleRow(
+                    'Ora Media',
+                    _oraMediaEnabled,
+                    (v) => setState(() => _oraMediaEnabled = v),
+                    _oraMediaTimeController,
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            SwitchListTile(
-              value: _soundEnabled,
-              title: const Text('Som no lembrete liturgico'),
-              onChanged: (v) => setState(() => _soundEnabled = v),
-            ),
-            Slider(
-              min: 0,
-              max: 1,
-              divisions: 20,
-              value: _soundVolume,
-              label: (_soundVolume * 100).round().toString(),
-              onChanged: _soundEnabled
-                  ? (v) => setState(() => _soundVolume = v)
-                  : null,
-            ),
-            const SizedBox(height: 12),
-            _moduleRow(
-              'Laudes',
-              _laudesEnabled,
-              (v) => setState(() => _laudesEnabled = v),
-              _laudesTimeController,
-            ),
-            _moduleRow(
-              'Vesperas',
-              _vespersEnabled,
-              (v) => setState(() => _vespersEnabled = v),
-              _vespersTimeController,
-            ),
-            _moduleRow(
-              'Completas',
-              _complineEnabled,
-              (v) => setState(() => _complineEnabled = v),
-              _complineTimeController,
-            ),
-            _moduleRow(
-              'Ora Media',
-              _oraMediaEnabled,
-              (v) => setState(() => _oraMediaEnabled = v),
-              _oraMediaTimeController,
-            ),
-            const SizedBox(height: 12),
-            _buildAuthSyncSection(context),
-            const SizedBox(height: 24),
-            ElevatedButton(
+            const SizedBox(height: IaculaSpacing.md),
+            _buildAuthSyncSection(),
+            const SizedBox(height: IaculaSpacing.lg),
+            CupertinoButton.filled(
+              borderRadius: BorderRadius.circular(26),
               onPressed: _saving ? null : _save,
               child: Text(_saving ? 'Salvando...' : 'Salvar'),
             ),
@@ -170,35 +206,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  Widget _fieldLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(label, style: IaculaText.secondary),
+    );
+  }
+
+  Widget _switchRow({
+    required String title,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(child: Text(title, style: IaculaText.cardTitle)),
+        CupertinoSwitch(value: value, onChanged: onChanged),
+      ],
+    );
+  }
+
   Widget _moduleRow(
     String label,
     bool enabled,
     ValueChanged<bool> onChanged,
     TextEditingController controller,
   ) {
-    return Column(
-      children: [
-        SwitchListTile(
-          value: enabled,
-          title: Text(label),
-          onChanged: onChanged,
-        ),
-        TextFormField(
-          controller: controller,
-          decoration: const InputDecoration(labelText: 'Horario (HH:MM)'),
-          validator: (v) {
-            final value = v ?? '';
-            final regex = RegExp(r'^([01]\d|2[0-3]):([0-5]\d)$');
-            if (!regex.hasMatch(value)) return 'Formato HH:MM';
-            return null;
-          },
-        ),
-        const SizedBox(height: 8),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: IaculaSpacing.md),
+      child: Column(
+        children: [
+          _switchRow(title: label, value: enabled, onChanged: onChanged),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: _fieldLabel('Horario (HH:MM)'),
+          ),
+          CupertinoTextField(controller: controller),
+        ],
+      ),
     );
   }
 
-  Widget _buildAuthSyncSection(BuildContext context) {
+  Widget _buildAuthSyncSection() {
     final authState = ref.watch(authStateProvider);
     final authRepo = ref.read(authRepositoryProvider);
     final user = authState.valueOrNull;
@@ -216,12 +267,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
+    final interval = int.tryParse(_intervalController.text);
+    if (interval == null || interval < 1 || interval > 60) {
+      await _showValidationError('Use 1..60 no intervalo.');
+      return;
+    }
+
+    final timeControllers = [
+      _laudesTimeController,
+      _vespersTimeController,
+      _complineTimeController,
+      _oraMediaTimeController,
+    ];
+
+    for (final controller in timeControllers) {
+      if (!_isValidTime(controller.text)) {
+        await _showValidationError('Formato HH:MM');
+        return;
+      }
+    }
 
     setState(() => _saving = true);
 
     final settings = Settings(
-      intervalMinutes: int.parse(_intervalController.text),
+      intervalMinutes: interval,
       durationSeconds: Settings.defaults.durationSeconds,
       autostart: Settings.defaults.autostart,
       language: _language,
@@ -235,6 +304,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       vespersTime: _vespersTimeController.text,
       complineTime: _complineTimeController.text,
       oraMediaTime: _oraMediaTimeController.text,
+      onboardingCompleted: _onboardingCompleted,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);
@@ -256,10 +326,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     if (mounted) {
       setState(() => _saving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Configuracoes salvas')));
       Navigator.of(context).pop(true);
     }
+  }
+
+  bool _isValidTime(String value) {
+    final regex = RegExp(r'^([01]\d|2[0-3]):([0-5]\d)$');
+    return regex.hasMatch(value);
+  }
+
+  Future<void> _showValidationError(String message) async {
+    await showCupertinoDialog<void>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Dados inválidos'),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }
