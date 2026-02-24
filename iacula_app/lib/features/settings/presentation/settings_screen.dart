@@ -160,7 +160,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             const SizedBox(height: IaculaSpacing.lg),
-            const IaculaSectionHeader(title: 'Segurança'),
+            const IaculaSectionHeader(title: 'Liturgia das Horas'),
             const SizedBox(height: IaculaSpacing.sm),
             IaculaSoftCard(
               child: Column(
