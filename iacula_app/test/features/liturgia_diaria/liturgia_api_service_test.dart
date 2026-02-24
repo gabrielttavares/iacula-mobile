@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:iacula_app/features/liturgia_diaria/domain/entities/daily_liturgy.dart';
 import 'package:iacula_app/features/liturgia_diaria/infrastructure/services/liturgia_api_service.dart';
 
 void main() {
@@ -27,7 +28,11 @@ void main() {
     expect(day.prayers.extra, contains('Oracao final'));
     expect(day.antiphons.entry, 'Antifona de entrada');
     expect(day.readings, hasLength(3));
+    // Canonical order: first, psalm, gospel
+    expect(day.readings[0].kind, LiturgyReadingKind.first);
+    expect(day.readings[1].kind, LiturgyReadingKind.psalm);
     expect(day.readings[1].response, 'Refrao do salmo');
+    expect(day.readings[2].kind, LiturgyReadingKind.gospel);
   });
 
   test('fetchPeriod returns empty list when response is non-success', () async {
@@ -86,5 +91,105 @@ void main() {
     expect(result, hasLength(2));
     expect(result[0].date, DateTime(2026, 2, 20));
     expect(result[1].date, DateTime(2026, 2, 22));
+  });
+
+  test('parses map-shaped leituras with full set and canonical order', () async {
+    final client = MockClient((_) async {
+      return http.Response(
+        '[{"data":"2026-03-01","liturgia":"Dia","cor":"Verde","oracoes":{"coleta":"C"},"antifonas":{},"leituras":{"primeiraLeitura":{"referencia":"Gn 1,1","texto":"Texto primeira"},"salmo":[{"referencia":"Sl 22","texto":"Texto salmo","refrao":"O Senhor é meu pastor"}],"segundaLeitura":{"referencia":"Rm 8,1","texto":"Texto segunda"},"sequencia":{"texto":"Texto sequencia"},"aclamacao":{"texto":"Aleluia","resposta":"Resposta aclamacao"},"evangelho":{"referencia":"Mt 5,1","texto":"Texto evangelho"}}}]',
+        200,
+      );
+    });
+
+    final service = LiturgiaApiService(
+      httpClient: client,
+      baseUrl: 'https://example.com/v2',
+    );
+
+    final result = await service.fetchPeriod(days: 1);
+    final readings = result.first.readings;
+
+    expect(readings, hasLength(6));
+    expect(readings[0].kind, LiturgyReadingKind.first);
+    expect(readings[1].kind, LiturgyReadingKind.psalm);
+    expect(readings[2].kind, LiturgyReadingKind.second);
+    expect(readings[3].kind, LiturgyReadingKind.sequence);
+    expect(readings[4].kind, LiturgyReadingKind.acclamation);
+    expect(readings[5].kind, LiturgyReadingKind.gospel);
+
+    // Psalm response preserved
+    expect(readings[1].response, 'O Senhor é meu pastor');
+    // Acclamation response preserved
+    expect(readings[4].response, 'Resposta aclamacao');
+
+    // Fallback titles for entries without titulo
+    expect(readings[3].title, 'Sequência');
+    expect(readings[4].title, 'Aclamação ao Evangelho');
+  });
+
+  test('parses list-shaped leituras with aliases and canonical order', () async {
+    final client = MockClient((_) async {
+      return http.Response(
+        '[{"data":"2026-03-02","liturgia":"Dia","cor":"Verde","oracoes":{"coleta":"C"},"antifonas":{},"leituras":[{"tipo":"evangelho","referencia":"Mc 1,1","texto":"Texto gospel"},{"tipo":"salmo","referencia":"Sl 50","texto":"Texto psalm","refrao":"Refrao"},{"tipo":"primeiraLeitura","referencia":"Is 1,1","titulo":"1a Leitura","texto":"Texto first"}]}]',
+        200,
+      );
+    });
+
+    final service = LiturgiaApiService(
+      httpClient: client,
+      baseUrl: 'https://example.com/v2',
+    );
+
+    final result = await service.fetchPeriod(days: 1);
+    final readings = result.first.readings;
+
+    expect(readings, hasLength(3));
+    // Canonical order despite list order being gospel, psalm, first
+    expect(readings[0].kind, LiturgyReadingKind.first);
+    expect(readings[0].title, '1a Leitura');
+    expect(readings[1].kind, LiturgyReadingKind.psalm);
+    expect(readings[1].response, 'Refrao');
+    expect(readings[2].kind, LiturgyReadingKind.gospel);
+  });
+
+  test('uses fallback titles when titulo is missing', () async {
+    final client = MockClient((_) async {
+      return http.Response(
+        '[{"data":"2026-03-03","liturgia":"Dia","cor":"Verde","oracoes":{"coleta":"C"},"antifonas":{},"leituras":{"primeiraLeitura":{"referencia":"Gn 1","texto":"T"},"salmo":[{"texto":"T","refrao":"R"}],"evangelho":{"texto":"T"}}}]',
+        200,
+      );
+    });
+
+    final service = LiturgiaApiService(
+      httpClient: client,
+      baseUrl: 'https://example.com/v2',
+    );
+
+    final result = await service.fetchPeriod(days: 1);
+    final readings = result.first.readings;
+
+    expect(readings[0].title, 'Primeira leitura'); // kind fallback for first
+    expect(readings[1].title, 'Salmo'); // kind fallback for psalm
+    expect(readings[2].title, 'Evangelho'); // kind fallback for gospel
+  });
+
+  test('ignores empty reading nodes', () async {
+    final client = MockClient((_) async {
+      return http.Response(
+        '[{"data":"2026-03-04","liturgia":"Dia","cor":"Verde","oracoes":{"coleta":"C"},"antifonas":{},"leituras":{"primeiraLeitura":{"referencia":"","texto":"","titulo":""},"evangelho":{"referencia":"Jo 1","texto":"T"}}}]',
+        200,
+      );
+    });
+
+    final service = LiturgiaApiService(
+      httpClient: client,
+      baseUrl: 'https://example.com/v2',
+    );
+
+    final result = await service.fetchPeriod(days: 1);
+    final readings = result.first.readings;
+
+    expect(readings, hasLength(1));
+    expect(readings[0].kind, LiturgyReadingKind.gospel);
   });
 }

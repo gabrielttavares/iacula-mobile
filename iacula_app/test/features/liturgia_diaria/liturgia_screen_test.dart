@@ -247,4 +247,99 @@ void main() {
     final chipLabels = find.byType(ChoiceChip).evaluate();
     expect(chipLabels.length, 3);
   });
+
+  testWidgets('renders all reading kinds in canonical order with fallback titles', (
+    tester,
+  ) async {
+    final repository = _FakeLiturgiaRepository([
+      LiturgyDay(
+        date: DateTime(2026, 2, 22),
+        title: 'Domingo de Pentecostes',
+        color: LiturgyColor.red,
+        prayers: const LiturgyPrayer(
+          collect: 'Coleta',
+          offering: 'Oferendas',
+          communion: 'Comunhao',
+        ),
+        readings: const [
+          LiturgyReading(
+            reference: 'At 2,1-11',
+            title: 'Primeira leitura',
+            text: 'Texto primeira',
+            kind: LiturgyReadingKind.first,
+          ),
+          LiturgyReading(
+            reference: 'Sl 103',
+            title: 'Salmo',
+            text: 'Texto salmo',
+            response: 'Enviai o vosso Espírito',
+            kind: LiturgyReadingKind.psalm,
+          ),
+          LiturgyReading(
+            reference: '1Cor 12,3-7',
+            title: 'Segunda leitura',
+            text: 'Texto segunda',
+            kind: LiturgyReadingKind.second,
+          ),
+          LiturgyReading(
+            reference: '',
+            title: 'Sequência',
+            text: 'Vinde Espírito Santo',
+            kind: LiturgyReadingKind.sequence,
+          ),
+          LiturgyReading(
+            reference: '',
+            title: 'Aclamação ao Evangelho',
+            text: 'Aleluia',
+            kind: LiturgyReadingKind.acclamation,
+          ),
+          LiturgyReading(
+            reference: 'Jo 20,19-23',
+            title: 'Evangelho',
+            text: 'Texto evangelho',
+            kind: LiturgyReadingKind.gospel,
+          ),
+        ],
+        antiphons: const LiturgyAntiphons(entry: 'Antifona'),
+      ),
+    ]);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          liturgiaCacheRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: const MaterialApp(home: LiturgiaScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // All reading titles visible
+    expect(find.text('Primeira leitura'), findsOneWidget);
+    expect(find.text('Salmo'), findsOneWidget);
+    expect(find.text('Segunda leitura'), findsOneWidget);
+    expect(find.text('Sequência'), findsOneWidget);
+    expect(find.text('Aclamação ao Evangelho'), findsOneWidget);
+    expect(find.text('Evangelho'), findsOneWidget);
+
+    // Response text appears for psalm
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is RichText &&
+            widget.text.toPlainText().contains('Resposta: Enviai o vosso Espírito'),
+      ),
+      findsOneWidget,
+    );
+
+    // Empty reference uses 'Texto' label instead of blank
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is RichText &&
+            widget.text.toPlainText().contains('Texto: Vinde Espírito Santo'),
+      ),
+      findsOneWidget,
+    );
+  });
 }

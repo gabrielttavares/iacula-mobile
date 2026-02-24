@@ -171,48 +171,93 @@ final class LiturgiaApiService {
     );
   }
 
+  static const _kindAliases = <String, LiturgyReadingKind>{
+    'primeiraLeitura': LiturgyReadingKind.first,
+    'primeira_leitura': LiturgyReadingKind.first,
+    'primeira': LiturgyReadingKind.first,
+    '1aLeitura': LiturgyReadingKind.first,
+    '1a_leitura': LiturgyReadingKind.first,
+    'firstReading': LiturgyReadingKind.first,
+    'first_reading': LiturgyReadingKind.first,
+    'salmo': LiturgyReadingKind.psalm,
+    'psalm': LiturgyReadingKind.psalm,
+    'salmoResponsorial': LiturgyReadingKind.psalm,
+    'salmo_responsorial': LiturgyReadingKind.psalm,
+    'segundaLeitura': LiturgyReadingKind.second,
+    'segunda_leitura': LiturgyReadingKind.second,
+    'segunda': LiturgyReadingKind.second,
+    '2aLeitura': LiturgyReadingKind.second,
+    '2a_leitura': LiturgyReadingKind.second,
+    'secondReading': LiturgyReadingKind.second,
+    'second_reading': LiturgyReadingKind.second,
+    'sequencia': LiturgyReadingKind.sequence,
+    'sequence': LiturgyReadingKind.sequence,
+    'aclamacao': LiturgyReadingKind.acclamation,
+    'aclamação': LiturgyReadingKind.acclamation,
+    'acclamation': LiturgyReadingKind.acclamation,
+    'evangelho': LiturgyReadingKind.gospel,
+    'gospel': LiturgyReadingKind.gospel,
+  };
+
+  static const _kindLabels = <LiturgyReadingKind, String>{
+    LiturgyReadingKind.first: 'Primeira leitura',
+    LiturgyReadingKind.psalm: 'Salmo',
+    LiturgyReadingKind.second: 'Segunda leitura',
+    LiturgyReadingKind.sequence: 'Sequência',
+    LiturgyReadingKind.acclamation: 'Aclamação ao Evangelho',
+    LiturgyReadingKind.gospel: 'Evangelho',
+  };
+
   List<LiturgyReading> _parseReadings(dynamic value) {
-    final map = value is Map
-        ? Map<String, dynamic>.from(value)
-        : const <String, dynamic>{};
-    final readings = <LiturgyReading>[];
+    final candidates = <({LiturgyReadingKind kind, Map<String, dynamic> raw})>[];
 
-    final firstReading = _parseReadingMap(
-      map['primeiraLeitura'] ?? map['primeira_leitura'],
-    );
-    if (firstReading != null) readings.add(firstReading);
-
-    final secondReading = _parseReadingMap(
-      map['segundaLeitura'] ?? map['segunda_leitura'],
-    );
-    if (secondReading != null) readings.add(secondReading);
-
-    final psalmRaw = map['salmo'];
-    if (psalmRaw is List) {
-      for (final item in psalmRaw.whereType<Map>()) {
-        final psalm = _parseReadingMap(item);
-        if (psalm != null) readings.add(psalm);
+    if (value is Map) {
+      final map = Map<String, dynamic>.from(value);
+      for (final entry in map.entries) {
+        final kind = _kindAliases[entry.key] ?? LiturgyReadingKind.other;
+        final raw = entry.value;
+        if (raw is List) {
+          for (final item in raw.whereType<Map>()) {
+            candidates.add((kind: kind, raw: Map<String, dynamic>.from(item)));
+          }
+        } else if (raw is Map) {
+          candidates.add((kind: kind, raw: Map<String, dynamic>.from(raw)));
+        }
       }
-    } else {
-      final psalm = _parseReadingMap(psalmRaw);
-      if (psalm != null) readings.add(psalm);
+    } else if (value is List) {
+      for (final item in value.whereType<Map>()) {
+        final map = Map<String, dynamic>.from(item);
+        final kind = _detectKindFromItem(map);
+        candidates.add((kind: kind, raw: map));
+      }
     }
 
-    final gospel = _parseReadingMap(map['evangelho']);
-    if (gospel != null) readings.add(gospel);
+    final readings = <LiturgyReading>[];
+    for (final c in candidates) {
+      final reading = _parseReadingMap(c.raw, c.kind);
+      if (reading != null) readings.add(reading);
+    }
 
+    readings.sort((a, b) => a.kind.index.compareTo(b.kind.index));
     return readings;
   }
 
-  LiturgyReading? _parseReadingMap(dynamic value) {
-    if (value is! Map) return null;
-    final map = Map<String, dynamic>.from(value);
+  LiturgyReadingKind _detectKindFromItem(Map<String, dynamic> map) {
+    for (final key in ['tipo', 'type', 'kind', 'nome', 'titulo']) {
+      final val = map[key]?.toString();
+      if (val != null) {
+        final match = _kindAliases[val];
+        if (match != null) return match;
+      }
+    }
+    return LiturgyReadingKind.other;
+  }
 
+  LiturgyReading? _parseReadingMap(Map<String, dynamic> map, LiturgyReadingKind kind) {
     final reference = _text(map['referencia'] ?? map['ref']);
-    final title = _text(
-      map['titulo'],
-      fallback: reference.isEmpty ? 'Leitura' : reference,
-    );
+    final fallbackTitle = _kindLabels[kind] ??
+        (reference.isEmpty ? 'Leitura' : reference);
+    final title = _text(map['titulo'], fallback: fallbackTitle);
     final text = _text(map['texto']);
     final response = _optionalText(map['refrao'] ?? map['resposta']);
 
@@ -223,6 +268,7 @@ final class LiturgiaApiService {
       title: title,
       text: text,
       response: response,
+      kind: kind,
     );
   }
 

@@ -230,7 +230,10 @@ class _ReadingsBlock extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            _Line(label: reading.reference, text: reading.text),
+            _Line(
+              label: reading.reference.isEmpty ? 'Texto' : reading.reference,
+              text: reading.text,
+            ),
             if (reading.response != null && reading.response!.isNotEmpty)
               _Line(label: 'Resposta', text: reading.response!),
             const SizedBox(height: 8),

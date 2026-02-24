@@ -1,5 +1,7 @@
 enum LiturgyColor { green, red, purple, pink, white }
 
+enum LiturgyReadingKind { first, psalm, second, sequence, acclamation, gospel, other }
+
 final class LiturgyPrayer {
   const LiturgyPrayer({
     required this.collect,
@@ -20,12 +22,14 @@ final class LiturgyReading {
     required this.title,
     required this.text,
     this.response,
+    this.kind = LiturgyReadingKind.other,
   });
 
   final String reference;
   final String title;
   final String text;
   final String? response;
+  final LiturgyReadingKind kind;
 }
 
 final class LiturgyAntiphons {
