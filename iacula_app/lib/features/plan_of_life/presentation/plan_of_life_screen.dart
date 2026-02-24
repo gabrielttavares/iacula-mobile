@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
-import '../domain/entities/plan_item.dart';
-import '../domain/entities/plan_item_schedule.dart';
-import '../application/plan_of_life_notifier.dart';
+import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/theme/cupertino_tokens.dart';
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
+import '../application/plan_of_life_notifier.dart';
+import '../domain/entities/plan_item.dart';
+import '../domain/entities/plan_item_schedule.dart';
 import 'widgets/plan_item_row.dart';
 
 class PlanOfLifeScreen extends ConsumerStatefulWidget {
@@ -24,7 +26,6 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_dateScrollController.hasClients) {
-        // Approximate center for index 3 with item width ~64
         _dateScrollController.jumpTo(100.0);
       }
     });
@@ -47,9 +48,6 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
   Widget _buildContent(BuildContext context) {
     final state = ref.watch(planOfLifeNotifierProvider);
     final notifier = ref.read(planOfLifeNotifierProvider.notifier);
-
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     final morningItems = <PlanItem>[];
     final afternoonItems = <PlanItem>[];
@@ -76,52 +74,88 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
       }
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Plano de Vida', style: theme.textTheme.titleMedium),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => _showEditItemModal(context, null),
-          ),
-          IconButton(
-            icon: const Icon(Icons.calendar_month),
-            onPressed: () async {
-              final date = await showDatePicker(
-                context: context,
-                initialDate: state.selectedDate,
-                firstDate: DateTime(2020),
-                lastDate: DateTime(2030),
-              );
-              if (date != null) {
-                notifier.selectDate(date);
-              }
-            },
-          ),
-        ],
-      ),
-      body: SafeArea(
+    return CupertinoPageScaffold(
+      backgroundColor: IaculaColors.background,
+      child: SafeArea(
         child: Column(
           children: [
-            _buildDateStrip(state.selectedDate, notifier, colorScheme, theme),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const IaculaLargeTitle('Plano de vida'),
+                  Row(
+                    children: [
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () => _showEditItemModal(context, null),
+                        child: const Icon(CupertinoIcons.add),
+                      ),
+                      const SizedBox(width: 10),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () async {
+                          final picked = await _showCupertinoDateDialog(
+                            context,
+                            state.selectedDate,
+                          );
+                          if (picked != null) {
+                            notifier.selectDate(picked);
+                          }
+                        },
+                        child: const Icon(CupertinoIcons.calendar),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            _buildDateStrip(state.selectedDate, notifier),
             Expanded(
               child: state.isLoading && state.items.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(child: CupertinoActivityIndicator())
                   : state.items.isEmpty
-                      ? const Center(child: Text('Nenhum item para este dia.'))
-                      : ListView(
-                          padding: const EdgeInsets.only(bottom: 80.0, top: 8.0),
-                          children: [
-                            if (morningItems.isNotEmpty)
-                              _buildSection('Manhã', Icons.wb_sunny_outlined, morningItems, notifier, theme),
-                            if (afternoonItems.isNotEmpty)
-                              _buildSection('Tarde', Icons.cloud_outlined, afternoonItems, notifier, theme),
-                            if (nightItems.isNotEmpty)
-                              _buildSection('Noite', Icons.nights_stay_outlined, nightItems, notifier, theme),
-                            if (unscheduledItems.isNotEmpty)
-                              _buildSection('Outros', Icons.checklist, unscheduledItems, notifier, theme),
-                          ],
-                        ),
+                  ? const Center(
+                      child: Text(
+                        'Nenhum item para este dia.',
+                        style: IaculaText.secondary,
+                      ),
+                    )
+                  : ListView(
+                      padding: const EdgeInsets.only(bottom: 80.0, top: 8.0),
+                      physics: const BouncingScrollPhysics(),
+                      children: [
+                        if (morningItems.isNotEmpty)
+                          _buildSection(
+                            'Manhã',
+                            CupertinoIcons.sun_max,
+                            morningItems,
+                            notifier,
+                          ),
+                        if (afternoonItems.isNotEmpty)
+                          _buildSection(
+                            'Tarde',
+                            CupertinoIcons.cloud,
+                            afternoonItems,
+                            notifier,
+                          ),
+                        if (nightItems.isNotEmpty)
+                          _buildSection(
+                            'Noite',
+                            CupertinoIcons.moon_stars,
+                            nightItems,
+                            notifier,
+                          ),
+                        if (unscheduledItems.isNotEmpty)
+                          _buildSection(
+                            'Outros',
+                            CupertinoIcons.check_mark_circled,
+                            unscheduledItems,
+                            notifier,
+                          ),
+                      ],
+                    ),
             ),
           ],
         ),
@@ -129,21 +163,31 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
     );
   }
 
-  Widget _buildDateStrip(DateTime selectedDate, PlanOfLifeNotifier notifier, ColorScheme colorScheme, ThemeData theme) {
-    final dates = List.generate(7, (i) => selectedDate.add(Duration(days: i - 3)));
+  Widget _buildDateStrip(DateTime selectedDate, PlanOfLifeNotifier notifier) {
+    final dates = List.generate(
+      7,
+      (i) => selectedDate.add(Duration(days: i - 3)),
+    );
 
-    return Container(
+    return SizedBox(
       height: 80,
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListView.builder(
         controller: _dateScrollController,
         scrollDirection: Axis.horizontal,
         itemCount: dates.length,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
         itemBuilder: (context, index) {
           final date = dates[index];
           final isActive = index == 3;
-          final dayName = const ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'][date.weekday - 1];
+          final dayName = const [
+            'Seg',
+            'Ter',
+            'Qua',
+            'Qui',
+            'Sex',
+            'Sáb',
+            'Dom',
+          ][date.weekday - 1];
 
           return GestureDetector(
             onTap: () => notifier.selectDate(date),
@@ -151,8 +195,15 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
               width: 56,
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
               decoration: BoxDecoration(
-                color: isActive ? colorScheme.primary : Colors.transparent,
+                color: isActive
+                    ? IaculaColors.primaryButton
+                    : CupertinoColors.transparent,
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isActive
+                      ? IaculaColors.primaryButton
+                      : CupertinoColors.systemGrey4,
+                ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -161,7 +212,9 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                     dayName,
                     style: TextStyle(
                       fontSize: 13,
-                      color: isActive ? colorScheme.onPrimary : theme.disabledColor,
+                      color: isActive
+                          ? CupertinoColors.white
+                          : IaculaColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -169,8 +222,12 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                     date.day.toString().padLeft(2, '0'),
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                      color: isActive ? colorScheme.onPrimary : colorScheme.onSurface,
+                      fontWeight: isActive
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color: isActive
+                          ? CupertinoColors.white
+                          : IaculaColors.textPrimary,
                     ),
                   ),
                 ],
@@ -182,48 +239,53 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
     );
   }
 
-  Widget _buildSection(String title, IconData icon, List<PlanItem> items, PlanOfLifeNotifier notifier, ThemeData theme) {
+  Widget _buildSection(
+    String title,
+    IconData icon,
+    List<PlanItem> items,
+    PlanOfLifeNotifier notifier,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 20.0, top: 24.0, bottom: 8.0, right: 20.0),
+          padding: const EdgeInsets.only(
+            left: 20.0,
+            top: 24.0,
+            bottom: 8.0,
+            right: 20.0,
+          ),
           child: Row(
             children: [
-              Icon(icon, size: 20, color: theme.colorScheme.onSurfaceVariant),
+              Icon(icon, size: 20, color: IaculaColors.textSecondary),
               const SizedBox(width: 8),
-              Text(
-                title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
+              Text(title, style: IaculaText.cardTitle),
             ],
           ),
         ),
         ...items.map((item) {
           return Dismissible(
             key: Key(item.id),
-            direction: item.schedule.isDefault ? DismissDirection.none : DismissDirection.endToStart,
+            direction: item.schedule.isDefault
+                ? DismissDirection.none
+                : DismissDirection.endToStart,
             background: Container(
-              color: Colors.red,
+              color: CupertinoColors.destructiveRed,
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 20),
-              child: const Icon(Icons.delete, color: Colors.white),
+              child: const Icon(
+                CupertinoIcons.delete,
+                color: CupertinoColors.white,
+              ),
             ),
-            onDismissed: (_) {
-              notifier.deleteItem(item.id);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Item removido')),
-              );
-            },
-            child: InkWell(
+            onDismissed: (_) => notifier.deleteItem(item.id),
+            child: GestureDetector(
               onLongPress: () => _showEditItemModal(context, item),
               child: PlanItemRow(
                 title: item.title,
                 isCompleted: item.isCompleted,
-                onToggle: (bool newValue) => notifier.toggleItem(item.id, newValue),
+                onToggle: (bool newValue) =>
+                    notifier.toggleItem(item.id, newValue),
               ),
             ),
           );
@@ -233,10 +295,57 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
   }
 
   void _showEditItemModal(BuildContext context, PlanItem? item) {
-    showModalBottomSheet(
+    showCupertinoModalPopup<void>(
       context: context,
-      isScrollControlled: true,
       builder: (ctx) => _EditItemForm(item: item),
+    );
+  }
+
+  Future<DateTime?> _showCupertinoDateDialog(
+    BuildContext context,
+    DateTime initialDate,
+  ) async {
+    DateTime selected = initialDate;
+    return showCupertinoModalPopup<DateTime>(
+      context: context,
+      builder: (context) {
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: 320,
+            color: CupertinoColors.white,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 46,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CupertinoButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Cancelar'),
+                      ),
+                      CupertinoButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        onPressed: () => Navigator.of(context).pop(selected),
+                        child: const Text('Selecionar'),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: initialDate,
+                    onDateTimeChanged: (value) => selected = value,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -252,26 +361,23 @@ class _EditItemForm extends ConsumerStatefulWidget {
 
 class _EditItemFormState extends ConsumerState<_EditItemForm> {
   late TextEditingController _titleController;
+  late TextEditingController _timeController;
   late List<bool> _days;
-  TimeOfDay? _time;
   bool _notify = false;
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.item?.title ?? '');
-    
+    _timeController = TextEditingController(
+      text: widget.item?.schedule.time ?? '',
+    );
+
     _days = List.generate(7, (i) {
-      if (widget.item == null || widget.item!.schedule.daysOfWeek.isEmpty) return true;
+      if (widget.item == null || widget.item!.schedule.daysOfWeek.isEmpty)
+        return true;
       return widget.item!.schedule.daysOfWeek.contains(i + 1);
     });
-
-    if (widget.item?.schedule.time != null) {
-      final parts = widget.item!.schedule.time!.split(':');
-      if (parts.length == 2) {
-        _time = TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
-      }
-    }
 
     _notify = widget.item?.schedule.notify ?? false;
   }
@@ -279,6 +385,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
   @override
   void dispose() {
     _titleController.dispose();
+    _timeController.dispose();
     super.dispose();
   }
 
@@ -286,97 +393,133 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
   Widget build(BuildContext context) {
     final notifier = ref.read(planOfLifeNotifierProvider.notifier);
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: 24,
-        right: 24,
-        top: 24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            widget.item == null ? 'Novo Item' : 'Editar Item',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _titleController,
-            decoration: const InputDecoration(
-              labelText: 'Título',
-              border: OutlineInputBorder(),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+        decoration: const BoxDecoration(
+          color: CupertinoColors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  widget.item == null ? 'Novo Item' : 'Editar Item',
+                  style: IaculaText.sectionTitle,
+                ),
+                const SizedBox(height: 16),
+                CupertinoTextField(
+                  controller: _titleController,
+                  placeholder: 'Título',
+                ),
+                const SizedBox(height: 16),
+                CupertinoTextField(
+                  controller: _timeController,
+                  placeholder: 'Horário (HH:MM)',
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Lembrete (Notificação)',
+                      style: IaculaText.secondary,
+                    ),
+                    CupertinoSwitch(
+                      value: _notify,
+                      onChanged: (v) => setState(() => _notify = v),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Text('Dias da semana:', style: IaculaText.secondary),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  children: List.generate(7, (index) {
+                    final dayName = const [
+                      'S',
+                      'T',
+                      'Q',
+                      'Q',
+                      'S',
+                      'S',
+                      'D',
+                    ][index];
+                    final selected = _days[index];
+                    return GestureDetector(
+                      onTap: () => setState(() => _days[index] = !selected),
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: selected
+                              ? IaculaColors.primaryButton
+                              : CupertinoColors.systemGrey5,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          dayName,
+                          style: TextStyle(
+                            color: selected
+                                ? CupertinoColors.white
+                                : IaculaColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+                const SizedBox(height: 24),
+                CupertinoButton.filled(
+                  onPressed: () {
+                    final title = _titleController.text.trim();
+                    if (title.isEmpty) return;
+
+                    final selectedDays = <int>[];
+                    for (int i = 0; i < 7; i++) {
+                      if (_days[i]) selectedDays.add(i + 1);
+                    }
+                    if (selectedDays.length == 7) selectedDays.clear();
+
+                    final timeText = _timeController.text.trim();
+                    final timeStr = _isValidTime(timeText) ? timeText : null;
+
+                    final schedule = PlanItemSchedule(
+                      time: timeStr,
+                      daysOfWeek: selectedDays,
+                      notify: _notify,
+                      isDefault: widget.item?.schedule.isDefault ?? false,
+                    );
+
+                    if (widget.item == null) {
+                      notifier.addItem(title, schedule);
+                    } else {
+                      notifier.updateItem(widget.item!.id, title, schedule);
+                    }
+
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Salvar'),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
-          ListTile(
-            title: const Text('Horário'),
-            subtitle: Text(_time?.format(context) ?? 'Nenhum horário definido'),
-            trailing: const Icon(Icons.access_time),
-            onTap: () async {
-              final selected = await showTimePicker(
-                context: context,
-                initialTime: _time ?? TimeOfDay.now(),
-              );
-              if (selected != null) {
-                setState(() => _time = selected);
-              }
-            },
-          ),
-          SwitchListTile(
-            title: const Text('Lembrete (Notificação)'),
-            value: _notify,
-            onChanged: (v) => setState(() => _notify = v),
-          ),
-          const SizedBox(height: 8),
-          const Text('Dias da semana:'),
-          Wrap(
-            spacing: 8,
-            children: List.generate(7, (index) {
-              final dayName = const ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'][index];
-              return FilterChip(
-                label: Text(dayName),
-                selected: _days[index],
-                onSelected: (v) => setState(() => _days[index] = v),
-              );
-            }),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              if (_titleController.text.trim().isEmpty) return;
-
-              final selectedDays = <int>[];
-              for (int i = 0; i < 7; i++) {
-                if (_days[i]) selectedDays.add(i + 1);
-              }
-              if (selectedDays.length == 7) selectedDays.clear();
-
-              final timeStr = _time != null 
-                ? '${_time!.hour.toString().padLeft(2, '0')}:${_time!.minute.toString().padLeft(2, '0')}'
-                : null;
-
-              final schedule = PlanItemSchedule(
-                time: timeStr,
-                daysOfWeek: selectedDays,
-                notify: _notify,
-                isDefault: widget.item?.schedule.isDefault ?? false,
-              );
-
-              if (widget.item == null) {
-                notifier.addItem(_titleController.text.trim(), schedule);
-              } else {
-                notifier.updateItem(widget.item!.id, _titleController.text.trim(), schedule);
-              }
-
-              Navigator.pop(context);
-            },
-            child: const Text('Salvar'),
-          ),
-          const SizedBox(height: 24),
-        ],
+        ),
       ),
     );
+  }
+
+  bool _isValidTime(String value) {
+    if (value.isEmpty) return false;
+    final regex = RegExp(r'^([01]\d|2[0-3]):([0-5]\d)$');
+    return regex.hasMatch(value);
   }
 }
