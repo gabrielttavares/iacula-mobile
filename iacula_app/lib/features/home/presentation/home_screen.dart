@@ -291,14 +291,6 @@ class _PromotionalBanner extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Retiro de Oração',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: CupertinoColors.white,
-                    ),
-                  ),
                   const SizedBox(height: 6),
                   Text(
                     quote.text,

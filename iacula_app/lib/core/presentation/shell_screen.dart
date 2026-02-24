@@ -39,13 +39,15 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
         inactiveColor: const Color(0xFF6E6E73),
         onTap: (index) async {
           if (_premiumIndexes.contains(index)) {
-            final status = ref.read(premiumStatusProvider).valueOrNull;
-            if (status?.isPremium != true) {
-              final feature = index == 1
-                  ? PremiumFeature.meditation
-                  : PremiumFeature.planOfLife;
-              PremiumGate.showModal(context, feature: feature);
-              return;
+            if (!PremiumGate.debugPremiumBypass) {
+              final status = ref.read(premiumStatusProvider).valueOrNull;
+              if (status?.isPremium != true) {
+                final feature = index == 1
+                    ? PremiumFeature.meditation
+                    : PremiumFeature.planOfLife;
+                PremiumGate.showModal(context, feature: feature);
+                return;
+              }
             }
           }
 

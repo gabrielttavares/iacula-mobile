@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,6 +8,9 @@ import 'package:iacula_app/features/premium/domain/entities/premium_status.dart'
 import 'package:iacula_app/features/premium/presentation/premium_gate.dart';
 
 void main() {
+  setUp(() => PremiumGate.debugPremiumBypass = false);
+  addTearDown(() => PremiumGate.debugPremiumBypass = kDebugMode);
+
   testWidgets('shows locked fallback when user is free', (tester) async {
     await tester.pumpWidget(
       ProviderScope(

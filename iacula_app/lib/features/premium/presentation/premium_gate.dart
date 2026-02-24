@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
@@ -16,6 +17,8 @@ class PremiumGate extends ConsumerWidget {
     super.key,
   });
 
+  static bool debugPremiumBypass = kDebugMode;
+
   final PremiumFeature feature;
   final Widget child;
   final Widget? lockedFallback;
@@ -26,7 +29,7 @@ class PremiumGate extends ConsumerWidget {
 
     return status.when(
       data: (value) {
-        if (!_isPremiumFeature(feature) || value.isPremium) {
+        if (debugPremiumBypass || !_isPremiumFeature(feature) || value.isPremium) {
           return child;
         }
 
@@ -52,6 +55,7 @@ class PremiumGate extends ConsumerWidget {
     BuildContext context, {
     required PremiumFeature feature,
   }) {
+    if (debugPremiumBypass) return;
     showCupertinoModalPopup<void>(
       context: context,
       builder: (context) => _PremiumGateModal(feature: feature),
