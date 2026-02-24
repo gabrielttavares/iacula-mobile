@@ -31,4 +31,4 @@ create policy "Users can update own premium"
 drop trigger if exists user_premium_set_updated_at on public.user_premium;
 create trigger user_premium_set_updated_at
 before update on public.user_premium
-for each row execute function public.set_updated_at();
+for each row execute function public.set_updated_at_now();

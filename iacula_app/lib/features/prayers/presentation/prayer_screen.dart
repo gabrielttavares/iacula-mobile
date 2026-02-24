@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+import '../../../core/presentation/widgets/iacula_resolved_image.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/prayer.dart';
 
@@ -16,10 +17,10 @@ class PrayerScreen extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           if (prayer.imagePath != null)
-            Image.asset(
-              prayer.imagePath!,
+            IaculaResolvedImage(
+              source: prayer.imagePath!,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) =>
+              errorBuilder: (context, error) =>
                   const SizedBox.shrink(),
             ),
           DecoratedBox(

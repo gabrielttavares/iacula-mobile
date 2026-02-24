@@ -10,18 +10,24 @@ import '../../features/auth/infrastructure/repositories/in_memory_auth_repositor
 import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
 import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/remote_liturgical_season_service.dart';
+import '../../features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
+import '../../features/notifications/infrastructure/repositories/supabase_last_delivered_card_repository.dart';
 import '../../features/plan_of_life/application/use_cases/seed_default_items_use_case.dart';
 import '../../features/premium/domain/repositories/premium_repository.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/premium/infrastructure/supabase_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
+import '../../features/quotes/domain/repositories/quote_indices_repository.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_quote_indices_repository.dart';
+import '../../features/quotes/infrastructure/repositories/supabase_quote_indices_repository.dart';
+import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../features/settings/infrastructure/repositories/sqlite_settings_repository.dart';
+import '../../features/settings/infrastructure/repositories/supabase_settings_repository.dart';
 import '../../features/spiritual_data/domain/entities/spiritual_entry.dart';
 import '../../features/spiritual_data/infrastructure/repositories/isar_spiritual_entry_repositories.dart';
 import '../../features/spiritual_data/infrastructure/storage/spiritual_data_encryption_key_provider.dart';
@@ -50,6 +56,10 @@ final class AppBootstrap {
     final settingsRepo = SqliteSettingsRepository(db);
     final indicesRepo = SqliteQuoteIndicesRepository(db);
     final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
+    SettingsRepository effectiveSettingsRepo = settingsRepo;
+    QuoteIndicesRepository effectiveQuoteIndicesRepo = indicesRepo;
+    LastDeliveredCardRepository effectiveLastDeliveredCardRepo =
+        lastDeliveredCardRepo;
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
     final localPremiumRepo = IsarPremiumRepository(store: isarStore);
     final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(isarStore);
@@ -129,6 +139,26 @@ final class AppBootstrap {
           authRepository: authRepository,
           remoteGateway: SupabasePremiumGateway(supabaseClient),
         );
+        effectiveSettingsRepo = SyncedSettingsRepository(
+          localRepository: settingsRepo,
+          authRepository: authRepository,
+          remoteGateway: SupabaseSettingsGateway(supabaseClient),
+        );
+        effectiveQuoteIndicesRepo = SyncedQuoteIndicesRepository(
+          localRepository: indicesRepo,
+          authRepository: authRepository,
+          remoteGateway: SupabaseQuoteIndicesGateway(supabaseClient),
+        );
+        effectiveLastDeliveredCardRepo = SyncedLastDeliveredCardRepository(
+          localRepository: lastDeliveredCardRepo,
+          authRepository: authRepository,
+          remoteGateway: SupabaseLastDeliveredCardGateway(supabaseClient),
+        );
+        await _bootstrapUserLocalStateSync(
+          settingsRepository: effectiveSettingsRepo,
+          quoteIndicesRepository: effectiveQuoteIndicesRepo,
+          lastDeliveredCardRepository: effectiveLastDeliveredCardRepo,
+        );
 
         final gateway = SupabaseSpiritualSyncGateway(supabaseClient);
 
@@ -180,16 +210,19 @@ final class AppBootstrap {
         );
         authRepository = InMemoryAuthRepository();
         premiumRepository = localPremiumRepo;
+        effectiveSettingsRepo = settingsRepo;
+        effectiveQuoteIndicesRepo = indicesRepo;
+        effectiveLastDeliveredCardRepo = lastDeliveredCardRepo;
         syncOrchestrator = const _BootstrapNoopSyncOrchestrator();
       }
     }
 
     final overrides = <Override>[
       appEnvProvider.overrideWithValue(env),
-      settingsRepositoryProvider.overrideWithValue(settingsRepo),
-      quoteIndicesRepositoryProvider.overrideWithValue(indicesRepo),
+      settingsRepositoryProvider.overrideWithValue(effectiveSettingsRepo),
+      quoteIndicesRepositoryProvider.overrideWithValue(effectiveQuoteIndicesRepo),
       lastDeliveredCardRepositoryProvider.overrideWithValue(
-        lastDeliveredCardRepo,
+        effectiveLastDeliveredCardRepo,
       ),
       mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
       premiumRepositoryProvider.overrideWithValue(premiumRepository),
@@ -235,6 +268,27 @@ final class AppBootstrap {
     }
 
     await mediaRepo.upsertAll(media);
+  }
+
+  static Future<void> _bootstrapUserLocalStateSync({
+    required SettingsRepository settingsRepository,
+    required QuoteIndicesRepository quoteIndicesRepository,
+    required LastDeliveredCardRepository lastDeliveredCardRepository,
+  }) async {
+    final now = DateTime.now();
+
+    final settings = await settingsRepository.load();
+    await settingsRepository.save(settings);
+
+    final quoteIndices = await quoteIndicesRepository.load(
+      dayOfWeek: now.weekday,
+    );
+    await quoteIndicesRepository.save(quoteIndices);
+
+    final card = await lastDeliveredCardRepository.load();
+    if (card != null) {
+      await lastDeliveredCardRepository.save(card);
+    }
   }
 }
 

@@ -90,13 +90,26 @@ final class DefaultSyncOrchestrator implements SyncOrchestrator {
     final now = _now().toUtc();
 
     try {
-      final since = await _syncStateRepository.getLastPullAt(adapter.module);
+      final dirtyEntries = await adapter.localRepository.listDirty();
+      final pushed = await adapter.remoteRepository.pushChanges(
+        localChanges: dirtyEntries,
+        userId: userId,
+      );
 
-      final localBeforePull = await adapter.localRepository.listLocal(
+      for (final item in pushed) {
+        await adapter.localRepository.saveLocal(
+          item.copyWith(userId: userId, isDirty: false, lastSyncedAt: now),
+        );
+      }
+
+      await _syncStateRepository.setLastPushAt(adapter.module, now);
+
+      final since = await _syncStateRepository.getLastPullAt(adapter.module);
+      final localAfterPush = await adapter.localRepository.listLocal(
         includeDeleted: true,
       );
       final localById = <String, SpiritualEntry>{
-        for (final entry in localBeforePull) entry.id: entry,
+        for (final entry in localAfterPush) entry.id: entry,
       };
 
       final remoteChanges = await adapter.remoteRepository.pullChanges(
@@ -122,20 +135,6 @@ final class DefaultSyncOrchestrator implements SyncOrchestrator {
       }
 
       await _syncStateRepository.setLastPullAt(adapter.module, now);
-
-      final dirtyEntries = await adapter.localRepository.listDirty();
-      final pushed = await adapter.remoteRepository.pushChanges(
-        localChanges: dirtyEntries,
-        userId: userId,
-      );
-
-      for (final item in pushed) {
-        await adapter.localRepository.saveLocal(
-          item.copyWith(userId: userId, isDirty: false, lastSyncedAt: now),
-        );
-      }
-
-      await _syncStateRepository.setLastPushAt(adapter.module, now);
       await _syncStateRepository.setLastError(adapter.module, null);
     } catch (error) {
       await _syncStateRepository.setLastError(adapter.module, error.toString());

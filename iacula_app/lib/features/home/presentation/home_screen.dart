@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/presentation/widgets/iacula_resolved_image.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -263,10 +264,10 @@ class _PromotionalBanner extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             if (quote.imagePath != null)
-              Image.asset(
-                quote.imagePath!,
+              IaculaResolvedImage(
+                source: quote.imagePath!,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const DecoratedBox(
+                errorBuilder: (_, __) => const DecoratedBox(
                   decoration: BoxDecoration(color: Color(0xFF3D3125)),
                 ),
               )
