@@ -152,7 +152,7 @@ class _HomeHeader extends StatelessWidget {
           ],
         ),
         const SizedBox(height: IaculaSpacing.sm),
-        const IaculaLargeTitle('Olá, Pedro!'),
+        const IaculaLargeTitle('Paz e bem, Pedro!'),
       ],
     );
   }
@@ -314,7 +314,7 @@ class _PromotionalBanner extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     onPressed: onOpenPremium,
                     child: const Text(
-                      'Desbloquear',
+                      'Conhecer Premium',
                       style: TextStyle(
                         color: CupertinoColors.white,
                         fontWeight: FontWeight.w600,
@@ -359,15 +359,15 @@ class _HorizontalHighlights extends StatelessWidget {
           const SizedBox(width: IaculaSpacing.sm),
           _HighlightCard(
             width: width,
-            title: 'Coleção de Orações',
-            subtitle: 'Orações para manhã, tarde e noite',
+            title: 'Orações do dia a dia',
+            subtitle: 'Orações para manhã, tarde e noite.',
             onTap: onOpenPrayers,
           ),
           const SizedBox(width: IaculaSpacing.sm),
           _HighlightCard(
             width: width,
-            title: 'Rosário guiado',
-            subtitle: 'Disponível no Premium',
+            title: 'Rosário no app',
+            subtitle: 'Disponível no Premium.',
             onTap: onOpenPremium,
           ),
         ],
@@ -417,9 +417,9 @@ class _DailyPrayerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const items = [
-      ('Oferecimento do dia', '2 min'),
+      ('Oferecimento da manhã', '2 min'),
       ('Angelus', '3 min'),
-      ('Exame de consciência', '5 min'),
+      ('Exame do dia', '5 min'),
     ];
 
     return Column(
@@ -449,9 +449,9 @@ class _ThematicPrayerRail extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width * 0.7;
     const cards = [
-      ('Família', 'Unidade e caridade no lar'),
-      ('Trabalho', 'Discernimento e constância'),
-      ('Enfermidade', 'Consolo e esperança'),
+      ('Família', 'Unidade, perdão e caridade no lar.'),
+      ('Trabalho', 'Discernimento, humildade e constância.'),
+      ('Enfermidade', 'Consolo, esperança e fortaleza.'),
     ];
 
     return SizedBox(
@@ -489,9 +489,9 @@ class _SaintPrayerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const items = [
-      ('São José', 'Proteção da família', 'SJ'),
-      ('Santa Teresinha', 'Pequena via de amor', 'ST'),
-      ('São Bento', 'Libertação do mal', 'SB'),
+      ('São José', 'Intercessão pela família', 'SJ'),
+      ('Santa Teresinha', 'Pequena via de amor e confiança', 'ST'),
+      ('São Bento', 'Firmeza espiritual e proteção', 'SB'),
     ];
 
     return Column(

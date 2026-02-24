@@ -32,13 +32,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 const _BrandMark(),
                 const SizedBox(height: 56),
                 const Text(
-                  'Uma rotina espiritual\nguiada todos os dias',
+                  'Presença de Deus\nno cotidiano',
                   textAlign: TextAlign.center,
                   style: IaculaText.largeTitle,
                 ),
                 const SizedBox(height: IaculaSpacing.xs),
                 const Text(
-                  'Orações, liturgia e plano de vida com foco e simplicidade.',
+                  'Jaculatórias, liturgia e plano de vida para rezar no ritmo do seu dia.',
                   textAlign: TextAlign.center,
                   style: IaculaText.secondary,
                 ),
@@ -49,7 +49,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: _FeatureCard(
                         icon: CupertinoIcons.book,
                         title: 'Liturgia diária',
-                        subtitle: 'Conteúdo organizado por dia.',
+                        subtitle: 'Acompanhe as orações de cada dia.',
                       ),
                     ),
                     SizedBox(width: IaculaSpacing.sm),
@@ -57,19 +57,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: _FeatureCard(
                         icon: CupertinoIcons.check_mark_circled,
                         title: 'Plano de vida',
-                        subtitle: 'Acompanhe sua constância.',
+                        subtitle: 'Cultive constância com pequenos passos.',
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: IaculaSpacing.xl),
                 IaculaPrimaryPillButton(
-                  label: _saving ? 'Entrando...' : 'Entre com sua conta',
+                  label: _saving ? 'Entrando...' : 'Começar com sua conta',
                   onPressed: _saving ? null : _completeOnboarding,
                 ),
                 const SizedBox(height: IaculaSpacing.sm),
                 IaculaSecondaryPillButton(
-                  label: 'Continuar sem conta',
+                  label: 'Começar sem conta',
                   onPressed: _saving
                       ? null
                       : () => Navigator.of(context).pushReplacement(
@@ -80,7 +80,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 const SizedBox(height: IaculaSpacing.md),
                 const Text(
-                  'Iacula • tradição católica',
+                  'Iacula • presença de Deus no cotidiano',
                   textAlign: TextAlign.center,
                   style: IaculaText.secondary,
                 ),

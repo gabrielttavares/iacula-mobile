@@ -116,9 +116,9 @@ void main() {
     await tester.tap(find.text('Calendário'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Selecionar data'), findsOneWidget);
+    expect(find.text('Escolha a data'), findsOneWidget);
     Navigator.of(
-      tester.element(find.text('Selecionar data')),
+      tester.element(find.text('Escolha a data')),
     ).pop(DateTime(2026, 2, 23));
     await tester.pumpAndSettle();
 
@@ -147,9 +147,9 @@ void main() {
     await tester.tap(find.text('Calendário'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Selecionar data'), findsOneWidget);
+    expect(find.text('Escolha a data'), findsOneWidget);
     Navigator.of(
-      tester.element(find.text('Selecionar data')),
+      tester.element(find.text('Escolha a data')),
     ).pop(DateTime(2026, 2, 25));
     await tester.pumpAndSettle();
 

@@ -51,7 +51,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
             if (days.isEmpty) {
               return const Center(
                 child: Text(
-                  'Liturgia indisponível no momento.',
+                  'A liturgia não está disponível agora.',
                   style: IaculaText.secondary,
                 ),
               );
@@ -190,7 +190,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
           },
           error: (error, _) => Center(
             child: Text(
-              'Erro ao carregar liturgia: $error',
+              'Não foi possível carregar a liturgia: $error',
               style: IaculaText.secondary,
             ),
           ),
@@ -288,7 +288,10 @@ class _SegmentedContent extends StatelessWidget {
             const IaculaSectionHeader(title: 'Leituras'),
             const SizedBox(height: IaculaSpacing.sm),
             if (day.readings.isEmpty)
-              const _Line(label: 'Leituras', text: 'Sem leituras disponíveis.')
+              const _Line(
+                label: 'Leituras',
+                text: 'Não há leituras disponíveis.',
+              )
             else
               for (final reading in day.readings) ...[
                 Text(reading.title, style: IaculaText.cardTitle),
@@ -318,7 +321,7 @@ class _SegmentedContent extends StatelessWidget {
             if (!hasAntiphons)
               const _Line(
                 label: 'Antífonas',
-                text: 'Sem antífonas disponíveis.',
+                text: 'Não há antífonas disponíveis.',
               )
             else ...[
               if (day.antiphons.entry != null)
@@ -406,7 +409,7 @@ class _CalendarModalState extends State<_CalendarModal> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                'Selecionar data',
+                'Escolha a data',
                 style: IaculaText.cardTitle,
                 textAlign: TextAlign.center,
               ),
@@ -511,7 +514,7 @@ class _CalendarModalState extends State<_CalendarModal> {
               CupertinoButton.filled(
                 borderRadius: BorderRadius.circular(26),
                 onPressed: () => Navigator.of(context).pop(_selectedDate),
-                child: const Text('Confirmar'),
+                child: const Text('Aplicar'),
               ),
             ],
           ),

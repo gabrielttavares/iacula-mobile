@@ -29,7 +29,9 @@ class PremiumGate extends ConsumerWidget {
 
     return status.when(
       data: (value) {
-        if (debugPremiumBypass || !_isPremiumFeature(feature) || value.isPremium) {
+        if (debugPremiumBypass ||
+            !_isPremiumFeature(feature) ||
+            value.isPremium) {
           return child;
         }
 
@@ -84,19 +86,19 @@ class _LockedFallback extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               const Text(
-                'Funcionalidade Premium',
+                'Recurso Premium',
                 textAlign: TextAlign.center,
                 style: IaculaText.sectionTitle,
               ),
               const SizedBox(height: 12),
               Text(
-                '${_label(feature)} está disponível após o pagamento único de R\$ 39,90.',
+                '${_label(feature)} está disponível no acesso Premium vitalício por R\$ 39,90.',
                 textAlign: TextAlign.center,
                 style: IaculaText.secondary,
               ),
               const SizedBox(height: 24),
               IaculaPrimaryPillButton(
-                label: 'Desbloquear Agora',
+                label: 'Conhecer Premium',
                 onPressed: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(builder: (_) => const PaywallScreen()),
@@ -113,7 +115,7 @@ class _LockedFallback extends StatelessWidget {
   static String _label(PremiumFeature value) {
     return switch (value) {
       PremiumFeature.meditation => 'A Meditação',
-      PremiumFeature.planOfLife => 'O Plano de Vida',
+      PremiumFeature.planOfLife => 'O Plano de vida',
       PremiumFeature.settings => 'As Configurações',
       PremiumFeature.rosary => 'O Rosário',
       PremiumFeature.novenas => 'As Novenas',
@@ -149,19 +151,19 @@ class _PremiumGateModal extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               const Text(
-                'Funcionalidade Premium',
+                'Recurso Premium',
                 textAlign: TextAlign.center,
                 style: IaculaText.sectionTitle,
               ),
               const SizedBox(height: 12),
               Text(
-                '${_LockedFallback._label(feature)} está disponível após o pagamento único de R\$ 39,90.',
+                '${_LockedFallback._label(feature)} está disponível no acesso Premium vitalício por R\$ 39,90.',
                 textAlign: TextAlign.center,
                 style: IaculaText.secondary,
               ),
               const SizedBox(height: 24),
               IaculaPrimaryPillButton(
-                label: 'Desbloquear Agora',
+                label: 'Conhecer Premium',
                 onPressed: () {
                   Navigator.pop(context);
                   Navigator.of(context).push(
@@ -171,7 +173,7 @@ class _PremiumGateModal extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               IaculaSecondaryPillButton(
-                label: 'Mais tarde',
+                label: 'Agora não',
                 onPressed: () => Navigator.pop(context),
               ),
             ],

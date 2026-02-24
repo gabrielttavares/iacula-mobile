@@ -9,7 +9,7 @@ import 'package:iacula_app/features/premium/presentation/premium_gate.dart';
 
 void main() {
   setUp(() => PremiumGate.debugPremiumBypass = false);
-  addTearDown(() => PremiumGate.debugPremiumBypass = kDebugMode);
+  tearDown(() => PremiumGate.debugPremiumBypass = kDebugMode);
 
   testWidgets('shows locked fallback when user is free', (tester) async {
     await tester.pumpWidget(
