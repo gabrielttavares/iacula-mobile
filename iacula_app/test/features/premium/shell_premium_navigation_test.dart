@@ -59,7 +59,7 @@ final class _FakePurchaseService implements PurchaseService {
 
 void main() {
   setUp(() => PremiumGate.debugPremiumBypass = false);
-  addTearDown(() => PremiumGate.debugPremiumBypass = kDebugMode);
+  tearDown(() => PremiumGate.debugPremiumBypass = kDebugMode);
 
   testWidgets('free user tapping Meditação tab opens premium gate modal', (
     tester,
@@ -90,8 +90,8 @@ void main() {
     await tester.tap(find.text('Meditação'));
     await tester.pump();
 
-    expect(find.text('Funcionalidade Premium'), findsOneWidget);
-    expect(find.text('Desbloquear Agora'), findsOneWidget);
+    expect(find.text('Recurso Premium'), findsOneWidget);
+    expect(find.text('Conhecer Premium'), findsOneWidget);
 
     await purchaseService.dispose();
   });
@@ -128,8 +128,8 @@ void main() {
       await tester.pump();
 
       // Verify premium modal is NOT shown
-      expect(find.text('Funcionalidade Premium'), findsNothing);
-      expect(find.text('Desbloquear Agora'), findsNothing);
+      expect(find.text('Recurso Premium'), findsNothing);
+      expect(find.text('Conhecer Premium'), findsNothing);
 
       // Verify tab bar state updated to profile index (4)
       final tabBar = tester.widget<CupertinoTabBar>(

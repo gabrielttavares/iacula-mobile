@@ -52,8 +52,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Entrar para comprar'), findsOneWidget);
-      expect(find.text('Comprar por R\$ 39,90'), findsNothing);
+      expect(find.text('Entrar para continuar'), findsOneWidget);
+      expect(find.text('Desbloquear por R\$ 39,90'), findsNothing);
       expect(find.text('Restaurar compras'), findsNothing);
     });
 
@@ -76,9 +76,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Comprar por R\$ 39,90'), findsOneWidget);
+      expect(find.text('Desbloquear por R\$ 39,90'), findsOneWidget);
       expect(find.text('Restaurar compras'), findsOneWidget);
-      expect(find.text('Entrar para comprar'), findsNothing);
+      expect(find.text('Entrar para continuar'), findsNothing);
     });
   });
 }

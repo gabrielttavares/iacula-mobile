@@ -118,7 +118,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                   : state.items.isEmpty
                   ? const Center(
                       child: Text(
-                        'Nenhum item para este dia.',
+                        'Ainda não há itens para este dia.',
                         style: IaculaText.secondary,
                       ),
                     )

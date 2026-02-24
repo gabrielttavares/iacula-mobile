@@ -42,9 +42,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(OnboardingScreen), findsOneWidget);
-    expect(find.text('Entre com sua conta'), findsOneWidget);
+    expect(find.text('Começar com sua conta'), findsOneWidget);
 
-    await tester.tap(find.text('Entre com sua conta'));
+    await tester.tap(find.text('Começar com sua conta'));
     await tester.pumpAndSettle();
 
     expect(repo.value.onboardingCompleted, isTrue);

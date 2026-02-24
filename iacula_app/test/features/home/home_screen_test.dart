@@ -8,6 +8,7 @@ import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
+import 'package:iacula_app/features/premium/presentation/premium_gate.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
 
@@ -96,6 +97,8 @@ _FakeLastDeliveredCardRepository _defaultLastCardRepo() =>
     );
 
 void main() {
+  setUp(() => PremiumGate.debugPremiumBypass = false);
+
   testWidgets('home follows required section order', (tester) async {
     await tester.pumpWidget(
       _buildApp(
@@ -114,7 +117,7 @@ void main() {
       expect(finder, findsOneWidget);
     }
 
-    expect(find.text('Olá, Pedro!'), findsOneWidget);
+    expect(find.text('Paz e bem, Pedro!'), findsOneWidget);
     await reveal('Destaques');
     await reveal('Orações diárias');
     await reveal('Orações temáticas');
@@ -151,7 +154,7 @@ void main() {
     await tester.tap(find.text('Premium'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Funcionalidade Premium'), findsOneWidget);
-    expect(find.text('Desbloquear Agora'), findsOneWidget);
+    expect(find.text('Recurso Premium'), findsOneWidget);
+    expect(find.text('Conhecer Premium'), findsWidgets);
   });
 }

@@ -84,29 +84,26 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                const Text(
-                  'Desbloqueie o Premium',
-                  style: IaculaText.sectionTitle,
-                ),
+                const Text('Iacula Premium', style: IaculaText.sectionTitle),
                 const SizedBox(height: 10),
                 const Text(
-                  'Acesso vitalicio por R\$ 39,90.',
+                  'Acesso vitalício por R\$ 39,90.',
                   style: IaculaText.secondary,
                 ),
                 const SizedBox(height: 20),
-                _featureTile(CupertinoIcons.play_circle, 'Meditacao diaria'),
+                _featureTile(CupertinoIcons.play_circle, 'Meditação diária'),
                 _featureTile(
                   CupertinoIcons.check_mark_circled,
-                  'Plano de Vida',
+                  'Plano de vida',
                 ),
                 _featureTile(
                   CupertinoIcons.slider_horizontal_3,
-                  'Configuracoes premium',
+                  'Recursos avançados',
                 ),
                 const SizedBox(height: 20),
                 if (authUser == null) ...[
                   IaculaPrimaryPillButton(
-                    label: isLoading ? 'Processando...' : 'Entrar para comprar',
+                    label: isLoading ? 'Aguarde...' : 'Entrar para continuar',
                     onPressed: isLoading
                         ? null
                         : () async {
@@ -120,8 +117,8 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 ] else ...[
                   IaculaPrimaryPillButton(
                     label: isLoading
-                        ? 'Processando...'
-                        : 'Comprar por R\$ 39,90',
+                        ? 'Aguarde...'
+                        : 'Desbloquear por R\$ 39,90',
                     onPressed: isLoading
                         ? null
                         : () async {

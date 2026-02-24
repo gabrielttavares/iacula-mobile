@@ -10,6 +10,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(CupertinoApp), findsOneWidget);
-    expect(find.text('Entre com sua conta'), findsOneWidget);
+    expect(find.text('Começar com sua conta'), findsOneWidget);
   });
 }

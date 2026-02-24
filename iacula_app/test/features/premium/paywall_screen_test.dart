@@ -90,11 +90,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Shows login CTA, not purchase CTA
-      expect(find.text('Entrar para comprar'), findsOneWidget);
-      expect(find.text('Comprar por R\$ 39,90'), findsNothing);
+      expect(find.text('Entrar para continuar'), findsOneWidget);
+      expect(find.text('Desbloquear por R\$ 39,90'), findsNothing);
 
       // Tap login CTA — should not dispatch purchase
-      await tester.tap(find.text('Entrar para comprar'));
+      await tester.tap(find.text('Entrar para continuar'));
       await tester.pumpAndSettle();
 
       // No snackbar with old error message
@@ -119,11 +119,11 @@ void main() {
     await tester.pumpAndSettle();
 
     // Shows purchase CTA
-    expect(find.text('Comprar por R\$ 39,90'), findsOneWidget);
-    expect(find.text('Entrar para comprar'), findsNothing);
+    expect(find.text('Desbloquear por R\$ 39,90'), findsOneWidget);
+    expect(find.text('Entrar para continuar'), findsNothing);
 
     // Tap purchase CTA
-    await tester.tap(find.text('Comprar por R\$ 39,90'));
+    await tester.tap(find.text('Desbloquear por R\$ 39,90'));
     await tester.pumpAndSettle();
 
     // Purchase service was called
@@ -140,7 +140,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Tap login CTA to set pending intent and trigger sign-in
-    await tester.tap(find.text('Entrar para comprar'));
+    await tester.tap(find.text('Entrar para continuar'));
     await tester.pumpAndSettle();
 
     // signInWithGoogle sets user and emits on authStateChanges,

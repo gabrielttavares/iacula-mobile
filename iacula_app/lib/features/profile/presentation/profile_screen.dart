@@ -22,7 +22,7 @@ class ProfileScreen extends StatelessWidget {
             const Center(child: _Avatar()),
             const SizedBox(height: IaculaSpacing.xl),
             _Section(
-              title: 'Dados da conta',
+              title: 'Conta',
               rows: const [
                 _InfoRow(label: 'Nome', value: 'Pedro Gabriel'),
                 _InfoRow(label: 'E-mail', value: 'pedro@iacula.app'),
@@ -31,10 +31,10 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: IaculaSpacing.lg),
             _Section(
-              title: 'Segurança',
+              title: 'Privacidade e segurança',
               rows: const [
-                _InfoRow(label: 'Conta', value: 'Conectada com Google'),
-                _InfoRow(label: 'Backup', value: 'Sincronização ativada'),
+                _InfoRow(label: 'Conta', value: 'Conectada'),
+                _InfoRow(label: 'Backup', value: 'Sincronização ativa'),
               ],
             ),
             const SizedBox(height: IaculaSpacing.lg),

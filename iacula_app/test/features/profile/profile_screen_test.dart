@@ -14,8 +14,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Perfil'), findsOneWidget);
-    expect(find.text('Dados da conta'), findsOneWidget);
-    expect(find.text('Segurança'), findsOneWidget);
+    expect(find.text('Conta'), findsWidgets);
+    expect(find.text('Privacidade e segurança'), findsOneWidget);
     final settingsRow = find.textContaining('Configura');
     for (var i = 0; i < 10 && settingsRow.evaluate().isEmpty; i++) {
       await tester.drag(find.byType(ListView), const Offset(0, -220));
