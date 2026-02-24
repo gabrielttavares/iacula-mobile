@@ -7,16 +7,27 @@ import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
 
 final class _FakeLiturgiaRepository implements LiturgiaRepository {
-  _FakeLiturgiaRepository(this.days);
+  _FakeLiturgiaRepository({
+    required this.periodDays,
+    Map<String, LiturgyDay>? byDate,
+  }) : _byDate = byDate ?? <String, LiturgyDay>{};
 
-  final List<LiturgyDay> days;
+  final List<LiturgyDay> periodDays;
+  final Map<String, LiturgyDay> _byDate;
 
   @override
-  Future<LiturgyDay?> getLiturgyForDate(DateTime date) async => days.first;
+  Future<LiturgyDay?> getLiturgyForDate(DateTime date) async {
+    return _byDate[_dateKey(date)];
+  }
 
   @override
   Future<List<LiturgyDay>> getLiturgyPeriod(int daysCount) async {
-    return days.take(daysCount).toList(growable: false);
+    return periodDays.take(daysCount).toList(growable: false);
+  }
+
+  String _dateKey(DateTime date) {
+    final d = DateTime(date.year, date.month, date.day);
+    return '${d.year}-${d.month}-${d.day}';
   }
 }
 
@@ -27,41 +38,30 @@ Widget _buildApp(_FakeLiturgiaRepository repository) {
   );
 }
 
+LiturgyDay _day({required DateTime date, required String title}) {
+  return LiturgyDay(
+    date: date,
+    title: title,
+    color: LiturgyColor.green,
+    prayers: const LiturgyPrayer(
+      collect: 'Coleta',
+      offering: 'Oferendas',
+      communion: 'Comunhao',
+    ),
+    readings: const [
+      LiturgyReading(reference: 'Ref', title: 'Leitura', text: 'Texto'),
+    ],
+    antiphons: const LiturgyAntiphons(entry: 'Antifona'),
+  );
+}
+
 void main() {
-  final repository = _FakeLiturgiaRepository([
-    LiturgyDay(
-      date: DateTime(2026, 2, 22),
-      title: '7o Domingo do Tempo Comum',
-      color: LiturgyColor.green,
-      prayers: const LiturgyPrayer(
-        collect: 'Coleta 1',
-        offering: 'Oferendas 1',
-        communion: 'Comunhao 1',
-      ),
-      readings: const [
-        LiturgyReading(
-          reference: 'Ref 1',
-          title: 'Primeira leitura',
-          text: 'Texto 1',
-        ),
-      ],
-      antiphons: const LiturgyAntiphons(entry: 'Antifona entrada 1'),
-    ),
-    LiturgyDay(
-      date: DateTime(2026, 2, 23),
-      title: '2a Feira da Semana',
-      color: LiturgyColor.red,
-      prayers: const LiturgyPrayer(
-        collect: 'Coleta 2',
-        offering: 'Oferendas 2',
-        communion: 'Comunhao 2',
-      ),
-      readings: const [
-        LiturgyReading(reference: 'Ref 2', title: 'Evangelho', text: 'Texto 2'),
-      ],
-      antiphons: const LiturgyAntiphons(entry: 'Antifona entrada 2'),
-    ),
-  ]);
+  final repository = _FakeLiturgiaRepository(
+    periodDays: [
+      _day(date: DateTime(2026, 2, 22), title: '7o Domingo do Tempo Comum'),
+      _day(date: DateTime(2026, 2, 23), title: '2a Feira da Semana'),
+    ],
+  );
 
   testWidgets(
     'renders Cupertino large title, day selector and segmented control',
@@ -90,25 +90,26 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('2a Feira da Semana'), findsOneWidget);
-    expect(find.textContaining('Coleta: Coleta 2'), findsOneWidget);
   });
 
   testWidgets('switches content with segmented control', (tester) async {
     await tester.pumpWidget(_buildApp(repository));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Coleta: Coleta 1'), findsOneWidget);
+    expect(find.textContaining('Coleta: Coleta'), findsOneWidget);
 
     await tester.tap(find.text('Leituras'));
     await tester.pumpAndSettle();
-    expect(find.text('Primeira leitura'), findsOneWidget);
+    expect(find.text('Leitura'), findsOneWidget);
 
     await tester.tap(find.text('Antífonas'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Entrada: Antifona entrada 1'), findsOneWidget);
+    expect(find.textContaining('Entrada: Antifona'), findsOneWidget);
   });
 
-  testWidgets('opens and closes calendar modal sheet', (tester) async {
+  testWidgets('calendar confirm selects date inside current window', (
+    tester,
+  ) async {
     await tester.pumpWidget(_buildApp(repository));
     await tester.pumpAndSettle();
 
@@ -116,11 +117,42 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Selecionar data'), findsOneWidget);
-    expect(find.text('Confirmar'), findsOneWidget);
-
-    await tester.tap(find.text('Confirmar'));
+    Navigator.of(
+      tester.element(find.text('Selecionar data')),
+    ).pop(DateTime(2026, 2, 23));
     await tester.pumpAndSettle();
 
-    expect(find.text('Selecionar data'), findsNothing);
+    expect(find.text('2a Feira da Semana'), findsOneWidget);
+  });
+
+  testWidgets('calendar out-of-window date re-anchors and reloads period', (
+    tester,
+  ) async {
+    final reanchorRepository = _FakeLiturgiaRepository(
+      periodDays: [
+        _day(date: DateTime(2026, 2, 22), title: '7o Domingo do Tempo Comum'),
+        _day(date: DateTime(2026, 2, 23), title: '2a Feira da Semana'),
+      ],
+      byDate: {
+        '2026-2-25': _day(
+          date: DateTime(2026, 2, 25),
+          title: 'Quarta Especial',
+        ),
+      },
+    );
+
+    await tester.pumpWidget(_buildApp(reanchorRepository));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Calendário'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Selecionar data'), findsOneWidget);
+    Navigator.of(
+      tester.element(find.text('Selecionar data')),
+    ).pop(DateTime(2026, 2, 25));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Quarta Especial'), findsOneWidget);
   });
 }

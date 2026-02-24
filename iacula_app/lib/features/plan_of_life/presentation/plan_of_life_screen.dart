@@ -178,7 +178,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
         itemBuilder: (context, index) {
           final date = dates[index];
-          final isActive = index == 3;
+          final isActive = _sameDate(date, selectedDate);
           final dayName = const [
             'Seg',
             'Ter',
@@ -237,6 +237,10 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
         },
       ),
     );
+  }
+
+  bool _sameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   Widget _buildSection(

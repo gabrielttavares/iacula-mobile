@@ -12,101 +12,85 @@ import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
-import '../../settings/domain/entities/settings.dart';
-import '../../settings/presentation/settings_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dashboard = ref.watch(_dashboardProvider);
+    final quoteAsync = ref.watch(_homeQuoteProvider);
 
     return CupertinoPageScaffold(
       backgroundColor: IaculaColors.background,
       child: SafeArea(
-        child: dashboard.when(
-          data: (data) => Center(
+        child: quoteAsync.when(
+          data: (quote) => Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 460),
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
                   SliverPadding(
-                    padding: const EdgeInsets.all(IaculaSpacing.md),
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const IaculaLargeTitle('Olá, Pedro'),
-                            CupertinoButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () async {
-                                await Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (_) => const SettingsScreen(),
-                                  ),
-                                );
-                                ref.invalidate(_dashboardProvider);
-                              },
-                              child: const Icon(
-                                CupertinoIcons.slider_horizontal_3,
-                                color: IaculaColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
+                        const _HomeHeader(),
                         const SizedBox(height: IaculaSpacing.lg),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              _QuickActionCard(
-                                icon: CupertinoIcons.book,
-                                title: 'Orações',
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    CupertinoPageRoute(
-                                      builder: (_) =>
-                                          const PrayerCollectionsScreen(),
-                                    ),
-                                  );
-                                },
+                        _FeatureGrid(
+                          onOpenPrayers: () {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const PrayerCollectionsScreen(),
                               ),
-                              const SizedBox(width: IaculaSpacing.sm),
-                              _QuickActionCard(
-                                icon: CupertinoIcons.calendar,
-                                title: 'Novenas',
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    CupertinoPageRoute(
-                                      builder: (_) =>
-                                          const _NovenasPlaceholderScreen(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: IaculaSpacing.sm),
-                              _QuickActionCard(
-                                icon: CupertinoIcons.doc_text,
-                                title: 'Liturgia Diária',
-                                onTap: () => Navigator.of(
-                                  context,
-                                ).pushNamed(LiturgiaScreen.routeName),
-                              ),
-                            ],
+                            );
+                          },
+                          onOpenLiturgy: () => Navigator.of(
+                            context,
+                          ).pushNamed(LiturgiaScreen.routeName),
+                          onOpenPremium: () => PremiumGate.showModal(
+                            context,
+                            feature: PremiumFeature.rosary,
                           ),
                         ),
                         const SizedBox(height: IaculaSpacing.lg),
-                        SizedBox(
-                          height: 320,
-                          child: _QuoteCard(quote: data.quote),
+                        _PromotionalBanner(
+                          quote: quote,
+                          onOpenPremium: () => PremiumGate.showModal(
+                            context,
+                            feature: PremiumFeature.rosary,
+                          ),
                         ),
-                        const SizedBox(height: IaculaSpacing.lg),
-                        const IaculaSectionHeader(title: 'Premium'),
+                        const SizedBox(height: IaculaSpacing.xl),
+                        const IaculaSectionHeader(title: 'Destaques'),
                         const SizedBox(height: IaculaSpacing.sm),
-                        _PremiumSection(),
+                        _HorizontalHighlights(
+                          onOpenPrayers: () {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const PrayerCollectionsScreen(),
+                              ),
+                            );
+                          },
+                          onOpenLiturgy: () => Navigator.of(
+                            context,
+                          ).pushNamed(LiturgiaScreen.routeName),
+                          onOpenPremium: () => PremiumGate.showModal(
+                            context,
+                            feature: PremiumFeature.rosary,
+                          ),
+                        ),
+                        const SizedBox(height: IaculaSpacing.xl),
+                        const IaculaSectionHeader(title: 'Orações diárias'),
+                        const SizedBox(height: IaculaSpacing.sm),
+                        const _DailyPrayerList(),
+                        const SizedBox(height: IaculaSpacing.xl),
+                        const IaculaSectionHeader(title: 'Orações temáticas'),
+                        const SizedBox(height: IaculaSpacing.sm),
+                        const _ThematicPrayerRail(),
+                        const SizedBox(height: IaculaSpacing.xl),
+                        const IaculaSectionHeader(title: 'Orações de Santos'),
+                        const SizedBox(height: IaculaSpacing.sm),
+                        const _SaintPrayerList(),
                       ]),
                     ),
                   ),
@@ -123,55 +107,158 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _QuickActionCard extends StatelessWidget {
-  const _QuickActionCard({required this.icon, required this.title, this.onTap});
+class _HomeHeader extends StatelessWidget {
+  const _HomeHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Row(
+              children: [
+                Icon(CupertinoIcons.circle_grid_3x3_fill, size: 18),
+                SizedBox(width: 8),
+                Text('Iacula', style: IaculaText.cardTitle),
+              ],
+            ),
+            Row(
+              children: [
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minSize: 32,
+                  onPressed: () {},
+                  child: const Icon(
+                    CupertinoIcons.bell,
+                    color: IaculaColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minSize: 32,
+                  onPressed: () {},
+                  child: const Icon(
+                    CupertinoIcons.search,
+                    color: IaculaColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: IaculaSpacing.sm),
+        const IaculaLargeTitle('Olá, Pedro!'),
+      ],
+    );
+  }
+}
+
+class _FeatureGrid extends StatelessWidget {
+  const _FeatureGrid({
+    required this.onOpenPrayers,
+    required this.onOpenLiturgy,
+    required this.onOpenPremium,
+  });
+
+  final VoidCallback onOpenPrayers;
+  final VoidCallback onOpenLiturgy;
+  final VoidCallback onOpenPremium;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _SquareFeatureCard(
+            icon: CupertinoIcons.book,
+            label: 'Orações',
+            onTap: onOpenPrayers,
+          ),
+        ),
+        const SizedBox(width: IaculaSpacing.sm),
+        Expanded(
+          child: _SquareFeatureCard(
+            icon: CupertinoIcons.doc_text,
+            label: 'Liturgia',
+            onTap: onOpenLiturgy,
+          ),
+        ),
+        const SizedBox(width: IaculaSpacing.sm),
+        Expanded(
+          child: _SquareFeatureCard(
+            icon: CupertinoIcons.star_fill,
+            label: 'Premium',
+            onTap: onOpenPremium,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SquareFeatureCard extends StatelessWidget {
+  const _SquareFeatureCard({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   final IconData icon;
-  final String title;
-  final VoidCallback? onTap;
+  final String label;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: IaculaSoftCard(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        radius: 16,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 20, color: IaculaColors.primaryButton),
-            const SizedBox(width: 8),
-            Text(title, style: IaculaText.cardTitle),
-          ],
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: IaculaSoftCard(
+          radius: 18,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: IaculaColors.primaryButton),
+              const SizedBox(height: IaculaSpacing.sm),
+              Text(
+                label,
+                style: IaculaText.cardTitle,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _QuoteCard extends StatelessWidget {
-  const _QuoteCard({required this.quote});
+class _PromotionalBanner extends StatelessWidget {
+  const _PromotionalBanner({required this.quote, required this.onOpenPremium});
 
   final Quote quote;
+  final VoidCallback onOpenPremium;
 
   @override
   Widget build(BuildContext context) {
-    final label = quote.feastName ?? _seasonLabel(quote.season.name);
-
     return Container(
+      height: 240,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
+        borderRadius: BorderRadius.circular(IaculaRadius.banner),
+        boxShadow: const [
           BoxShadow(
-            color: CupertinoColors.black.withValues(alpha: 0.08),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
+            color: Color(0x12000000),
+            blurRadius: 10,
+            offset: Offset(0, 3),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(IaculaRadius.banner),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -179,7 +266,7 @@ class _QuoteCard extends StatelessWidget {
               Image.asset(
                 quote.imagePath!,
                 fit: BoxFit.cover,
-                errorBuilder: (ctx, error, stackTrace) => const DecoratedBox(
+                errorBuilder: (_, __, ___) => const DecoratedBox(
                   decoration: BoxDecoration(color: Color(0xFF3D3125)),
                 ),
               )
@@ -193,32 +280,52 @@ class _QuoteCard extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    CupertinoColors.black.withValues(alpha: 0.67),
-                    CupertinoColors.black.withValues(alpha: 0.9),
+                    CupertinoColors.black.withValues(alpha: 0.3),
+                    CupertinoColors.black.withValues(alpha: 0.86),
                   ],
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
+              padding: const EdgeInsets.all(18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        quote.text,
-                        style: IaculaText.secondary.copyWith(
-                          color: const Color(0xFFF8EFE1),
-                          height: 1.65,
-                        ),
-                      ),
+                  const Text(
+                    'Retiro de Oração',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: CupertinoColors.white,
                     ),
                   ),
+                  const SizedBox(height: 6),
                   Text(
-                    label,
-                    style: IaculaText.secondary.copyWith(
-                      color: const Color(0xD8D6BA8E),
+                    quote.text,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFFF6F6F8),
+                      height: 1.5,
+                    ),
+                  ),
+                  const Spacer(),
+                  CupertinoButton(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    minSize: 0,
+                    color: const Color(0x26FFFFFF),
+                    borderRadius: BorderRadius.circular(20),
+                    onPressed: onOpenPremium,
+                    child: const Text(
+                      'Desbloquear',
+                      style: TextStyle(
+                        color: CupertinoColors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
@@ -229,94 +336,111 @@ class _QuoteCard extends StatelessWidget {
       ),
     );
   }
-
-  String _seasonLabel(String season) {
-    switch (season) {
-      case 'advent':
-        return 'tempo do advento';
-      case 'lent':
-        return 'tempo da quaresma';
-      case 'easter':
-        return 'tempo pascal';
-      case 'christmas':
-        return 'tempo do natal';
-      default:
-        return 'tempo comum';
-    }
-  }
 }
 
-class _NovenasPlaceholderScreen extends StatelessWidget {
-  const _NovenasPlaceholderScreen();
+class _HorizontalHighlights extends StatelessWidget {
+  const _HorizontalHighlights({
+    required this.onOpenPrayers,
+    required this.onOpenLiturgy,
+    required this.onOpenPremium,
+  });
+
+  final VoidCallback onOpenPrayers;
+  final VoidCallback onOpenLiturgy;
+  final VoidCallback onOpenPremium;
 
   @override
   Widget build(BuildContext context) {
-    return const CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(middle: Text('Novenas')),
-      child: Center(child: Text('Em breve...')),
+    final width = MediaQuery.of(context).size.width * 0.7;
+    return SizedBox(
+      height: 150,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          _HighlightCard(
+            width: width,
+            title: 'Liturgia diária',
+            subtitle: 'Leituras e orações de hoje',
+            onTap: onOpenLiturgy,
+          ),
+          const SizedBox(width: IaculaSpacing.sm),
+          _HighlightCard(
+            width: width,
+            title: 'Coleção de Orações',
+            subtitle: 'Orações para manhã, tarde e noite',
+            onTap: onOpenPrayers,
+          ),
+          const SizedBox(width: IaculaSpacing.sm),
+          _HighlightCard(
+            width: width,
+            title: 'Rosário guiado',
+            subtitle: 'Disponível no Premium',
+            onTap: onOpenPremium,
+          ),
+        ],
+      ),
     );
   }
 }
 
-class _PremiumCardData {
-  const _PremiumCardData({
-    required this.icon,
+class _HighlightCard extends StatelessWidget {
+  const _HighlightCard({
+    required this.width,
     required this.title,
-    required this.feature,
+    required this.subtitle,
+    required this.onTap,
   });
 
-  final IconData icon;
+  final double width;
   final String title;
-  final PremiumFeature feature;
-}
-
-const _premiumCards = [
-  _PremiumCardData(
-    icon: CupertinoIcons.circle_grid_3x3,
-    title: 'Rosário',
-    feature: PremiumFeature.rosary,
-  ),
-];
-
-class _PremiumSection extends StatelessWidget {
-  const _PremiumSection();
+  final String subtitle;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: width,
+        child: IaculaSoftCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(title, style: IaculaText.cardTitle),
+              const SizedBox(height: 6),
+              Text(subtitle, style: IaculaText.secondary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DailyPrayerList extends StatelessWidget {
+  const _DailyPrayerList();
+
+  @override
+  Widget build(BuildContext context) {
+    const items = [
+      ('Oferecimento do dia', '2 min'),
+      ('Angelus', '3 min'),
+      ('Exame de consciência', '5 min'),
+    ];
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
       children: [
-        for (final card in _premiumCards)
+        for (final item in items)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: GestureDetector(
-              onTap: () =>
-                  PremiumGate.showModal(context, feature: card.feature),
-              child: IaculaSoftCard(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-                radius: 16,
-                child: Row(
-                  children: [
-                    Icon(
-                      card.icon,
-                      size: 20,
-                      color: IaculaColors.primaryButton,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(card.title, style: IaculaText.cardTitle),
-                    ),
-                    const Icon(
-                      CupertinoIcons.lock,
-                      size: 16,
-                      color: IaculaColors.textSecondary,
-                    ),
-                  ],
-                ),
+            padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+            child: IaculaSoftCard(
+              radius: 16,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              child: _PrayerListItem(
+                title: item.$1,
+                subtitle: item.$2,
+                avatarLabel: item.$1[0],
               ),
             ),
           ),
@@ -325,29 +449,145 @@ class _PremiumSection extends StatelessWidget {
   }
 }
 
-final _dashboardProvider = FutureProvider<_DashboardData>((ref) async {
+class _ThematicPrayerRail extends StatelessWidget {
+  const _ThematicPrayerRail();
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width * 0.7;
+    const cards = [
+      ('Família', 'Unidade e caridade no lar'),
+      ('Trabalho', 'Discernimento e constância'),
+      ('Enfermidade', 'Consolo e esperança'),
+    ];
+
+    return SizedBox(
+      height: 132,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: cards.length,
+        separatorBuilder: (_, _) => const SizedBox(width: IaculaSpacing.sm),
+        itemBuilder: (context, index) {
+          final card = cards[index];
+          return SizedBox(
+            width: width,
+            child: IaculaSoftCard(
+              radius: 16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(card.$1, style: IaculaText.cardTitle),
+                  const SizedBox(height: 6),
+                  Text(card.$2, style: IaculaText.secondary),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _SaintPrayerList extends StatelessWidget {
+  const _SaintPrayerList();
+
+  @override
+  Widget build(BuildContext context) {
+    const items = [
+      ('São José', 'Proteção da família', 'SJ'),
+      ('Santa Teresinha', 'Pequena via de amor', 'ST'),
+      ('São Bento', 'Libertação do mal', 'SB'),
+    ];
+
+    return Column(
+      children: [
+        for (final item in items)
+          Padding(
+            padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+            child: IaculaSoftCard(
+              radius: 16,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              child: _PrayerListItem(
+                title: item.$1,
+                subtitle: item.$2,
+                avatarLabel: item.$3,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _PrayerListItem extends StatelessWidget {
+  const _PrayerListItem({
+    required this.title,
+    required this.subtitle,
+    required this.avatarLabel,
+  });
+
+  final String title;
+  final String subtitle;
+  final String avatarLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: const BoxDecoration(
+            color: Color(0xFFE9E9ED),
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            avatarLabel,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              color: IaculaColors.textPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: IaculaText.cardTitle),
+              const SizedBox(height: 2),
+              Text(subtitle, style: IaculaText.secondary),
+            ],
+          ),
+        ),
+        const Icon(
+          CupertinoIcons.bookmark,
+          size: 18,
+          color: IaculaColors.textSecondary,
+        ),
+      ],
+    );
+  }
+}
+
+final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
   final lastDeliveredCardRepo = ref.watch(lastDeliveredCardRepositoryProvider);
   final lastDeliveredCard = await lastDeliveredCardRepo.load();
 
-  Quote quote;
   if (lastDeliveredCard != null) {
-    quote = lastDeliveredCard.toQuote();
-  } else {
-    quote = await ref
-        .watch(getNextQuoteUseCaseProvider)
-        .call(language: settings.language);
-    await lastDeliveredCardRepo.save(
-      LastDeliveredCard.fromQuote(quote, deliveredAt: DateTime.now()),
-    );
+    return lastDeliveredCard.toQuote();
   }
 
-  return _DashboardData(settings: settings, quote: quote);
+  final quote = await ref
+      .watch(getNextQuoteUseCaseProvider)
+      .call(language: settings.language);
+  await lastDeliveredCardRepo.save(
+    LastDeliveredCard.fromQuote(quote, deliveredAt: DateTime.now()),
+  );
+  return quote;
 });
-
-final class _DashboardData {
-  const _DashboardData({required this.settings, required this.quote});
-
-  final Settings settings;
-  final Quote quote;
-}

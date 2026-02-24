@@ -8,9 +8,12 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/daily_liturgy.dart';
 
-final _liturgyPeriodProvider = FutureProvider<List<LiturgyDay>>((ref) {
-  return ref.watch(getLiturgyPeriodUseCaseProvider).call(days: 7);
-});
+final _liturgyPeriodProvider =
+    FutureProvider.family<List<LiturgyDay>, DateTime>((ref, anchorDate) {
+      return ref
+          .watch(getLiturgyPeriodUseCaseProvider)
+          .call(days: 7, anchorDate: anchorDate);
+    });
 
 enum _LiturgySegment { prayers, readings, antiphons }
 
@@ -24,12 +27,21 @@ class LiturgiaScreen extends ConsumerStatefulWidget {
 }
 
 class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
-  int _selectedIndex = 0;
+  late DateTime _selectedDate;
+  late DateTime _anchorDate;
   _LiturgySegment _segment = _LiturgySegment.prayers;
 
   @override
+  void initState() {
+    super.initState();
+    final today = DateTime.now();
+    _selectedDate = DateTime(today.year, today.month, today.day);
+    _anchorDate = _selectedDate;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final asyncDays = ref.watch(_liturgyPeriodProvider);
+    final asyncDays = ref.watch(_liturgyPeriodProvider(_anchorDate));
 
     return CupertinoPageScaffold(
       backgroundColor: IaculaColors.background,
@@ -45,11 +57,12 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
               );
             }
 
-            if (_selectedIndex >= days.length) {
-              _selectedIndex = 0;
+            final selectedIndex = _indexForDate(days, _selectedDate);
+            final effectiveIndex = selectedIndex >= 0 ? selectedIndex : 0;
+            final selected = days[effectiveIndex];
+            if (selectedIndex < 0) {
+              _selectedDate = selected.date;
             }
-
-            final selected = days[_selectedIndex];
             final accent = _accentColor(selected.color);
 
             return Padding(
@@ -63,8 +76,15 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                       const IaculaLargeTitle('Liturgia'),
                       CupertinoButton(
                         padding: EdgeInsets.zero,
-                        onPressed: () =>
-                            _showCalendarSheet(context, selected.date),
+                        onPressed: () async {
+                          final picked = await _showCalendarSheet(
+                            context,
+                            _selectedDate,
+                          );
+                          if (picked == null) return;
+                          if (!mounted) return;
+                          _selectDateFromCalendar(picked, days);
+                        },
                         child: const Text(
                           'Calendário',
                           style: TextStyle(
@@ -82,9 +102,9 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         final day = days[index];
-                        final selectedDay = index == _selectedIndex;
+                        final selectedDay = _sameDate(day.date, _selectedDate);
                         return GestureDetector(
-                          onTap: () => setState(() => _selectedIndex = index),
+                          onTap: () => setState(() => _selectedDate = day.date),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
@@ -180,13 +200,41 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
     );
   }
 
-  void _showCalendarSheet(BuildContext context, DateTime selectedDate) {
-    showCupertinoModalPopup<void>(
+  Future<DateTime?> _showCalendarSheet(
+    BuildContext context,
+    DateTime selectedDate,
+  ) {
+    return showCupertinoModalPopup<DateTime>(
       context: context,
       builder: (context) {
         return _CalendarModal(initialDate: selectedDate);
       },
     );
+  }
+
+  void _selectDateFromCalendar(DateTime date, List<LiturgyDay> loadedDays) {
+    final normalized = DateTime(date.year, date.month, date.day);
+    final hasDateInWindow = loadedDays.any(
+      (day) => _sameDate(day.date, normalized),
+    );
+
+    setState(() {
+      _selectedDate = normalized;
+      if (!hasDateInWindow) {
+        _anchorDate = normalized;
+      }
+    });
+  }
+
+  int _indexForDate(List<LiturgyDay> days, DateTime date) {
+    for (var i = 0; i < days.length; i++) {
+      if (_sameDate(days[i].date, date)) return i;
+    }
+    return -1;
+  }
+
+  bool _sameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   Color _accentColor(LiturgyColor color) {
@@ -315,19 +363,38 @@ class _CalendarModal extends StatefulWidget {
 
 class _CalendarModalState extends State<_CalendarModal> {
   late DateTime _visibleMonth;
+  late DateTime _selectedDate;
 
   @override
   void initState() {
     super.initState();
+    _selectedDate = DateTime(
+      widget.initialDate.year,
+      widget.initialDate.month,
+      widget.initialDate.day,
+    );
     _visibleMonth = DateTime(widget.initialDate.year, widget.initialDate.month);
   }
 
   @override
   Widget build(BuildContext context) {
+    final firstDayOfMonth = DateTime(
+      _visibleMonth.year,
+      _visibleMonth.month,
+      1,
+    );
+    final leadingBlanks = firstDayOfMonth.weekday - 1;
+    final daysInMonth = DateTime(
+      _visibleMonth.year,
+      _visibleMonth.month + 1,
+      0,
+    ).day;
+    final totalCells = ((leadingBlanks + daysInMonth + 6) ~/ 7) * 7;
+
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        height: 430,
+        height: 460,
         padding: const EdgeInsets.all(IaculaSpacing.md),
         decoration: const BoxDecoration(
           color: CupertinoColors.white,
@@ -378,20 +445,64 @@ class _CalendarModalState extends State<_CalendarModal> {
                 ],
               ),
               const SizedBox(height: IaculaSpacing.sm),
+              const Row(
+                children: [
+                  _WeekdayHeader('S'),
+                  _WeekdayHeader('T'),
+                  _WeekdayHeader('Q'),
+                  _WeekdayHeader('Q'),
+                  _WeekdayHeader('S'),
+                  _WeekdayHeader('S'),
+                  _WeekdayHeader('D'),
+                ],
+              ),
+              const SizedBox(height: 6),
               Expanded(
                 child: GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 35,
+                  itemCount: totalCells,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 7,
                     childAspectRatio: 1.1,
                   ),
                   itemBuilder: (context, index) {
-                    final day = index + 1;
-                    return Center(
-                      child: Text(
-                        day <= 31 ? '$day' : '',
-                        style: IaculaText.secondary,
+                    final dayNumber = index - leadingBlanks + 1;
+                    if (dayNumber < 1 || dayNumber > daysInMonth) {
+                      return const SizedBox.shrink();
+                    }
+                    final cellDate = DateTime(
+                      _visibleMonth.year,
+                      _visibleMonth.month,
+                      dayNumber,
+                    );
+                    final isSelected = _sameDate(cellDate, _selectedDate);
+
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedDate = cellDate),
+                      child: Center(
+                        child: Container(
+                          key: ValueKey<String>('calendar-day-$dayNumber'),
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isSelected
+                                ? IaculaColors.primaryButton
+                                : CupertinoColors.transparent,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$dayNumber',
+                            style: TextStyle(
+                              color: isSelected
+                                  ? CupertinoColors.white
+                                  : IaculaColors.textPrimary,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            ),
+                          ),
+                        ),
                       ),
                     );
                   },
@@ -399,7 +510,7 @@ class _CalendarModalState extends State<_CalendarModal> {
               ),
               CupertinoButton.filled(
                 borderRadius: BorderRadius.circular(26),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(context).pop(_selectedDate),
                 child: const Text('Confirmar'),
               ),
             ],
@@ -407,6 +518,10 @@ class _CalendarModalState extends State<_CalendarModal> {
         ),
       ),
     );
+  }
+
+  bool _sameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   String _monthName(int month) {
@@ -425,5 +540,22 @@ class _CalendarModalState extends State<_CalendarModal> {
       'Dezembro',
     ];
     return names[(month - 1).clamp(0, 11)];
+  }
+}
+
+class _WeekdayHeader extends StatelessWidget {
+  const _WeekdayHeader(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: IaculaText.secondary,
+      ),
+    );
   }
 }

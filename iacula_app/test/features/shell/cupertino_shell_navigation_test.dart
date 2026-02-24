@@ -50,5 +50,6 @@ void main() {
 
     final tabBar = tester.widget<CupertinoTabBar>(find.byType(CupertinoTabBar));
     expect(tabBar.currentIndex, 4);
+    expect(find.text('Dados da conta'), findsOneWidget);
   });
 }

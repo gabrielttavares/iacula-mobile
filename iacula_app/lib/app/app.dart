@@ -11,7 +11,9 @@ import '../features/liturgia_diaria/presentation/liturgia_screen.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
+import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/prayers/presentation/prayer_screen.dart';
+import '../features/settings/domain/entities/settings.dart';
 import '../features/sync/infrastructure/services/background_sync_scheduler.dart';
 
 class IaculaApp extends ConsumerStatefulWidget {
@@ -24,10 +26,12 @@ class IaculaApp extends ConsumerStatefulWidget {
 class _IaculaAppState extends ConsumerState<IaculaApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   StreamSubscription? _actionsSub;
+  Settings? _settings;
 
   @override
   void initState() {
     super.initState();
+    _loadSettings();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final syncService = ref.read(connectivitySyncServiceProvider);
       syncService.start();
@@ -88,8 +92,16 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
     super.dispose();
   }
 
+  Future<void> _loadSettings() async {
+    final settings = await ref.read(getSettingsUseCaseProvider).call();
+    if (mounted) {
+      setState(() => _settings = settings);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final settings = _settings;
     return CupertinoApp(
       title: 'Iacula',
       navigatorKey: _navigatorKey,
@@ -102,7 +114,13 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
       ],
       supportedLocales: const [Locale('pt', 'BR'), Locale('en'), Locale('la')],
       routes: {LiturgiaScreen.routeName: (_) => const LiturgiaScreen()},
-      home: const ShellScreen(),
+      home: settings == null
+          ? const CupertinoPageScaffold(
+              child: Center(child: CupertinoActivityIndicator()),
+            )
+          : settings.onboardingCompleted
+          ? const ShellScreen()
+          : const OnboardingScreen(),
     );
   }
 }

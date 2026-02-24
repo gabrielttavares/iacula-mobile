@@ -7,5 +7,6 @@ void main() {
     expect(Settings.defaults.durationSeconds, 10);
     expect(Settings.defaults.language, 'pt-br');
     expect(Settings.defaults.laudesTime, '06:00');
+    expect(Settings.defaults.onboardingCompleted, isFalse);
   });
 }

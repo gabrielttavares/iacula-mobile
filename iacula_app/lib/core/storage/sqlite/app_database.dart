@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -38,7 +38,8 @@ final class AppDatabase {
             laudes_time TEXT NOT NULL,
             vespers_time TEXT NOT NULL,
             compline_time TEXT NOT NULL,
-            ora_media_time TEXT NOT NULL
+            ora_media_time TEXT NOT NULL,
+            onboarding_completed INTEGER NOT NULL DEFAULT 0
           )
         ''');
 
@@ -83,6 +84,12 @@ final class AppDatabase {
               feast_name TEXT,
               delivered_at TEXT NOT NULL
             )
+          ''');
+        }
+        if (oldVersion < 3) {
+          await db.execute('''
+            ALTER TABLE settings
+            ADD COLUMN onboarding_completed INTEGER NOT NULL DEFAULT 0
           ''');
         }
       },

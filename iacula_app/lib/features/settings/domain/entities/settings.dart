@@ -1,4 +1,4 @@
-﻿final class Settings {
+final class Settings {
   const Settings({
     required this.intervalMinutes,
     required this.durationSeconds,
@@ -14,6 +14,7 @@
     required this.vespersTime,
     required this.complineTime,
     required this.oraMediaTime,
+    required this.onboardingCompleted,
   });
 
   final int intervalMinutes;
@@ -30,6 +31,7 @@
   final String vespersTime;
   final String complineTime;
   final String oraMediaTime;
+  final bool onboardingCompleted;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -46,6 +48,7 @@
     vespersTime: '18:00',
     complineTime: '21:00',
     oraMediaTime: '12:30',
+    onboardingCompleted: false,
   );
 
   Settings copyWith({
@@ -63,14 +66,17 @@
     String? vespersTime,
     String? complineTime,
     String? oraMediaTime,
+    bool? onboardingCompleted,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
       durationSeconds: durationSeconds ?? this.durationSeconds,
       autostart: autostart ?? this.autostart,
       language: language ?? this.language,
-      liturgyReminderSoundEnabled: liturgyReminderSoundEnabled ?? this.liturgyReminderSoundEnabled,
-      liturgyReminderSoundVolume: liturgyReminderSoundVolume ?? this.liturgyReminderSoundVolume,
+      liturgyReminderSoundEnabled:
+          liturgyReminderSoundEnabled ?? this.liturgyReminderSoundEnabled,
+      liturgyReminderSoundVolume:
+          liturgyReminderSoundVolume ?? this.liturgyReminderSoundVolume,
       laudesEnabled: laudesEnabled ?? this.laudesEnabled,
       vespersEnabled: vespersEnabled ?? this.vespersEnabled,
       complineEnabled: complineEnabled ?? this.complineEnabled,
@@ -79,6 +85,7 @@
       vespersTime: vespersTime ?? this.vespersTime,
       complineTime: complineTime ?? this.complineTime,
       oraMediaTime: oraMediaTime ?? this.oraMediaTime,
+      onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
     );
   }
 }

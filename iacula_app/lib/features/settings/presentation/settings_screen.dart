@@ -32,6 +32,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _vespersEnabled = false;
   bool _complineEnabled = false;
   bool _oraMediaEnabled = false;
+  bool _onboardingCompleted = false;
 
   bool _loading = true;
   bool _saving = false;
@@ -62,6 +63,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _vespersEnabled = settings.vespersEnabled;
     _complineEnabled = settings.complineEnabled;
     _oraMediaEnabled = settings.oraMediaEnabled;
+    _onboardingCompleted = settings.onboardingCompleted;
 
     if (mounted) {
       setState(() => _loading = false);
@@ -92,7 +94,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: ListView(
           padding: const EdgeInsets.all(IaculaSpacing.md),
           children: [
-            const IaculaLargeTitle('Perfil'),
+            const IaculaLargeTitle('Configurações'),
             const SizedBox(height: IaculaSpacing.lg),
             const IaculaSectionHeader(title: 'Dados da conta'),
             const SizedBox(height: IaculaSpacing.sm),
@@ -302,6 +304,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       vespersTime: _vespersTimeController.text,
       complineTime: _complineTimeController.text,
       oraMediaTime: _oraMediaTimeController.text,
+      onboardingCompleted: _onboardingCompleted,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);

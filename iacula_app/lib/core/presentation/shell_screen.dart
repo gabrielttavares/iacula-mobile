@@ -9,7 +9,7 @@ import '../../features/home/presentation/home_screen.dart';
 import '../../features/meditation/presentation/meditation_screen.dart';
 import '../../features/plan_of_life/presentation/plan_of_life_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
-import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/profile/presentation/profile_screen.dart';
 
 class ShellScreen extends ConsumerStatefulWidget {
   const ShellScreen({super.key});
@@ -27,7 +27,7 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
     MeditationScreen(),
     PlanOfLifeScreen(),
     FavoritesScreen(),
-    SettingsScreen(),
+    ProfileScreen(),
   ];
 
   @override

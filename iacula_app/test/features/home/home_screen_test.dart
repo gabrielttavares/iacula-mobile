@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
@@ -78,10 +78,7 @@ Widget _buildApp({
       if (liturgiaRepo != null)
         liturgiaCacheRepositoryProvider.overrideWithValue(liturgiaRepo),
     ],
-    child: MaterialApp(
-      routes: routes ?? const {},
-      home: const HomeScreen(),
-    ),
+    child: CupertinoApp(routes: routes ?? const {}, home: const HomeScreen()),
   );
 }
 
@@ -99,50 +96,32 @@ _FakeLastDeliveredCardRepository _defaultLastCardRepo() =>
     );
 
 void main() {
-  testWidgets('home card renders last delivered quote and feast label', (
-    tester,
-  ) async {
-    final settingsRepo = _FakeSettingsRepository(
-      Settings.defaults.copyWith(language: 'pt-br', intervalMinutes: 20),
-    );
-    final lastCardRepo = _FakeLastDeliveredCardRepository(
-      LastDeliveredCard(
-        quoteText: 'Sede santos.',
-        theme: 'Santidade',
-        season: 'ordinary',
-        deliveredAt: DateTime(2026, 2, 21, 10, 20),
-        feast: 'all-saints',
-        feastName: 'Todos os Santos',
-      ),
-    );
-
+  testWidgets('home follows required section order', (tester) async {
     await tester.pumpWidget(
-      _buildApp(settingsRepo: settingsRepo, lastCardRepo: lastCardRepo),
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Olá, Pedro'), findsOneWidget);
-    expect(find.text('Sede santos.'), findsOneWidget);
-    expect(find.text('Todos os Santos'), findsOneWidget);
+    Future<void> reveal(String text) async {
+      final finder = find.text(text);
+      for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+        await tester.pumpAndSettle();
+      }
+      expect(finder, findsOneWidget);
+    }
+
+    expect(find.text('Olá, Pedro!'), findsOneWidget);
+    await reveal('Destaques');
+    await reveal('Orações diárias');
+    await reveal('Orações temáticas');
+    await reveal('Orações de Santos');
   });
 
-  testWidgets(
-    'home card falls back to season label when feast name is absent',
-    (tester) async {
-      await tester.pumpWidget(
-        _buildApp(
-          settingsRepo: _defaultSettingsRepo(),
-          lastCardRepo: _defaultLastCardRepo(),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Permanecei em mim.'), findsOneWidget);
-      expect(find.text('tempo da quaresma'), findsOneWidget);
-    },
-  );
-
-  testWidgets('quick action opens Liturgia Diária screen', (tester) async {
+  testWidgets('feature card opens Liturgia Diária screen', (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -153,97 +132,26 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Liturgia Diária'), findsOneWidget);
-    await tester.ensureVisible(find.text('Liturgia Diária'));
-    await tester.tap(find.text('Liturgia Diária'));
+    await tester.tap(find.text('Liturgia'));
     await tester.pumpAndSettle();
 
     expect(find.byType(LiturgiaScreen), findsOneWidget);
     expect(find.text('Domingo'), findsOneWidget);
   });
 
-  testWidgets(
-    'quick-action row contains only three free actions',
-    (tester) async {
-      await tester.pumpWidget(
-        _buildApp(
-          settingsRepo: _defaultSettingsRepo(),
-          lastCardRepo: _defaultLastCardRepo(),
-        ),
-      );
-      await tester.pumpAndSettle();
+  testWidgets('premium card opens premium modal', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      // Free quick-actions present
-      expect(find.text('Orações'), findsOneWidget);
-      expect(find.text('Novenas'), findsOneWidget);
-      expect(find.text('Liturgia Diária'), findsOneWidget);
+    await tester.tap(find.text('Premium'));
+    await tester.pumpAndSettle();
 
-      // Rosário NOT in quick-action row (it's in premium section)
-      // Find the horizontal scroll row and verify Rosário is not a descendant
-      final quickActionRow = find.byType(SingleChildScrollView).first;
-      expect(
-        find.descendant(of: quickActionRow, matching: find.text('Rosário')),
-        findsNothing,
-      );
-    },
-  );
-
-  testWidgets(
-    'premium section shows Rosário card below quote',
-    (tester) async {
-      await tester.pumpWidget(
-        _buildApp(
-          settingsRepo: _defaultSettingsRepo(),
-          lastCardRepo: _defaultLastCardRepo(),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Premium heading exists
-      expect(find.text('Premium'), findsOneWidget);
-
-      // Rosário exists on the page (in premium section)
-      expect(find.text('Rosário'), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'tapping Rosário in premium section opens premium modal',
-    (tester) async {
-      await tester.pumpWidget(
-        _buildApp(
-          settingsRepo: _defaultSettingsRepo(),
-          lastCardRepo: _defaultLastCardRepo(),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.ensureVisible(find.text('Rosário'));
-      await tester.tap(find.text('Rosário'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Funcionalidade Premium'), findsOneWidget);
-      expect(find.text('Desbloquear Agora'), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'tapping Novenas opens free placeholder screen',
-    (tester) async {
-      await tester.pumpWidget(
-        _buildApp(
-          settingsRepo: _defaultSettingsRepo(),
-          lastCardRepo: _defaultLastCardRepo(),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.ensureVisible(find.text('Novenas'));
-      await tester.tap(find.text('Novenas'));
-      await tester.pumpAndSettle();
-
-      // Novenas placeholder screen has AppBar with 'Novenas' and body 'Em breve...'
-      expect(find.text('Em breve...'), findsOneWidget);
-    },
-  );
+    expect(find.text('Funcionalidade Premium'), findsOneWidget);
+    expect(find.text('Desbloquear Agora'), findsOneWidget);
+  });
 }

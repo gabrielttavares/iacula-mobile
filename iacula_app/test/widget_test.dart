@@ -5,12 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/app/app.dart';
 
 void main() {
-  testWidgets('renderiza shell inicial do Iacula', (tester) async {
+  testWidgets('renderiza onboarding no primeiro launch', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: IaculaApp()));
     await tester.pumpAndSettle();
 
     expect(find.byType(CupertinoApp), findsOneWidget);
-    expect(find.text('Início'), findsOneWidget);
-    expect(find.text('Olá, Pedro'), findsOneWidget);
+    expect(find.text('Entre com sua conta'), findsOneWidget);
   });
 }
