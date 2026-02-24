@@ -165,7 +165,46 @@ final premiumStatusProvider = StreamProvider<PremiumStatus>((ref) {
 });
 
 final syncOrchestratorProvider = Provider<SyncOrchestrator>((ref) {
-  return const _NoopSyncOrchestrator();
+  final env = ref.watch(appEnvProvider);
+  final gateway = ref.watch(spiritualSyncGatewayProvider);
+
+  if (!env.authSyncEnabled || gateway == null) {
+    return const _NoopSyncOrchestrator();
+  }
+
+  return DefaultSyncOrchestrator(
+    authRepository: ref.watch(authRepositoryProvider),
+    syncStateRepository: ref.watch(syncStateRepositoryProvider),
+    modules: [
+      SyncModuleAdapter(
+        module: SpiritualModule.planOfLife,
+        localRepository: ref.watch(planOfLifeEntryRepositoryProvider),
+        remoteRepository: SupabaseSpiritualSyncRepository(
+          module: SpiritualModule.planOfLife,
+          table: 'plan_of_life_entries',
+          gateway: gateway,
+        ),
+      ),
+      SyncModuleAdapter(
+        module: SpiritualModule.examination,
+        localRepository: ref.watch(examinationEntryRepositoryProvider),
+        remoteRepository: SupabaseSpiritualSyncRepository(
+          module: SpiritualModule.examination,
+          table: 'examination_entries',
+          gateway: gateway,
+        ),
+      ),
+      SyncModuleAdapter(
+        module: SpiritualModule.prayerIntention,
+        localRepository: ref.watch(prayerIntentionEntryRepositoryProvider),
+        remoteRepository: SupabaseSpiritualSyncRepository(
+          module: SpiritualModule.prayerIntention,
+          table: 'prayer_intention_entries',
+          gateway: gateway,
+        ),
+      ),
+    ],
+  );
 });
 
 final connectivityProvider = Provider<Connectivity>((ref) {
