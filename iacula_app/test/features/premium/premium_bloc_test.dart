@@ -45,11 +45,20 @@ final class _FakePurchaseService implements PurchaseService {
   @override
   Stream<PurchaseStatus> get purchaseStream => _controller.stream;
 
-  @override
-  Future<bool> purchasePremium(String productId) async => purchaseResult;
+  int purchaseCallCount = 0;
+  int restoreCallCount = 0;
 
   @override
-  Future<bool> restorePurchases() async => true;
+  Future<bool> purchasePremium(String productId) async {
+    purchaseCallCount++;
+    return purchaseResult;
+  }
+
+  @override
+  Future<bool> restorePurchases() async {
+    restoreCallCount++;
+    return true;
+  }
 
   void emit(PurchaseStatus status) {
     _controller.add(status);
@@ -147,7 +156,9 @@ void main() {
     final bloc = PremiumBloc(
       repository: repository,
       purchaseService: purchase,
-      authRepository: _FakeAuthRepository(),
+      authRepository: _FakeAuthRepository(
+        user: const AuthUser(id: 'u1', email: 'u1@x.dev'),
+      ),
     );
 
     final states = <PremiumState>[];
@@ -264,4 +275,95 @@ void main() {
     await purchase.dispose();
     await bloc.dispose();
   });
+
+  test(
+    'PurchasePremium unauthenticated emits PremiumAuthRequired and skips purchase service',
+    () async {
+      final repository = _FakePremiumRepository(PremiumStatus.free);
+      final purchase = _FakePurchaseService(purchaseResult: true);
+      final auth = _FakeAuthRepository(); // user == null
+      final bloc = PremiumBloc(
+        repository: repository,
+        purchaseService: purchase,
+        authRepository: auth,
+      );
+
+      final next = Completer<PremiumState>();
+      final sub = bloc.states.listen((state) {
+        if (!next.isCompleted) next.complete(state);
+      });
+
+      await bloc.add(const PurchasePremium(productId: 'premium_lifetime'));
+      final state = await next.future.timeout(const Duration(seconds: 2));
+
+      expect(state, isA<PremiumAuthRequired>());
+      expect(purchase.purchaseCallCount, 0);
+
+      await sub.cancel();
+      await auth.dispose();
+      await purchase.dispose();
+      await bloc.dispose();
+    },
+  );
+
+  test(
+    'PurchasePremium authenticated calls purchase service normally',
+    () async {
+      final repository = _FakePremiumRepository(PremiumStatus.free);
+      final purchase = _FakePurchaseService(purchaseResult: true);
+      final auth = _FakeAuthRepository(
+        user: const AuthUser(id: 'u1', email: 'u1@x.dev'),
+      );
+      final bloc = PremiumBloc(
+        repository: repository,
+        purchaseService: purchase,
+        authRepository: auth,
+      );
+
+      final next = Completer<PremiumState>();
+      final sub = bloc.states.listen((state) {
+        if (!next.isCompleted) next.complete(state);
+      });
+
+      await bloc.add(const PurchasePremium(productId: 'premium_lifetime'));
+      await next.future.timeout(const Duration(seconds: 2));
+
+      expect(purchase.purchaseCallCount, 1);
+
+      await sub.cancel();
+      await auth.dispose();
+      await purchase.dispose();
+      await bloc.dispose();
+    },
+  );
+
+  test(
+    'RestorePurchases unauthenticated emits PremiumAuthRequired and skips restore service',
+    () async {
+      final repository = _FakePremiumRepository(PremiumStatus.free);
+      final purchase = _FakePurchaseService(purchaseResult: true);
+      final auth = _FakeAuthRepository(); // user == null
+      final bloc = PremiumBloc(
+        repository: repository,
+        purchaseService: purchase,
+        authRepository: auth,
+      );
+
+      final next = Completer<PremiumState>();
+      final sub = bloc.states.listen((state) {
+        if (!next.isCompleted) next.complete(state);
+      });
+
+      await bloc.add(const RestorePurchases());
+      final state = await next.future.timeout(const Duration(seconds: 2));
+
+      expect(state, isA<PremiumAuthRequired>());
+      expect(purchase.restoreCallCount, 0);
+
+      await sub.cancel();
+      await auth.dispose();
+      await purchase.dispose();
+      await bloc.dispose();
+    },
+  );
 }

@@ -37,7 +37,7 @@ final class _FakePremiumRepository implements PremiumRepository {
 
 void main() {
   group('PaywallScreen Auth Section', () {
-    testWidgets('shows pre-purchase auth block when logged out', (tester) async {
+    testWidgets('shows login CTA when logged out', (tester) async {
       final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
 
       await tester.pumpWidget(
@@ -52,13 +52,12 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Acesse sua conta'), findsOneWidget);
-      expect(find.text('Faça login para comprar ou restaurar o Iacula Premium.'), findsOneWidget);
-      expect(find.text('Continuar com Google'), findsOneWidget);
-      expect(find.text('Continuar com Microsoft'), findsOneWidget);
+      expect(find.text('Entrar para comprar'), findsOneWidget);
+      expect(find.text('Comprar por R\$ 29,90'), findsNothing);
+      expect(find.text('Restaurar compras'), findsNothing);
     });
 
-    testWidgets('shows signed-in account block when logged in', (tester) async {
+    testWidgets('shows purchase CTA when logged in', (tester) async {
       final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
 
       await tester.pumpWidget(
@@ -75,13 +74,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Conta'), findsOneWidget);
-      expect(find.text('Você está conectado e pronto para usar os recursos Premium.'), findsOneWidget);
-      expect(find.text('Conectado como user@example.com'), findsOneWidget);
-      expect(find.text('Sair da conta'), findsOneWidget);
-
-      expect(find.text('Continuar com Google'), findsNothing);
-      expect(find.text('Continuar com Microsoft'), findsNothing);
+      expect(find.text('Comprar por R\$ 29,90'), findsOneWidget);
+      expect(find.text('Restaurar compras'), findsOneWidget);
+      expect(find.text('Entrar para comprar'), findsNothing);
     });
   });
 }

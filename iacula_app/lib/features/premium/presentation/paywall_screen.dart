@@ -5,8 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/premium/application/premium_bloc.dart';
 
-import '../../auth/presentation/auth_action_sheet.dart';
-
 const premiumLifetimeProductId = 'premium_lifetime';
 
 class PaywallScreen extends ConsumerStatefulWidget {
@@ -18,6 +16,7 @@ class PaywallScreen extends ConsumerStatefulWidget {
 
 class _PaywallScreenState extends ConsumerState<PaywallScreen> {
   StreamSubscription<PremiumState>? _stateSub;
+  bool _pendingPurchaseAfterSignIn = false;
 
   @override
   void initState() {
@@ -44,11 +43,23 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     super.dispose();
   }
 
+  void _onAuthTransition(AsyncValue<dynamic>? previous, AsyncValue<dynamic> next) {
+    final user = next.valueOrNull;
+    if (user != null && _pendingPurchaseAfterSignIn) {
+      _pendingPurchaseAfterSignIn = false;
+      ref.read(premiumBlocProvider).add(
+        const PurchasePremium(productId: premiumLifetimeProductId),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final premiumState = ref.watch(premiumStateProvider);
     final authUser = ref.watch(authStateProvider).valueOrNull;
     final isLoading = premiumState.valueOrNull is PremiumLoading;
+
+    ref.listen(authStateProvider, _onAuthTransition);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Premium')),
@@ -83,71 +94,49 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   'Configuracoes premium',
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () async {
-                          if (authUser == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Entre em uma conta antes de comprar.',
-                                ),
-                              ),
-                            );
-                            return;
-                          }
-
-                          await ref
-                              .read(premiumBlocProvider)
-                              .add(
-                                const PurchasePremium(
-                                  productId: premiumLifetimeProductId,
-                                ),
-                              );
-                        },
-                  child: Text(
-                    isLoading ? 'Processando...' : 'Comprar por R\$ 39,90',
+                if (authUser == null) ...[
+                  _GoogleSignInButton(
+                    isLoading: isLoading,
+                    onPressed: () async {
+                      setState(() => _pendingPurchaseAfterSignIn = true);
+                      await ref
+                          .read(authRepositoryProvider)
+                          .signInWithGoogle();
+                    },
                   ),
-                ),
-                const SizedBox(height: 10),
-                OutlinedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () async {
-                          if (authUser == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Entre em uma conta para restaurar compras.',
-                                ),
-                              ),
-                            );
-                            return;
-                          }
-
-                          await ref
-                              .read(premiumBlocProvider)
-                              .add(const RestorePurchases());
-                        },
-                  child: const Text('Restaurar compras'),
-                ),
-                const SizedBox(height: 24),
-                AuthActionSheet(
-                  compact: true,
-                  title: authUser == null ? 'Acesse sua conta' : 'Conta',
-                  subtitle: authUser == null
-                      ? 'Faça login para comprar ou restaurar o Iacula Premium.'
-                      : 'Você está conectado e pronto para usar os recursos Premium.',
-                  signedInEmail: authUser?.email,
-                  onGoogle: () =>
-                      ref.read(authRepositoryProvider).signInWithGoogle(),
-                  onMicrosoft: () =>
-                      ref.read(authRepositoryProvider).signInWithMicrosoft(),
-                  onApple: () =>
-                      ref.read(authRepositoryProvider).signInWithApple(),
-                  onSignOut: () => ref.read(authRepositoryProvider).signOut(),
-                ),
+                  const SizedBox(height: 10),
+                ] else ...[
+                  ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            await ref
+                                .read(premiumBlocProvider)
+                                .add(
+                                  const PurchasePremium(
+                                    productId: premiumLifetimeProductId,
+                                  ),
+                                );
+                          },
+                    child: Text(
+                      isLoading
+                          ? 'Processando...'
+                          : 'Comprar por R\$ 29,90',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  OutlinedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            await ref
+                                .read(premiumBlocProvider)
+                                .add(const RestorePurchases());
+                          },
+                    child: const Text('Restaurar compras'),
+                  ),
+                  const SizedBox(height: 24),
+                ],
               ],
             ),
           ),
@@ -166,6 +155,24 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           Text(label, style: Theme.of(context).textTheme.bodyLarge),
         ],
       ),
+    );
+  }
+}
+
+class _GoogleSignInButton extends StatelessWidget {
+  const _GoogleSignInButton({
+    required this.isLoading,
+    required this.onPressed,
+  });
+
+  final bool isLoading;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: isLoading ? null : onPressed,
+      child: Text(isLoading ? 'Processando...' : 'Entrar para comprar'),
     );
   }
 }

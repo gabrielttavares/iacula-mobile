@@ -34,6 +34,10 @@ final class PremiumError extends PremiumState {
   final String message;
 }
 
+final class PremiumAuthRequired extends PremiumState {
+  const PremiumAuthRequired();
+}
+
 sealed class PremiumEvent {
   const PremiumEvent();
 }
@@ -114,6 +118,11 @@ final class PremiumBloc {
   }
 
   Future<void> _purchase(String productId) async {
+    final user = await _authRepository.currentUser();
+    if (user == null) {
+      _emit(const PremiumAuthRequired());
+      return;
+    }
     _emit(const PremiumLoading());
     final started = await _purchaseService.purchasePremium(productId);
     if (!started) {
@@ -122,6 +131,11 @@ final class PremiumBloc {
   }
 
   Future<void> _restore() async {
+    final user = await _authRepository.currentUser();
+    if (user == null) {
+      _emit(const PremiumAuthRequired());
+      return;
+    }
     _emit(const PremiumLoading());
     final started = await _purchaseService.restorePurchases();
     if (!started) {
