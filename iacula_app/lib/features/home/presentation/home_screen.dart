@@ -122,12 +122,16 @@ class _HomeHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
-    final greeting = authState.whenData((user) {
-      final name = user?.displayName;
-      final isFemale = user?.gender == Gender.female;
-      final welcome = isFemale ? 'Bem vinda' : 'Bem vindo';
-      return name != null && name.isNotEmpty ? '$welcome, $name!' : '$welcome!';
-    }).value ?? 'Bem vindo!';
+    final greeting =
+        authState.whenData((user) {
+          final name = user?.displayName;
+          final isFemale = user?.gender == Gender.female;
+          final welcome = isFemale ? 'Bem vinda' : 'Bem vindo';
+          return name != null && name.isNotEmpty
+              ? '$welcome, $name!'
+              : '$welcome!';
+        }).value ??
+        'Bem vindo!';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,7 +445,7 @@ class _HorizontalHighlights extends StatelessWidget {
           const SizedBox(width: IaculaSpacing.sm),
           _HighlightCard(
             width: width,
-            title: 'Homilias diárias',
+            title: 'Meditações',
             subtitle: 'Disponível no Premium.',
             onTap: onOpenPremium,
           ),

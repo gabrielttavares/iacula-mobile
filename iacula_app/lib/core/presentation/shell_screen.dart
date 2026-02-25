@@ -60,7 +60,7 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.play_circle),
-            label: 'Homilias',
+            label: 'Meditação',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.check_mark_circled),

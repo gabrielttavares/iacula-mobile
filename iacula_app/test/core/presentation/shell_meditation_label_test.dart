@@ -46,15 +46,15 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-  testWidgets('tab bar shows "Homilias" instead of "Meditação"',
-      (tester) async {
+  testWidgets('tab bar shows "Meditações" instead of "Meditação"', (
+    tester,
+  ) async {
     final purchaseService = _FakePurchaseService();
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          premiumRepositoryProvider
-              .overrideWithValue(_FakePremiumRepository()),
+          premiumRepositoryProvider.overrideWithValue(_FakePremiumRepository()),
           purchaseServiceProvider.overrideWithValue(purchaseService),
         ],
         child: const CupertinoApp(
@@ -71,8 +71,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.text('Homilias'), findsOneWidget);
-    expect(find.text('Meditação'), findsNothing);
+    expect(find.text('Meditações'), findsOneWidget);
+    expect(find.text('Meditações'), findsNothing);
 
     await purchaseService.dispose();
   });

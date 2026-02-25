@@ -17,7 +17,7 @@ class MeditationScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IaculaLargeTitle('Homilias'),
+              IaculaLargeTitle('Meditações'),
               SizedBox(height: IaculaSpacing.md),
               Expanded(
                 child: SingleChildScrollView(

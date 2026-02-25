@@ -41,14 +41,14 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-  testWidgets('paywall does not advertise unimplemented features',
-      (tester) async {
+  testWidgets('paywall does not advertise unimplemented features', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           authRepositoryProvider.overrideWithValue(InMemoryAuthRepository()),
-          premiumRepositoryProvider
-              .overrideWithValue(_FakePremiumRepository()),
+          premiumRepositoryProvider.overrideWithValue(_FakePremiumRepository()),
           purchaseServiceProvider.overrideWithValue(_FakePurchaseService()),
         ],
         child: const MaterialApp(home: PaywallScreen()),
@@ -62,7 +62,7 @@ void main() {
     expect(find.textContaining('Configurações premium'), findsNothing);
 
     // Should mention features that DO exist
-    expect(find.textContaining('Homilias'), findsOneWidget);
+    expect(find.textContaining('Meditações'), findsOneWidget);
     expect(find.textContaining('Plano de vida'), findsOneWidget);
   });
 }
