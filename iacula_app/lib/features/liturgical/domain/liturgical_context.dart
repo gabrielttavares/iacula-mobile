@@ -14,6 +14,7 @@ final class LiturgicalContext {
     required this.apiQuotes,
     this.feast,
     this.feastName,
+    this.isFallback = false,
   });
 
   final LiturgicalSeason season;
@@ -22,9 +23,14 @@ final class LiturgicalContext {
   final String? feastName;
   final List<String> apiQuotes;
 
+  /// Whether this context was produced by a fallback service rather than
+  /// a real liturgical calendar API.
+  final bool isFallback;
+
   static const ordinaryFallback = LiturgicalContext(
     season: LiturgicalSeason.ordinary,
     rank: LiturgicalRank.weekday,
     apiQuotes: <String>[],
+    isFallback: true,
   );
 }

@@ -19,6 +19,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final quoteAsync = ref.watch(_homeQuoteProvider);
+    final isFallback = ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false;
 
     return CupertinoPageScaffold(
       backgroundColor: IaculaColors.background,
@@ -55,6 +56,7 @@ class HomeScreen extends ConsumerWidget {
                         const SizedBox(height: IaculaSpacing.lg),
                         _PromotionalBanner(
                           quote: quote,
+                          isFallback: isFallback,
                           onOpenPremium: () => PremiumGate.showModal(
                             context,
                             feature: PremiumFeature.rosary,
@@ -238,10 +240,15 @@ class _SquareFeatureCard extends StatelessWidget {
 }
 
 class _PromotionalBanner extends StatelessWidget {
-  const _PromotionalBanner({required this.quote, required this.onOpenPremium});
+  const _PromotionalBanner({
+    required this.quote,
+    required this.onOpenPremium,
+    this.isFallback = false,
+  });
 
   final Quote quote;
   final VoidCallback onOpenPremium;
+  final bool isFallback;
 
   @override
   Widget build(BuildContext context) {
@@ -302,6 +309,17 @@ class _PromotionalBanner extends StatelessWidget {
                       height: 1.5,
                     ),
                   ),
+                  if (isFallback)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Text(
+                        'Tempo litúrgico indisponível',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Color(0x99F6F6F8),
+                        ),
+                      ),
+                    ),
                   const Spacer(),
                   CupertinoButton(
                     padding: const EdgeInsets.symmetric(
@@ -565,6 +583,12 @@ class _PrayerListItem extends StatelessWidget {
     );
   }
 }
+
+final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
+  final service = ref.watch(liturgicalSeasonServiceProvider);
+  final context = await service.getCurrentContext();
+  return context.isFallback;
+});
 
 final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
