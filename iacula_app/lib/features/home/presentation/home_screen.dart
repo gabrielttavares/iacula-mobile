@@ -50,7 +50,7 @@ class HomeScreen extends ConsumerWidget {
                           ).pushNamed(LiturgiaScreen.routeName),
                           onOpenPremium: () => PremiumGate.showModal(
                             context,
-                            feature: PremiumFeature.rosary,
+                            feature: PremiumFeature.meditation,
                           ),
                         ),
                         const SizedBox(height: IaculaSpacing.lg),
@@ -59,7 +59,7 @@ class HomeScreen extends ConsumerWidget {
                           isFallback: isFallback,
                           onOpenPremium: () => PremiumGate.showModal(
                             context,
-                            feature: PremiumFeature.rosary,
+                            feature: PremiumFeature.meditation,
                           ),
                         ),
                         const SizedBox(height: IaculaSpacing.xl),
@@ -78,7 +78,7 @@ class HomeScreen extends ConsumerWidget {
                           ).pushNamed(LiturgiaScreen.routeName),
                           onOpenPremium: () => PremiumGate.showModal(
                             context,
-                            feature: PremiumFeature.rosary,
+                            feature: PremiumFeature.meditation,
                           ),
                         ),
                         const SizedBox(height: IaculaSpacing.xl),
@@ -389,7 +389,7 @@ class _HorizontalHighlights extends StatelessWidget {
           const SizedBox(width: IaculaSpacing.sm),
           _HighlightCard(
             width: width,
-            title: 'Rosário no app',
+            title: 'Homilias diárias',
             subtitle: 'Disponível no Premium.',
             onTap: onOpenPremium,
           ),

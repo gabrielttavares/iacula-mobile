@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,7 +9,6 @@ import 'package:iacula_app/core/presentation/shell_screen.dart';
 import 'package:iacula_app/features/premium/domain/entities/premium_status.dart';
 import 'package:iacula_app/features/premium/domain/repositories/premium_repository.dart';
 import 'package:iacula_app/features/premium/infrastructure/purchase_service.dart';
-import 'package:iacula_app/features/premium/presentation/premium_gate.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 final class _FakePremiumRepository implements PremiumRepository {
@@ -58,10 +56,8 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-  setUp(() => PremiumGate.debugPremiumBypass = false);
-  tearDown(() => PremiumGate.debugPremiumBypass = kDebugMode);
 
-  testWidgets('free user tapping Meditação tab opens premium gate modal', (
+  testWidgets('free user tapping Homilias tab opens premium gate modal', (
     tester,
   ) async {
     final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
@@ -87,7 +83,7 @@ void main() {
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100)); // wait for provider
-    await tester.tap(find.text('Meditação'));
+    await tester.tap(find.text('Homilias'));
     await tester.pump();
 
     expect(find.text('Recurso Premium'), findsOneWidget);
