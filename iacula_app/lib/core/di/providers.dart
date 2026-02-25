@@ -8,6 +8,9 @@ import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
 import '../../features/auth/domain/entities/auth_user.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
+import '../../features/favorites/domain/entities/favorite_item.dart';
+import '../../features/favorites/domain/repositories/favorite_repository.dart';
+import '../../features/favorites/infrastructure/repositories/in_memory_favorite_repository.dart';
 import '../../features/liturgia_diaria/application/use_cases/get_liturgy_period_use_case.dart';
 import '../../features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
 import '../../features/liturgia_diaria/infrastructure/repositories/liturgia_cache_repository.dart';
@@ -129,6 +132,14 @@ final lastDeliveredCardRepositoryProvider =
 
 final mediaCatalogRepositoryProvider = Provider<MediaCatalogRepository>((ref) {
   return InMemoryMediaCatalogRepository();
+});
+
+final favoriteRepositoryProvider = Provider<FavoriteRepository>((ref) {
+  return InMemoryFavoriteRepository();
+});
+
+final favoritesProvider = StreamProvider<List<FavoriteItem>>((ref) {
+  return ref.watch(favoriteRepositoryProvider).watchAll();
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
