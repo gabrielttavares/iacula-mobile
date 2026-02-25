@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
-import 'package:iacula_app/features/auth/domain/entities/auth_user.dart';
+import 'package:iacula_app/features/auth/domain/entities/auth_user.dart' show AuthUser, Gender;
 import 'package:iacula_app/features/home/presentation/home_screen.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
@@ -70,12 +70,19 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Paz e bem!'), findsOneWidget);
-    expect(find.text('Paz e bem, Pedro!'), findsNothing);
+    expect(find.text('Bem vindo!'), findsOneWidget);
+    expect(find.text('Bem vindo, Pedro!'), findsNothing);
   });
 
-  testWidgets('shows user name in greeting when authenticated', (tester) async {
-    const user = AuthUser(id: '1', email: 'test@test.com', displayName: 'Maria');
+  testWidgets('shows user name in greeting when authenticated (female)', (
+    tester,
+  ) async {
+    const user = AuthUser(
+      id: '1',
+      email: 'test@test.com',
+      displayName: 'Maria',
+      gender: Gender.female,
+    );
     await tester.pumpWidget(
       _buildApp(
         extraOverrides: [
@@ -84,10 +91,32 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Paz e bem, Maria!'), findsOneWidget);
+    expect(find.text('Bem vinda, Maria!'), findsOneWidget);
   });
 
-  testWidgets('shows generic greeting when user has no displayName', (tester) async {
+  testWidgets('shows user name in greeting when authenticated (male)', (
+    tester,
+  ) async {
+    const user = AuthUser(
+      id: '1',
+      email: 'test@test.com',
+      displayName: 'Pedro',
+      gender: Gender.male,
+    );
+    await tester.pumpWidget(
+      _buildApp(
+        extraOverrides: [
+          authStateProvider.overrideWith((ref) => Stream.value(user)),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Bem vindo, Pedro!'), findsOneWidget);
+  });
+
+  testWidgets('shows generic greeting when user has no displayName', (
+    tester,
+  ) async {
     const user = AuthUser(id: '1', email: 'test@test.com');
     await tester.pumpWidget(
       _buildApp(
@@ -97,6 +126,6 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Paz e bem!'), findsOneWidget);
+    expect(find.text('Bem vindo!'), findsOneWidget);
   });
 }

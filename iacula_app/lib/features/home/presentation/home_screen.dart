@@ -7,6 +7,7 @@ import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../auth/domain/entities/auth_user.dart';
 import '../../liturgia_diaria/presentation/liturgia_screen.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../notifications/presentation/notifications_screen.dart';
@@ -23,7 +24,8 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final quoteAsync = ref.watch(_homeQuoteProvider);
-    final isFallback = ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false;
+    final isFallback =
+        ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false;
 
     return CupertinoPageScaffold(
       backgroundColor: IaculaColors.background,
@@ -122,8 +124,10 @@ class _HomeHeader extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
     final greeting = authState.whenData((user) {
       final name = user?.displayName;
-      return name != null && name.isNotEmpty ? 'Paz e bem, $name!' : 'Paz e bem!';
-    }).value ?? 'Paz e bem!';
+      final isFemale = user?.gender == Gender.female;
+      final welcome = isFemale ? 'Bem vinda' : 'Bem vindo';
+      return name != null && name.isNotEmpty ? '$welcome, $name!' : '$welcome!';
+    }).value ?? 'Bem vindo!';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,9 +165,7 @@ class _HomeHeader extends ConsumerWidget {
                   minSize: 32,
                   onPressed: () {
                     Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => const SearchScreen(),
-                      ),
+                      CupertinoPageRoute(builder: (_) => const SearchScreen()),
                     );
                   },
                   child: const Icon(
@@ -329,17 +331,22 @@ class _PromotionalBanner extends ConsumerWidget {
                         minSize: 32,
                         onPressed: () async {
                           final repo = ref.read(favoriteRepositoryProvider);
-                          final alreadySaved = await repo.isFavorite(quote.text);
+                          final alreadySaved = await repo.isFavorite(
+                            quote.text,
+                          );
                           if (!alreadySaved) {
-                            await repo.save(FavoriteItem(
-                              id: DateTime.now().millisecondsSinceEpoch.toString(),
-                              quoteText: quote.text,
-                              theme: quote.theme,
-                              season: quote.season.name,
-                              savedAt: DateTime.now(),
-                              imagePath: quote.imagePath,
-                              feastName: quote.feastName,
-                            ));
+                            await repo.save(
+                              FavoriteItem(
+                                id: DateTime.now().millisecondsSinceEpoch
+                                    .toString(),
+                                quoteText: quote.text,
+                                theme: quote.theme,
+                                season: quote.season.name,
+                                savedAt: DateTime.now(),
+                                imagePath: quote.imagePath,
+                                feastName: quote.feastName,
+                              ),
+                            );
                           }
                         },
                         child: const Icon(

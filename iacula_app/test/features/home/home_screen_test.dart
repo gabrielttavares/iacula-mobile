@@ -114,7 +114,7 @@ void main() {
       expect(finder, findsOneWidget);
     }
 
-    expect(find.text('Paz e bem!'), findsOneWidget);
+    expect(find.text('Bem vindo!'), findsOneWidget);
     await reveal('Destaques');
     await reveal('Orações diárias');
     await reveal('Orações temáticas');
