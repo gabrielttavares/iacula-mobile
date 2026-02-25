@@ -11,6 +11,7 @@ import '../../liturgia_diaria/presentation/liturgia_screen.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../premium/domain/entities/premium_feature.dart';
+import '../../search/presentation/search_screen.dart';
 import '../../premium/presentation/premium_gate.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
@@ -157,7 +158,13 @@ class _HomeHeader extends ConsumerWidget {
                 CupertinoButton(
                   padding: EdgeInsets.zero,
                   minSize: 32,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (_) => const SearchScreen(),
+                      ),
+                    );
+                  },
                   child: const Icon(
                     CupertinoIcons.search,
                     color: IaculaColors.textSecondary,
