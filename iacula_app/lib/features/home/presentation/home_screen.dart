@@ -12,6 +12,7 @@ import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
+import '../../favorites/domain/entities/favorite_item.dart';
 import '../../quotes/domain/entities/quote.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -247,7 +248,7 @@ class _SquareFeatureCard extends StatelessWidget {
   }
 }
 
-class _PromotionalBanner extends StatelessWidget {
+class _PromotionalBanner extends ConsumerWidget {
   const _PromotionalBanner({
     required this.quote,
     required this.onOpenPremium,
@@ -259,7 +260,7 @@ class _PromotionalBanner extends StatelessWidget {
   final bool isFallback;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       height: 240,
       decoration: BoxDecoration(
@@ -306,7 +307,35 @@ class _PromotionalBanner extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        minSize: 32,
+                        onPressed: () async {
+                          final repo = ref.read(favoriteRepositoryProvider);
+                          final alreadySaved = await repo.isFavorite(quote.text);
+                          if (!alreadySaved) {
+                            await repo.save(FavoriteItem(
+                              id: DateTime.now().millisecondsSinceEpoch.toString(),
+                              quoteText: quote.text,
+                              theme: quote.theme,
+                              season: quote.season.name,
+                              savedAt: DateTime.now(),
+                              imagePath: quote.imagePath,
+                              feastName: quote.feastName,
+                            ));
+                          }
+                        },
+                        child: const Icon(
+                          CupertinoIcons.bookmark,
+                          color: CupertinoColors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
                   Text(
                     quote.text,
                     maxLines: 3,
