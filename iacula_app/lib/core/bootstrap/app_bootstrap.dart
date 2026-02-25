@@ -33,10 +33,12 @@ import '../../features/sync/domain/repositories/sync_orchestrator.dart';
 import '../../features/sync/infrastructure/repositories/isar_sync_state_repository.dart';
 import '../../features/sync/infrastructure/repositories/supabase_spiritual_sync_repository.dart';
 import '../../features/sync/infrastructure/services/default_sync_orchestrator.dart';
+import '../../features/sync/infrastructure/services/noop_sync_orchestrator.dart';
 import '../config/app_env.dart';
 import '../di/providers.dart';
 import '../storage/isar/isar_store.dart';
 import '../storage/sqlite/app_database.dart';
+import 'bootstrap_status.dart';
 
 final class AppBootstrap {
   const AppBootstrap._();
@@ -99,7 +101,8 @@ final class AppBootstrap {
 
     AuthRepository authRepository = InMemoryAuthRepository();
     PremiumRepository premiumRepository = localPremiumRepo;
-    SyncOrchestrator syncOrchestrator = const _BootstrapNoopSyncOrchestrator();
+    SyncOrchestrator syncOrchestrator = const NoopSyncOrchestrator();
+    var bootstrapStatus = const BootstrapStatus();
     SupabaseClient? supabaseClient;
 
     // Always create local spiritual store
@@ -171,6 +174,12 @@ final class AppBootstrap {
             ),
           ],
         );
+
+        bootstrapStatus = const BootstrapStatus(
+          supabaseAvailable: true,
+          authMode: AuthMode.supabase,
+          syncEnabled: true,
+        );
       } catch (error, st) {
         developer.log(
           'Supabase auth/sync bootstrap failed. Falling back to local-only mode.',
@@ -180,7 +189,10 @@ final class AppBootstrap {
         );
         authRepository = InMemoryAuthRepository();
         premiumRepository = localPremiumRepo;
-        syncOrchestrator = const _BootstrapNoopSyncOrchestrator();
+        syncOrchestrator = const NoopSyncOrchestrator();
+        bootstrapStatus = BootstrapStatus(
+          errorMessage: 'Supabase initialization failed: $error',
+        );
       }
     }
 
@@ -200,6 +212,7 @@ final class AppBootstrap {
       httpClientProvider.overrideWithValue(httpClient),
       authRepositoryProvider.overrideWithValue(authRepository),
       syncOrchestratorProvider.overrideWithValue(syncOrchestrator),
+      bootstrapStatusProvider.overrideWithValue(bootstrapStatus),
       spiritualDataKeyProvider.overrideWithValue(localKeyProvider),
       spiritualDataIsarStoreProvider.overrideWithValue(spiritualStore),
       liturgicalSeasonServiceProvider.overrideWith((ref) {
@@ -236,14 +249,4 @@ final class AppBootstrap {
 
     await mediaRepo.upsertAll(media);
   }
-}
-
-final class _BootstrapNoopSyncOrchestrator implements SyncOrchestrator {
-  const _BootstrapNoopSyncOrchestrator();
-
-  @override
-  Future<void> syncAll() async {}
-
-  @override
-  Future<void> syncModule(String module) async {}
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/widgets/local_only_banner.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -34,6 +35,7 @@ class HomeScreen extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
+                        const LocalOnlyBanner(),
                         const _HomeHeader(),
                         const SizedBox(height: IaculaSpacing.lg),
                         _FeatureGrid(
