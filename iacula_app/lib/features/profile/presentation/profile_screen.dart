@@ -31,6 +31,9 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: IaculaSpacing.xl),
             _Section(
               title: 'Conta',
+              onEdit: isConnected
+                  ? () => _showEditNameDialog(context)
+                  : null,
               rows: [
                 _InfoRow(label: 'Nome', value: name),
                 _InfoRow(label: 'E-mail', value: email),
@@ -72,6 +75,30 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  static void _showEditNameDialog(BuildContext context) {
+    showCupertinoDialog<void>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Editar nome'),
+        content: const Column(
+          children: [
+            SizedBox(height: 8),
+            Text(
+              'Seu nome é gerenciado pelo provedor de login (Google, Microsoft ou Apple). '
+              'Para alterá-lo, atualize seu perfil no provedor.',
+            ),
+          ],
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
@@ -138,10 +165,11 @@ class _Avatar extends StatelessWidget {
 }
 
 class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.rows});
+  const _Section({required this.title, required this.rows, this.onEdit});
 
   final String title;
   final List<Widget> rows;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -150,18 +178,20 @@ class _Section extends StatelessWidget {
       children: [
         IaculaSectionHeader(
           title: title,
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            minSize: 0,
-            onPressed: () {},
-            child: const Text(
-              'Editar',
-              style: TextStyle(
-                color: IaculaColors.primaryButton,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          trailing: onEdit != null
+              ? CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  minSize: 0,
+                  onPressed: onEdit,
+                  child: const Text(
+                    'Editar',
+                    style: TextStyle(
+                      color: IaculaColors.primaryButton,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                )
+              : null,
         ),
         const SizedBox(height: IaculaSpacing.sm),
         IaculaSoftCard(
