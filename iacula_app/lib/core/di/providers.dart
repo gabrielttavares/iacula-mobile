@@ -61,10 +61,16 @@ import '../../features/sync/infrastructure/repositories/supabase_spiritual_sync_
 import '../../features/sync/infrastructure/services/background_sync_scheduler.dart';
 import '../../features/sync/infrastructure/services/connectivity_sync_service.dart';
 import '../../features/sync/infrastructure/services/default_sync_orchestrator.dart';
+import '../../features/sync/infrastructure/services/noop_sync_orchestrator.dart';
+import '../bootstrap/bootstrap_status.dart';
 import '../config/app_env.dart';
 import '../storage/isar/isar_store.dart';
 
 final appEnvProvider = Provider<AppEnv>((ref) => AppEnv.fromDartDefines());
+
+final bootstrapStatusProvider = Provider<BootstrapStatus>((ref) {
+  return const BootstrapStatus();
+});
 
 final supabaseClientProvider = Provider<SupabaseClient?>((ref) {
   return null;
@@ -169,7 +175,7 @@ final syncOrchestratorProvider = Provider<SyncOrchestrator>((ref) {
   final gateway = ref.watch(spiritualSyncGatewayProvider);
 
   if (!env.authSyncEnabled || gateway == null) {
-    return const _NoopSyncOrchestrator();
+    return const NoopSyncOrchestrator();
   }
 
   return DefaultSyncOrchestrator(
@@ -333,12 +339,3 @@ final planOfLifeNotifierProvider =
   );
 });
 
-final class _NoopSyncOrchestrator implements SyncOrchestrator {
-  const _NoopSyncOrchestrator();
-
-  @override
-  Future<void> syncAll() async {}
-
-  @override
-  Future<void> syncModule(String module) async {}
-}
