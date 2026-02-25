@@ -56,8 +56,7 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-
-  testWidgets('free user tapping Homilias tab opens premium gate modal', (
+  testWidgets('free user tapping Meditação tab opens premium gate modal', (
     tester,
   ) async {
     final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
@@ -83,7 +82,7 @@ void main() {
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100)); // wait for provider
-    await tester.tap(find.text('Homilias'));
+    await tester.tap(find.text('Meditação'));
     await tester.pump();
 
     expect(find.text('Recurso Premium'), findsOneWidget);

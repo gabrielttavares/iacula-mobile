@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/favorites/infrastructure/repositories/isar_favorite_repository.dart';
 import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
 import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
 import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
@@ -53,6 +54,7 @@ final class AppBootstrap {
     final indicesRepo = SqliteQuoteIndicesRepository(db);
     final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
+    final favoriteRepo = IsarFavoriteRepository(store: isarStore);
     final localPremiumRepo = IsarPremiumRepository(store: isarStore);
     final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(isarStore);
     final httpClient = http.Client();
@@ -204,6 +206,7 @@ final class AppBootstrap {
         lastDeliveredCardRepo,
       ),
       mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
+      favoriteRepositoryProvider.overrideWithValue(favoriteRepo),
       premiumRepositoryProvider.overrideWithValue(premiumRepository),
       liturgicalSeasonCacheRepositoryProvider.overrideWithValue(
         liturgicalCacheRepo,

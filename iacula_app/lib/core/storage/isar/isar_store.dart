@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
+import 'favorite_item_doc.dart';
 import 'liturgical_day_doc.dart';
 import 'media_asset_doc.dart';
 import 'premium_status_doc.dart';
@@ -22,7 +23,7 @@ final class IsarStore {
     final isarDirectory = p.join(databasesPath, 'isar');
     await Directory(isarDirectory).create(recursive: true);
     _isar = await Isar.open(
-      [MediaAssetDocSchema, LiturgicalDayDocSchema, PremiumStatusDocSchema],
+      [MediaAssetDocSchema, LiturgicalDayDocSchema, PremiumStatusDocSchema, FavoriteItemDocSchema],
       directory: isarDirectory,
       name: 'iacula_isar',
     );

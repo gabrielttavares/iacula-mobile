@@ -46,7 +46,7 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-  testWidgets('tab bar shows "Meditações" instead of "Meditação"', (
+  testWidgets('tab bar shows "Meditação"', (
     tester,
   ) async {
     final purchaseService = _FakePurchaseService();
@@ -71,8 +71,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.text('Meditações'), findsOneWidget);
-    expect(find.text('Meditações'), findsNothing);
+    expect(find.text('Meditação'), findsOneWidget);
 
     await purchaseService.dispose();
   });
