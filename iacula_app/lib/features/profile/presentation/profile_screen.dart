@@ -1,16 +1,24 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../settings/presentation/settings_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+    final user = authState.valueOrNull;
+    final name = user?.displayName ?? 'Sem conta';
+    final email = user?.email ?? '\u2014';
+    final isConnected = user != null;
+
     return CupertinoPageScaffold(
       backgroundColor: IaculaColors.background,
       child: SafeArea(
@@ -19,22 +27,22 @@ class ProfileScreen extends StatelessWidget {
           children: [
             const IaculaLargeTitle('Perfil'),
             const SizedBox(height: IaculaSpacing.lg),
-            const Center(child: _Avatar()),
+            Center(child: _Avatar(name: name)),
             const SizedBox(height: IaculaSpacing.xl),
             _Section(
               title: 'Conta',
-              rows: const [
-                _InfoRow(label: 'Nome', value: 'Pedro Gabriel'),
-                _InfoRow(label: 'E-mail', value: 'pedro@iacula.app'),
-                _InfoRow(label: 'Idioma', value: 'Português (Brasil)'),
+              rows: [
+                _InfoRow(label: 'Nome', value: name),
+                _InfoRow(label: 'E-mail', value: email),
+                const _InfoRow(label: 'Idioma', value: 'Português (Brasil)'),
               ],
             ),
             const SizedBox(height: IaculaSpacing.lg),
             _Section(
               title: 'Privacidade e segurança',
-              rows: const [
-                _InfoRow(label: 'Conta', value: 'Conectada'),
-                _InfoRow(label: 'Backup', value: 'Sincronização ativa'),
+              rows: [
+                _InfoRow(label: 'Conta', value: isConnected ? 'Conectada' : 'Não conectada'),
+                _InfoRow(label: 'Backup', value: isConnected ? 'Sincronização ativada' : 'Apenas local'),
               ],
             ),
             const SizedBox(height: IaculaSpacing.lg),
@@ -70,7 +78,16 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class _Avatar extends StatelessWidget {
-  const _Avatar();
+  const _Avatar({required this.name});
+
+  final String name;
+
+  String get _initials {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return '?';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,9 +105,9 @@ class _Avatar extends StatelessWidget {
               color: CupertinoColors.white,
             ),
             alignment: Alignment.center,
-            child: const Text(
-              'PG',
-              style: TextStyle(
+            child: Text(
+              _initials,
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
                 color: IaculaColors.textPrimary,
