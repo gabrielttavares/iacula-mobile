@@ -107,11 +107,17 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _HomeHeader extends StatelessWidget {
+class _HomeHeader extends ConsumerWidget {
   const _HomeHeader();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+    final greeting = authState.whenData((user) {
+      final name = user?.displayName;
+      return name != null && name.isNotEmpty ? 'Paz e bem, $name!' : 'Paz e bem!';
+    }).value ?? 'Paz e bem!';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -151,7 +157,7 @@ class _HomeHeader extends StatelessWidget {
           ],
         ),
         const SizedBox(height: IaculaSpacing.sm),
-        const IaculaLargeTitle('Paz e bem, Pedro!'),
+        IaculaLargeTitle(greeting),
       ],
     );
   }
