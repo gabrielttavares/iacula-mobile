@@ -171,6 +171,7 @@ void main() {
     expect(find.text('Liturgia'), findsOneWidget);
     expect(find.text('Rosário 📿'), findsOneWidget);
     expect(find.text('Novenas'), findsOneWidget);
+    expect(find.textContaining('Doutrina'), findsOneWidget);
     expect(find.text('Premium'), findsNothing);
   });
 
@@ -228,7 +229,8 @@ void main() {
     expect(find.byType(CupertinoAlertDialog), findsNothing);
   });
 
-  testWidgets('novenas quick action shows em breve dialog', (tester) async {
+  testWidgets('novenas quick action navigates to prayer collections',
+      (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -238,12 +240,6 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Novenas'));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(CupertinoAlertDialog), findsOneWidget);
-    expect(find.text('Em breve'), findsOneWidget);
-
-    await tester.tap(find.text('Fechar'));
     await tester.pumpAndSettle();
 
     expect(find.byType(CupertinoAlertDialog), findsNothing);
