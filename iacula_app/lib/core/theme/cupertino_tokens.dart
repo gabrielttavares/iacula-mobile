@@ -12,6 +12,10 @@ final class IaculaColors {
   static const warning = Color(0xFFFF9500);
   static const error = Color(0xFFFF3B30);
   static const separator = Color(0x1A000000);
+  static const homeWarmBackground = Color(0xFFFFFAF3);
+  static const homeSacredAccent = Color(0xFFB08A57);
+  static const homeHeroTop = Color(0xFFF6EFE3);
+  static const homeHeroBottom = Color(0xFFFDF9F2);
 }
 
 final class IaculaShadows {

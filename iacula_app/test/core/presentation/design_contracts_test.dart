@@ -90,4 +90,11 @@ void main() {
     expect(IaculaColors.error, const Color(0xFFFF3B30));
     expect(IaculaMetrics.minTapTarget, 44.0);
   });
+
+  test('home reverent tokens are exposed', () {
+    expect(IaculaColors.homeWarmBackground, const Color(0xFFFFFAF3));
+    expect(IaculaColors.homeSacredAccent, const Color(0xFFB08A57));
+    expect(IaculaColors.homeHeroTop, const Color(0xFFF6EFE3));
+    expect(IaculaColors.homeHeroBottom, const Color(0xFFFDF9F2));
+  });
 }
