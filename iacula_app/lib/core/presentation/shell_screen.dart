@@ -46,8 +46,8 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
         inactiveColor: const Color(0xFF6E6E73),
         onTap: (index) async {
           if (_premiumIndexes.contains(index)) {
-            final status = ref.read(premiumStatusProvider).valueOrNull;
-            if (status?.isPremium != true) {
+            final asyncStatus = ref.read(premiumStatusProvider);
+            if (asyncStatus.hasValue && asyncStatus.value?.isPremium != true) {
               _tabController.index = _currentIndex;
               final feature = index == 1
                   ? PremiumFeature.meditation
