@@ -1,0 +1,24 @@
+{
+  "slug": "salmo-ii-latim",
+  "default_language": "la",
+  "titles": {
+    "pt-br": "Salmo II (Latim)",
+    "la": "Psalmus II"
+  },
+  "blocks": {
+    "la": [
+      "Quare fremuerunt gentes, et populi meditati sunt inania?",
+      "Astiterunt reges terrae, et principes convenerunt in unum adversus Dominum et adversus Christum eius.",
+      "Dirumpamus vincula eorum et proiciamus a nobis iugum ipsorum.",
+      "Qui habitat in caelis irridebit eos, et Dominus subsannabit eos.",
+      "Tunc loquetur ad eos in ira sua et in furore suo conturbabit eos."
+    ],
+    "pt-br": [
+      "Por que se amotinam as nações, e os povos tramam em vão?",
+      "Levantam-se os reis da terra e os príncipes conspiram unidos contra o Senhor e contra o seu Ungido.",
+      "Rompamos as suas cadeias e lancemos de nós os seus grilhões.",
+      "Aquele que habita nos céus os escarnecerá, e o Senhor zombará deles.",
+      "Então lhes falará em sua ira e em seu furor os confundirá."
+    ]
+  }
+}

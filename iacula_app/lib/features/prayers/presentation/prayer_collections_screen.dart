@@ -16,6 +16,29 @@ final _catalogProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
       .listAll(language: settings.language);
 });
 
+// Ordem explícita das seções conforme o PDF
+const _sectionOrder = [
+  'oracoes-comuns',
+  'oracoes-santissima-trindade',
+  'adoracao-eucaristica',
+  'ao-espirito-santo',
+  'oracoes-a-nossa-senhora',
+  'preparacao-santa-missa',
+  'acao-de-gracas-santa-missa',
+  'oracoes-a-sao-jose',
+  'oracoes-diversas',
+  'outras-devocoes',
+  'oracoes-pelos-defuntos',
+  'formulas-doutrina-catolica',
+  'homilia-rumo-santidade',
+];
+
+// Seções que fazem parte de "Recursos Adicionais"
+const _recursosAdicionaisSections = [
+  'formulas-doutrina-catolica',
+  'homilia-rumo-santidade',
+];
+
 class PrayerCollectionsScreen extends ConsumerWidget {
   const PrayerCollectionsScreen({super.key});
 
@@ -62,6 +85,9 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                       itemCount: grouped.length,
                       itemBuilder: (context, index) {
                         final group = grouped[index];
+                        final isFirstRecurso = group.sectionId ==
+                            _recursosAdicionaisSections.first;
+
                         return Padding(
                           padding: const EdgeInsets.only(
                             bottom: IaculaSpacing.md,
@@ -69,6 +95,22 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (isFirstRecurso) ...[
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: IaculaSpacing.md,
+                                  ),
+                                  child: Text(
+                                    'Recursos Adicionais',
+                                    style: IaculaText.sectionTitle.copyWith(
+                                      fontSize: 20,
+                                      color: IaculaColors.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: IaculaSpacing.sm),
+                              ],
                               Text(
                                 group.sectionTitle,
                                 style: IaculaText.secondary.copyWith(
@@ -161,21 +203,56 @@ class _PrayerCategoryCard extends StatelessWidget {
 }
 
 List<_SectionGroup> _groupBySection(List<PrayerCatalogEntry> entries) {
+  // Group by section_id (not section_title)
   final buckets = <String, List<PrayerCatalogEntry>>{};
+  final sectionTitles = <String, String>{};
+
   for (final entry in entries) {
-    final title = entry.sectionTitle.isNotEmpty ? entry.sectionTitle : 'Outras';
-    buckets.putIfAbsent(title, () => <PrayerCatalogEntry>[]).add(entry);
+    final sectionId = entry.sectionId.isNotEmpty ? entry.sectionId : 'outras';
+    buckets.putIfAbsent(sectionId, () => <PrayerCatalogEntry>[]).add(entry);
+    // Store the section title for this ID
+    if (entry.sectionTitle.isNotEmpty) {
+      sectionTitles[sectionId] = entry.sectionTitle;
+    }
   }
 
-  final groups = buckets.entries
-      .map((item) => _SectionGroup(sectionTitle: item.key, entries: item.value))
+  // Sort according to _sectionOrder
+  final sortedIds = <String>[];
+
+  // First, add sections that are in _sectionOrder
+  for (final id in _sectionOrder) {
+    if (buckets.containsKey(id)) {
+      sortedIds.add(id);
+    }
+  }
+
+  // Then, add any remaining sections not in _sectionOrder
+  for (final id in buckets.keys) {
+    if (!sortedIds.contains(id)) {
+      sortedIds.add(id);
+    }
+  }
+
+  // Create groups in order
+  final groups = sortedIds
+      .map((id) => _SectionGroup(
+            sectionId: id,
+            sectionTitle: sectionTitles[id] ?? 'Outras',
+            entries: buckets[id]!,
+          ))
       .toList(growable: false);
+
   return groups;
 }
 
 final class _SectionGroup {
-  const _SectionGroup({required this.sectionTitle, required this.entries});
+  const _SectionGroup({
+    required this.sectionId,
+    required this.sectionTitle,
+    required this.entries,
+  });
 
+  final String sectionId;
   final String sectionTitle;
   final List<PrayerCatalogEntry> entries;
 }

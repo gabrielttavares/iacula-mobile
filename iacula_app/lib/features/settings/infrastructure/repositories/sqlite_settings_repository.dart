@@ -37,6 +37,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       oraMediaTime: row['ora_media_time'] as String,
       onboardingCompleted: (row['onboarding_completed'] as int? ?? 0) == 1,
       displayName: row['display_name'] as String?,
+      prayerFontSize: (row['prayer_font_size'] as num? ?? 15.0).toDouble(),
     );
   }
 
@@ -61,6 +62,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       'ora_media_time': settings.oraMediaTime,
       'onboarding_completed': settings.onboardingCompleted ? 1 : 0,
       'display_name': settings.displayName,
+      'prayer_font_size': settings.prayerFontSize,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }

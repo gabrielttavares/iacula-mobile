@@ -16,6 +16,7 @@ final class Settings {
     required this.oraMediaTime,
     required this.onboardingCompleted,
     this.displayName,
+    this.prayerFontSize = 15.0,
   });
 
   final int intervalMinutes;
@@ -34,6 +35,7 @@ final class Settings {
   final String oraMediaTime;
   final bool onboardingCompleted;
   final String? displayName;
+  final double prayerFontSize;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -51,6 +53,7 @@ final class Settings {
     complineTime: '21:00',
     oraMediaTime: '12:30',
     onboardingCompleted: false,
+    prayerFontSize: 15.0,
   );
 
   Settings copyWith({
@@ -70,6 +73,7 @@ final class Settings {
     String? oraMediaTime,
     bool? onboardingCompleted,
     String? displayName,
+    double? prayerFontSize,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
@@ -90,6 +94,7 @@ final class Settings {
       oraMediaTime: oraMediaTime ?? this.oraMediaTime,
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
       displayName: displayName ?? this.displayName,
+      prayerFontSize: prayerFontSize ?? this.prayerFontSize,
     );
   }
 }

@@ -1,0 +1,20 @@
+{
+  "slug": "bem-aventurancas",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Bem-Aventuranças"
+  },
+  "blocks": {
+    "pt-br": [
+      "Bem-aventurados os pobres de espírito, porque deles é o reino dos céus.",
+      "Bem-aventurados os que choram, porque eles serão consolados.",
+      "Bem-aventurados os mansos, porque eles possuirão a terra.",
+      "Bem-aventurados os que têm fome e sede de justiça, porque eles serão saciados.",
+      "Bem-aventurados os misericordiosos, porque eles alcançarão misericórdia.",
+      "Bem-aventurados os limpos de coração, porque eles verão a Deus.",
+      "Bem-aventurados os pacificadores, porque eles serão chamados filhos de Deus.",
+      "Bem-aventurados os perseguidos por causa da justiça, porque deles é o reino dos céus.",
+      "Bem-aventurados sois vós, quando vos injuriarem, e perseguirem, e disserem toda a espécie de mal contra vós, mentindo, por minha causa. Alegrai-vos e exultai, porque é grande no céu a vossa recompensa."
+    ]
+  }
+}

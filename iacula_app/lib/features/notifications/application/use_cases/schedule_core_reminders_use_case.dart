@@ -49,7 +49,7 @@ final class ScheduleCoreRemindersUseCase {
       ReminderEvent(
         type: ReminderEventType.angelusNoon,
         title: 'Angelus',
-        body: 'Rezar ao meio-dia',
+        body: '',
         scheduledAt: noon,
         withVibration: true,
         isAlarm: true,

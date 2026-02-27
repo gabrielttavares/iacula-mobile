@@ -1,0 +1,17 @@
+{
+  "slug": "mandamentos-da-igreja",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Mandamentos da Igreja"
+  },
+  "blocks": {
+    "pt-br": [
+      "1. Assistir à Missa aos domingos e festas de guarda e descansar desses dias de trabalho.",
+      "2. Confessar-se pelo menos uma vez ao ano.",
+      "3. Comungar na Páscoa (ou pelo menos uma vez por ano, na Páscoa).",
+      "4. Jejuar e abster-se de carne nos dias prescritos.",
+      "5. Contribuir para as necessidades da Igreja segundo as próprias possibilidades.",
+      "Estes mandamentos, estabelecidos pela Igreja Católica, têm por objetivo assegurar o culto a Deus, a santificação do povo cristão e o sustento do ministério sagrado."
+    ]
+  }
+}

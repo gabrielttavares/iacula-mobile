@@ -1,0 +1,19 @@
+{
+  "slug": "dons-espirito-santo",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Dons do Espírito Santo"
+  },
+  "blocks": {
+    "pt-br": [
+      "Sabedoria, Entendimento, Conselho, Fortaleza, Ciência, Piedade e Temor de Deus.",
+      "O dom de sabedoria nos faz saborear as coisas divinas e julgar corretamente segundo Deus.",
+      "O dom de entendimento ilumina a mente para compreender as verdades reveladas.",
+      "O dom de conselho nos guia nas dúvidas práticas da vida cristã.",
+      "O dom de fortaleza nos dá coragem para praticar o bem e suportar as provações.",
+      "O dom de ciência nos permite conhecer as coisas criadas em relação a Deus.",
+      "O dom de piedade nos move a amar a Deus como pai e aos homens como irmãos.",
+      "O dom de temor de Deus nos faz temer ofender a Deus e ansiar por agradá-lo."
+    ]
+  }
+}
