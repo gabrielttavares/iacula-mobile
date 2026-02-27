@@ -68,19 +68,25 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 const SizedBox(height: IaculaSpacing.sm),
                 IaculaSecondaryPillButton(
                   label: 'Começar sem conta',
-                  onPressed: _saving
-                      ? null
-                      : () => Navigator.of(context).pushReplacement(
-                          CupertinoPageRoute(
-                            builder: (_) => const ShellScreen(),
-                          ),
-                        ),
+                  onPressed: _saving ? null : _skipWithoutAccount,
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _skipWithoutAccount() async {
+    setState(() => _saving = true);
+    final settings = await ref.read(getSettingsUseCaseProvider).call();
+    await ref
+        .read(updateSettingsUseCaseProvider)
+        .call(settings.copyWith(onboardingCompleted: true));
+    if (!mounted) return;
+    Navigator.of(context).pushReplacement(
+      CupertinoPageRoute(builder: (_) => const ShellScreen()),
     );
   }
 

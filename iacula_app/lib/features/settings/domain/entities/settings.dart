@@ -15,6 +15,7 @@ final class Settings {
     required this.complineTime,
     required this.oraMediaTime,
     required this.onboardingCompleted,
+    this.displayName,
   });
 
   final int intervalMinutes;
@@ -32,6 +33,7 @@ final class Settings {
   final String complineTime;
   final String oraMediaTime;
   final bool onboardingCompleted;
+  final String? displayName;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -67,6 +69,7 @@ final class Settings {
     String? complineTime,
     String? oraMediaTime,
     bool? onboardingCompleted,
+    String? displayName,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
@@ -86,6 +89,7 @@ final class Settings {
       complineTime: complineTime ?? this.complineTime,
       oraMediaTime: oraMediaTime ?? this.oraMediaTime,
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+      displayName: displayName ?? this.displayName,
     );
   }
 }

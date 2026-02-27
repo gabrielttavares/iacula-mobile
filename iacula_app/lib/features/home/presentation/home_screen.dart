@@ -124,9 +124,10 @@ class _HomeHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
+    final localName = ref.watch(localDisplayNameProvider).valueOrNull;
     final greeting =
         authState.whenData((user) {
-          final name = user?.displayName;
+          final name = user?.displayName ?? localName;
           final isFemale = user?.gender == Gender.female;
           final welcome = isFemale ? 'Bem vinda' : 'Bem vindo';
           return name != null && name.isNotEmpty

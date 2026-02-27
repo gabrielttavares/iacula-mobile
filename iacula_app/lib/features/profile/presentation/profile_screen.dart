@@ -15,9 +15,10 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     final user = authState.valueOrNull;
-    final name = user?.displayName ?? 'Sem conta';
-    final email = user?.email ?? '\u2014';
     final isConnected = user != null;
+    final localName = ref.watch(localDisplayNameProvider).valueOrNull;
+    final name = user?.displayName ?? localName ?? 'Sem conta';
+    final email = user?.email ?? '\u2014';
 
     return CupertinoPageScaffold(
       backgroundColor: IaculaColors.background,
@@ -27,13 +28,13 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             const IaculaLargeTitle('Perfil'),
             const SizedBox(height: IaculaSpacing.lg),
-            Center(child: _Avatar(name: name)),
+            Center(child: _Avatar(name: name, showEditBadge: isConnected)),
             const SizedBox(height: IaculaSpacing.xl),
             _Section(
               title: 'Conta',
               onEdit: isConnected
-                  ? () => _showEditNameDialog(context)
-                  : null,
+                  ? () => _showProviderNameDialog(context)
+                  : () => _showLocalNameDialog(context, ref, localName),
               rows: [
                 _InfoRow(label: 'Nome', value: name),
                 _InfoRow(label: 'E-mail', value: email),
@@ -79,7 +80,7 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  static void _showEditNameDialog(BuildContext context) {
+  static void _showProviderNameDialog(BuildContext context) {
     showCupertinoDialog<void>(
       context: context,
       builder: (context) => CupertinoAlertDialog(
@@ -102,12 +103,60 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
   }
+
+  static void _showLocalNameDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String? currentName,
+  ) {
+    final controller = TextEditingController(text: currentName);
+    showCupertinoDialog<void>(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: const Text('Editar nome'),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: CupertinoTextField(
+            controller: controller,
+            placeholder: 'Seu nome',
+            autofocus: true,
+            textCapitalization: TextCapitalization.words,
+          ),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancelar'),
+          ),
+          CupertinoDialogAction(
+            onPressed: () async {
+              final newName = controller.text.trim();
+              if (newName.isEmpty) {
+                Navigator.of(ctx).pop();
+                return;
+              }
+              final settings =
+                  await ref.read(getSettingsUseCaseProvider).call();
+              await ref
+                  .read(updateSettingsUseCaseProvider)
+                  .call(settings.copyWith(displayName: newName));
+              ref.invalidate(localDisplayNameProvider);
+              if (ctx.mounted) Navigator.of(ctx).pop();
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _Avatar extends StatelessWidget {
-  const _Avatar({required this.name});
+  const _Avatar({required this.name, required this.showEditBadge});
 
   final String name;
+  final bool showEditBadge;
 
   String get _initials {
     final parts = name.trim().split(RegExp(r'\s+'));
@@ -141,23 +190,24 @@ class _Avatar extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            right: -2,
-            bottom: -2,
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: const BoxDecoration(
-                color: IaculaColors.primaryButton,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                CupertinoIcons.pencil,
-                size: 16,
-                color: CupertinoColors.white,
+          if (showEditBadge)
+            Positioned(
+              right: -2,
+              bottom: -2,
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: const BoxDecoration(
+                  color: IaculaColors.primaryButton,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  CupertinoIcons.pencil,
+                  size: 16,
+                  color: CupertinoColors.white,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

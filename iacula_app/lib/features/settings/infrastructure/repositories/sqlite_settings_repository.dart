@@ -36,6 +36,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       complineTime: row['compline_time'] as String,
       oraMediaTime: row['ora_media_time'] as String,
       onboardingCompleted: (row['onboarding_completed'] as int? ?? 0) == 1,
+      displayName: row['display_name'] as String?,
     );
   }
 
@@ -59,6 +60,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       'compline_time': settings.complineTime,
       'ora_media_time': settings.oraMediaTime,
       'onboarding_completed': settings.onboardingCompleted ? 1 : 0,
+      'display_name': settings.displayName,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }

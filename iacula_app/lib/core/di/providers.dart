@@ -142,6 +142,11 @@ final lastDeliveredCardRepositoryProvider =
       return InMemoryLastDeliveredCardRepository();
     });
 
+final localDisplayNameProvider = FutureProvider<String?>((ref) async {
+  final settings = await ref.read(getSettingsUseCaseProvider).call();
+  return settings.displayName;
+});
+
 final meditationCatalogRepositoryProvider =
     Provider<MeditationCatalogRepository>((ref) {
       return AssetMeditationCatalogRepository();
