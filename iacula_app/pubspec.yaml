@@ -50,6 +50,7 @@ flutter:
     - assets/seed/images/
     - assets/seed/audio/
     - assets/seed/meditations/
+    - assets/seed/doctrina/pt-br/
 
 
 dependency_overrides:
