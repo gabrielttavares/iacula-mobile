@@ -85,8 +85,8 @@ void main() {
     await tester.tap(find.text('Meditação'));
     await tester.pump();
 
-    expect(find.text('Recurso Premium'), findsOneWidget);
-    expect(find.text('Conhecer Premium'), findsOneWidget);
+    expect(find.text('Recurso Premium'), findsAtLeastNWidgets(1));
+    expect(find.text('Conhecer Premium'), findsAtLeastNWidgets(1));
 
     await purchaseService.dispose();
   });

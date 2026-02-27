@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +17,7 @@ import '../../features/notifications/application/use_cases/schedule_liturgy_remi
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/plan_of_life/application/use_cases/seed_default_items_use_case.dart';
+import '../../features/premium/domain/entities/premium_status.dart';
 import '../../features/premium/domain/repositories/premium_repository.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/premium/infrastructure/supabase_premium_repository.dart';
@@ -56,6 +58,11 @@ final class AppBootstrap {
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
     final favoriteRepo = IsarFavoriteRepository(store: isarStore);
     final localPremiumRepo = IsarPremiumRepository(store: isarStore);
+    if (kDebugMode) {
+      await localPremiumRepo.unlockPremium(
+        PremiumStatus(isPremium: true, purchaseDate: DateTime.now()),
+      );
+    }
     final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(isarStore);
     final httpClient = http.Client();
     final liturgicalSeasonService = RemoteLiturgicalSeasonService(
