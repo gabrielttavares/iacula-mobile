@@ -12,6 +12,9 @@ import '../../features/favorites/domain/entities/favorite_item.dart';
 import '../../features/favorites/domain/repositories/favorite_repository.dart';
 import '../../features/favorites/infrastructure/repositories/in_memory_favorite_repository.dart';
 import '../../features/liturgia_diaria/application/use_cases/get_liturgy_period_use_case.dart';
+import '../../features/meditation/domain/entities/meditation_item.dart';
+import '../../features/meditation/domain/repositories/meditation_catalog_repository.dart';
+import '../../features/meditation/infrastructure/repositories/asset_meditation_catalog_repository.dart';
 import '../../features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
 import '../../features/liturgia_diaria/infrastructure/repositories/liturgia_cache_repository.dart';
 import '../../features/liturgia_diaria/infrastructure/services/liturgia_api_service.dart';
@@ -138,6 +141,15 @@ final lastDeliveredCardRepositoryProvider =
     Provider<LastDeliveredCardRepository>((ref) {
       return InMemoryLastDeliveredCardRepository();
     });
+
+final meditationCatalogRepositoryProvider =
+    Provider<MeditationCatalogRepository>((ref) {
+      return AssetMeditationCatalogRepository();
+    });
+
+final meditationCatalogProvider = FutureProvider<List<MeditationItem>>((ref) {
+  return ref.watch(meditationCatalogRepositoryProvider).listAll();
+});
 
 final mediaCatalogRepositoryProvider = Provider<MediaCatalogRepository>((ref) {
   return InMemoryMediaCatalogRepository();

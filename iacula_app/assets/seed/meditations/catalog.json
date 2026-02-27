@@ -1,0 +1,101 @@
+[
+  {
+    "id": "video-ppr-channel",
+    "type": "video",
+    "title": "Homilia Diária — Padre Paulo Ricardo",
+    "summary": "Reflexões diárias sobre o Evangelho do dia com Padre Paulo Ricardo de Azevedo Júnior.",
+    "durationSec": 600,
+    "categoryTags": ["espiritual", "evangelho"],
+    "sourceName": "Padre Paulo Ricardo",
+    "sourceUrl": "https://www.youtube.com/@padrepauloricardo/videos",
+    "mediaUrl": "https://www.youtube.com/@padrepauloricardo/videos",
+    "imageUrl": null,
+    "availability": { "kind": "evergreen" },
+    "premiumTier": "free",
+    "provenance": { "providerId": "youtube-ppr", "providerType": "channel" }
+  },
+  {
+    "id": "video-pp-willemsens",
+    "type": "video",
+    "title": "Meditações — Padre Pedro Willemsens",
+    "summary": "Meditações profundas sobre a vida espiritual e os ensinamentos da Igreja.",
+    "durationSec": 900,
+    "categoryTags": ["espiritual", "foco"],
+    "sourceName": "Padre Pedro Willemsens",
+    "sourceUrl": "https://www.youtube.com/@meditacoespadrepedro",
+    "mediaUrl": "https://www.youtube.com/@meditacoespadrepedro",
+    "imageUrl": null,
+    "availability": { "kind": "evergreen" },
+    "premiumTier": "free",
+    "provenance": { "providerId": "youtube-ppw", "providerType": "channel" }
+  },
+  {
+    "id": "audio-cleber-dias",
+    "type": "audio",
+    "title": "Pregações — Padre Cléber Eduardo",
+    "summary": "Pregações e reflexões espirituais do Padre Cléber Eduardo dos Santos Dias.",
+    "durationSec": 1200,
+    "categoryTags": ["espiritual", "pregação"],
+    "sourceName": "Padre Cléber Eduardo",
+    "sourceUrl": "https://soundcloud.com/praedicaverbum",
+    "mediaUrl": "https://soundcloud.com/praedicaverbum",
+    "imageUrl": null,
+    "availability": { "kind": "evergreen" },
+    "premiumTier": "free",
+    "provenance": { "providerId": "soundcloud-cleber", "providerType": "channel" }
+  },
+  {
+    "id": "text-hablar-con-dios",
+    "type": "text",
+    "title": "Meditação do Dia — Hablar con Dios",
+    "summary": "Meditação diária baseada nas leituras litúrgicas, com reflexões para a vida cotidiana.",
+    "categoryTags": ["espiritual", "evangelho", "diário"],
+    "sourceName": "Hablar con Dios",
+    "sourceUrl": "https://hablarcondios.org/pt/meditacao-diaria/",
+    "imageUrl": null,
+    "availability": { "kind": "daily", "timezone": "America/Sao_Paulo" },
+    "textContent": {
+      "body": "Acesse a meditação diária completa no site Hablar con Dios para reflexões sobre as leituras do dia.",
+      "format": "plain",
+      "language": "pt"
+    },
+    "premiumTier": "free",
+    "provenance": { "providerId": "hablar-con-dios", "providerType": "daily_text" }
+  },
+  {
+    "id": "text-ibreviary",
+    "type": "text",
+    "title": "Ofício das Leituras — iBreviary",
+    "summary": "O Ofício das Leituras do dia com textos dos Padres da Igreja e reflexões patrísticas.",
+    "categoryTags": ["espiritual", "liturgia", "diário"],
+    "sourceName": "iBreviary",
+    "sourceUrl": "https://www.ibreviary.com/m2/breviario.php?s=ufficio_delle_letture",
+    "imageUrl": null,
+    "availability": { "kind": "daily", "timezone": "America/Sao_Paulo" },
+    "textContent": {
+      "body": "O Ofício das Leituras é parte da Liturgia das Horas, com textos bíblicos e patrísticos para aprofundamento espiritual.",
+      "format": "plain",
+      "language": "pt"
+    },
+    "premiumTier": "free",
+    "provenance": { "providerId": "ibreviary", "providerType": "daily_text" }
+  },
+  {
+    "id": "text-meditatione",
+    "type": "text",
+    "title": "Meditação Diária — Meditatione",
+    "summary": "Meditação contemplativa do dia com foco na oração interior e no silêncio.",
+    "categoryTags": ["espiritual", "contemplação", "diário"],
+    "sourceName": "Meditatione",
+    "sourceUrl": "https://meditatione.online/pt",
+    "imageUrl": null,
+    "availability": { "kind": "daily", "timezone": "America/Sao_Paulo" },
+    "textContent": {
+      "body": "Meditação diária para cultivar a oração interior e o silêncio contemplativo.",
+      "format": "plain",
+      "language": "pt"
+    },
+    "premiumTier": "free",
+    "provenance": { "providerId": "meditatione", "providerType": "daily_text" }
+  }
+]

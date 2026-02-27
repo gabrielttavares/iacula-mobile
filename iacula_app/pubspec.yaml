@@ -49,6 +49,7 @@ flutter:
     - assets/seed/prayers/pt-br/
     - assets/seed/images/
     - assets/seed/audio/
+    - assets/seed/meditations/
 
 
 dependency_overrides:
