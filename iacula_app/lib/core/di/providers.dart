@@ -30,7 +30,6 @@ import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/premium/infrastructure/purchase_service.dart';
 import '../../features/prayers/application/use_cases/get_prayer_use_case.dart';
 import '../../features/prayers/application/use_cases/get_prayer_catalog_use_case.dart';
-import '../../features/prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import '../../features/prayers/domain/repositories/prayer_content_repository.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_content_repository.dart';
@@ -126,7 +125,9 @@ final prayerContentRepositoryProvider = Provider<PrayerContentRepository>((
 final prayerCatalogRepositoryProvider = Provider<PrayerCatalogRepository>((
   ref,
 ) {
-  return const _EmptyPrayerCatalogRepository();
+  throw UnsupportedError(
+    'Prayer catalog repository is not wired yet. Implement Task 2 and replace prayerCatalogRepositoryProvider with a real repository.',
+  );
 });
 
 final notificationSchedulerRepositoryProvider =
@@ -383,14 +384,3 @@ final planOfLifeNotifierProvider =
         deleteItem: ref.watch(deletePlanItemUseCaseProvider),
       );
     });
-
-final class _EmptyPrayerCatalogRepository implements PrayerCatalogRepository {
-  const _EmptyPrayerCatalogRepository();
-
-  @override
-  Future<List<PrayerCatalogEntry>> listCatalog({
-    required String language,
-  }) async {
-    return const <PrayerCatalogEntry>[];
-  }
-}

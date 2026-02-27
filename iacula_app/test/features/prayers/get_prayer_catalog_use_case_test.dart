@@ -7,11 +7,13 @@ class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
   _FakePrayerCatalogRepository(this.entries);
 
   final List<PrayerCatalogEntry> entries;
+  final List<String> requestedLanguages = <String>[];
 
   @override
   Future<List<PrayerCatalogEntry>> listCatalog({
     required String language,
   }) async {
+    requestedLanguages.add(language);
     return entries;
   }
 }
@@ -39,32 +41,45 @@ void main() {
   ];
 
   test('listAll returns all entries', () async {
-    final useCase = GetPrayerCatalogUseCase(
-      repository: _FakePrayerCatalogRepository(entries),
-    );
+    final repository = _FakePrayerCatalogRepository(entries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
 
-    final result = await useCase.listAll(language: 'pt-br');
+    final result = await useCase.listAll(language: 'en');
     expect(result, entries);
+    expect(repository.requestedLanguages, ['en']);
   });
 
   test('byTheme returns only matching theme entries', () async {
-    final useCase = GetPrayerCatalogUseCase(
-      repository: _FakePrayerCatalogRepository(entries),
-    );
+    final repository = _FakePrayerCatalogRepository(entries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
 
-    final result = await useCase.byTheme(
-      language: 'pt-br',
-      theme: 'intercessao',
-    );
+    final result = await useCase.byTheme(language: 'es', theme: 'intercessao');
     expect(result.map((e) => e.slug), ['ladainha-santa-teresinha']);
+    expect(repository.requestedLanguages, ['es']);
   });
 
   test('bySaint ignores entries without saint', () async {
-    final useCase = GetPrayerCatalogUseCase(
-      repository: _FakePrayerCatalogRepository(entries),
-    );
+    final repository = _FakePrayerCatalogRepository(entries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
 
-    final result = await useCase.bySaint(language: 'pt-br', saint: 'sao-jose');
+    final result = await useCase.bySaint(language: 'it', saint: 'sao-jose');
     expect(result.map((e) => e.slug), ['novena-sao-jose']);
+    expect(repository.requestedLanguages, ['it']);
+  });
+
+  test('byTheme returns empty list when no entry matches', () async {
+    final repository = _FakePrayerCatalogRepository(entries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+
+    final result = await useCase.byTheme(language: 'pt-br', theme: 'mariano');
+    expect(result, isEmpty);
+  });
+
+  test('bySaint returns empty list when no entry matches', () async {
+    final repository = _FakePrayerCatalogRepository(entries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+
+    final result = await useCase.bySaint(language: 'pt-br', saint: 'sao-pio');
+    expect(result, isEmpty);
   });
 }
