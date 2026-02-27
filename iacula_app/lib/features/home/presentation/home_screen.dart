@@ -55,10 +55,8 @@ class HomeScreen extends ConsumerWidget {
                           onOpenLiturgy: () => Navigator.of(
                             context,
                           ).pushNamed(LiturgiaScreen.routeName),
-                          onOpenPremium: () => PremiumGate.showModal(
-                            context,
-                            feature: PremiumFeature.meditation,
-                          ),
+                          onOpenRosary: () {},
+                          onOpenNovenas: () {},
                         ),
                         const SizedBox(height: IaculaSpacing.lg),
                         _PromotionalBanner(
@@ -70,26 +68,7 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Destaques'),
-                        const SizedBox(height: IaculaSpacing.sm),
-                        _HorizontalHighlights(
-                          onOpenPrayers: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) => const PrayerCollectionsScreen(),
-                              ),
-                            );
-                          },
-                          onOpenLiturgy: () => Navigator.of(
-                            context,
-                          ).pushNamed(LiturgiaScreen.routeName),
-                          onOpenPremium: () => PremiumGate.showModal(
-                            context,
-                            feature: PremiumFeature.meditation,
-                          ),
-                        ),
-                        const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Orações diárias'),
+                        const IaculaSectionHeader(title: 'Sugestão do Dia'),
                         const SizedBox(height: IaculaSpacing.sm),
                         const _DailyPrayerList(),
                         const SizedBox(height: IaculaSpacing.xl),
@@ -186,39 +165,57 @@ class _FeatureGrid extends StatelessWidget {
   const _FeatureGrid({
     required this.onOpenPrayers,
     required this.onOpenLiturgy,
-    required this.onOpenPremium,
+    required this.onOpenRosary,
+    required this.onOpenNovenas,
   });
 
   final VoidCallback onOpenPrayers;
   final VoidCallback onOpenLiturgy;
-  final VoidCallback onOpenPremium;
+  final VoidCallback onOpenRosary;
+  final VoidCallback onOpenNovenas;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: _SquareFeatureCard(
-            icon: CupertinoIcons.book,
-            label: 'Orações',
-            onTap: onOpenPrayers,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: _SquareFeatureCard(
+                icon: CupertinoIcons.book,
+                label: 'Orações',
+                onTap: onOpenPrayers,
+              ),
+            ),
+            const SizedBox(width: IaculaSpacing.sm),
+            Expanded(
+              child: _SquareFeatureCard(
+                icon: CupertinoIcons.doc_text,
+                label: 'Liturgia',
+                onTap: onOpenLiturgy,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: IaculaSpacing.sm),
-        Expanded(
-          child: _SquareFeatureCard(
-            icon: CupertinoIcons.doc_text,
-            label: 'Liturgia',
-            onTap: onOpenLiturgy,
-          ),
-        ),
-        const SizedBox(width: IaculaSpacing.sm),
-        Expanded(
-          child: _SquareFeatureCard(
-            icon: CupertinoIcons.star_fill,
-            label: 'Premium',
-            onTap: onOpenPremium,
-          ),
+        const SizedBox(height: IaculaSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: _SquareFeatureCard(
+                icon: CupertinoIcons.heart,
+                label: 'Rosário 📿',
+                onTap: onOpenRosary,
+              ),
+            ),
+            const SizedBox(width: IaculaSpacing.sm),
+            Expanded(
+              child: _SquareFeatureCard(
+                icon: CupertinoIcons.book_solid,
+                label: 'Novenas',
+                onTap: onOpenNovenas,
+              ),
+            ),
+          ],
         ),
       ],
     );

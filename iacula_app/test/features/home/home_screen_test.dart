@@ -115,10 +115,26 @@ void main() {
     }
 
     expect(find.text('Bem vindo!'), findsOneWidget);
-    await reveal('Destaques');
-    await reveal('Orações diárias');
+    expect(find.text('Destaques'), findsNothing);
+    await reveal('Sugestão do Dia');
     await reveal('Orações temáticas');
     await reveal('Orações de Santos');
+  });
+
+  testWidgets('home shows updated quick actions', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Orações'), findsOneWidget);
+    expect(find.text('Liturgia'), findsOneWidget);
+    expect(find.text('Rosário 📿'), findsOneWidget);
+    expect(find.text('Novenas'), findsOneWidget);
+    expect(find.text('Premium'), findsNothing);
   });
 
   testWidgets('home header shows text-only brand without grid icon', (
@@ -154,7 +170,7 @@ void main() {
     expect(find.text('Domingo'), findsOneWidget);
   });
 
-  testWidgets('premium card opens premium modal', (tester) async {
+  testWidgets('new quick actions handle taps safely', (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -163,10 +179,11 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Premium'));
+    await tester.tap(find.text('Rosário 📿'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Novenas'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Recurso Premium'), findsOneWidget);
-    expect(find.text('Conhecer Premium'), findsWidgets);
+    expect(find.byType(HomeScreen), findsOneWidget);
   });
 }
