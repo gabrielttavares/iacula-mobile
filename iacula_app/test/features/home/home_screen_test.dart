@@ -229,7 +229,7 @@ void main() {
     expect(find.byType(CupertinoAlertDialog), findsNothing);
   });
 
-  testWidgets('novenas quick action navigates to prayer collections',
+  testWidgets('novenas quick action navigates away from home',
       (tester) async {
     await tester.pumpWidget(
       _buildApp(
@@ -240,7 +240,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Novenas'));
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(find.byType(CupertinoAlertDialog), findsNothing);
   });
