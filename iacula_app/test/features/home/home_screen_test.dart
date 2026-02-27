@@ -129,6 +129,7 @@ void main() {
     final quoteText = tester.widget<Text>(quoteFinder);
     expect(quoteText.maxLines, isNull);
     expect(quoteText.overflow, isNull);
+    expect(find.byType(SingleChildScrollView), findsNothing);
     expect(find.text('Conhecer Premium'), findsOneWidget);
   });
 
