@@ -17,6 +17,7 @@ import '../../premium/presentation/premium_gate.dart';
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
+import '../../doctrina/presentation/doctrine_collections_screen.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../../quotes/domain/entities/quote.dart';
 
@@ -78,8 +79,22 @@ class HomeScreen extends ConsumerWidget {
                           },
                           onOpenRosary: () =>
                               _showEmBreveDialog(context, 'Rosário 📿'),
-                          onOpenNovenas: () =>
-                              _showEmBreveDialog(context, 'Novenas'),
+                          onOpenNovenas: () {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) =>
+                                    const PrayerCollectionsScreen(),
+                              ),
+                            );
+                          },
+                          onOpenDoctrina: () {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) =>
+                                    const DoctrineCollectionsScreen(),
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(height: IaculaSpacing.lg),
                         _PromotionalBanner(
@@ -191,12 +206,14 @@ class _FeatureGrid extends StatelessWidget {
     required this.onOpenLiturgy,
     required this.onOpenRosary,
     required this.onOpenNovenas,
+    required this.onOpenDoctrina,
   });
 
   final VoidCallback onOpenPrayers;
   final VoidCallback onOpenLiturgy;
   final VoidCallback onOpenRosary;
   final VoidCallback onOpenNovenas;
+  final VoidCallback onOpenDoctrina;
 
   @override
   Widget build(BuildContext context) {
@@ -239,6 +256,20 @@ class _FeatureGrid extends StatelessWidget {
                 onTap: onOpenNovenas,
               ),
             ),
+          ],
+        ),
+        const SizedBox(height: IaculaSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: _SquareFeatureCard(
+                icon: CupertinoIcons.lightbulb,
+                label: 'Doutrina\nCatólica',
+                onTap: onOpenDoctrina,
+              ),
+            ),
+            const SizedBox(width: IaculaSpacing.sm),
+            const Expanded(child: SizedBox()),
           ],
         ),
       ],
