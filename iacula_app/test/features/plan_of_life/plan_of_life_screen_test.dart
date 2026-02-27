@@ -16,6 +16,11 @@ import 'package:iacula_app/features/spiritual_data/domain/entities/spiritual_ent
 import 'package:iacula_app/features/spiritual_data/domain/repositories/spiritual_entry_repository.dart';
 
 final class _FakeSpiritualEntryRepository implements SpiritualEntryRepository {
+  _FakeSpiritualEntryRepository([List<SpiritualEntry>? seed])
+    : _entries = [...?seed];
+
+  final List<SpiritualEntry> _entries;
+
   @override
   SpiritualModule get module => SpiritualModule.planOfLife;
 
@@ -24,7 +29,7 @@ final class _FakeSpiritualEntryRepository implements SpiritualEntryRepository {
 
   @override
   Future<List<SpiritualEntry>> listLocal({bool includeDeleted = false}) async =>
-      const [];
+      List<SpiritualEntry>.from(_entries);
 
   @override
   Future<void> markClean(String id, {required DateTime syncedAt}) async {}
@@ -33,10 +38,21 @@ final class _FakeSpiritualEntryRepository implements SpiritualEntryRepository {
   Future<void> markDeleted(String id, {required DateTime deletedAt}) async {}
 
   @override
-  Future<void> saveLocal(SpiritualEntry entry) async {}
+  Future<void> saveLocal(SpiritualEntry entry) async {
+    final index = _entries.indexWhere((e) => e.id == entry.id);
+    if (index >= 0) {
+      _entries[index] = entry;
+    } else {
+      _entries.add(entry);
+    }
+  }
 
   @override
-  Future<void> upsertMany(List<SpiritualEntry> entries) async {}
+  Future<void> upsertMany(List<SpiritualEntry> entries) async {
+    for (final entry in entries) {
+      await saveLocal(entry);
+    }
+  }
 }
 
 final class _FakePlanCompletionRepository implements PlanCompletionRepository {
@@ -88,5 +104,57 @@ void main() {
 
     final selectedText = tester.widget<Text>(find.text(targetDay).first);
     expect(selectedText.style?.fontWeight, FontWeight.bold);
+  });
+
+  testWidgets('default item opens schedule-only edit via three-dot menu', (
+    tester,
+  ) async {
+    final now = DateTime.now();
+    final entryRepository = _FakeSpiritualEntryRepository([
+      SpiritualEntry(
+        id: 'default-item',
+        module: SpiritualModule.planOfLife,
+        title: 'Oferecimento de obras',
+        body: '',
+        scheduleJson:
+            '{"time":"07:00","daysOfWeek":[],"notify":false,"isDefault":true}',
+        createdAt: now,
+        updatedAt: now,
+        isDirty: true,
+      ),
+    ]);
+    final completionRepository = _FakePlanCompletionRepository();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          premiumStatusProvider.overrideWith(
+            (ref) => Stream.value(const PremiumStatus(isPremium: true)),
+          ),
+          planOfLifeNotifierProvider.overrideWith(
+            (ref) => PlanOfLifeNotifier(
+              getDailyPlan: GetDailyPlanUseCase(
+                entryRepository,
+                completionRepository,
+              ),
+              toggleItem: ToggleItemUseCase(completionRepository),
+              addItem: AddPlanItemUseCase(entryRepository),
+              updateItem: UpdatePlanItemUseCase(entryRepository),
+              deleteItem: DeletePlanItemUseCase(entryRepository),
+            ),
+          ),
+        ],
+        child: const CupertinoApp(home: PlanOfLifeScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(CupertinoIcons.ellipsis_circle).first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Horário (HH:MM)'), findsOneWidget);
+    expect(find.text('Dias da semana:'), findsOneWidget);
+    expect(find.text('Lembrete (Notificação)'), findsOneWidget);
+    expect(find.text('Título'), findsNothing);
   });
 }

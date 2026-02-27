@@ -8,13 +8,17 @@ class PlanItemRow extends StatelessWidget {
   const PlanItemRow({
     super.key,
     required this.title,
+    required this.scheduleSummary,
     required this.isCompleted,
     required this.onToggle,
+    required this.onEdit,
   });
 
   final String title;
+  final String scheduleSummary;
   final bool isCompleted;
   final ValueChanged<bool> onToggle;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +59,27 @@ class PlanItemRow extends StatelessWidget {
                         : TextDecoration.none,
                     decorationColor: IaculaColors.textSecondary,
                   ),
-                  child: Text(
-                    title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 2),
+                      Text(
+                        scheduleSummary,
+                        style: IaculaText.secondary.copyWith(fontSize: 13),
+                      ),
+                    ],
                   ),
+                ),
+              ),
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(32, 32),
+                onPressed: onEdit,
+                child: const Icon(
+                  CupertinoIcons.ellipsis_circle,
+                  size: 20,
+                  color: IaculaColors.textSecondary,
                 ),
               ),
               const SizedBox(width: 12),

@@ -290,15 +290,43 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
               onLongPress: () => _showEditItemModal(context, item),
               child: PlanItemRow(
                 title: item.title,
+                scheduleSummary: _scheduleSummary(item.schedule),
                 isCompleted: item.isCompleted,
                 onToggle: (bool newValue) =>
                     notifier.toggleItem(item.id, newValue),
+                onEdit: () => _showEditItemModal(context, item),
               ),
             ),
           );
         }),
       ],
     );
+  }
+
+  String _scheduleSummary(PlanItemSchedule schedule) {
+    final time = schedule.time?.trim();
+    if (time == null || time.isEmpty) {
+      return 'Sem horário';
+    }
+
+    if (schedule.daysOfWeek.isEmpty) {
+      return 'Todos os dias • $time';
+    }
+
+    const dayLabels = <int, String>{
+      1: 'Seg',
+      2: 'Ter',
+      3: 'Qua',
+      4: 'Qui',
+      5: 'Sex',
+      6: 'Sáb',
+      7: 'Dom',
+    };
+    final days = schedule.daysOfWeek
+        .map((d) => dayLabels[d] ?? '')
+        .where((d) => d.isNotEmpty)
+        .join(', ');
+    return '$days • $time';
   }
 
   void _showEditItemModal(BuildContext context, PlanItem? item) {
@@ -361,6 +389,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
   @override
   Widget build(BuildContext context) {
     final notifier = ref.read(planOfLifeNotifierProvider.notifier);
+    final isDefault = widget.item?.schedule.isDefault ?? false;
 
     return Align(
       alignment: Alignment.bottomCenter,
@@ -382,11 +411,13 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                   style: IaculaText.sectionTitle,
                 ),
                 const SizedBox(height: 16),
-                IaculaTextInput(
-                  controller: _titleController,
-                  placeholder: 'Título',
-                ),
-                const SizedBox(height: 16),
+                if (!isDefault) ...[
+                  IaculaTextInput(
+                    controller: _titleController,
+                    placeholder: 'Título',
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 IaculaTimeInput(
                   controller: _timeController,
                   placeholder: 'Horário (HH:MM)',
@@ -449,7 +480,9 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                 const SizedBox(height: 24),
                 CupertinoButton.filled(
                   onPressed: () {
-                    final title = _titleController.text.trim();
+                    final title = isDefault
+                        ? (widget.item?.title ?? '')
+                        : _titleController.text.trim();
                     if (title.isEmpty) return;
 
                     final selectedDays = <int>[];
