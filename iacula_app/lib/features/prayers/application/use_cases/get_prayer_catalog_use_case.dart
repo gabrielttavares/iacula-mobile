@@ -30,4 +30,19 @@ final class GetPrayerCatalogUseCase {
         .where((entry) => entry.saints.contains(saint))
         .toList(growable: false);
   }
+
+  Future<PrayerCatalogEntry?> suggestionOfDay({
+    required String language,
+    required DateTime date,
+  }) async {
+    final catalog = await listAll(language: language);
+    if (catalog.isEmpty) {
+      return null;
+    }
+
+    final dayStamp =
+        DateTime.utc(date.year, date.month, date.day).millisecondsSinceEpoch ~/
+        Duration.millisecondsPerDay;
+    return catalog[dayStamp % catalog.length];
+  }
 }

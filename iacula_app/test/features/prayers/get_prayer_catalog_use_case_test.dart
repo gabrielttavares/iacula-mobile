@@ -85,4 +85,29 @@ void main() {
     final result = await useCase.bySaint(language: 'pt-br', saint: 'sao-pio');
     expect(result, isEmpty);
   });
+
+  test('suggestionOfDay returns same entry for same date', () async {
+    final repository = _FakePrayerCatalogRepository(entries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+    final date = DateTime(2026, 2, 26);
+
+    final first = await useCase.suggestionOfDay(language: 'pt-br', date: date);
+    final second = await useCase.suggestionOfDay(language: 'pt-br', date: date);
+
+    expect(first, isNotNull);
+    expect(second, isNotNull);
+    expect(first, second);
+  });
+
+  test('suggestionOfDay returns null when catalog has no entries', () async {
+    final repository = _FakePrayerCatalogRepository(const <PrayerCatalogEntry>[]);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+
+    final result = await useCase.suggestionOfDay(
+      language: 'pt-br',
+      date: DateTime(2026, 2, 26),
+    );
+
+    expect(result, isNull);
+  });
 }
