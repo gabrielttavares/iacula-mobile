@@ -28,8 +28,8 @@ class PrayerScreen extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  CupertinoColors.white.withValues(alpha: 0.65),
-                  CupertinoColors.white.withValues(alpha: 0.95),
+                  CupertinoColors.black.withValues(alpha: 0.3),
+                  CupertinoColors.black.withValues(alpha: 0.86),
                 ],
               ),
             ),
