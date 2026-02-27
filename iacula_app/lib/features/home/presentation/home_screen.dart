@@ -139,13 +139,7 @@ class _HomeHeader extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Row(
-              children: [
-                Icon(CupertinoIcons.circle_grid_3x3_fill, size: 18),
-                SizedBox(width: 8),
-                Text('Iacula', style: IaculaText.cardTitle),
-              ],
-            ),
+            const Text('Iacula', style: IaculaText.cardTitle),
             Row(
               children: [
                 CupertinoButton(

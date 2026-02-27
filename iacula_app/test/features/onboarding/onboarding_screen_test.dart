@@ -41,8 +41,22 @@ void main() {
     await tester.pumpWidget(_buildApp(repo));
     await tester.pumpAndSettle();
 
+    Future<void> reveal(String text) async {
+      final finder = find.text(text);
+      for (var i = 0; i < 12 && finder.evaluate().isEmpty; i++) {
+        await tester.drag(find.byType(ListView), const Offset(0, -220));
+        await tester.pumpAndSettle();
+      }
+      expect(finder, findsOneWidget);
+    }
+
     expect(find.byType(OnboardingScreen), findsOneWidget);
-    expect(find.text('Começar com sua conta'), findsOneWidget);
+    expect(find.text('Iacula'), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.circle_grid_3x3_fill), findsNothing);
+    expect(find.text('Notificações diárias com Jaculatórias'), findsOneWidget);
+    expect(find.text('Angelus / Regina Caeli às 12:00 PM'), findsOneWidget);
+    await reveal('Começar com sua conta');
+    expect(find.text('Iacula • presença de Deus no cotidiano'), findsNothing);
 
     await tester.tap(find.text('Começar com sua conta'));
     await tester.pumpAndSettle();

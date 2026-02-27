@@ -7,7 +7,7 @@ final class IaculaColors {
   static const card = Color(0xFFFFFFFF);
   static const textPrimary = Color(0xFF111111);
   static const textSecondary = Color(0xFF6E6E73);
-  static const primaryButton = Color(0xFF151826);
+  static const primaryButton = Color(0xFF0975C8);
 }
 
 final class IaculaSpacing {

@@ -121,6 +121,21 @@ void main() {
     await reveal('Orações de Santos');
   });
 
+  testWidgets('home header shows text-only brand without grid icon', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Iacula'), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.circle_grid_3x3_fill), findsNothing);
+  });
+
   testWidgets('feature card opens Liturgia Diária screen', (tester) async {
     await tester.pumpWidget(
       _buildApp(

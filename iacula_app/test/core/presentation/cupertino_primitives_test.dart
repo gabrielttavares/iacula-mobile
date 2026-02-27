@@ -42,4 +42,8 @@ void main() {
     final borderRadius = decoration.borderRadius! as BorderRadius;
     expect(borderRadius.topLeft.x, IaculaRadius.card);
   });
+
+  test('Iacula primary button color token is app blue', () {
+    expect(IaculaColors.primaryButton, const Color(0xFF0975C8));
+  });
 }

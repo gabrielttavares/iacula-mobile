@@ -29,35 +29,33 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.all(IaculaSpacing.md),
               children: [
-                const _BrandMark(),
-                const SizedBox(height: 56),
-                const Text(
-                  'Presença de Deus\nno cotidiano',
-                  textAlign: TextAlign.center,
-                  style: IaculaText.largeTitle,
-                ),
-                const SizedBox(height: IaculaSpacing.xs),
+                const _BrandBlock(),
+                const SizedBox(height: IaculaSpacing.md),
                 const Text(
                   'Jaculatórias, liturgia e plano de vida para rezar no ritmo do seu dia.',
                   textAlign: TextAlign.center,
                   style: IaculaText.secondary,
                 ),
                 const SizedBox(height: IaculaSpacing.xl),
+                const _ExclusiveFeatureCard(),
+                const SizedBox(height: IaculaSpacing.sm),
                 const Row(
                   children: [
                     Expanded(
                       child: _FeatureCard(
                         icon: CupertinoIcons.book,
-                        title: 'Liturgia diária',
+                        title: 'Liturgia Diária',
                         subtitle: 'Acompanhe as orações de cada dia.',
+                        minHeight: 140,
                       ),
                     ),
                     SizedBox(width: IaculaSpacing.sm),
                     Expanded(
                       child: _FeatureCard(
                         icon: CupertinoIcons.check_mark_circled,
-                        title: 'Plano de vida',
+                        title: 'Plano de Vida',
                         subtitle: 'Cultive constância com pequenos passos.',
+                        minHeight: 140,
                       ),
                     ),
                   ],
@@ -77,12 +75,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             builder: (_) => const ShellScreen(),
                           ),
                         ),
-                ),
-                const SizedBox(height: IaculaSpacing.md),
-                const Text(
-                  'Iacula • presença de Deus no cotidiano',
-                  textAlign: TextAlign.center,
-                  style: IaculaText.secondary,
                 ),
               ],
             ),
@@ -105,24 +97,70 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 }
 
-class _BrandMark extends StatelessWidget {
-  const _BrandMark();
+class _BrandBlock extends StatelessWidget {
+  const _BrandBlock();
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Column(
       children: [
-        Icon(CupertinoIcons.circle_grid_3x3_fill, size: 20),
-        SizedBox(width: 8),
-        Text(
+        Image.asset(
+          'assets/seed/images/icon.png',
+          width: 94,
+          height: 94,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) =>
+              const Icon(CupertinoIcons.circle, size: 94),
+        ),
+        const SizedBox(height: IaculaSpacing.sm),
+        const Text(
           'Iacula',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: IaculaColors.textPrimary,
-          ),
+          textAlign: TextAlign.center,
+          style: IaculaText.largeTitle,
         ),
       ],
+    );
+  }
+}
+
+class _ExclusiveFeatureCard extends StatelessWidget {
+  const _ExclusiveFeatureCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return IaculaSoftCard(
+      padding: const EdgeInsets.all(IaculaSpacing.md),
+      radius: 16,
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(CupertinoIcons.bell_fill, color: IaculaColors.primaryButton),
+              Text(
+                'EXCLUSIVO',
+                style: TextStyle(
+                  color: IaculaColors.primaryButton,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  letterSpacing: 0.6,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: IaculaSpacing.sm),
+          Text(
+            'Notificações diárias com Jaculatórias',
+            style: IaculaText.cardTitle,
+          ),
+          SizedBox(height: 4),
+          Text(
+            'Angelus / Regina Caeli às 12:00 PM',
+            style: IaculaText.secondary,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -132,26 +170,31 @@ class _FeatureCard extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
+    this.minHeight = 132,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
+  final double minHeight;
 
   @override
   Widget build(BuildContext context) {
     return IaculaSoftCard(
       padding: const EdgeInsets.all(IaculaSpacing.md),
       radius: 16,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: IaculaColors.primaryButton),
-          const SizedBox(height: IaculaSpacing.sm),
-          Text(title, style: IaculaText.cardTitle),
-          const SizedBox(height: 4),
-          Text(subtitle, style: IaculaText.secondary),
-        ],
+      child: SizedBox(
+        height: minHeight,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: IaculaColors.primaryButton),
+            const SizedBox(height: IaculaSpacing.sm),
+            Text(title, style: IaculaText.cardTitle),
+            const SizedBox(height: 4),
+            Text(subtitle, style: IaculaText.secondary),
+          ],
+        ),
       ),
     );
   }
