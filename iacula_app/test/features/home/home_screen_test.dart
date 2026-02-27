@@ -158,7 +158,6 @@ void main() {
         settingsRepo: _defaultSettingsRepo(),
         lastCardRepo: _defaultLastCardRepo(),
         liturgiaRepo: _FakeLiturgiaRepository(),
-        routes: {LiturgiaScreen.routeName: (_) => const LiturgiaScreen()},
       ),
     );
     await tester.pumpAndSettle();
@@ -168,6 +167,7 @@ void main() {
 
     expect(find.byType(LiturgiaScreen), findsOneWidget);
     expect(find.text('Domingo'), findsOneWidget);
+    expect(find.text('Coleta: Coleta'), findsOneWidget);
   });
 
   testWidgets('rosario quick action shows em breve dialog', (tester) async {

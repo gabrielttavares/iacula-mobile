@@ -68,9 +68,13 @@ class HomeScreen extends ConsumerWidget {
                               ),
                             );
                           },
-                          onOpenLiturgy: () => Navigator.of(
-                            context,
-                          ).pushNamed(LiturgiaScreen.routeName),
+                          onOpenLiturgy: () {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const LiturgiaScreen(),
+                              ),
+                            );
+                          },
                           onOpenRosary: () =>
                               _showEmBreveDialog(context, 'Rosário 📿'),
                           onOpenNovenas: () =>
