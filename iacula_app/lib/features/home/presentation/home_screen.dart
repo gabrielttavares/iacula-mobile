@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 
 import '../../../core/presentation/widgets/iacula_large_title.dart';
@@ -21,10 +22,28 @@ import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../doctrina/presentation/doctrine_collections_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import 'widgets/home_action_grid.dart';
+import 'widgets/home_continuation_card.dart';
 import 'widgets/home_hero_card.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  bool _animateIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() => _animateIn = true);
+      }
+    });
+  }
 
   Future<void> _showEmBreveDialog(BuildContext context, String title) {
     return IaculaModal.showAlert(
@@ -36,37 +55,41 @@ class HomeScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final quoteAsync = ref.watch(_homeQuoteProvider);
+  Widget build(BuildContext context) {
     final isFallback =
         ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false;
 
     return CupertinoPageScaffold(
       backgroundColor: IaculaColors.background,
       child: SafeArea(
-        child: quoteAsync.when(
-          data: (quote) => Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 460),
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        const _HomeHeader(),
-                        const SizedBox(height: IaculaSpacing.lg),
-                        HomeHeroCard(
-                          quote: quote,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 460),
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      const _HomeHeader(),
+                      const SizedBox(height: IaculaSpacing.lg),
+                      _AnimatedHomeBlock(
+                        visible: _animateIn,
+                        offsetY: 0.04,
+                        child: _HomeHeroSection(
                           isFallback: isFallback,
                           onOpenPremium: () => PremiumGate.showModal(
                             context,
                             feature: PremiumFeature.meditation,
                           ),
                         ),
-                        const SizedBox(height: IaculaSpacing.lg),
-                        HomeActionGrid(
+                      ),
+                      const SizedBox(height: IaculaSpacing.lg),
+                      _AnimatedHomeBlock(
+                        visible: _animateIn,
+                        offsetY: 0.06,
+                        child: HomeActionGrid(
                           onOpenPrayers: () {
                             Navigator.of(context).push(
                               CupertinoPageRoute(
@@ -99,29 +122,100 @@ class HomeScreen extends ConsumerWidget {
                             );
                           },
                         ),
-                        const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Sugestão do Dia'),
-                        const SizedBox(height: IaculaSpacing.sm),
-                        const _DailyPrayerList(),
-                        const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Orações temáticas'),
-                        const SizedBox(height: IaculaSpacing.sm),
-                        const _ThematicPrayerRail(),
-                        const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Orações de Santos'),
-                        const SizedBox(height: IaculaSpacing.sm),
-                        const _SaintPrayerList(),
-                      ]),
-                    ),
+                      ),
+                      const SizedBox(height: IaculaSpacing.md),
+                      _AnimatedHomeBlock(
+                        visible: _animateIn,
+                        offsetY: 0.08,
+                        child: HomeContinuationCard(
+                          title: 'Continue seu caminho',
+                          subtitle: 'Retome suas orações favoritas',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const PrayerCollectionsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: IaculaSpacing.xl),
+                      const IaculaSectionHeader(title: 'Sugestão do Dia'),
+                      const SizedBox(height: IaculaSpacing.sm),
+                      const _DailyPrayerList(),
+                      const SizedBox(height: IaculaSpacing.xl),
+                      const IaculaSectionHeader(title: 'Orações temáticas'),
+                      const SizedBox(height: IaculaSpacing.sm),
+                      const _ThematicPrayerRail(),
+                      const SizedBox(height: IaculaSpacing.xl),
+                      const IaculaSectionHeader(title: 'Orações de Santos'),
+                      const SizedBox(height: IaculaSpacing.sm),
+                      const _SaintPrayerList(),
+                    ]),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          error: (error, stack) =>
-              Center(child: Text('Erro: $error', style: IaculaText.secondary)),
-          loading: () => const Center(child: CupertinoActivityIndicator()),
         ),
+      ),
+    );
+  }
+}
+
+class _AnimatedHomeBlock extends StatelessWidget {
+  const _AnimatedHomeBlock({
+    required this.visible,
+    required this.offsetY,
+    required this.child,
+  });
+
+  final bool visible;
+  final double offsetY;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSlide(
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOutCubic,
+      offset: visible ? Offset.zero : Offset(0, offsetY),
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOut,
+        opacity: visible ? 1 : 0,
+        child: child,
+      ),
+    );
+  }
+}
+
+class _HomeHeroSection extends ConsumerWidget {
+  const _HomeHeroSection({
+    required this.isFallback,
+    required this.onOpenPremium,
+  });
+
+  final bool isFallback;
+  final VoidCallback onOpenPremium;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final quoteAsync = ref.watch(_homeQuoteProvider);
+    return quoteAsync.when(
+      data: (quote) => HomeHeroCard(
+        quote: quote,
+        isFallback: isFallback,
+        onOpenPremium: onOpenPremium,
+      ),
+      loading: () => const SizedBox(
+        height: 240,
+        child: Center(child: CupertinoActivityIndicator()),
+      ),
+      error: (error, stackTrace) => IaculaErrorState(
+        title: 'Não foi possível carregar a reflexão',
+        message: 'Tente novamente em instantes.',
+        onRetry: () => ref.invalidate(_homeQuoteProvider),
       ),
     );
   }
@@ -156,7 +250,7 @@ class _HomeHeader extends ConsumerWidget {
               children: [
                 CupertinoButton(
                   padding: EdgeInsets.zero,
-                  minSize: 32,
+                  minimumSize: const Size(32, 32),
                   onPressed: () {
                     Navigator.of(context).push(
                       CupertinoPageRoute(
@@ -172,7 +266,7 @@ class _HomeHeader extends ConsumerWidget {
                 const SizedBox(width: 8),
                 CupertinoButton(
                   padding: EdgeInsets.zero,
-                  minSize: 32,
+                  minimumSize: const Size(32, 32),
                   onPressed: () {
                     Navigator.of(context).push(
                       CupertinoPageRoute(builder: (_) => const SearchScreen()),
@@ -224,7 +318,7 @@ class _DailyPrayerList extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CupertinoActivityIndicator()),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
 }
@@ -256,7 +350,7 @@ class _ThematicPrayerRail extends ConsumerWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: entries.length,
-            separatorBuilder: (_, __) =>
+            separatorBuilder: (context, index) =>
                 const SizedBox(width: IaculaSpacing.sm),
             itemBuilder: (context, index) {
               final entry = entries[index];
@@ -294,7 +388,7 @@ class _ThematicPrayerRail extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CupertinoActivityIndicator()),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
 }
@@ -350,7 +444,7 @@ class _SaintPrayerList extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CupertinoActivityIndicator()),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
 }

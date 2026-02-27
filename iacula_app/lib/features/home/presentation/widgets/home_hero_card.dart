@@ -56,9 +56,12 @@ class HomeHeroCard extends ConsumerWidget {
                     ? Image.asset(
                         imagePath,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const DecoratedBox(
-                          decoration: BoxDecoration(color: Color(0xFF3D3125)),
-                        ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: Color(0xFF3D3125),
+                              ),
+                            ),
                       )
                     : const DecoratedBox(
                         decoration: BoxDecoration(color: Color(0xFF3D3125)),
@@ -89,7 +92,7 @@ class HomeHeroCard extends ConsumerWidget {
                       children: [
                         CupertinoButton(
                           padding: EdgeInsets.zero,
-                          minSize: 32,
+                          minimumSize: const Size(32, 32),
                           onPressed: () async {
                             final repo = ref.read(favoriteRepositoryProvider);
                             final alreadySaved = await repo.isFavorite(
@@ -149,7 +152,7 @@ class HomeHeroCard extends ConsumerWidget {
                         horizontal: 14,
                         vertical: 8,
                       ),
-                      minSize: 0,
+                      minimumSize: Size.zero,
                       color: const Color(0x26FFFFFF),
                       borderRadius: BorderRadius.circular(20),
                       onPressed: onOpenPremium,

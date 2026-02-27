@@ -40,6 +40,17 @@ final class _FakeLastDeliveredCardRepository
   }
 }
 
+final class _ThrowingLastDeliveredCardRepository
+    implements LastDeliveredCardRepository {
+  @override
+  Future<LastDeliveredCard?> load() async {
+    throw StateError('load failed');
+  }
+
+  @override
+  Future<void> save(LastDeliveredCard card) async {}
+}
+
 final class _FakeLiturgiaRepository implements LiturgiaRepository {
   @override
   Future<LiturgyDay?> getLiturgyForDate(DateTime date) async => null;
@@ -169,6 +180,53 @@ void main() {
 
     expect(find.byKey(const Key('home_hero_card')), findsOneWidget);
     expect(find.byKey(const Key('home_action_grid')), findsOneWidget);
+  });
+
+  testWidgets('home shows continuation card after action grid', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final cardTitle = find.text('Continue seu caminho');
+    for (var i = 0; i < 20 && cardTitle.evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    expect(cardTitle, findsOneWidget);
+  });
+
+  testWidgets('hero error does not remove quick actions', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          settingsRepositoryProvider.overrideWithValue(_defaultSettingsRepo()),
+          lastDeliveredCardRepositoryProvider.overrideWithValue(
+            _ThrowingLastDeliveredCardRepository(),
+          ),
+        ],
+        child: const CupertinoApp(home: HomeScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tentar novamente'), findsOneWidget);
+    expect(find.byKey(const Key('home_action_grid')), findsOneWidget);
+  });
+
+  testWidgets('home hero uses subtle entrance animation', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(AnimatedOpacity), findsWidgets);
   });
 
   testWidgets('home shows updated quick actions', (tester) async {
