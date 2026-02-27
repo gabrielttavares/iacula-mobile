@@ -5,13 +5,22 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../domain/entities/prayer_catalog_entry.dart';
+import 'prayer_catalog_detail_screen.dart';
 import 'prayer_screen.dart';
+
+final _catalogProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
+  final settings = await ref.watch(getSettingsUseCaseProvider).call();
+  return ref.watch(getPrayerCatalogUseCaseProvider).listAll(language: settings.language);
+});
 
 class PrayerCollectionsScreen extends ConsumerWidget {
   const PrayerCollectionsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final catalogAsync = ref.watch(_catalogProvider);
+
     return CupertinoPageScaffold(
       backgroundColor: IaculaColors.background,
       child: SafeArea(
@@ -41,25 +50,37 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                   }
                 },
               ),
-              const SizedBox(height: IaculaSpacing.sm),
-              _PrayerCategoryCard(
-                title: 'Devoções',
-                icon: CupertinoIcons.sparkles,
-                onTap: () async {
-                  await showCupertinoDialog<void>(
-                    context: context,
-                    builder: (context) => CupertinoAlertDialog(
-                      title: const Text('Devoções'),
-                      content: const Text('Em breve...'),
-                      actions: [
-                        CupertinoDialogAction(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+              const SizedBox(height: IaculaSpacing.lg),
+              catalogAsync.when(
+                data: (entries) => Expanded(
+                  child: ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: entries.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(height: IaculaSpacing.sm),
+                    itemBuilder: (context, index) {
+                      final entry = entries[index];
+                      return _PrayerCategoryCard(
+                        title: entry.title,
+                        icon: CupertinoIcons.book,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (_) =>
+                                  PrayerCatalogDetailScreen(entry: entry),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                loading: () =>
+                    const Center(child: CupertinoActivityIndicator()),
+                error: (_, __) => const Text(
+                  'Erro ao carregar orações',
+                  style: IaculaText.secondary,
+                ),
               ),
             ],
           ),
