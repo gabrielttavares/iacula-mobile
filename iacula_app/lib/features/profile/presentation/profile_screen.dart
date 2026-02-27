@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_input.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -28,7 +30,9 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             const IaculaLargeTitle('Perfil'),
             const SizedBox(height: IaculaSpacing.lg),
-            Center(child: _Avatar(name: name, showEditBadge: isConnected)),
+            Center(
+              child: _Avatar(name: name, showEditBadge: isConnected),
+            ),
             const SizedBox(height: IaculaSpacing.xl),
             _Section(
               title: 'Conta',
@@ -45,8 +49,14 @@ class ProfileScreen extends ConsumerWidget {
             _Section(
               title: 'Privacidade e segurança',
               rows: [
-                _InfoRow(label: 'Conta', value: isConnected ? 'Conectada' : 'Não conectada'),
-                _InfoRow(label: 'Backup', value: isConnected ? 'Sincronização ativada' : 'Apenas local'),
+                _InfoRow(
+                  label: 'Conta',
+                  value: isConnected ? 'Conectada' : 'Não conectada',
+                ),
+                _InfoRow(
+                  label: 'Backup',
+                  value: isConnected ? 'Sincronização ativada' : 'Apenas local',
+                ),
               ],
             ),
             const SizedBox(height: IaculaSpacing.lg),
@@ -81,26 +91,12 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   static void _showProviderNameDialog(BuildContext context) {
-    showCupertinoDialog<void>(
+    IaculaModal.showAlert(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Editar nome'),
-        content: const Column(
-          children: [
-            SizedBox(height: 8),
-            Text(
-              'Seu nome é gerenciado pelo provedor de login (Google, Microsoft ou Apple). '
-              'Para alterá-lo, atualize seu perfil no provedor.',
-            ),
-          ],
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
+      title: 'Editar nome',
+      message:
+          'Seu nome é gerenciado pelo provedor de login (Google, Microsoft ou Apple). '
+          'Para alterá-lo, atualize seu perfil no provedor.',
     );
   }
 
@@ -110,43 +106,51 @@ class ProfileScreen extends ConsumerWidget {
     String? currentName,
   ) {
     final controller = TextEditingController(text: currentName);
-    showCupertinoDialog<void>(
+    IaculaModal.showSheet<void>(
       context: context,
-      builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('Editar nome'),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 12),
-          child: CupertinoTextField(
-            controller: controller,
-            placeholder: 'Seu nome',
-            autofocus: true,
-            textCapitalization: TextCapitalization.words,
-          ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Editar nome',
+              style: IaculaText.cardTitle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: IaculaSpacing.md),
+            IaculaTextInput(
+              controller: controller,
+              placeholder: 'Seu nome',
+              autofocus: true,
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: IaculaSpacing.md),
+            CupertinoButton.filled(
+              onPressed: () async {
+                final newName = controller.text.trim();
+                if (newName.isEmpty) {
+                  Navigator.of(ctx).pop();
+                  return;
+                }
+                final settings = await ref
+                    .read(getSettingsUseCaseProvider)
+                    .call();
+                await ref
+                    .read(updateSettingsUseCaseProvider)
+                    .call(settings.copyWith(displayName: newName));
+                ref.invalidate(localDisplayNameProvider);
+                if (ctx.mounted) Navigator.of(ctx).pop();
+              },
+              child: const Text('Salvar'),
+            ),
+            CupertinoButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancelar'),
+            ),
+          ],
         ),
-        actions: [
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancelar'),
-          ),
-          CupertinoDialogAction(
-            onPressed: () async {
-              final newName = controller.text.trim();
-              if (newName.isEmpty) {
-                Navigator.of(ctx).pop();
-                return;
-              }
-              final settings =
-                  await ref.read(getSettingsUseCaseProvider).call();
-              await ref
-                  .read(updateSettingsUseCaseProvider)
-                  .call(settings.copyWith(displayName: newName));
-              ref.invalidate(localDisplayNameProvider);
-              if (ctx.mounted) Navigator.of(ctx).pop();
-            },
-            child: const Text('Salvar'),
-          ),
-        ],
       ),
     );
   }

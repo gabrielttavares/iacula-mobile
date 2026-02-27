@@ -1,0 +1,12 @@
+{
+  "slug": "oracao-sao-tomas-de-aquino",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração de São Tomás de Aquino"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus eterno e todo-poderoso, eis que me aproximo do sacramento do vosso Filho único, Nosso Senhor Jesus Cristo. Impuro, venho à fonte da misericórdia; cego, à luz da eternal claridade; pobre e indigente, ao Senhor do céu e da terra. Imploro, pois, a abundância da vossa liberalidade, para que Vos digneis curar a minha fraqueza, lavar as minhas manchas, iluminar a minha cegueira, enriquecer a minha pobreza, vestir a minha nudez."
+    ]
+  }
+}

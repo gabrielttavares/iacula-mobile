@@ -20,7 +20,9 @@ final class AssetPrayerCatalogRepository implements PrayerCatalogRepository {
   final AvailableAssetsLoader _loadAvailableAssets;
 
   @override
-  Future<List<PrayerCatalogEntry>> listCatalog({required String language}) async {
+  Future<List<PrayerCatalogEntry>> listCatalog({
+    required String language,
+  }) async {
     try {
       final path = await _resolveCatalogPath(language);
       final content = await _loadAsset(path);
@@ -53,14 +55,22 @@ final class AssetPrayerCatalogRepository implements PrayerCatalogRepository {
     final content = item['content']?.toString().trim() ?? '';
     final themes = _parseTags(item, 'theme');
     final saints = _parseTags(item, 'saints');
+    final availableLanguages = _parseTags(item, 'languages');
+    final sectionId = item['section_id']?.toString().trim() ?? '';
+    final sectionTitle = item['section_title']?.toString().trim() ?? '';
 
     if (id.isEmpty || title.isEmpty || content.isEmpty) {
       return null;
     }
 
-    if (themes == null || saints == null) {
+    if (themes == null || saints == null || availableLanguages == null) {
       return null;
     }
+
+    final resolvedSectionId = sectionId.isNotEmpty
+        ? sectionId
+        : (themes.isNotEmpty ? themes.first : 'geral');
+    final resolvedSectionTitle = sectionTitle.isNotEmpty ? sectionTitle : title;
 
     return PrayerCatalogEntry(
       slug: id,
@@ -68,6 +78,9 @@ final class AssetPrayerCatalogRepository implements PrayerCatalogRepository {
       content: content,
       themes: themes,
       saints: saints,
+      sectionId: resolvedSectionId,
+      sectionTitle: resolvedSectionTitle,
+      availableLanguages: availableLanguages,
     );
   }
 

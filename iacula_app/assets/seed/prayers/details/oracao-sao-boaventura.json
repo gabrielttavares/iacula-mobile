@@ -1,0 +1,12 @@
+{
+  "slug": "oracao-sao-boaventura",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração de São Boaventura"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus, que iluminastes São Boaventura com a luz da sabedoria divina, concedei-me que, seguindo os seus ensinamentos, walk in vossos caminhos e alcance a glória eterna."
+    ]
+  }
+}

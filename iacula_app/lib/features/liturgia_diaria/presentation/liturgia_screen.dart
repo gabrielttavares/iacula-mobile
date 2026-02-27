@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -204,11 +205,9 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
     BuildContext context,
     DateTime selectedDate,
   ) {
-    return showCupertinoModalPopup<DateTime>(
+    return IaculaModal.showSheet<DateTime>(
       context: context,
-      builder: (context) {
-        return _CalendarModal(initialDate: selectedDate);
-      },
+      builder: (context) => _CalendarModal(initialDate: selectedDate),
     );
   }
 

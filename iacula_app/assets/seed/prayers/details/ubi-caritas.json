@@ -1,0 +1,12 @@
+{
+  "slug": "ubi-caritas",
+  "default_language": "la",
+  "titles": {
+    "la": "Ubi Cáritas"
+  },
+  "blocks": {
+    "la": [
+      "Ubi cáritas et amor, Deus ibi est. Congregavit nos in unum Christi amor. Exsultemus et in ipso iucundemur. Timeamus et amemus Deum vivum. Et ex corde diligamus nos sincero."
+    ]
+  }
+}

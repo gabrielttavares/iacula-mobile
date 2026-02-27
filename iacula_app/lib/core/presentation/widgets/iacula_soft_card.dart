@@ -21,13 +21,7 @@ class IaculaSoftCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: IaculaColors.card,
         borderRadius: BorderRadius.circular(radius),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0F000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
+        boxShadow: IaculaShadows.card,
       ),
       child: child,
     );

@@ -15,13 +15,15 @@ class IaculaPrimaryPillButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 52,
+      height: IaculaMetrics.inputHeight + IaculaSpacing.xs,
       width: double.infinity,
       child: CupertinoButton(
         onPressed: onPressed,
         padding: EdgeInsets.zero,
         color: IaculaColors.primaryButton,
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(
+          (IaculaMetrics.inputHeight + IaculaSpacing.xs) / 2,
+        ),
         child: Text(
           label,
           style: const TextStyle(
@@ -48,13 +50,15 @@ class IaculaSecondaryPillButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 52,
+      height: IaculaMetrics.inputHeight + IaculaSpacing.xs,
       width: double.infinity,
       child: CupertinoButton(
         onPressed: onPressed,
         padding: EdgeInsets.zero,
         color: const Color(0xFFE9E9ED),
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(
+          (IaculaMetrics.inputHeight + IaculaSpacing.xs) / 2,
+        ),
         child: Text(
           label,
           style: const TextStyle(

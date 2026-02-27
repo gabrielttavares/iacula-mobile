@@ -1,0 +1,12 @@
+{
+  "slug": "ave-regina-coelorum",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ave, Regina Caelorum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ave, Regina Caelorum, Ave, Domina Angelorum: Salve, radix, salve, porta Ex qua mundo lux est orta: Gaude, Virgo gloriosa, Super omnes speciosa, Vale, o valde decora, Et pro nobis Christum exora."
+    ]
+  }
+}

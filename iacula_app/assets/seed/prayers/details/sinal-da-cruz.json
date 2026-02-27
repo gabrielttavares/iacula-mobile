@@ -1,0 +1,12 @@
+{
+  "slug": "sinal-da-cruz",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Sinal da Cruz"
+  },
+  "blocks": {
+    "pt-br": [
+      "Em nome do Pai e do Filho e do Espírito Santo. Amém."
+    ]
+  }
+}

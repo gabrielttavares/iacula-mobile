@@ -47,6 +47,7 @@ flutter:
     - assets/seed/prayers/en/
     - assets/seed/prayers/la/
     - assets/seed/prayers/pt-br/
+    - assets/seed/prayers/details/
     - assets/seed/images/
     - assets/seed/audio/
     - assets/seed/meditations/

@@ -11,7 +11,9 @@ import 'prayer_screen.dart';
 
 final _catalogProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
-  return ref.watch(getPrayerCatalogUseCaseProvider).listAll(language: settings.language);
+  return ref
+      .watch(getPrayerCatalogUseCaseProvider)
+      .listAll(language: settings.language);
 });
 
 class PrayerCollectionsScreen extends ConsumerWidget {
@@ -52,29 +54,57 @@ class PrayerCollectionsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: IaculaSpacing.lg),
               catalogAsync.when(
-                data: (entries) => Expanded(
-                  child: ListView.separated(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: entries.length,
-                    separatorBuilder: (_, __) =>
-                        const SizedBox(height: IaculaSpacing.sm),
-                    itemBuilder: (context, index) {
-                      final entry = entries[index];
-                      return _PrayerCategoryCard(
-                        title: entry.title,
-                        icon: CupertinoIcons.book,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (_) =>
-                                  PrayerCatalogDetailScreen(entry: entry),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
+                data: (entries) {
+                  final grouped = _groupBySection(entries);
+                  return Expanded(
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: grouped.length,
+                      itemBuilder: (context, index) {
+                        final group = grouped[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: IaculaSpacing.md,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                group.sectionTitle,
+                                style: IaculaText.secondary.copyWith(
+                                  color: IaculaColors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: IaculaSpacing.sm),
+                              ...group.entries.map(
+                                (entry) => Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: IaculaSpacing.sm,
+                                  ),
+                                  child: _PrayerCategoryCard(
+                                    title: entry.title,
+                                    icon: CupertinoIcons.book,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        CupertinoPageRoute(
+                                          builder: (_) =>
+                                              PrayerCatalogDetailScreen(
+                                                entry: entry,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
                 loading: () =>
                     const Center(child: CupertinoActivityIndicator()),
                 error: (_, __) => const Text(
@@ -128,4 +158,24 @@ class _PrayerCategoryCard extends StatelessWidget {
       ),
     );
   }
+}
+
+List<_SectionGroup> _groupBySection(List<PrayerCatalogEntry> entries) {
+  final buckets = <String, List<PrayerCatalogEntry>>{};
+  for (final entry in entries) {
+    final title = entry.sectionTitle.isNotEmpty ? entry.sectionTitle : 'Outras';
+    buckets.putIfAbsent(title, () => <PrayerCatalogEntry>[]).add(entry);
+  }
+
+  final groups = buckets.entries
+      .map((item) => _SectionGroup(sectionTitle: item.key, entries: item.value))
+      .toList(growable: false);
+  return groups;
+}
+
+final class _SectionGroup {
+  const _SectionGroup({required this.sectionTitle, required this.entries});
+
+  final String sectionTitle;
+  final List<PrayerCatalogEntry> entries;
 }

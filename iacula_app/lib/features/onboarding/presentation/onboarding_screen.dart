@@ -189,8 +189,8 @@ class _FeatureCard extends StatelessWidget {
     return IaculaSoftCard(
       padding: const EdgeInsets.all(IaculaSpacing.md),
       radius: 16,
-      child: SizedBox(
-        height: minHeight,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: minHeight),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

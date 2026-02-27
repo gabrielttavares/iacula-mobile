@@ -1,0 +1,12 @@
+{
+  "slug": "oracao-santo-ambrosio",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração de Santo Ambrósio"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus, que preparastes o vosso povo redimido para a glória eterna, fazei que as almas dos fiéis que dormem no Senhor descansem em paz e na luz da vossa face. Por Jesus Cristo, Senhor nosso."
+    ]
+  }
+}

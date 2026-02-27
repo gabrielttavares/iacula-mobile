@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -95,19 +96,9 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
           ),
           const SizedBox(height: IaculaSpacing.lg),
           if (_errorMessage != null) ...[
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF0F0),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                _errorMessage!,
-                textAlign: TextAlign.center,
-                style: IaculaText.secondary.copyWith(
-                  color: const Color(0xFF7A1F1F),
-                ),
-              ),
+            IaculaInlineMessage(
+              message: _errorMessage!,
+              color: IaculaColors.error,
             ),
             const SizedBox(height: IaculaSpacing.md),
           ],

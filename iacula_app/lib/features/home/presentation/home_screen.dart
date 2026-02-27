@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
@@ -25,18 +26,11 @@ class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   Future<void> _showEmBreveDialog(BuildContext context, String title) {
-    return showCupertinoDialog<void>(
+    return IaculaModal.showAlert(
       context: context,
-      builder: (_) => CupertinoAlertDialog(
-        title: Text(title),
-        content: const Text('Em breve'),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Fechar'),
-          ),
-        ],
-      ),
+      title: title,
+      message: 'Em breve',
+      actionLabel: 'Fechar',
     );
   }
 
@@ -82,8 +76,7 @@ class HomeScreen extends ConsumerWidget {
                           onOpenNovenas: () {
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (_) =>
-                                    const PrayerCollectionsScreen(),
+                                builder: (_) => const PrayerCollectionsScreen(),
                               ),
                             );
                           },
@@ -544,15 +537,17 @@ class _ThematicPrayerRail extends ConsumerWidget {
                 const SizedBox(width: IaculaSpacing.sm),
             itemBuilder: (context, index) {
               final entry = entries[index];
-              final themeLabel = entry.themes
-                  .map((t) => _themeLabels[t])
-                  .where((l) => l != null)
-                  .firstOrNull ?? entry.themes.firstOrNull ?? '';
+              final themeLabel =
+                  entry.themes
+                      .map((t) => _themeLabels[t])
+                      .where((l) => l != null)
+                      .firstOrNull ??
+                  entry.themes.firstOrNull ??
+                  '';
               return GestureDetector(
                 onTap: () => Navigator.of(context).push(
                   CupertinoPageRoute(
-                    builder: (_) =>
-                        PrayerCatalogDetailScreen(entry: entry),
+                    builder: (_) => PrayerCatalogDetailScreen(entry: entry),
                   ),
                 ),
                 child: SizedBox(
@@ -607,14 +602,15 @@ class _SaintPrayerList extends ConsumerWidget {
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).push(
                     CupertinoPageRoute(
-                      builder: (_) =>
-                          PrayerCatalogDetailScreen(entry: entry),
+                      builder: (_) => PrayerCatalogDetailScreen(entry: entry),
                     ),
                   ),
                   child: IaculaSoftCard(
                     radius: 16,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 12),
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
                     child: _PrayerListItem(
                       title: entry.title,
                       subtitle: entry.saints
@@ -691,10 +687,9 @@ class _PrayerListItem extends StatelessWidget {
 
 final _suggestionProvider = FutureProvider<PrayerCatalogEntry?>((ref) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
-  return ref.watch(getPrayerCatalogUseCaseProvider).suggestionOfDay(
-    language: settings.language,
-    date: DateTime.now(),
-  );
+  return ref
+      .watch(getPrayerCatalogUseCaseProvider)
+      .suggestionOfDay(language: settings.language, date: DateTime.now());
 });
 
 final _thematicProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {

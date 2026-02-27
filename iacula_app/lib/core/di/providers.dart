@@ -127,7 +127,7 @@ final quoteIndicesRepositoryProvider = Provider<QuoteIndicesRepository>((ref) {
 final prayerContentRepositoryProvider = Provider<PrayerContentRepository>((
   ref,
 ) {
-  return const AssetPrayerContentRepository();
+  return AssetPrayerContentRepository();
 });
 
 final prayerCatalogRepositoryProvider = Provider<PrayerCatalogRepository>((
@@ -168,12 +168,13 @@ final doctrineCatalogProvider = FutureProvider<List<DoctrineEntry>>((ref) {
   return ref.watch(doctrineRepositoryProvider).listCatalog(language: 'pt-br');
 });
 
-final getDoctrineCatalogUseCaseProvider =
-    Provider<GetDoctrineCatalogUseCase>((ref) {
-      return GetDoctrineCatalogUseCase(
-        repository: ref.watch(doctrineRepositoryProvider),
-      );
-    });
+final getDoctrineCatalogUseCaseProvider = Provider<GetDoctrineCatalogUseCase>((
+  ref,
+) {
+  return GetDoctrineCatalogUseCase(
+    repository: ref.watch(doctrineRepositoryProvider),
+  );
+});
 
 final mediaCatalogRepositoryProvider = Provider<MediaCatalogRepository>((ref) {
   return InMemoryMediaCatalogRepository();

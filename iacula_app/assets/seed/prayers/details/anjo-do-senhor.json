@@ -1,0 +1,16 @@
+{
+  "slug": "anjo-do-senhor",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Anjo do Senhor",
+    "la": "Angelus"
+  },
+  "blocks": {
+    "pt-br": [
+      "V/. O anjo do Senhor anunciou a Maria. R/. E Ela concebeu do Espírito Santo. Ave Maria. V/. Eis aqui a escrava do Senhor. R/. Faça-se em mim segundo a vossa palavra. Ave Maria. V/. E o Verbo divino se fez carne. R/. E habitou entre nós. Ave Maria. V/. Rogai por nós Santa Mãe de Deus. R/. Para que sejamos dignos das graças de Cristo."
+    ],
+    "la": [
+      "V/. Angelus Dómini nuntiávit Maríæ. R/. Et concépit de Spíritu Sancto. Ave, Maria. V/. Ecce ancílla Dómini. R/. Fiat mihi secúndum verbum tuum. Ave, María. V/. Et Verbum caro factum est. R/. Et habitávit in nobis. Ave, María."
+    ]
+  }
+}

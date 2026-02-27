@@ -31,16 +31,18 @@ final class _FakeAuthRepository implements AuthRepository {
 }
 
 void main() {
-  testWidgets('edit button opens dialog when user is authenticated',
-      (tester) async {
-    const user =
-        AuthUser(id: '1', email: 'test@test.com', displayName: 'Maria');
+  testWidgets('edit button opens dialog when user is authenticated', (
+    tester,
+  ) async {
+    const user = AuthUser(
+      id: '1',
+      email: 'test@test.com',
+      displayName: 'Maria',
+    );
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authRepositoryProvider.overrideWithValue(
-            _FakeAuthRepository(user),
-          ),
+          authRepositoryProvider.overrideWithValue(_FakeAuthRepository(user)),
         ],
         child: const CupertinoApp(home: ProfileScreen()),
       ),
@@ -53,20 +55,20 @@ void main() {
     expect(find.byType(CupertinoAlertDialog), findsOneWidget);
   });
 
-  testWidgets('edit button is hidden when no user is authenticated',
-      (tester) async {
+  testWidgets('edit button opens local name editor when unauthenticated', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authRepositoryProvider.overrideWithValue(
-            _FakeAuthRepository(null),
-          ),
+          authRepositoryProvider.overrideWithValue(_FakeAuthRepository(null)),
         ],
         child: const CupertinoApp(home: ProfileScreen()),
       ),
     );
     await tester.pumpAndSettle();
-    // The Conta section should not show "Editar" when unauthenticated
-    expect(find.text('Editar'), findsNothing);
+    await tester.tap(find.text('Editar').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Seu nome'), findsOneWidget);
   });
 }

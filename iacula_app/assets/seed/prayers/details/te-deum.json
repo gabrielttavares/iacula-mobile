@@ -1,0 +1,12 @@
+{
+  "slug": "te-deum",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Te Deum"
+  },
+  "blocks": {
+    "pt-br": [
+      "A vós, ó Deus, nosso louvor! Nós vos aclamamos: sois o Senhor! A vós, Pai eterno, o hino do universo. Diante de vós prosternam-se os arcanjos, os anjos e os espíritos celestiais; eles vos dão graças, vos adoram e cantam: Santo, Santo, Santo é o Senhor Deus do universo; o céu e a terra estão cheios de vossa glória. É a vós que os apóstolos glorificam, a vós que os profetas proclamam, de quem os mártires dão testemunho; é a vós que, pelo mundo inteiro, a Igreja anuncia e reconhece. Deus, nós vos adoramos: Pai infinitamente santo, Filho eterno e bem-amado, Espírito de poder e de paz."
+    ]
+  }
+}

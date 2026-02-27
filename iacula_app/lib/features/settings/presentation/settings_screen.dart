@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
+import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -36,6 +38,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   bool _loading = true;
   bool _saving = false;
+  String? _validationMessage;
 
   @override
   void initState() {
@@ -103,8 +106,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _fieldLabel('Intervalo (minutos)'),
-                  CupertinoTextField(
+                  IaculaTextInput(
                     controller: _intervalController,
+                    placeholder: '1..60',
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: IaculaSpacing.md),
@@ -194,6 +198,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             const SizedBox(height: IaculaSpacing.md),
             _buildAuthSyncSection(),
+            if (_validationMessage != null) ...[
+              const SizedBox(height: IaculaSpacing.md),
+              IaculaInlineMessage(
+                message: _validationMessage!,
+                color: IaculaColors.error,
+              ),
+            ],
             const SizedBox(height: IaculaSpacing.lg),
             CupertinoButton.filled(
               borderRadius: BorderRadius.circular(26),
@@ -243,7 +254,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             alignment: Alignment.centerLeft,
             child: _fieldLabel('Horario (HH:MM)'),
           ),
-          CupertinoTextField(controller: controller),
+          IaculaTimeInput(controller: controller),
         ],
       ),
     );
@@ -267,9 +278,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _save() async {
+    setState(() => _validationMessage = null);
     final interval = int.tryParse(_intervalController.text);
     if (interval == null || interval < 1 || interval > 60) {
-      await _showValidationError('Use 1..60 no intervalo.');
+      setState(() => _validationMessage = 'Use 1..60 no intervalo.');
       return;
     }
 
@@ -282,7 +294,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     for (final controller in timeControllers) {
       if (!_isValidTime(controller.text)) {
-        await _showValidationError('Formato HH:MM');
+        setState(() => _validationMessage = 'Formato HH:MM');
         return;
       }
     }
@@ -333,21 +345,5 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _isValidTime(String value) {
     final regex = RegExp(r'^([01]\d|2[0-3]):([0-5]\d)$');
     return regex.hasMatch(value);
-  }
-
-  Future<void> _showValidationError(String message) async {
-    await showCupertinoDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Dados inválidos'),
-        content: Text(message),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
   }
 }

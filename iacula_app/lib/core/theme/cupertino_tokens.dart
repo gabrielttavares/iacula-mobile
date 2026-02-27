@@ -8,6 +8,18 @@ final class IaculaColors {
   static const textPrimary = Color(0xFF111111);
   static const textSecondary = Color(0xFF6E6E73);
   static const primaryButton = Color(0xFF0975C8);
+  static const success = Color(0xFF34C759);
+  static const warning = Color(0xFFFF9500);
+  static const error = Color(0xFFFF3B30);
+  static const separator = Color(0x1A000000);
+}
+
+final class IaculaShadows {
+  IaculaShadows._();
+
+  static const card = [
+    BoxShadow(color: Color(0x0F000000), blurRadius: 8, offset: Offset(0, 2)),
+  ];
 }
 
 final class IaculaSpacing {
@@ -26,6 +38,14 @@ final class IaculaRadius {
   static const small = 12.0;
   static const card = 20.0;
   static const banner = 24.0;
+}
+
+final class IaculaMetrics {
+  IaculaMetrics._();
+
+  static const inputHeight = 44.0;
+  static const modalCornerRadius = 24.0;
+  static const minTapTarget = 44.0;
 }
 
 final class IaculaText {

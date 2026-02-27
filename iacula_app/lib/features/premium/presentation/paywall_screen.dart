@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../application/premium_bloc.dart';
@@ -31,18 +32,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       if (state is PremiumUnlocked) {
         Navigator.of(context).pop(true);
       } else if (state is PremiumError) {
-        await showCupertinoDialog<void>(
+        await IaculaModal.showAlert(
           context: context,
-          builder: (context) => CupertinoAlertDialog(
-            title: const Text('Erro'),
-            content: Text(state.message),
-            actions: [
-              CupertinoDialogAction(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
+          title: 'Erro',
+          message: state.message,
         );
       }
     });

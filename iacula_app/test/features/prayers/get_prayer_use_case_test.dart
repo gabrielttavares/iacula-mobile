@@ -5,6 +5,7 @@ import 'package:iacula_app/features/liturgical/domain/services/liturgical_season
 import 'package:iacula_app/features/prayers/application/use_cases/get_prayer_use_case.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_collection.dart';
+import 'package:iacula_app/features/prayers/domain/entities/prayer_detail.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_content_repository.dart';
 
 class _FakeSeasonService implements LiturgicalSeasonService {
@@ -41,6 +42,11 @@ class _FakePrayerRepository implements PrayerContentRepository {
       easterVerses: [PrayerVerse(verse: 'v2', response: 'r2')],
       easterPrayer: 'easter',
     );
+  }
+
+  @override
+  Future<PrayerDetail> loadPrayerDetail({required String slug}) async {
+    throw UnimplementedError();
   }
 }
 

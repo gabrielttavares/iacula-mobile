@@ -1,0 +1,12 @@
+{
+  "slug": "oracao-a-sagrada-familia",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração à Sagrada Família"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Sagrada Família de Nazaré, exemplo de amor, de paz e de santidade, ensinai-me a viver em harmonia com os meus, a praticar a virtues da paciência e da compreensão."
+    ]
+  }
+}

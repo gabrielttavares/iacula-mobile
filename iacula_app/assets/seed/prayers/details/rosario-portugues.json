@@ -1,0 +1,16 @@
+{
+  "slug": "rosario-portugues",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Santo Rosário (Português)",
+    "la": "Santo Rosário (Latim)"
+  },
+  "blocks": {
+    "pt-br": [
+      "Mistérios Gozosos (segunda-feira e sábado): A Anunciação, A Visitação, O Nascimento, A Purificação, O Menino-Deus no Templo. Mistérios Luminosos (quinta-feira): O Batismo, As Bodas de Caná, O Anúncio do Reino, A Transfiguração, A Eucaristia. Mistérios Dolorosos (terça e sexta-feira): A Oração no Horto, A Flagelação, A Coroação de Espinhos, A Cruz às Costas, Jesus Morre na Cruz. Mistérios Gloriosos (quarta-feira e domingo): A Ressurreição, A Ascensão, A Vinda do Espírito Santo, A Assunção, A Coroação de Maria."
+    ],
+    "la": [
+      "Gaudii Mystéria (feria secunda et sábbato): Annuntiatio, Visitatio, Nativitas, Presentatio, Inventio. Lucis Mystéria (feria quinta): Baptismus, Cana, Regnum, Transfiguratio, Eucharistia. Doloris Mystéria (feria tertia et sexta): Agonia, Flagellatio, Coronatio, Via Crucis, Mors. Glóriae Mystéria (feria quarta et dominica): Resurrectio, Ascensio, Pentecostes, Assumptio, Coronatio."
+    ]
+  }
+}

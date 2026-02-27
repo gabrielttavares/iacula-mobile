@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_input.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../premium/domain/entities/premium_feature.dart';
@@ -299,7 +301,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
   }
 
   void _showEditItemModal(BuildContext context, PlanItem? item) {
-    showCupertinoModalPopup<void>(
+    IaculaModal.showSheet<void>(
       context: context,
       builder: (ctx) => _EditItemForm(item: item),
     );
@@ -310,43 +312,39 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
     DateTime initialDate,
   ) async {
     DateTime selected = initialDate;
-    return showCupertinoModalPopup<DateTime>(
+    return IaculaModal.showSheet<DateTime>(
       context: context,
       builder: (context) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            height: 320,
-            color: CupertinoColors.white,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 46,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CupertinoButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Cancelar'),
-                      ),
-                      CupertinoButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        onPressed: () => Navigator.of(context).pop(selected),
-                        child: const Text('Selecionar'),
-                      ),
-                    ],
-                  ),
+        return SizedBox(
+          height: 320,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 46,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancelar'),
+                    ),
+                    CupertinoButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      onPressed: () => Navigator.of(context).pop(selected),
+                      child: const Text('Selecionar'),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: initialDate,
-                    onDateTimeChanged: (value) => selected = value,
-                  ),
+              ),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: initialDate,
+                  onDateTimeChanged: (value) => selected = value,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
@@ -417,12 +415,12 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                   style: IaculaText.sectionTitle,
                 ),
                 const SizedBox(height: 16),
-                CupertinoTextField(
+                IaculaTextInput(
                   controller: _titleController,
                   placeholder: 'Título',
                 ),
                 const SizedBox(height: 16),
-                CupertinoTextField(
+                IaculaTimeInput(
                   controller: _timeController,
                   placeholder: 'Horário (HH:MM)',
                 ),

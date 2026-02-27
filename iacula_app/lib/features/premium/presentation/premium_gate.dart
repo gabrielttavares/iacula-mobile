@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -48,7 +49,7 @@ class PremiumGate extends ConsumerWidget {
     BuildContext context, {
     required PremiumFeature feature,
   }) {
-    showCupertinoModalPopup<void>(
+    IaculaModal.showSheet<void>(
       context: context,
       builder: (context) => _PremiumGateModal(feature: feature),
     );
@@ -117,54 +118,47 @@ class _PremiumGateModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
-          color: CupertinoColors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Icon(
-                CupertinoIcons.lock,
-                size: 48,
-                color: IaculaColors.primaryButton,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Recurso Premium',
-                textAlign: TextAlign.center,
-                style: IaculaText.sectionTitle,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                '${_LockedFallback._label(feature)} está disponível no acesso Premium vitalício por R\$ 39,90.',
-                textAlign: TextAlign.center,
-                style: IaculaText.secondary,
-              ),
-              const SizedBox(height: 24),
-              IaculaPrimaryPillButton(
-                label: 'Conhecer Premium',
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(builder: (_) => const PaywallScreen()),
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              IaculaSecondaryPillButton(
-                label: 'Agora não',
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Icon(
+              CupertinoIcons.lock,
+              size: 48,
+              color: IaculaColors.primaryButton,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Recurso Premium',
+              textAlign: TextAlign.center,
+              style: IaculaText.sectionTitle,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '${_LockedFallback._label(feature)} está disponível no acesso Premium vitalício por R\$ 39,90.',
+              textAlign: TextAlign.center,
+              style: IaculaText.secondary,
+            ),
+            const SizedBox(height: 24),
+            IaculaPrimaryPillButton(
+              label: 'Conhecer Premium',
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  CupertinoPageRoute(builder: (_) => const PaywallScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            IaculaSecondaryPillButton(
+              label: 'Agora não',
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
         ),
       ),
     );

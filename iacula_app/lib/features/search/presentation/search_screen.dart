@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../liturgical/domain/liturgical_season.dart';
@@ -48,11 +49,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         for (final entry in quotes.entries) {
           for (final text in entry.value.quotes) {
             if (text.toLowerCase().contains(lowerQuery)) {
-              results.add(_SearchResult(
-                text: text,
-                category: entry.value.theme,
-                type: 'Citação',
-              ));
+              results.add(
+                _SearchResult(
+                  text: text,
+                  category: entry.value.theme,
+                  type: 'Citação',
+                ),
+              );
             }
           }
         }
@@ -71,9 +74,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       backgroundColor: IaculaColors.background,
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Pesquisar'),
-      ),
+      navigationBar: const CupertinoNavigationBar(middle: Text('Pesquisar')),
       child: SafeArea(
         child: Column(
           children: [
@@ -88,30 +89,27 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               child: _loading
                   ? const Center(child: CupertinoActivityIndicator())
                   : _query.trim().length < 2
-                      ? const Center(
-                          child: Text(
-                            'Pesquise por citações dos santos.',
-                            style: IaculaText.secondary,
-                          ),
-                        )
-                      : _results.isEmpty
-                          ? Center(
-                              child: Text(
-                                'Nenhum resultado para "$_query".',
-                                style: IaculaText.secondary,
-                              ),
-                            )
-                          : ListView.separated(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: IaculaSpacing.md,
-                              ),
-                              itemCount: _results.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 8),
-                              itemBuilder: (_, i) => _ResultCard(
-                                result: _results[i],
-                              ),
-                            ),
+                  ? const Center(
+                      child: IaculaEmptyState(
+                        title: 'Pesquisar',
+                        message: 'Pesquise por citações dos santos.',
+                      ),
+                    )
+                  : _results.isEmpty
+                  ? Center(
+                      child: IaculaEmptyState(
+                        title: 'Sem resultados',
+                        message: 'Nenhum resultado para "$_query".',
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: IaculaSpacing.md,
+                      ),
+                      itemCount: _results.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (_, i) => _ResultCard(result: _results[i]),
+                    ),
             ),
           ],
         ),

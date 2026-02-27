@@ -1,0 +1,15 @@
+{
+  "oracoes-comuns": {"section_id": "oracoes-comuns", "section_title": "Orações Comuns"},
+  "santissima-trindade": {"section_id": "santissima-trindade", "section_title": "Santíssima Trindade"},
+  "eucaristica": {"section_id": "eucaristia", "section_title": "Orações Eucarísticas"},
+  "espirito-santo": {"section_id": "espirito-santo", "section_title": "Espírito Santo"},
+  "mariano": {"section_id": "mariano", "section_title": "Orações Marianas"},
+  "rosario": {"section_id": "rosario", "section_title": "Santo Rosário"},
+  "missa-preparacao": {"section_id": "missa-preparacao", "section_title": "Preparação para a Missa"},
+  "missa-acao-de-gracas": {"section_id": "missa-acao-de-gracas", "section_title": "Ação de Graças da Missa"},
+  "sao-jose": {"section_id": "sao-jose", "section_title": "São José"},
+  "trabalho": {"section_id": "vida-ordinaria", "section_title": "Vida Ordinária"},
+  "devocoes": {"section_id": "devocoes", "section_title": "Devoções"},
+  "defuntos": {"section_id": "defuntos", "section_title": "Sufrágios pelos Defuntos"},
+  "diversos": {"section_id": "diversos", "section_title": "Orações Diversas"}
+}

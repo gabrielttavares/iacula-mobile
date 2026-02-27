@@ -11,6 +11,7 @@ final class AppTheme {
       scaffoldBackgroundColor: IaculaColors.background,
       primaryColor: IaculaColors.primaryButton,
       textTheme: CupertinoTextThemeData(
+        primaryColor: IaculaColors.primaryButton,
         textStyle: IaculaText.secondary,
         navLargeTitleTextStyle: IaculaText.largeTitle,
         navTitleTextStyle: IaculaText.cardTitle,

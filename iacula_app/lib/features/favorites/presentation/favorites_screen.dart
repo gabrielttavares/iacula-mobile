@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -27,11 +28,9 @@ class FavoritesScreen extends ConsumerWidget {
                   children: [
                     IaculaLargeTitle('Favoritos'),
                     SizedBox(height: IaculaSpacing.lg),
-                    Center(
-                      child: Text(
-                        'Seus itens salvos aparecerão aqui.',
-                        style: IaculaText.secondary,
-                      ),
+                    IaculaEmptyState(
+                      title: 'Sem favoritos',
+                      message: 'Seus itens salvos aparecerão aqui.',
                     ),
                   ],
                 ),
@@ -63,7 +62,10 @@ class FavoritesScreen extends ConsumerWidget {
           },
           loading: () => const Center(child: CupertinoActivityIndicator()),
           error: (_, __) => const Center(
-            child: Text('Erro ao carregar favoritos.', style: IaculaText.secondary),
+            child: IaculaErrorState(
+              title: 'Erro ao carregar favoritos',
+              message: 'Tente novamente em instantes.',
+            ),
           ),
         ),
       ),
