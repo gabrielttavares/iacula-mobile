@@ -19,8 +19,9 @@ import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../doctrina/presentation/doctrine_collections_screen.dart';
-import '../../favorites/domain/entities/favorite_item.dart';
 import '../../quotes/domain/entities/quote.dart';
+import 'widgets/home_action_grid.dart';
+import 'widgets/home_hero_card.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -56,7 +57,16 @@ class HomeScreen extends ConsumerWidget {
                       delegate: SliverChildListDelegate([
                         const _HomeHeader(),
                         const SizedBox(height: IaculaSpacing.lg),
-                        _FeatureGrid(
+                        HomeHeroCard(
+                          quote: quote,
+                          isFallback: isFallback,
+                          onOpenPremium: () => PremiumGate.showModal(
+                            context,
+                            feature: PremiumFeature.meditation,
+                          ),
+                        ),
+                        const SizedBox(height: IaculaSpacing.lg),
+                        HomeActionGrid(
                           onOpenPrayers: () {
                             Navigator.of(context).push(
                               CupertinoPageRoute(
@@ -88,15 +98,6 @@ class HomeScreen extends ConsumerWidget {
                               ),
                             );
                           },
-                        ),
-                        const SizedBox(height: IaculaSpacing.lg),
-                        _PromotionalBanner(
-                          quote: quote,
-                          isFallback: isFallback,
-                          onOpenPremium: () => PremiumGate.showModal(
-                            context,
-                            feature: PremiumFeature.meditation,
-                          ),
                         ),
                         const SizedBox(height: IaculaSpacing.xl),
                         const IaculaSectionHeader(title: 'Sugestão do Dia'),
@@ -189,284 +190,6 @@ class _HomeHeader extends ConsumerWidget {
         const SizedBox(height: IaculaSpacing.sm),
         IaculaLargeTitle(greeting),
       ],
-    );
-  }
-}
-
-class _FeatureGrid extends StatelessWidget {
-  const _FeatureGrid({
-    required this.onOpenPrayers,
-    required this.onOpenLiturgy,
-    required this.onOpenRosary,
-    required this.onOpenNovenas,
-    required this.onOpenDoctrina,
-  });
-
-  final VoidCallback onOpenPrayers;
-  final VoidCallback onOpenLiturgy;
-  final VoidCallback onOpenRosary;
-  final VoidCallback onOpenNovenas;
-  final VoidCallback onOpenDoctrina;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _SquareFeatureCard(
-                icon: CupertinoIcons.book,
-                label: 'Orações',
-                onTap: onOpenPrayers,
-              ),
-            ),
-            const SizedBox(width: IaculaSpacing.sm),
-            Expanded(
-              child: _SquareFeatureCard(
-                icon: CupertinoIcons.doc_text,
-                label: 'Liturgia',
-                onTap: onOpenLiturgy,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: IaculaSpacing.sm),
-        Row(
-          children: [
-            Expanded(
-              child: _SquareFeatureCard(
-                icon: CupertinoIcons.heart,
-                label: 'Rosário 📿',
-                onTap: onOpenRosary,
-              ),
-            ),
-            const SizedBox(width: IaculaSpacing.sm),
-            Expanded(
-              child: _SquareFeatureCard(
-                icon: CupertinoIcons.book_solid,
-                label: 'Novenas',
-                onTap: onOpenNovenas,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: IaculaSpacing.sm),
-        Row(
-          children: [
-            Expanded(
-              child: _SquareFeatureCard(
-                icon: CupertinoIcons.lightbulb,
-                label: 'Doutrina\nCatólica',
-                onTap: onOpenDoctrina,
-              ),
-            ),
-            const SizedBox(width: IaculaSpacing.sm),
-            const Expanded(child: SizedBox()),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _SquareFeatureCard extends StatelessWidget {
-  const _SquareFeatureCard({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: IaculaSoftCard(
-          radius: 18,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: IaculaColors.primaryButton),
-              const SizedBox(height: IaculaSpacing.sm),
-              Text(
-                label,
-                style: IaculaText.cardTitle,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PromotionalBanner extends ConsumerWidget {
-  const _PromotionalBanner({
-    required this.quote,
-    required this.onOpenPremium,
-    this.isFallback = false,
-  });
-
-  final Quote quote;
-  final VoidCallback onOpenPremium;
-  final bool isFallback;
-
-  String? _resolveAssetPath(String? path) {
-    if (path == null) {
-      return null;
-    }
-    final value = path.trim();
-    if (value.isEmpty) {
-      return null;
-    }
-    return value.startsWith('/') ? value.substring(1) : value;
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final imagePath = _resolveAssetPath(quote.imagePath);
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(IaculaRadius.banner),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x12000000),
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 240),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(IaculaRadius.banner),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: imagePath != null
-                    ? Image.asset(
-                        imagePath,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const DecoratedBox(
-                          decoration: BoxDecoration(color: Color(0xFF3D3125)),
-                        ),
-                      )
-                    : const DecoratedBox(
-                        decoration: BoxDecoration(color: Color(0xFF3D3125)),
-                      ),
-              ),
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        CupertinoColors.black.withValues(alpha: 0.3),
-                        CupertinoColors.black.withValues(alpha: 0.86),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          minSize: 32,
-                          onPressed: () async {
-                            final repo = ref.read(favoriteRepositoryProvider);
-                            final alreadySaved = await repo.isFavorite(
-                              quote.text,
-                            );
-                            if (!alreadySaved) {
-                              await repo.save(
-                                FavoriteItem(
-                                  id: DateTime.now().millisecondsSinceEpoch
-                                      .toString(),
-                                  quoteText: quote.text,
-                                  theme: quote.theme,
-                                  season: quote.season.name,
-                                  savedAt: DateTime.now(),
-                                  imagePath: quote.imagePath,
-                                  feastName: quote.feastName,
-                                ),
-                              );
-                            }
-                          },
-                          child: const Icon(
-                            CupertinoIcons.bookmark,
-                            color: CupertinoColors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          quote.text,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Color(0xFFF6F6F8),
-                            height: 1.5,
-                          ),
-                        ),
-                        if (isFallback)
-                          const Padding(
-                            padding: EdgeInsets.only(top: 4),
-                            child: Text(
-                              'Tempo litúrgico indisponível',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Color(0x99F6F6F8),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    CupertinoButton(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
-                      ),
-                      minSize: 0,
-                      color: const Color(0x26FFFFFF),
-                      borderRadius: BorderRadius.circular(20),
-                      onPressed: onOpenPremium,
-                      child: const Text(
-                        'Conhecer Premium',
-                        style: TextStyle(
-                          color: CupertinoColors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

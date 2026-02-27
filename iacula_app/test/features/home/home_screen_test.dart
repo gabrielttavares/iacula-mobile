@@ -146,7 +146,7 @@ void main() {
       final finder = find.text(text);
       for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
         await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 200));
       }
       expect(finder, findsOneWidget);
     }
@@ -156,6 +156,19 @@ void main() {
     await reveal('Sugestão do Dia');
     await reveal('Orações temáticas');
     await reveal('Orações de Santos');
+  });
+
+  testWidgets('home renders hero card before quick actions', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('home_hero_card')), findsOneWidget);
+    expect(find.byKey(const Key('home_action_grid')), findsOneWidget);
   });
 
   testWidgets('home shows updated quick actions', (tester) async {
@@ -217,8 +230,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Rosário 📿'));
-    await tester.pumpAndSettle();
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -260));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Rosário 📿').first);
+    await tester.pump(const Duration(milliseconds: 200));
 
     expect(find.byType(CupertinoAlertDialog), findsOneWidget);
     expect(find.text('Em breve'), findsOneWidget);
@@ -229,8 +244,7 @@ void main() {
     expect(find.byType(CupertinoAlertDialog), findsNothing);
   });
 
-  testWidgets('novenas quick action navigates away from home',
-      (tester) async {
+  testWidgets('novenas quick action navigates away from home', (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -239,7 +253,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Novenas'));
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -260));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Novenas').first);
     await tester.pump();
 
     expect(find.byType(CupertinoAlertDialog), findsNothing);
