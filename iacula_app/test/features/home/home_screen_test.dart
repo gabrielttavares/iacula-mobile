@@ -96,6 +96,42 @@ _FakeLastDeliveredCardRepository _defaultLastCardRepo() =>
     );
 
 void main() {
+  testWidgets('home hero keeps long quote visible without truncation', (
+    tester,
+  ) async {
+    const longQuote =
+        'LONG_QUOTE_MARKER Permanecei em mim, e Eu permanecerei em vos. Assim como o ramo nao pode dar fruto por si mesmo, se nao permanecer na videira, assim tambem vos, se nao permanecerdes em mim. '; // cspell:disable-line
+    final lastCardRepo = _FakeLastDeliveredCardRepository(
+      LastDeliveredCard(
+        quoteText: longQuote + longQuote,
+        theme: 'Conversao',
+        season: 'lent',
+        deliveredAt: DateTime(2026, 2, 21, 11, 0),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: lastCardRepo,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final quoteFinder = find.textContaining('LONG_QUOTE_MARKER');
+    for (var i = 0; i < 20 && quoteFinder.evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pumpAndSettle();
+    }
+
+    expect(quoteFinder, findsOneWidget);
+
+    final quoteText = tester.widget<Text>(quoteFinder);
+    expect(quoteText.maxLines, isNull);
+    expect(quoteText.overflow, isNull);
+    expect(find.text('Conhecer Premium'), findsOneWidget);
+  });
+
   testWidgets('home follows required section order', (tester) async {
     await tester.pumpWidget(
       _buildApp(

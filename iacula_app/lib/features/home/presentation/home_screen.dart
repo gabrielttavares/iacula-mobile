@@ -292,8 +292,21 @@ class _PromotionalBanner extends ConsumerWidget {
   final VoidCallback onOpenPremium;
   final bool isFallback;
 
+  String? _resolveAssetPath(String? path) {
+    if (path == null) {
+      return null;
+    }
+    final value = path.trim();
+    if (value.isEmpty) {
+      return null;
+    }
+    return value.startsWith('/') ? value.substring(1) : value;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final imagePath = _resolveAssetPath(quote.imagePath);
+
     return Container(
       height: 240,
       decoration: BoxDecoration(
@@ -311,9 +324,9 @@ class _PromotionalBanner extends ConsumerWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (quote.imagePath != null)
+            if (imagePath != null)
               Image.asset(
-                quote.imagePath!,
+                imagePath,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => const DecoratedBox(
                   decoration: BoxDecoration(color: Color(0xFF3D3125)),
@@ -374,28 +387,36 @@ class _PromotionalBanner extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  Text(
-                    quote.text,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: Color(0xFFF6F6F8),
-                      height: 1.5,
-                    ),
-                  ),
-                  if (isFallback)
-                    const Padding(
-                      padding: EdgeInsets.only(top: 4),
-                      child: Text(
-                        'Tempo litúrgico indisponível',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Color(0x99F6F6F8),
-                        ),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            quote.text,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFFF6F6F8),
+                              height: 1.5,
+                            ),
+                          ),
+                          if (isFallback)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 4),
+                              child: Text(
+                                'Tempo litúrgico indisponível',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0x99F6F6F8),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                  const Spacer(),
+                  ),
+                  const SizedBox(height: 10),
                   CupertinoButton(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
