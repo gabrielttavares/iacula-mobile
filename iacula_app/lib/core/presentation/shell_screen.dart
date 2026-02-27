@@ -20,6 +20,7 @@ class ShellScreen extends ConsumerStatefulWidget {
 
 class _ShellScreenState extends ConsumerState<ShellScreen> {
   int _currentIndex = 0;
+  final _tabController = CupertinoTabController();
   static const _premiumIndexes = <int>{1, 2};
 
   static const _screens = <Widget>[
@@ -31,16 +32,23 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
   ];
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
+      controller: _tabController,
       tabBar: CupertinoTabBar(
-        currentIndex: _currentIndex,
         activeColor: const Color(0xFF111111),
         inactiveColor: const Color(0xFF6E6E73),
         onTap: (index) async {
           if (_premiumIndexes.contains(index)) {
             final status = ref.read(premiumStatusProvider).valueOrNull;
             if (status?.isPremium != true) {
+              _tabController.index = _currentIndex;
               final feature = index == 1
                   ? PremiumFeature.meditation
                   : PremiumFeature.planOfLife;
