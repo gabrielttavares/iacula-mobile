@@ -21,6 +21,22 @@ import '../../quotes/domain/entities/quote.dart';
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
+  Future<void> _showEmBreveDialog(BuildContext context, String title) {
+    return showCupertinoDialog<void>(
+      context: context,
+      builder: (_) => CupertinoAlertDialog(
+        title: Text(title),
+        content: const Text('Em breve'),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final quoteAsync = ref.watch(_homeQuoteProvider);
@@ -55,8 +71,10 @@ class HomeScreen extends ConsumerWidget {
                           onOpenLiturgy: () => Navigator.of(
                             context,
                           ).pushNamed(LiturgiaScreen.routeName),
-                          onOpenRosary: () {},
-                          onOpenNovenas: () {},
+                          onOpenRosary: () =>
+                              _showEmBreveDialog(context, 'Rosário 📿'),
+                          onOpenNovenas: () =>
+                              _showEmBreveDialog(context, 'Novenas'),
                         ),
                         const SizedBox(height: IaculaSpacing.lg),
                         _PromotionalBanner(
@@ -395,86 +413,6 @@ class _PromotionalBanner extends ConsumerWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HorizontalHighlights extends StatelessWidget {
-  const _HorizontalHighlights({
-    required this.onOpenPrayers,
-    required this.onOpenLiturgy,
-    required this.onOpenPremium,
-  });
-
-  final VoidCallback onOpenPrayers;
-  final VoidCallback onOpenLiturgy;
-  final VoidCallback onOpenPremium;
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width * 0.7;
-    return SizedBox(
-      height: 150,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _HighlightCard(
-            width: width,
-            title: 'Liturgia diária',
-            subtitle: 'Leituras e orações de hoje',
-            onTap: onOpenLiturgy,
-          ),
-          const SizedBox(width: IaculaSpacing.sm),
-          _HighlightCard(
-            width: width,
-            title: 'Orações do dia a dia',
-            subtitle: 'Orações para manhã, tarde e noite.',
-            onTap: onOpenPrayers,
-          ),
-          const SizedBox(width: IaculaSpacing.sm),
-          _HighlightCard(
-            width: width,
-            title: 'Meditações',
-            subtitle: 'Disponível no Premium.',
-            onTap: onOpenPremium,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HighlightCard extends StatelessWidget {
-  const _HighlightCard({
-    required this.width,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final double width;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        width: width,
-        child: IaculaSoftCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(title, style: IaculaText.cardTitle),
-              const SizedBox(height: 6),
-              Text(subtitle, style: IaculaText.secondary),
-            ],
-          ),
         ),
       ),
     );

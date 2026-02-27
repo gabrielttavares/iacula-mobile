@@ -170,7 +170,7 @@ void main() {
     expect(find.text('Domingo'), findsOneWidget);
   });
 
-  testWidgets('new quick actions handle taps safely', (tester) async {
+  testWidgets('rosario quick action shows em breve dialog', (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -181,9 +181,34 @@ void main() {
 
     await tester.tap(find.text('Rosário 📿'));
     await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoAlertDialog), findsOneWidget);
+    expect(find.text('Em breve'), findsOneWidget);
+
+    await tester.tap(find.text('Fechar'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoAlertDialog), findsNothing);
+  });
+
+  testWidgets('novenas quick action shows em breve dialog', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
     await tester.tap(find.text('Novenas'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(CupertinoAlertDialog), findsOneWidget);
+    expect(find.text('Em breve'), findsOneWidget);
+
+    await tester.tap(find.text('Fechar'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoAlertDialog), findsNothing);
   });
 }
