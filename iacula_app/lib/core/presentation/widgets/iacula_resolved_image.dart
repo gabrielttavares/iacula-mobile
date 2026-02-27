@@ -120,9 +120,14 @@ final class IaculaImageResolver {
       return cached ?? source;
     }
 
+    final localAsset = await _resolveLocalSeedAsset(source);
+    if (localAsset != null) {
+      return localAsset;
+    }
+
     final env = AppEnv.fromDartDefines();
     if (env.supabaseUrl == null || env.supabaseUrl!.isEmpty) {
-      return source;
+      return null;
     }
 
     final fallback = await _resolveSupabaseKey(source);
@@ -204,6 +209,23 @@ final class IaculaImageResolver {
     return assetPath
         .replaceFirst(RegExp(r'^assets/seed/images/+'), '')
         .replaceFirst(RegExp(r'^/+'), '');
+  }
+
+  static Future<String?> _resolveLocalSeedAsset(String source) async {
+    final normalizedKey = source
+        .replaceFirst(RegExp(r'^/+'), '')
+        .replaceFirst(RegExp(r'^iacula_images/+'), '');
+    if (normalizedKey.isEmpty) {
+      return null;
+    }
+
+    final assetPath = 'assets/seed/images/$normalizedKey';
+    final exists = await _assetExists(assetPath);
+    if (exists) {
+      return assetPath;
+    }
+
+    return null;
   }
 
   static Future<bool> _assetExists(String assetPath) async {
