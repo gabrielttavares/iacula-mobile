@@ -2,34 +2,34 @@
   {
     "id": "sinal-da-cruz",
     "title": "Sinal da Cruz",
-    "content": "Em nome do Pai e do Filho e do Espirito Santo. Amem.",
+    "content": "Em nome do Pai e do Filho e do Espírito Santo. Amém.",
     "theme": ["oracoes-comuns", "inicio"],
     "saints": []
   },
   {
     "id": "pai-nosso",
     "title": "Pai Nosso",
-    "content": "Pai nosso que estais nos ceus, santificado seja o vosso nome; venha a nos o vosso reino.",
+    "content": "Pai nosso que estais nos céus, santificado seja o vosso nome; venha a nós o vosso reino.",
     "theme": ["oracoes-comuns", "confianca"],
     "saints": []
   },
   {
     "id": "ave-maria",
     "title": "Ave Maria",
-    "content": "Ave Maria, cheia de graca, o Senhor e convosco; bendita sois vos entre as mulheres.",
+    "content": "Ave Maria, cheia de graça, o Senhor é convosco; bendita sois vós entre as mulheres.",
     "theme": ["mariano", "intercessao"],
     "saints": ["virgem-maria"]
   },
   {
     "id": "salve-rainha",
     "title": "Salve Rainha",
-    "content": "Salve Rainha, Mae de misericordia, vida, docura, esperanca nossa, salve.",
+    "content": "Salve Rainha, Mãe de misericórdia, vida, doçura, esperança nossa, salve.",
     "theme": ["mariano", "esperanca"],
     "saints": ["virgem-maria"]
   },
   {
     "id": "ato-de-contricao",
-    "title": "Ato de Contricao",
+    "title": "Ato de Contrição",
     "content": "Senhor, eu me arrependo sinceramente de todo mal que pratiquei e do bem que deixei de fazer.",
     "theme": ["penitencia", "conversao"],
     "saints": []
@@ -43,44 +43,51 @@
   },
   {
     "id": "vinde-santo-espirito",
-    "title": "Vinde Santo Espirito",
-    "content": "Vinde Santo Espirito e do ceu mandai luminoso raio; vinde pai dos pobres, doador dos dons.",
+    "title": "Vinde Santo Espírito",
+    "content": "Vinde Santo Espírito e do céu mandai luminoso raio; vinde pai dos pobres, doador dos dons.",
     "theme": ["espirito-santo", "discernimento"],
     "saints": []
   },
   {
     "id": "lembrai-vos",
     "title": "Lembrai-vos",
-    "content": "Lembrai-vos, o piissima Virgem Maria, que nunca se ouviu dizer que algum dos que recorreram a vos fosse desamparado.",
+    "content": "Lembrai-vos, ó piíssima Virgem Maria, que nunca se ouviu dizer que algum dos que recorreram a vós fosse desamparado.",
     "theme": ["mariano", "socorro"],
     "saints": ["virgem-maria"]
   },
   {
     "id": "stabat-mater",
     "title": "Stabat Mater",
-    "content": "De pe a Mae dolorosa, junto da cruz, lacrimosa, via Jesus que pendia.",
+    "content": "De pé a Mãe dolorosa, junto da cruz, lacrimosa, via Jesus que pendia.",
     "theme": ["paixao-de-cristo", "mariano"],
     "saints": ["virgem-maria"]
   },
   {
     "id": "para-o-trabalho",
     "title": "Para o trabalho",
-    "content": "Sao Jose, varao feliz, rogai por nos para que sirvamos a Deus com coracao limpo e boas obras.",
+    "content": "São José, varão feliz, rogai por nós para que sirvamos a Deus com coração limpo e boas obras.",
     "theme": ["trabalho", "familia"],
     "saints": ["sao-jose"]
   },
   {
     "id": "oracao-de-sao-tomas-de-aquino",
-    "title": "Oracao de Sao Tomas de Aquino",
-    "content": "O Deus eterno e todo-poderoso, eis que me aproximo do sacramento do vosso Filho unico.",
+    "title": "Oração de São Tomás de Aquino",
+    "content": "Ó Deus eterno e todo-poderoso, eis que me aproximo do sacramento do vosso Filho único.",
     "theme": ["eucaristia", "humildade"],
     "saints": ["sao-tomas-de-aquino"]
   },
   {
     "id": "oracao-a-sao-josemaria",
-    "title": "Oracao a Sao Josemaria",
-    "content": "Deus, que enchestes Sao Josemaria de gracas para servir a Igreja, concedei-me viver santamente no trabalho de cada dia.",
+    "title": "Oração a São Josemaria",
+    "content": "Deus, que enchestes São Josemaria de graças para servir a Igreja, concedei-me viver santamente no trabalho de cada dia.",
     "theme": ["santidade", "vida-diaria"],
     "saints": ["sao-josemaria"]
+  },
+  {
+    "id": "eis-me-aqui",
+    "title": "Eis-me aqui",
+    "content": "Senhor, eis-me aqui para cumprir a vossa vontade, com fidelidade no ordinário.",
+    "theme": [],
+    "saints": []
   }
 ]

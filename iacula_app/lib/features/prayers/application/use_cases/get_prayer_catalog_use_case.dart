@@ -17,7 +17,7 @@ final class GetPrayerCatalogUseCase {
   }) async {
     final catalog = await listAll(language: language);
     return catalog
-        .where((entry) => entry.theme == theme)
+        .where((entry) => entry.themes.contains(theme))
         .toList(growable: false);
   }
 
@@ -27,7 +27,7 @@ final class GetPrayerCatalogUseCase {
   }) async {
     final catalog = await listAll(language: language);
     return catalog
-        .where((entry) => entry.saint == saint)
+        .where((entry) => entry.saints.contains(saint))
         .toList(growable: false);
   }
 }

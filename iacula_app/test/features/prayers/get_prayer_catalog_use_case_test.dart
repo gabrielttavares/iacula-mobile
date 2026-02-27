@@ -23,20 +23,23 @@ void main() {
     PrayerCatalogEntry(
       slug: 'novena-sao-jose',
       title: 'Novena de Sao Jose',
-      theme: 'familia',
-      saint: 'sao-jose',
+      content: 'Texto da novena',
+      themes: ['familia', 'trabalho'],
+      saints: ['sao-jose'],
     ),
     PrayerCatalogEntry(
       slug: 'consagracao-sagrado-coracao',
       title: 'Consagracao ao Sagrado Coracao',
-      theme: 'consagracao',
-      saint: null,
+      content: 'Texto da consagracao',
+      themes: ['consagracao'],
+      saints: [],
     ),
     PrayerCatalogEntry(
       slug: 'ladainha-santa-teresinha',
       title: 'Ladainha de Santa Teresinha',
-      theme: 'intercessao',
-      saint: 'santa-teresinha',
+      content: 'Texto da ladainha',
+      themes: ['intercessao', 'mariano'],
+      saints: ['santa-teresinha', 'virgem-maria'],
     ),
   ];
 
@@ -49,21 +52,21 @@ void main() {
     expect(repository.requestedLanguages, ['en']);
   });
 
-  test('byTheme returns only matching theme entries', () async {
+  test('byTheme matches any theme tag in entry', () async {
     final repository = _FakePrayerCatalogRepository(entries);
     final useCase = GetPrayerCatalogUseCase(repository: repository);
 
-    final result = await useCase.byTheme(language: 'es', theme: 'intercessao');
+    final result = await useCase.byTheme(language: 'es', theme: 'mariano');
     expect(result.map((e) => e.slug), ['ladainha-santa-teresinha']);
     expect(repository.requestedLanguages, ['es']);
   });
 
-  test('bySaint ignores entries without saint', () async {
+  test('bySaint matches any saint tag in entry', () async {
     final repository = _FakePrayerCatalogRepository(entries);
     final useCase = GetPrayerCatalogUseCase(repository: repository);
 
-    final result = await useCase.bySaint(language: 'it', saint: 'sao-jose');
-    expect(result.map((e) => e.slug), ['novena-sao-jose']);
+    final result = await useCase.bySaint(language: 'it', saint: 'virgem-maria');
+    expect(result.map((e) => e.slug), ['ladainha-santa-teresinha']);
     expect(repository.requestedLanguages, ['it']);
   });
 
@@ -71,7 +74,7 @@ void main() {
     final repository = _FakePrayerCatalogRepository(entries);
     final useCase = GetPrayerCatalogUseCase(repository: repository);
 
-    final result = await useCase.byTheme(language: 'pt-br', theme: 'mariano');
+    final result = await useCase.byTheme(language: 'pt-br', theme: 'pascal');
     expect(result, isEmpty);
   });
 

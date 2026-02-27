@@ -2,15 +2,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/prayers/infrastructure/repositories/asset_prayer_catalog_repository.dart';
 
 void main() {
-  test('listCatalog parses valid entries and skips malformed ones', () async {
+  test('listCatalog parses accents, keeps empty tags, and skips malformed entries', () async {
     final repository = AssetPrayerCatalogRepository(
       loadAsset: (_) async => '''
 [
   {
     "id": "pai-nosso",
     "title": "Pai Nosso",
-    "content": "Pai nosso que estais nos ceus.",
+    "content": "Pai nosso que estais nos céus.",
     "theme": ["oracoes-comuns", "confianca"],
+    "saints": []
+  },
+  {
+    "id": "oracao-curta",
+    "title": "Oração Curta",
+    "content": "Texto válido com acentuação.",
+    "theme": [],
     "saints": []
   },
   {
@@ -22,9 +29,9 @@ void main() {
   {
     "id": "sao-jose-trabalho",
     "title": "Para o trabalho",
-    "content": "Sao Jose, protegei meu trabalho.",
+    "content": "São José, protegei meu trabalho.",
     "theme": ["trabalho", "intercessao"],
-    "saints": ["sao-jose"]
+    "saints": ["sao-jose", "sagrada-familia"]
   },
   {
     "id": "tema-invalido",
@@ -42,9 +49,16 @@ void main() {
 
     final result = await repository.listCatalog(language: 'pt_br');
 
-    expect(result.map((entry) => entry.slug), ['pai-nosso', 'sao-jose-trabalho']);
-    expect(result.first.theme, 'oracoes-comuns');
-    expect(result.last.saint, 'sao-jose');
+    expect(result.map((entry) => entry.slug), [
+      'pai-nosso',
+      'oracao-curta',
+      'sao-jose-trabalho',
+    ]);
+    expect(result.first.content, 'Pai nosso que estais nos céus.');
+    expect(result.first.themes, ['oracoes-comuns', 'confianca']);
+    expect(result[1].themes, isEmpty);
+    expect(result[1].saints, isEmpty);
+    expect(result.last.saints, ['sao-jose', 'sagrada-familia']);
   });
 
   test('listCatalog falls back to pt-br catalog when requested language is missing', () async {

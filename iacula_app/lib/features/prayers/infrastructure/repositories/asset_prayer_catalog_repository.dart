@@ -51,24 +51,34 @@ final class AssetPrayerCatalogRepository implements PrayerCatalogRepository {
     final id = item['id']?.toString().trim() ?? '';
     final title = item['title']?.toString().trim() ?? '';
     final content = item['content']?.toString().trim() ?? '';
-    final themes = _stringList(item['theme']);
-    final saints = _stringList(item['saints']);
+    final themes = _parseTags(item, 'theme');
+    final saints = _parseTags(item, 'saints');
 
-    if (id.isEmpty || title.isEmpty || content.isEmpty || themes.isEmpty) {
+    if (id.isEmpty || title.isEmpty || content.isEmpty) {
+      return null;
+    }
+
+    if (themes == null || saints == null) {
       return null;
     }
 
     return PrayerCatalogEntry(
       slug: id,
       title: title,
-      theme: themes.first,
-      saint: saints.isEmpty ? null : saints.first,
+      content: content,
+      themes: themes,
+      saints: saints,
     );
   }
 
-  List<String> _stringList(dynamic value) {
+  List<String>? _parseTags(Map<String, dynamic> map, String key) {
+    if (!map.containsKey(key)) {
+      return null;
+    }
+
+    final value = map[key];
     if (value is! List<dynamic>) {
-      return const <String>[];
+      return null;
     }
 
     return value
