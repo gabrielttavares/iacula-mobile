@@ -62,6 +62,10 @@ import '../../features/plan_of_life/application/use_cases/update_plan_item_use_c
 import '../../features/plan_of_life/application/use_cases/delete_plan_item_use_case.dart';
 import '../../features/plan_of_life/application/plan_of_life_notifier.dart';
 
+import '../../features/doctrina/application/use_cases/get_doctrine_catalog_use_case.dart';
+import '../../features/doctrina/domain/entities/doctrine_entry.dart';
+import '../../features/doctrina/domain/repositories/doctrine_repository.dart';
+import '../../features/doctrina/infrastructure/repositories/asset_doctrine_repository.dart';
 import '../../features/spiritual_data/domain/entities/spiritual_entry.dart';
 import '../../features/sync/domain/repositories/sync_orchestrator.dart';
 import '../../features/sync/domain/repositories/sync_state_repository.dart';
@@ -155,6 +159,21 @@ final meditationCatalogRepositoryProvider =
 final meditationCatalogProvider = FutureProvider<List<MeditationItem>>((ref) {
   return ref.watch(meditationCatalogRepositoryProvider).listAll();
 });
+
+final doctrineRepositoryProvider = Provider<DoctrineRepository>((ref) {
+  return AssetDoctrineRepository();
+});
+
+final doctrineCatalogProvider = FutureProvider<List<DoctrineEntry>>((ref) {
+  return ref.watch(doctrineRepositoryProvider).listCatalog(language: 'pt-br');
+});
+
+final getDoctrineCatalogUseCaseProvider =
+    Provider<GetDoctrineCatalogUseCase>((ref) {
+      return GetDoctrineCatalogUseCase(
+        repository: ref.watch(doctrineRepositoryProvider),
+      );
+    });
 
 final mediaCatalogRepositoryProvider = Provider<MediaCatalogRepository>((ref) {
   return InMemoryMediaCatalogRepository();
