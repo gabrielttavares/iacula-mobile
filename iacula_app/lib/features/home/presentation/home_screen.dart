@@ -14,6 +14,8 @@ import '../../notifications/presentation/notifications_screen.dart';
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../premium/presentation/premium_gate.dart';
+import '../../prayers/domain/entities/prayer_catalog_entry.dart';
+import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../../quotes/domain/entities/quote.dart';
@@ -444,105 +446,160 @@ class _PromotionalBanner extends ConsumerWidget {
   }
 }
 
-class _DailyPrayerList extends StatelessWidget {
+class _DailyPrayerList extends ConsumerWidget {
   const _DailyPrayerList();
 
   @override
-  Widget build(BuildContext context) {
-    const items = [
-      ('Oferecimento da manhã', '2 min'),
-      ('Angelus', '3 min'),
-      ('Exame do dia', '5 min'),
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final suggestion = ref.watch(_suggestionProvider);
 
-    return Column(
-      children: [
-        for (final item in items)
-          Padding(
-            padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-            child: IaculaSoftCard(
-              radius: 16,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: _PrayerListItem(
-                title: item.$1,
-                subtitle: item.$2,
-                avatarLabel: item.$1[0],
-              ),
+    return suggestion.when(
+      data: (entry) {
+        if (entry == null) return const SizedBox.shrink();
+        return GestureDetector(
+          onTap: () => Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (_) => PrayerCatalogDetailScreen(entry: entry),
             ),
           ),
-      ],
+          child: IaculaSoftCard(
+            radius: 16,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: _PrayerListItem(
+              title: entry.title,
+              subtitle: entry.content.length > 60
+                  ? '${entry.content.substring(0, 60)}...'
+                  : entry.content,
+              avatarLabel: entry.title[0],
+            ),
+          ),
+        );
+      },
+      loading: () => const Center(child: CupertinoActivityIndicator()),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
 
-class _ThematicPrayerRail extends StatelessWidget {
+class _ThematicPrayerRail extends ConsumerWidget {
   const _ThematicPrayerRail();
 
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width * 0.7;
-    const cards = [
-      ('Família', 'Unidade, perdão e caridade no lar.'),
-      ('Trabalho', 'Discernimento, humildade e constância.'),
-      ('Enfermidade', 'Consolo, esperança e fortaleza.'),
-    ];
+  static const _themeLabels = {
+    'familia': 'Família',
+    'trabalho': 'Trabalho',
+    'mariano': 'Mariano',
+    'penitencia': 'Penitência',
+    'protecao': 'Proteção',
+    'esperanca': 'Esperança',
+    'espirito-santo': 'Espírito Santo',
+    'eucaristia': 'Eucaristia',
+  };
 
-    return SizedBox(
-      height: 132,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: cards.length,
-        separatorBuilder: (_, _) => const SizedBox(width: IaculaSpacing.sm),
-        itemBuilder: (context, index) {
-          final card = cards[index];
-          return SizedBox(
-            width: width,
-            child: IaculaSoftCard(
-              radius: 16,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(card.$1, style: IaculaText.cardTitle),
-                  const SizedBox(height: 6),
-                  Text(card.$2, style: IaculaText.secondary),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalogAsync = ref.watch(_thematicProvider);
+    final width = MediaQuery.of(context).size.width * 0.7;
+
+    return catalogAsync.when(
+      data: (entries) {
+        if (entries.isEmpty) return const SizedBox.shrink();
+        return SizedBox(
+          height: 132,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: entries.length,
+            separatorBuilder: (_, __) =>
+                const SizedBox(width: IaculaSpacing.sm),
+            itemBuilder: (context, index) {
+              final entry = entries[index];
+              final themeLabel = entry.themes
+                  .map((t) => _themeLabels[t])
+                  .where((l) => l != null)
+                  .firstOrNull ?? entry.themes.firstOrNull ?? '';
+              return GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (_) =>
+                        PrayerCatalogDetailScreen(entry: entry),
+                  ),
+                ),
+                child: SizedBox(
+                  width: width,
+                  child: IaculaSoftCard(
+                    radius: 16,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(entry.title, style: IaculaText.cardTitle),
+                        const SizedBox(height: 6),
+                        Text(themeLabel, style: IaculaText.secondary),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+      loading: () => const Center(child: CupertinoActivityIndicator()),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
 
-class _SaintPrayerList extends StatelessWidget {
+class _SaintPrayerList extends ConsumerWidget {
   const _SaintPrayerList();
 
-  @override
-  Widget build(BuildContext context) {
-    const items = [
-      ('São José', 'Intercessão pela família', 'SJ'),
-      ('Santa Teresinha', 'Pequena via de amor e confiança', 'ST'),
-      ('São Bento', 'Firmeza espiritual e proteção', 'SB'),
-    ];
+  static const _saintLabels = {
+    'virgem-maria': 'Virgem Maria',
+    'sao-jose': 'São José',
+    'sao-tomas-de-aquino': 'São Tomás de Aquino',
+    'sao-josemaria': 'São Josemaria',
+    'anjos': 'Anjos',
+  };
 
-    return Column(
-      children: [
-        for (final item in items)
-          Padding(
-            padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-            child: IaculaSoftCard(
-              radius: 16,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: _PrayerListItem(
-                title: item.$1,
-                subtitle: item.$2,
-                avatarLabel: item.$3,
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalogAsync = ref.watch(_saintProvider);
+
+    return catalogAsync.when(
+      data: (entries) {
+        if (entries.isEmpty) return const SizedBox.shrink();
+        return Column(
+          children: [
+            for (final entry in entries)
+              Padding(
+                padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (_) =>
+                          PrayerCatalogDetailScreen(entry: entry),
+                    ),
+                  ),
+                  child: IaculaSoftCard(
+                    radius: 16,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
+                    child: _PrayerListItem(
+                      title: entry.title,
+                      subtitle: entry.saints
+                          .map((s) => _saintLabels[s] ?? s)
+                          .join(', '),
+                      avatarLabel: entry.title.isNotEmpty
+                          ? entry.title.substring(0, 2).toUpperCase()
+                          : '',
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
+      loading: () => const Center(child: CupertinoActivityIndicator()),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
@@ -599,6 +656,30 @@ class _PrayerListItem extends StatelessWidget {
     );
   }
 }
+
+final _suggestionProvider = FutureProvider<PrayerCatalogEntry?>((ref) async {
+  final settings = await ref.watch(getSettingsUseCaseProvider).call();
+  return ref.watch(getPrayerCatalogUseCaseProvider).suggestionOfDay(
+    language: settings.language,
+    date: DateTime.now(),
+  );
+});
+
+final _thematicProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
+  final settings = await ref.watch(getSettingsUseCaseProvider).call();
+  final catalog = await ref
+      .watch(getPrayerCatalogUseCaseProvider)
+      .listAll(language: settings.language);
+  return catalog.where((e) => e.themes.isNotEmpty).toList(growable: false);
+});
+
+final _saintProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
+  final settings = await ref.watch(getSettingsUseCaseProvider).call();
+  final catalog = await ref
+      .watch(getPrayerCatalogUseCaseProvider)
+      .listAll(language: settings.language);
+  return catalog.where((e) => e.saints.isNotEmpty).toList(growable: false);
+});
 
 final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
   final service = ref.watch(liturgicalSeasonServiceProvider);
