@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
+import '../../../core/presentation/widgets/iacula_calendar_modal.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../premium/domain/entities/premium_feature.dart';
@@ -98,7 +99,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                       CupertinoButton(
                         padding: EdgeInsets.zero,
                         onPressed: () async {
-                          final picked = await _showCupertinoDateDialog(
+                          final picked = await _showCalendarSheet(
                             context,
                             state.selectedDate,
                           );
@@ -307,47 +308,13 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
     );
   }
 
-  Future<DateTime?> _showCupertinoDateDialog(
+  Future<DateTime?> _showCalendarSheet(
     BuildContext context,
     DateTime initialDate,
-  ) async {
-    DateTime selected = initialDate;
+  ) {
     return IaculaModal.showSheet<DateTime>(
       context: context,
-      builder: (context) {
-        return SizedBox(
-          height: 320,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 46,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CupertinoButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancelar'),
-                    ),
-                    CupertinoButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      onPressed: () => Navigator.of(context).pop(selected),
-                      child: const Text('Selecionar'),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
-                  initialDateTime: initialDate,
-                  onDateTimeChanged: (value) => selected = value,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (context) => IaculaCalendarModal(initialDate: initialDate),
     );
   }
 }
