@@ -96,6 +96,43 @@ _FakeLastDeliveredCardRepository _defaultLastCardRepo() =>
     );
 
 void main() {
+  testWidgets('home hero keeps long quote visible without truncation', (
+    tester,
+  ) async {
+    const longQuote =
+        'LONG_QUOTE_MARKER Permanecei em mim, e Eu permanecerei em vos. Assim como o ramo nao pode dar fruto por si mesmo, se nao permanecer na videira, assim tambem vos, se nao permanecerdes em mim. '; // cspell:disable-line
+    final lastCardRepo = _FakeLastDeliveredCardRepository(
+      LastDeliveredCard(
+        quoteText: longQuote + longQuote,
+        theme: 'Conversao',
+        season: 'lent',
+        deliveredAt: DateTime(2026, 2, 21, 11, 0),
+      ),
+    );
+
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: lastCardRepo,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final quoteFinder = find.textContaining('LONG_QUOTE_MARKER');
+    for (var i = 0; i < 20 && quoteFinder.evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pumpAndSettle();
+    }
+
+    expect(quoteFinder, findsOneWidget);
+
+    final quoteText = tester.widget<Text>(quoteFinder);
+    expect(quoteText.maxLines, isNull);
+    expect(quoteText.overflow, isNull);
+    expect(find.byType(SingleChildScrollView), findsNothing);
+    expect(find.text('Conhecer Premium'), findsOneWidget);
+  });
+
   testWidgets('home follows required section order', (tester) async {
     await tester.pumpWidget(
       _buildApp(
@@ -115,10 +152,26 @@ void main() {
     }
 
     expect(find.text('Bem vindo!'), findsOneWidget);
-    await reveal('Destaques');
-    await reveal('Orações diárias');
+    expect(find.text('Destaques'), findsNothing);
+    await reveal('Sugestão do Dia');
     await reveal('Orações temáticas');
     await reveal('Orações de Santos');
+  });
+
+  testWidgets('home shows updated quick actions', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Orações'), findsOneWidget);
+    expect(find.text('Liturgia'), findsOneWidget);
+    expect(find.text('Rosário 📿'), findsOneWidget);
+    expect(find.text('Novenas'), findsOneWidget);
+    expect(find.text('Premium'), findsNothing);
   });
 
   testWidgets('home header shows text-only brand without grid icon', (
@@ -142,7 +195,6 @@ void main() {
         settingsRepo: _defaultSettingsRepo(),
         lastCardRepo: _defaultLastCardRepo(),
         liturgiaRepo: _FakeLiturgiaRepository(),
-        routes: {LiturgiaScreen.routeName: (_) => const LiturgiaScreen()},
       ),
     );
     await tester.pumpAndSettle();
@@ -152,9 +204,10 @@ void main() {
 
     expect(find.byType(LiturgiaScreen), findsOneWidget);
     expect(find.text('Domingo'), findsOneWidget);
+    expect(find.text('Coleta: Coleta'), findsOneWidget);
   });
 
-  testWidgets('premium card opens premium modal', (tester) async {
+  testWidgets('rosario quick action shows em breve dialog', (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -163,10 +216,36 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Premium'));
+    await tester.tap(find.text('Rosário 📿'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Recurso Premium'), findsOneWidget);
-    expect(find.text('Conhecer Premium'), findsWidgets);
+    expect(find.byType(CupertinoAlertDialog), findsOneWidget);
+    expect(find.text('Em breve'), findsOneWidget);
+
+    await tester.tap(find.text('Fechar'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoAlertDialog), findsNothing);
+  });
+
+  testWidgets('novenas quick action shows em breve dialog', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Novenas'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoAlertDialog), findsOneWidget);
+    expect(find.text('Em breve'), findsOneWidget);
+
+    await tester.tap(find.text('Fechar'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoAlertDialog), findsNothing);
   });
 }

@@ -29,7 +29,10 @@ import '../../features/premium/domain/repositories/premium_repository.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/premium/infrastructure/purchase_service.dart';
 import '../../features/prayers/application/use_cases/get_prayer_use_case.dart';
+import '../../features/prayers/application/use_cases/get_prayer_catalog_use_case.dart';
+import '../../features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import '../../features/prayers/domain/repositories/prayer_content_repository.dart';
+import '../../features/prayers/infrastructure/repositories/asset_prayer_catalog_repository.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_content_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
 import '../../features/quotes/domain/repositories/quote_content_repository.dart';
@@ -118,6 +121,12 @@ final prayerContentRepositoryProvider = Provider<PrayerContentRepository>((
   ref,
 ) {
   return const AssetPrayerContentRepository();
+});
+
+final prayerCatalogRepositoryProvider = Provider<PrayerCatalogRepository>((
+  ref,
+) {
+  return AssetPrayerCatalogRepository();
 });
 
 final notificationSchedulerRepositoryProvider =
@@ -274,6 +283,14 @@ final getPrayerUseCaseProvider = Provider<GetPrayerUseCase>((ref) {
   );
 });
 
+final getPrayerCatalogUseCaseProvider = Provider<GetPrayerCatalogUseCase>((
+  ref,
+) {
+  return GetPrayerCatalogUseCase(
+    repository: ref.watch(prayerCatalogRepositoryProvider),
+  );
+});
+
 final getLiturgyPeriodUseCaseProvider = Provider<GetLiturgyPeriodUseCase>((
   ref,
 ) {
@@ -287,23 +304,40 @@ final spiritualDataKeyProvider = Provider<EncryptionKeyProvider>((ref) {
 });
 
 final spiritualDataIsarStoreProvider = Provider<SpiritualDataIsarStore>((ref) {
-  return SpiritualDataIsarStore(keyProvider: ref.watch(spiritualDataKeyProvider));
+  return SpiritualDataIsarStore(
+    keyProvider: ref.watch(spiritualDataKeyProvider),
+  );
 });
 
-final planOfLifeEntryRepositoryProvider = Provider<SpiritualEntryRepository>((ref) {
-  return IsarPlanOfLifeSpiritualEntryRepository(ref.watch(spiritualDataIsarStoreProvider));
+final planOfLifeEntryRepositoryProvider = Provider<SpiritualEntryRepository>((
+  ref,
+) {
+  return IsarPlanOfLifeSpiritualEntryRepository(
+    ref.watch(spiritualDataIsarStoreProvider),
+  );
 });
 
-final examinationEntryRepositoryProvider = Provider<SpiritualEntryRepository>((ref) {
-  return IsarExaminationSpiritualEntryRepository(ref.watch(spiritualDataIsarStoreProvider));
+final examinationEntryRepositoryProvider = Provider<SpiritualEntryRepository>((
+  ref,
+) {
+  return IsarExaminationSpiritualEntryRepository(
+    ref.watch(spiritualDataIsarStoreProvider),
+  );
 });
 
-final prayerIntentionEntryRepositoryProvider = Provider<SpiritualEntryRepository>((ref) {
-  return IsarPrayerIntentionSpiritualEntryRepository(ref.watch(spiritualDataIsarStoreProvider));
-});
+final prayerIntentionEntryRepositoryProvider =
+    Provider<SpiritualEntryRepository>((ref) {
+      return IsarPrayerIntentionSpiritualEntryRepository(
+        ref.watch(spiritualDataIsarStoreProvider),
+      );
+    });
 
-final planCompletionRepositoryProvider = Provider<PlanCompletionRepository>((ref) {
-  return IsarPlanCompletionRepository(ref.watch(spiritualDataIsarStoreProvider));
+final planCompletionRepositoryProvider = Provider<PlanCompletionRepository>((
+  ref,
+) {
+  return IsarPlanCompletionRepository(
+    ref.watch(spiritualDataIsarStoreProvider),
+  );
 });
 
 final syncStateRepositoryProvider = Provider<SyncStateRepository>((ref) {
@@ -341,12 +375,11 @@ final deletePlanItemUseCaseProvider = Provider<DeletePlanItemUseCase>((ref) {
 
 final planOfLifeNotifierProvider =
     StateNotifierProvider<PlanOfLifeNotifier, PlanOfLifeState>((ref) {
-  return PlanOfLifeNotifier(
-    getDailyPlan: ref.watch(getDailyPlanUseCaseProvider),
-    toggleItem: ref.watch(toggleItemUseCaseProvider),
-    addItem: ref.watch(addPlanItemUseCaseProvider),
-    updateItem: ref.watch(updatePlanItemUseCaseProvider),
-    deleteItem: ref.watch(deletePlanItemUseCaseProvider),
-  );
-});
-
+      return PlanOfLifeNotifier(
+        getDailyPlan: ref.watch(getDailyPlanUseCaseProvider),
+        toggleItem: ref.watch(toggleItemUseCaseProvider),
+        addItem: ref.watch(addPlanItemUseCaseProvider),
+        updateItem: ref.watch(updatePlanItemUseCaseProvider),
+        deleteItem: ref.watch(deletePlanItemUseCaseProvider),
+      );
+    });

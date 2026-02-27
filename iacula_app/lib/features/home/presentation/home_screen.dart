@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
-import '../../../core/presentation/widgets/local_only_banner.dart';
+
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -14,12 +14,30 @@ import '../../notifications/presentation/notifications_screen.dart';
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../premium/presentation/premium_gate.dart';
+import '../../prayers/domain/entities/prayer_catalog_entry.dart';
+import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../../quotes/domain/entities/quote.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+
+  Future<void> _showEmBreveDialog(BuildContext context, String title) {
+    return showCupertinoDialog<void>(
+      context: context,
+      builder: (_) => CupertinoAlertDialog(
+        title: Text(title),
+        content: const Text('Em breve'),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,7 +59,6 @@ class HomeScreen extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        const LocalOnlyBanner(),
                         const _HomeHeader(),
                         const SizedBox(height: IaculaSpacing.lg),
                         _FeatureGrid(
@@ -52,13 +69,17 @@ class HomeScreen extends ConsumerWidget {
                               ),
                             );
                           },
-                          onOpenLiturgy: () => Navigator.of(
-                            context,
-                          ).pushNamed(LiturgiaScreen.routeName),
-                          onOpenPremium: () => PremiumGate.showModal(
-                            context,
-                            feature: PremiumFeature.meditation,
-                          ),
+                          onOpenLiturgy: () {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const LiturgiaScreen(),
+                              ),
+                            );
+                          },
+                          onOpenRosary: () =>
+                              _showEmBreveDialog(context, 'Rosário 📿'),
+                          onOpenNovenas: () =>
+                              _showEmBreveDialog(context, 'Novenas'),
                         ),
                         const SizedBox(height: IaculaSpacing.lg),
                         _PromotionalBanner(
@@ -70,26 +91,7 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Destaques'),
-                        const SizedBox(height: IaculaSpacing.sm),
-                        _HorizontalHighlights(
-                          onOpenPrayers: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) => const PrayerCollectionsScreen(),
-                              ),
-                            );
-                          },
-                          onOpenLiturgy: () => Navigator.of(
-                            context,
-                          ).pushNamed(LiturgiaScreen.routeName),
-                          onOpenPremium: () => PremiumGate.showModal(
-                            context,
-                            feature: PremiumFeature.meditation,
-                          ),
-                        ),
-                        const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Orações diárias'),
+                        const IaculaSectionHeader(title: 'Sugestão do Dia'),
                         const SizedBox(height: IaculaSpacing.sm),
                         const _DailyPrayerList(),
                         const SizedBox(height: IaculaSpacing.xl),
@@ -186,39 +188,57 @@ class _FeatureGrid extends StatelessWidget {
   const _FeatureGrid({
     required this.onOpenPrayers,
     required this.onOpenLiturgy,
-    required this.onOpenPremium,
+    required this.onOpenRosary,
+    required this.onOpenNovenas,
   });
 
   final VoidCallback onOpenPrayers;
   final VoidCallback onOpenLiturgy;
-  final VoidCallback onOpenPremium;
+  final VoidCallback onOpenRosary;
+  final VoidCallback onOpenNovenas;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: _SquareFeatureCard(
-            icon: CupertinoIcons.book,
-            label: 'Orações',
-            onTap: onOpenPrayers,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: _SquareFeatureCard(
+                icon: CupertinoIcons.book,
+                label: 'Orações',
+                onTap: onOpenPrayers,
+              ),
+            ),
+            const SizedBox(width: IaculaSpacing.sm),
+            Expanded(
+              child: _SquareFeatureCard(
+                icon: CupertinoIcons.doc_text,
+                label: 'Liturgia',
+                onTap: onOpenLiturgy,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: IaculaSpacing.sm),
-        Expanded(
-          child: _SquareFeatureCard(
-            icon: CupertinoIcons.doc_text,
-            label: 'Liturgia',
-            onTap: onOpenLiturgy,
-          ),
-        ),
-        const SizedBox(width: IaculaSpacing.sm),
-        Expanded(
-          child: _SquareFeatureCard(
-            icon: CupertinoIcons.star_fill,
-            label: 'Premium',
-            onTap: onOpenPremium,
-          ),
+        const SizedBox(height: IaculaSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: _SquareFeatureCard(
+                icon: CupertinoIcons.heart,
+                label: 'Rosário 📿',
+                onTap: onOpenRosary,
+              ),
+            ),
+            const SizedBox(width: IaculaSpacing.sm),
+            Expanded(
+              child: _SquareFeatureCard(
+                icon: CupertinoIcons.book_solid,
+                label: 'Novenas',
+                onTap: onOpenNovenas,
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -273,10 +293,22 @@ class _PromotionalBanner extends ConsumerWidget {
   final VoidCallback onOpenPremium;
   final bool isFallback;
 
+  String? _resolveAssetPath(String? path) {
+    if (path == null) {
+      return null;
+    }
+    final value = path.trim();
+    if (value.isEmpty) {
+      return null;
+    }
+    return value.startsWith('/') ? value.substring(1) : value;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final imagePath = _resolveAssetPath(quote.imagePath);
+
     return Container(
-      height: 240,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(IaculaRadius.banner),
         boxShadow: const [
@@ -287,195 +319,125 @@ class _PromotionalBanner extends ConsumerWidget {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(IaculaRadius.banner),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (quote.imagePath != null)
-              Image.asset(
-                quote.imagePath!,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const DecoratedBox(
-                  decoration: BoxDecoration(color: Color(0xFF3D3125)),
-                ),
-              )
-            else
-              const DecoratedBox(
-                decoration: BoxDecoration(color: Color(0xFF3D3125)),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 240),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(IaculaRadius.banner),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: imagePath != null
+                    ? Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const DecoratedBox(
+                          decoration: BoxDecoration(color: Color(0xFF3D3125)),
+                        ),
+                      )
+                    : const DecoratedBox(
+                        decoration: BoxDecoration(color: Color(0xFF3D3125)),
+                      ),
               ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    CupertinoColors.black.withValues(alpha: 0.3),
-                    CupertinoColors.black.withValues(alpha: 0.86),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        CupertinoColors.black.withValues(alpha: 0.3),
+                        CupertinoColors.black.withValues(alpha: 0.86),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          minSize: 32,
+                          onPressed: () async {
+                            final repo = ref.read(favoriteRepositoryProvider);
+                            final alreadySaved = await repo.isFavorite(
+                              quote.text,
+                            );
+                            if (!alreadySaved) {
+                              await repo.save(
+                                FavoriteItem(
+                                  id: DateTime.now().millisecondsSinceEpoch
+                                      .toString(),
+                                  quoteText: quote.text,
+                                  theme: quote.theme,
+                                  season: quote.season.name,
+                                  savedAt: DateTime.now(),
+                                  imagePath: quote.imagePath,
+                                  feastName: quote.feastName,
+                                ),
+                              );
+                            }
+                          },
+                          child: const Icon(
+                            CupertinoIcons.bookmark,
+                            color: CupertinoColors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          quote.text,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Color(0xFFF6F6F8),
+                            height: 1.5,
+                          ),
+                        ),
+                        if (isFallback)
+                          const Padding(
+                            padding: EdgeInsets.only(top: 4),
+                            child: Text(
+                              'Tempo litúrgico indisponível',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Color(0x99F6F6F8),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    CupertinoButton(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      minSize: 0,
+                      color: const Color(0x26FFFFFF),
+                      borderRadius: BorderRadius.circular(20),
+                      onPressed: onOpenPremium,
+                      child: const Text(
+                        'Conhecer Premium',
+                        style: TextStyle(
+                          color: CupertinoColors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        minSize: 32,
-                        onPressed: () async {
-                          final repo = ref.read(favoriteRepositoryProvider);
-                          final alreadySaved = await repo.isFavorite(
-                            quote.text,
-                          );
-                          if (!alreadySaved) {
-                            await repo.save(
-                              FavoriteItem(
-                                id: DateTime.now().millisecondsSinceEpoch
-                                    .toString(),
-                                quoteText: quote.text,
-                                theme: quote.theme,
-                                season: quote.season.name,
-                                savedAt: DateTime.now(),
-                                imagePath: quote.imagePath,
-                                feastName: quote.feastName,
-                              ),
-                            );
-                          }
-                        },
-                        child: const Icon(
-                          CupertinoIcons.bookmark,
-                          color: CupertinoColors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    quote.text,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: Color(0xFFF6F6F8),
-                      height: 1.5,
-                    ),
-                  ),
-                  if (isFallback)
-                    const Padding(
-                      padding: EdgeInsets.only(top: 4),
-                      child: Text(
-                        'Tempo litúrgico indisponível',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Color(0x99F6F6F8),
-                        ),
-                      ),
-                    ),
-                  const Spacer(),
-                  CupertinoButton(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    minSize: 0,
-                    color: const Color(0x26FFFFFF),
-                    borderRadius: BorderRadius.circular(20),
-                    onPressed: onOpenPremium,
-                    child: const Text(
-                      'Conhecer Premium',
-                      style: TextStyle(
-                        color: CupertinoColors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HorizontalHighlights extends StatelessWidget {
-  const _HorizontalHighlights({
-    required this.onOpenPrayers,
-    required this.onOpenLiturgy,
-    required this.onOpenPremium,
-  });
-
-  final VoidCallback onOpenPrayers;
-  final VoidCallback onOpenLiturgy;
-  final VoidCallback onOpenPremium;
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width * 0.7;
-    return SizedBox(
-      height: 150,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _HighlightCard(
-            width: width,
-            title: 'Liturgia diária',
-            subtitle: 'Leituras e orações de hoje',
-            onTap: onOpenLiturgy,
-          ),
-          const SizedBox(width: IaculaSpacing.sm),
-          _HighlightCard(
-            width: width,
-            title: 'Orações do dia a dia',
-            subtitle: 'Orações para manhã, tarde e noite.',
-            onTap: onOpenPrayers,
-          ),
-          const SizedBox(width: IaculaSpacing.sm),
-          _HighlightCard(
-            width: width,
-            title: 'Meditações',
-            subtitle: 'Disponível no Premium.',
-            onTap: onOpenPremium,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HighlightCard extends StatelessWidget {
-  const _HighlightCard({
-    required this.width,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final double width;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        width: width,
-        child: IaculaSoftCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(title, style: IaculaText.cardTitle),
-              const SizedBox(height: 6),
-              Text(subtitle, style: IaculaText.secondary),
             ],
           ),
         ),
@@ -484,105 +446,160 @@ class _HighlightCard extends StatelessWidget {
   }
 }
 
-class _DailyPrayerList extends StatelessWidget {
+class _DailyPrayerList extends ConsumerWidget {
   const _DailyPrayerList();
 
   @override
-  Widget build(BuildContext context) {
-    const items = [
-      ('Oferecimento da manhã', '2 min'),
-      ('Angelus', '3 min'),
-      ('Exame do dia', '5 min'),
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final suggestion = ref.watch(_suggestionProvider);
 
-    return Column(
-      children: [
-        for (final item in items)
-          Padding(
-            padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-            child: IaculaSoftCard(
-              radius: 16,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: _PrayerListItem(
-                title: item.$1,
-                subtitle: item.$2,
-                avatarLabel: item.$1[0],
-              ),
+    return suggestion.when(
+      data: (entry) {
+        if (entry == null) return const SizedBox.shrink();
+        return GestureDetector(
+          onTap: () => Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (_) => PrayerCatalogDetailScreen(entry: entry),
             ),
           ),
-      ],
+          child: IaculaSoftCard(
+            radius: 16,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: _PrayerListItem(
+              title: entry.title,
+              subtitle: entry.content.length > 60
+                  ? '${entry.content.substring(0, 60)}...'
+                  : entry.content,
+              avatarLabel: entry.title[0],
+            ),
+          ),
+        );
+      },
+      loading: () => const Center(child: CupertinoActivityIndicator()),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
 
-class _ThematicPrayerRail extends StatelessWidget {
+class _ThematicPrayerRail extends ConsumerWidget {
   const _ThematicPrayerRail();
 
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width * 0.7;
-    const cards = [
-      ('Família', 'Unidade, perdão e caridade no lar.'),
-      ('Trabalho', 'Discernimento, humildade e constância.'),
-      ('Enfermidade', 'Consolo, esperança e fortaleza.'),
-    ];
+  static const _themeLabels = {
+    'familia': 'Família',
+    'trabalho': 'Trabalho',
+    'mariano': 'Mariano',
+    'penitencia': 'Penitência',
+    'protecao': 'Proteção',
+    'esperanca': 'Esperança',
+    'espirito-santo': 'Espírito Santo',
+    'eucaristia': 'Eucaristia',
+  };
 
-    return SizedBox(
-      height: 132,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: cards.length,
-        separatorBuilder: (_, _) => const SizedBox(width: IaculaSpacing.sm),
-        itemBuilder: (context, index) {
-          final card = cards[index];
-          return SizedBox(
-            width: width,
-            child: IaculaSoftCard(
-              radius: 16,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(card.$1, style: IaculaText.cardTitle),
-                  const SizedBox(height: 6),
-                  Text(card.$2, style: IaculaText.secondary),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalogAsync = ref.watch(_thematicProvider);
+    final width = MediaQuery.of(context).size.width * 0.7;
+
+    return catalogAsync.when(
+      data: (entries) {
+        if (entries.isEmpty) return const SizedBox.shrink();
+        return SizedBox(
+          height: 132,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: entries.length,
+            separatorBuilder: (_, __) =>
+                const SizedBox(width: IaculaSpacing.sm),
+            itemBuilder: (context, index) {
+              final entry = entries[index];
+              final themeLabel = entry.themes
+                  .map((t) => _themeLabels[t])
+                  .where((l) => l != null)
+                  .firstOrNull ?? entry.themes.firstOrNull ?? '';
+              return GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (_) =>
+                        PrayerCatalogDetailScreen(entry: entry),
+                  ),
+                ),
+                child: SizedBox(
+                  width: width,
+                  child: IaculaSoftCard(
+                    radius: 16,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(entry.title, style: IaculaText.cardTitle),
+                        const SizedBox(height: 6),
+                        Text(themeLabel, style: IaculaText.secondary),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+      loading: () => const Center(child: CupertinoActivityIndicator()),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
 
-class _SaintPrayerList extends StatelessWidget {
+class _SaintPrayerList extends ConsumerWidget {
   const _SaintPrayerList();
 
-  @override
-  Widget build(BuildContext context) {
-    const items = [
-      ('São José', 'Intercessão pela família', 'SJ'),
-      ('Santa Teresinha', 'Pequena via de amor e confiança', 'ST'),
-      ('São Bento', 'Firmeza espiritual e proteção', 'SB'),
-    ];
+  static const _saintLabels = {
+    'virgem-maria': 'Virgem Maria',
+    'sao-jose': 'São José',
+    'sao-tomas-de-aquino': 'São Tomás de Aquino',
+    'sao-josemaria': 'São Josemaria',
+    'anjos': 'Anjos',
+  };
 
-    return Column(
-      children: [
-        for (final item in items)
-          Padding(
-            padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-            child: IaculaSoftCard(
-              radius: 16,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: _PrayerListItem(
-                title: item.$1,
-                subtitle: item.$2,
-                avatarLabel: item.$3,
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalogAsync = ref.watch(_saintProvider);
+
+    return catalogAsync.when(
+      data: (entries) {
+        if (entries.isEmpty) return const SizedBox.shrink();
+        return Column(
+          children: [
+            for (final entry in entries)
+              Padding(
+                padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (_) =>
+                          PrayerCatalogDetailScreen(entry: entry),
+                    ),
+                  ),
+                  child: IaculaSoftCard(
+                    radius: 16,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
+                    child: _PrayerListItem(
+                      title: entry.title,
+                      subtitle: entry.saints
+                          .map((s) => _saintLabels[s] ?? s)
+                          .join(', '),
+                      avatarLabel: entry.title.isNotEmpty
+                          ? entry.title.substring(0, 2).toUpperCase()
+                          : '',
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
+      loading: () => const Center(child: CupertinoActivityIndicator()),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
@@ -639,6 +656,30 @@ class _PrayerListItem extends StatelessWidget {
     );
   }
 }
+
+final _suggestionProvider = FutureProvider<PrayerCatalogEntry?>((ref) async {
+  final settings = await ref.watch(getSettingsUseCaseProvider).call();
+  return ref.watch(getPrayerCatalogUseCaseProvider).suggestionOfDay(
+    language: settings.language,
+    date: DateTime.now(),
+  );
+});
+
+final _thematicProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
+  final settings = await ref.watch(getSettingsUseCaseProvider).call();
+  final catalog = await ref
+      .watch(getPrayerCatalogUseCaseProvider)
+      .listAll(language: settings.language);
+  return catalog.where((e) => e.themes.isNotEmpty).toList(growable: false);
+});
+
+final _saintProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
+  final settings = await ref.watch(getSettingsUseCaseProvider).call();
+  final catalog = await ref
+      .watch(getPrayerCatalogUseCaseProvider)
+      .listAll(language: settings.language);
+  return catalog.where((e) => e.saints.isNotEmpty).toList(growable: false);
+});
 
 final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
   final service = ref.watch(liturgicalSeasonServiceProvider);
