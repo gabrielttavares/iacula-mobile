@@ -1,0 +1,86 @@
+[
+  {
+    "id": "sinal-da-cruz",
+    "title": "Sinal da Cruz",
+    "content": "Em nome do Pai e do Filho e do Espirito Santo. Amem.",
+    "theme": ["oracoes-comuns", "inicio"],
+    "saints": []
+  },
+  {
+    "id": "pai-nosso",
+    "title": "Pai Nosso",
+    "content": "Pai nosso que estais nos ceus, santificado seja o vosso nome; venha a nos o vosso reino.",
+    "theme": ["oracoes-comuns", "confianca"],
+    "saints": []
+  },
+  {
+    "id": "ave-maria",
+    "title": "Ave Maria",
+    "content": "Ave Maria, cheia de graca, o Senhor e convosco; bendita sois vos entre as mulheres.",
+    "theme": ["mariano", "intercessao"],
+    "saints": ["virgem-maria"]
+  },
+  {
+    "id": "salve-rainha",
+    "title": "Salve Rainha",
+    "content": "Salve Rainha, Mae de misericordia, vida, docura, esperanca nossa, salve.",
+    "theme": ["mariano", "esperanca"],
+    "saints": ["virgem-maria"]
+  },
+  {
+    "id": "ato-de-contricao",
+    "title": "Ato de Contricao",
+    "content": "Senhor, eu me arrependo sinceramente de todo mal que pratiquei e do bem que deixei de fazer.",
+    "theme": ["penitencia", "conversao"],
+    "saints": []
+  },
+  {
+    "id": "ao-anjo-da-guarda",
+    "title": "Ao Anjo da Guarda",
+    "content": "Santo Anjo do Senhor, meu zeloso guardador, hoje e sempre me governa, rege, guarda e ilumina.",
+    "theme": ["protecao", "vida-diaria"],
+    "saints": ["anjos"]
+  },
+  {
+    "id": "vinde-santo-espirito",
+    "title": "Vinde Santo Espirito",
+    "content": "Vinde Santo Espirito e do ceu mandai luminoso raio; vinde pai dos pobres, doador dos dons.",
+    "theme": ["espirito-santo", "discernimento"],
+    "saints": []
+  },
+  {
+    "id": "lembrai-vos",
+    "title": "Lembrai-vos",
+    "content": "Lembrai-vos, o piissima Virgem Maria, que nunca se ouviu dizer que algum dos que recorreram a vos fosse desamparado.",
+    "theme": ["mariano", "socorro"],
+    "saints": ["virgem-maria"]
+  },
+  {
+    "id": "stabat-mater",
+    "title": "Stabat Mater",
+    "content": "De pe a Mae dolorosa, junto da cruz, lacrimosa, via Jesus que pendia.",
+    "theme": ["paixao-de-cristo", "mariano"],
+    "saints": ["virgem-maria"]
+  },
+  {
+    "id": "para-o-trabalho",
+    "title": "Para o trabalho",
+    "content": "Sao Jose, varao feliz, rogai por nos para que sirvamos a Deus com coracao limpo e boas obras.",
+    "theme": ["trabalho", "familia"],
+    "saints": ["sao-jose"]
+  },
+  {
+    "id": "oracao-de-sao-tomas-de-aquino",
+    "title": "Oracao de Sao Tomas de Aquino",
+    "content": "O Deus eterno e todo-poderoso, eis que me aproximo do sacramento do vosso Filho unico.",
+    "theme": ["eucaristia", "humildade"],
+    "saints": ["sao-tomas-de-aquino"]
+  },
+  {
+    "id": "oracao-a-sao-josemaria",
+    "title": "Oracao a Sao Josemaria",
+    "content": "Deus, que enchestes Sao Josemaria de gracas para servir a Igreja, concedei-me viver santamente no trabalho de cada dia.",
+    "theme": ["santidade", "vida-diaria"],
+    "saints": ["sao-josemaria"]
+  }
+]

@@ -32,6 +32,7 @@ import '../../features/prayers/application/use_cases/get_prayer_use_case.dart';
 import '../../features/prayers/application/use_cases/get_prayer_catalog_use_case.dart';
 import '../../features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import '../../features/prayers/domain/repositories/prayer_content_repository.dart';
+import '../../features/prayers/infrastructure/repositories/asset_prayer_catalog_repository.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_content_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
 import '../../features/quotes/domain/repositories/quote_content_repository.dart';
@@ -125,9 +126,7 @@ final prayerContentRepositoryProvider = Provider<PrayerContentRepository>((
 final prayerCatalogRepositoryProvider = Provider<PrayerCatalogRepository>((
   ref,
 ) {
-  throw UnsupportedError(
-    'Prayer catalog repository is not wired yet. Implement Task 2 and replace prayerCatalogRepositoryProvider with a real repository.',
-  );
+  return AssetPrayerCatalogRepository();
 });
 
 final notificationSchedulerRepositoryProvider =
