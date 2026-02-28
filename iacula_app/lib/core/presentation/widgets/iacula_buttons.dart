@@ -55,7 +55,7 @@ class IaculaSecondaryPillButton extends StatelessWidget {
       child: CupertinoButton(
         onPressed: onPressed,
         padding: EdgeInsets.zero,
-        color: const Color(0xFFE9E9ED),
+        color: const Color(0x33000000),
         borderRadius: BorderRadius.circular(
           (IaculaMetrics.inputHeight + IaculaSpacing.xs) / 2,
         ),

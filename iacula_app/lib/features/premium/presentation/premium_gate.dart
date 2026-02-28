@@ -76,7 +76,7 @@ class _LockedFallback extends StatelessWidget {
                 color: IaculaColors.primaryButton,
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Recurso Premium',
                 textAlign: TextAlign.center,
                 style: IaculaText.sectionTitle,
@@ -132,7 +132,7 @@ class _PremiumGateModal extends StatelessWidget {
               color: IaculaColors.primaryButton,
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Recurso Premium',
               textAlign: TextAlign.center,
               style: IaculaText.sectionTitle,

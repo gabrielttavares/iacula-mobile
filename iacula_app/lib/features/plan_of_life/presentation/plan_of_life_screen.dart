@@ -223,7 +223,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                   const SizedBox(height: 4),
                   Text(
                     date.day.toString().padLeft(2, '0'),
-                    style: TextStyle(
+                    style: IaculaText.cardTitle.copyWith(
                       fontSize: 18,
                       fontWeight: isActive
                           ? FontWeight.bold

@@ -35,7 +35,7 @@ class PlanItemRow extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8ECF5),
+                  color: const Color(0x33FFFFFF),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -46,30 +46,28 @@ class PlanItemRow extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 220),
-                  style: IaculaText.secondary.copyWith(
-                    color: isCompleted
-                        ? IaculaColors.textSecondary
-                        : IaculaColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    decoration: isCompleted
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                    decorationColor: IaculaColors.textSecondary,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
-                      const SizedBox(height: 2),
-                      Text(
-                        scheduleSummary,
-                        style: IaculaText.secondary.copyWith(fontSize: 13),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 220),
+                      style: IaculaText.cardTitle.copyWith(
+                        color: isCompleted
+                            ? IaculaColors.textSecondary
+                            : IaculaColors.textPrimary,
+                        decoration: isCompleted
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        decorationColor: IaculaColors.textSecondary,
                       ),
-                    ],
-                  ),
+                      child: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      scheduleSummary,
+                      style: IaculaText.secondary.copyWith(fontSize: 13),
+                    ),
+                  ],
                 ),
               ),
               CupertinoButton(

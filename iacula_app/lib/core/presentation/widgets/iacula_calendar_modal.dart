@@ -49,7 +49,7 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
+            Text(
               'Escolha a data',
               style: IaculaText.cardTitle,
               textAlign: TextAlign.center,

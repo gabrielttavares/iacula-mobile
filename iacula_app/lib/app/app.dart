@@ -106,7 +106,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
       title: 'Iacula',
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
+      theme: AppTheme.dark(),
       localizationsDelegates: const [
         GlobalCupertinoLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

@@ -69,7 +69,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 );
               },
-              child: const IaculaSoftCard(
+              child: IaculaSoftCard(
                 child: Row(
                   children: [
                     Expanded(
@@ -114,7 +114,7 @@ class ProfileScreen extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
+            Text(
               'Editar nome',
               style: IaculaText.cardTitle,
               textAlign: TextAlign.center,

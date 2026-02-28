@@ -1,28 +1,29 @@
 import 'package:flutter/cupertino.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final class IaculaColors {
   IaculaColors._();
 
-  static const background = Color(0xFFF2F2F7);
-  static const card = Color(0xFFFFFFFF);
-  static const textPrimary = Color(0xFF111111);
-  static const textSecondary = Color(0xFF6E6E73);
-  static const primaryButton = Color(0xFF0975C8);
+  static const background = Color(0xFF26407E);
+  static const card = Color(0xFF365399);
+  static const textPrimary = Color(0xFFFFFFFF);
+  static const textSecondary = Color(0xFFB5C4E5);
+  static const primaryButton = Color(0xFFC8B037);
   static const success = Color(0xFF34C759);
   static const warning = Color(0xFFFF9500);
   static const error = Color(0xFFFF3B30);
-  static const separator = Color(0x1A000000);
-  static const homeWarmBackground = Color(0xFFFFFAF3);
-  static const homeSacredAccent = Color(0xFFB08A57);
-  static const homeHeroTop = Color(0xFFF6EFE3);
-  static const homeHeroBottom = Color(0xFFFDF9F2);
+  static const separator = Color(0x33000000);
+  static const homeWarmBackground = Color(0xFF26407E);
+  static const homeSacredAccent = Color(0xFFC8B037);
+  static const homeHeroTop = Color(0xFF26407E);
+  static const homeHeroBottom = Color(0xFF1E3365);
 }
 
 final class IaculaShadows {
   IaculaShadows._();
 
   static const card = [
-    BoxShadow(color: Color(0x0F000000), blurRadius: 8, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x0A000000), blurRadius: 20, offset: Offset(0, 8)),
   ];
 }
 
@@ -40,7 +41,7 @@ final class IaculaRadius {
   IaculaRadius._();
 
   static const small = 12.0;
-  static const card = 20.0;
+  static const card = 24.0;
   static const banner = 24.0;
 }
 
@@ -55,22 +56,22 @@ final class IaculaMetrics {
 final class IaculaText {
   IaculaText._();
 
-  static const largeTitle = TextStyle(
+  static final largeTitle = GoogleFonts.lora(
     fontSize: 34,
     fontWeight: FontWeight.w700,
-    color: IaculaColors.textPrimary,
+    color: const Color(0xFFC8B037),
   );
 
-  static const sectionTitle = TextStyle(
+  static final sectionTitle = GoogleFonts.lora(
     fontSize: 22,
     fontWeight: FontWeight.w600,
-    color: IaculaColors.textPrimary,
+    color: const Color(0xFFC8B037),
   );
 
-  static const cardTitle = TextStyle(
+  static final cardTitle = GoogleFonts.lora(
     fontSize: 17,
     fontWeight: FontWeight.w600,
-    color: IaculaColors.textPrimary,
+    color: const Color(0xFFC8B037),
   );
 
   static const secondary = TextStyle(

@@ -176,7 +176,7 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
           decoration: BoxDecoration(
             color: primary
                 ? IaculaColors.primaryButton
-                : const Color(0xFFE9E9ED),
+                : const Color(0x33000000),
             borderRadius: BorderRadius.circular(26),
           ),
           child: const Center(child: CupertinoActivityIndicator()),

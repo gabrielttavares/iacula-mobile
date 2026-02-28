@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 
 class HomeContinuationCard extends StatelessWidget {
@@ -17,7 +18,7 @@ class HomeContinuationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return PremiumTouchableCard(
       onTap: onTap,
       child: IaculaSoftCard(
         key: const Key('home_continuation_card'),

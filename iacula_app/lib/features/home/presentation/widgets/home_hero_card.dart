@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/providers.dart';
+import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../favorites/domain/entities/favorite_item.dart';
 import '../../../quotes/domain/entities/quote.dart';
@@ -33,10 +34,12 @@ class HomeHeroCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final imagePath = _resolveAssetPath(quote.imagePath);
 
-    return Container(
-      key: const Key('home_hero_card'),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(IaculaRadius.banner),
+    return PremiumTouchableCard(
+      onTap: onOpenPremium,
+      child: Container(
+        key: const Key('home_hero_card'),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(IaculaRadius.banner),
         boxShadow: const [
           BoxShadow(
             color: Color(0x12000000),
@@ -171,6 +174,6 @@ class HomeHeroCard extends ConsumerWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }

@@ -115,15 +115,15 @@ class _BrandBlock extends StatelessWidget {
           width: 94,
           height: 94,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) =>
+          errorBuilder: (context, error, stackTrace) =>
               const Icon(CupertinoIcons.circle, size: 94),
         ),
         const SizedBox(height: IaculaSpacing.sm),
-        const Text(
-          'Iacula',
-          textAlign: TextAlign.center,
-          style: IaculaText.largeTitle,
-        ),
+          Text(
+            'Iacula',
+            textAlign: TextAlign.center,
+            style: IaculaText.largeTitle,
+          ),
       ],
     );
   }
@@ -137,14 +137,14 @@ class _ExclusiveFeatureCard extends StatelessWidget {
     return IaculaSoftCard(
       padding: const EdgeInsets.all(IaculaSpacing.md),
       radius: 16,
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(CupertinoIcons.bell_fill, color: IaculaColors.primaryButton),
-              Text(
+              const Icon(CupertinoIcons.bell_fill, color: IaculaColors.primaryButton),
+              const Text(
                 'EXCLUSIVO',
                 style: TextStyle(
                   color: IaculaColors.primaryButton,
@@ -155,13 +155,13 @@ class _ExclusiveFeatureCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: IaculaSpacing.sm),
+          const SizedBox(height: IaculaSpacing.sm),
           Text(
             'Notificações diárias com Jaculatórias',
             style: IaculaText.cardTitle,
           ),
-          SizedBox(height: 4),
-          Text(
+          const SizedBox(height: 4),
+          const Text(
             'Angelus / Regina Caeli às 12:00 PM',
             style: IaculaText.secondary,
           ),

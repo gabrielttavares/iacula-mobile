@@ -93,7 +93,7 @@ class _DoctrineCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F1F5),
+                color: const Color(0x1AFFFFFF),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(

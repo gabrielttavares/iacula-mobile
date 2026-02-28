@@ -10,6 +10,7 @@ import '../../features/meditation/presentation/meditation_screen.dart';
 import '../../features/plan_of_life/presentation/plan_of_life_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
+import '../theme/cupertino_tokens.dart';
 
 class ShellScreen extends ConsumerStatefulWidget {
   const ShellScreen({super.key});
@@ -42,8 +43,8 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
     return CupertinoTabScaffold(
       controller: _tabController,
       tabBar: CupertinoTabBar(
-        activeColor: const Color(0xFF111111),
-        inactiveColor: const Color(0xFF6E6E73),
+        activeColor: IaculaColors.primaryButton,
+        inactiveColor: IaculaColors.textSecondary,
         onTap: (index) async {
           if (_premiumIndexes.contains(index)) {
             final asyncStatus = ref.read(premiumStatusProvider);

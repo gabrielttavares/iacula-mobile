@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 
 class HomeActionGrid extends StatelessWidget {
@@ -10,14 +11,12 @@ class HomeActionGrid extends StatelessWidget {
     required this.onOpenLiturgy,
     required this.onOpenRosary,
     required this.onOpenNovenas,
-    required this.onOpenDoctrina,
   });
 
   final VoidCallback onOpenPrayers;
   final VoidCallback onOpenLiturgy;
   final VoidCallback onOpenRosary;
   final VoidCallback onOpenNovenas;
-  final VoidCallback onOpenDoctrina;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,7 @@ class HomeActionGrid extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _SquareFeatureCard(
+              child: _HorizontalFeatureCard(
                 icon: CupertinoIcons.book,
                 label: 'Orações',
                 onTap: onOpenPrayers,
@@ -35,7 +34,7 @@ class HomeActionGrid extends StatelessWidget {
             ),
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
-              child: _SquareFeatureCard(
+              child: _HorizontalFeatureCard(
                 icon: CupertinoIcons.doc_text,
                 label: 'Liturgia',
                 onTap: onOpenLiturgy,
@@ -47,15 +46,15 @@ class HomeActionGrid extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _SquareFeatureCard(
+              child: _HorizontalFeatureCard(
                 icon: CupertinoIcons.heart,
-                label: 'Rosário 📿',
+                label: 'Rosário',
                 onTap: onOpenRosary,
               ),
             ),
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
-              child: _SquareFeatureCard(
+              child: _HorizontalFeatureCard(
                 icon: CupertinoIcons.book_solid,
                 label: 'Novenas',
                 onTap: onOpenNovenas,
@@ -63,27 +62,13 @@ class HomeActionGrid extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: IaculaSpacing.sm),
-        Row(
-          children: [
-            Expanded(
-              child: _SquareFeatureCard(
-                icon: CupertinoIcons.lightbulb,
-                label: 'Doutrina\nCatólica',
-                onTap: onOpenDoctrina,
-              ),
-            ),
-            const SizedBox(width: IaculaSpacing.sm),
-            const Expanded(child: SizedBox()),
-          ],
-        ),
       ],
     );
   }
 }
 
-class _SquareFeatureCard extends StatelessWidget {
-  const _SquareFeatureCard({
+class _HorizontalFeatureCard extends StatelessWidget {
+  const _HorizontalFeatureCard({
     required this.icon,
     required this.label,
     required this.onTap,
@@ -95,24 +80,22 @@ class _SquareFeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return PremiumTouchableCard(
       onTap: onTap,
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: IaculaSoftCard(
-          radius: 18,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: IaculaColors.primaryButton),
-              const SizedBox(height: IaculaSpacing.sm),
-              Text(
+      child: IaculaSoftCard(
+        radius: 16,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, color: IaculaColors.primaryButton, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
                 label,
-                style: IaculaText.cardTitle,
-                textAlign: TextAlign.center,
+                style: IaculaText.cardTitle.copyWith(fontSize: 16),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

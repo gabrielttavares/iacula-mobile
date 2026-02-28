@@ -77,7 +77,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                const Text('Iacula Premium', style: IaculaText.sectionTitle),
+                Text('Iacula Premium', style: IaculaText.sectionTitle),
                 const SizedBox(height: 10),
                 const Text(
                   'Acesso vitalício por R\$ 39,90.',

@@ -5,6 +5,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../doctrina/presentation/doctrine_collections_screen.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
 import 'prayer_catalog_detail_screen.dart';
 import 'prayer_screen.dart';
@@ -73,6 +74,18 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                       ),
                     );
                   }
+                },
+              ),
+              const SizedBox(height: IaculaSpacing.sm),
+              _PrayerCategoryCard(
+                title: 'Doutrina Católica',
+                icon: CupertinoIcons.lightbulb,
+                onTap: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (_) => const DoctrineCollectionsScreen(),
+                    ),
+                  );
                 },
               ),
               const SizedBox(height: IaculaSpacing.lg),
@@ -184,7 +197,7 @@ class _PrayerCategoryCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F1F5),
+                color: const Color(0x1AFFFFFF),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: IaculaColors.primaryButton),
