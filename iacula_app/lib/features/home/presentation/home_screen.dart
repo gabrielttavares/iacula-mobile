@@ -104,24 +104,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             );
                           },
                           onOpenRosary: () =>
-                              _showEmBreveDialog(context, 'Rosário 📿'),
+                              _showEmBreveDialog(context, 'Rosário'),
                           onOpenNovenas: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) => const PrayerCollectionsScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: IaculaSpacing.md),
-                      _AnimatedHomeBlock(
-                        visible: _animateIn,
-                        offsetY: 0.08,
-                        child: HomeContinuationCard(
-                          title: 'Continue seu caminho',
-                          subtitle: 'Retome suas orações favoritas',
-                          onTap: () {
                             Navigator.of(context).push(
                               CupertinoPageRoute(
                                 builder: (_) => const PrayerCollectionsScreen(),

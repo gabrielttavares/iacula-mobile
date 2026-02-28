@@ -4,19 +4,19 @@ import 'package:google_fonts/google_fonts.dart';
 final class IaculaColors {
   IaculaColors._();
 
-  static const background = Color(0xFF0F1B3B);
-  static const card = Color(0xFF162755);
+  static const background = Color(0xFF030D22);
+  static const card = Color(0xFF0C1938);
   static const textPrimary = Color(0xFFFFFFFF);
   static const textSecondary = Color(0xFF9AA9CD);
-  static const primaryButton = Color(0xFFA18B22);
+  static const primaryButton = Color(0xFFF7F5EC);
   static const success = Color(0xFF34C759);
   static const warning = Color(0xFFFF9500);
   static const error = Color(0xFFFF3B30);
   static const separator = Color(0x33000000);
-  static const homeWarmBackground = Color(0xFF0F1B3B);
-  static const homeSacredAccent = Color(0xFFA18B22);
-  static const homeHeroTop = Color(0xFF0F1B3B);
-  static const homeHeroBottom = Color(0xFF0A1227);
+  static const homeWarmBackground = Color(0xFF030D22);
+  static const homeSacredAccent = Color(0xFFF7F5EC);
+  static const homeHeroTop = Color(0xFF030D22);
+  static const homeHeroBottom = Color(0xFF05102A);
 }
 
 final class IaculaShadows {
@@ -59,19 +59,19 @@ final class IaculaText {
   static final largeTitle = GoogleFonts.lora(
     fontSize: 34,
     fontWeight: FontWeight.w700,
-    color: const Color(0xFFA18B22),
+    color: const Color(0xFFF7F5EC),
   );
 
   static final sectionTitle = GoogleFonts.lora(
     fontSize: 22,
     fontWeight: FontWeight.w600,
-    color: const Color(0xFFA18B22),
+    color: const Color(0xFFF7F5EC),
   );
 
   static final cardTitle = GoogleFonts.lora(
     fontSize: 17,
     fontWeight: FontWeight.w600,
-    color: const Color(0xFFA18B22),
+    color: const Color(0xFFF7F5EC),
   );
 
   static final secondary = GoogleFonts.lora(

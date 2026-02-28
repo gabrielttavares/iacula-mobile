@@ -27,7 +27,6 @@ class HomeActionGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _HorizontalFeatureCard(
-                icon: CupertinoIcons.book,
                 label: 'Orações',
                 onTap: onOpenPrayers,
               ),
@@ -35,7 +34,6 @@ class HomeActionGrid extends StatelessWidget {
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
               child: _HorizontalFeatureCard(
-                icon: CupertinoIcons.doc_text,
                 label: 'Liturgia',
                 onTap: onOpenLiturgy,
               ),
@@ -47,7 +45,6 @@ class HomeActionGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _HorizontalFeatureCard(
-                icon: CupertinoIcons.heart,
                 label: 'Rosário',
                 onTap: onOpenRosary,
               ),
@@ -55,7 +52,6 @@ class HomeActionGrid extends StatelessWidget {
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
               child: _HorizontalFeatureCard(
-                icon: CupertinoIcons.book_solid,
                 label: 'Novenas',
                 onTap: onOpenNovenas,
               ),
@@ -69,12 +65,10 @@ class HomeActionGrid extends StatelessWidget {
 
 class _HorizontalFeatureCard extends StatelessWidget {
   const _HorizontalFeatureCard({
-    required this.icon,
     required this.label,
     required this.onTap,
   });
 
-  final IconData icon;
   final String label;
   final VoidCallback onTap;
 
@@ -85,17 +79,12 @@ class _HorizontalFeatureCard extends StatelessWidget {
       child: IaculaSoftCard(
         radius: 16,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            Icon(icon, color: IaculaColors.primaryButton, size: 24),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                label,
-                style: IaculaText.cardTitle.copyWith(fontSize: 16),
-              ),
-            ),
-          ],
+        child: Center(
+          child: Text(
+            label,
+            style: IaculaText.cardTitle.copyWith(fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );
