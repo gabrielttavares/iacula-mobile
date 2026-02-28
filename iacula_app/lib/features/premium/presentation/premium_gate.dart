@@ -148,9 +148,13 @@ class _PremiumGateModal extends StatelessWidget {
               label: 'Conhecer Premium',
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.of(context).push(
-                  CupertinoPageRoute(builder: (_) => const PaywallScreen()),
-                );
+                Future.delayed(Duration.zero, () {
+                  if (context.mounted) {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(builder: (_) => const PaywallScreen()),
+                    );
+                  }
+                });
               },
             ),
             const SizedBox(height: 12),

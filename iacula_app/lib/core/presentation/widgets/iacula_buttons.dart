@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
+import 'package:flutter/services.dart';
+
 import '../../theme/cupertino_tokens.dart';
 
 class IaculaPrimaryPillButton extends StatelessWidget {
@@ -18,7 +20,12 @@ class IaculaPrimaryPillButton extends StatelessWidget {
       height: IaculaMetrics.inputHeight + IaculaSpacing.xs,
       width: double.infinity,
       child: CupertinoButton(
-        onPressed: onPressed,
+        onPressed: onPressed != null
+            ? () {
+                HapticFeedback.lightImpact();
+                onPressed!();
+              }
+            : null,
         padding: EdgeInsets.zero,
         color: context.colors.primaryButton,
         borderRadius: BorderRadius.circular(
@@ -53,9 +60,14 @@ class IaculaSecondaryPillButton extends StatelessWidget {
       height: IaculaMetrics.inputHeight + IaculaSpacing.xs,
       width: double.infinity,
       child: CupertinoButton(
-        onPressed: onPressed,
+        onPressed: onPressed != null
+            ? () {
+                HapticFeedback.lightImpact();
+                onPressed!();
+              }
+            : null,
         padding: EdgeInsets.zero,
-        color: const Color(0x33000000),
+        color: context.colors.secondaryButton,
         borderRadius: BorderRadius.circular(
           (IaculaMetrics.inputHeight + IaculaSpacing.xs) / 2,
         ),

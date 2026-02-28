@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../di/providers.dart';
 
+import '../../theme/cupertino_tokens.dart';
+
 class LocalOnlyBanner extends ConsumerWidget {
   const LocalOnlyBanner({super.key});
 
@@ -15,15 +17,22 @@ class LocalOnlyBanner extends ConsumerWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      color: const Color(0xFFFFF3CD),
-      child: const Row(
+      color: context.colors.bannerBackground,
+      child: Row(
         children: [
-          Icon(CupertinoIcons.exclamationmark_triangle, size: 16, color: Color(0xFF856404)),
-          SizedBox(width: 8),
+          Icon(
+            CupertinoIcons.exclamationmark_triangle,
+            size: 16,
+            color: context.colors.bannerForeground,
+          ),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               'Usando modo local \u2014 dados n\u00e3o ser\u00e3o sincronizados.',
-              style: TextStyle(fontSize: 13, color: Color(0xFF856404)),
+              style: TextStyle(
+                fontSize: 13,
+                color: context.colors.bannerForeground,
+              ),
             ),
           ),
         ],

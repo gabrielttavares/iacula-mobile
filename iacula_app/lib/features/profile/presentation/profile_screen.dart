@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
@@ -24,68 +25,78 @@ class ProfileScreen extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      child: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(IaculaSpacing.md),
-          children: [
-            const IaculaLargeTitle('Perfil'),
-            const SizedBox(height: IaculaSpacing.lg),
-            Center(
-              child: _Avatar(name: name, showEditBadge: isConnected),
-            ),
-            const SizedBox(height: IaculaSpacing.xl),
-            _Section(
-              title: 'Conta',
-              onEdit: isConnected
-                  ? () => _showProviderNameDialog(context)
-                  : () => _showLocalNameDialog(context, ref, localName),
-              rows: [
-                _InfoRow(label: 'Nome', value: name),
-                _InfoRow(label: 'E-mail', value: email),
-                const _InfoRow(label: 'Idioma', value: 'Português (Brasil)'),
-              ],
-            ),
-            const SizedBox(height: IaculaSpacing.lg),
-            _Section(
-              title: 'Privacidade e segurança',
-              rows: [
-                _InfoRow(
-                  label: 'Conta',
-                  value: isConnected ? 'Conectada' : 'Não conectada',
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          CupertinoSliverNavigationBar(
+            largeTitle: const Text('Perfil'),
+            backgroundColor: context.colors.background,
+            border: null,
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(IaculaSpacing.md),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                Center(
+                  child: _Avatar(name: name, showEditBadge: isConnected),
                 ),
-                _InfoRow(
-                  label: 'Backup',
-                  value: isConnected ? 'Sincronização ativada' : 'Apenas local',
+                const SizedBox(height: IaculaSpacing.xl),
+                _Section(
+                  title: 'Conta',
+                  onEdit: isConnected
+                      ? () => _showProviderNameDialog(context)
+                      : () => _showLocalNameDialog(context, ref, localName),
+                  rows: [
+                    _InfoRow(label: 'Nome', value: name),
+                    _InfoRow(label: 'E-mail', value: email),
+                    const _InfoRow(label: 'Idioma', value: 'Português (Brasil)'),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: IaculaSpacing.lg),
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (_) => const SettingsScreen(),
-                    title: 'Configurações',
-                  ),
-                );
-              },
-              child: IaculaSoftCard(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text('Configurações', style: context.textStyles.cardTitle),
+                const SizedBox(height: IaculaSpacing.lg),
+                _Section(
+                  title: 'Privacidade e segurança',
+                  rows: [
+                    _InfoRow(
+                      label: 'Conta',
+                      value: isConnected ? 'Conectada' : 'Não conectada',
                     ),
-                    Icon(
-                      CupertinoIcons.chevron_right,
-                      size: 18,
-                      color: context.colors.textSecondary,
+                    _InfoRow(
+                      label: 'Backup',
+                      value: isConnected ? 'Sincronização ativada' : 'Apenas local',
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: IaculaSpacing.lg),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (_) => const SettingsScreen(),
+                        title: 'Configurações',
+                      ),
+                    );
+                  },
+                  child: IaculaSoftCard(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text('Configurações',
+                              style: context.textStyles.cardTitle),
+                        ),
+                        Icon(
+                          CupertinoIcons.chevron_right,
+                          size: 18,
+                          color: context.colors.textSecondary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ]),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -254,11 +265,11 @@ class _Section extends StatelessWidget {
               for (var i = 0; i < rows.length; i++) ...[
                 rows[i],
                 if (i != rows.length - 1)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     child: DecoratedBox(
-                      decoration: BoxDecoration(color: Color(0x14000000)),
-                      child: SizedBox(height: 1, width: double.infinity),
+                      decoration: BoxDecoration(color: context.colors.separator),
+                      child: const SizedBox(height: 1, width: double.infinity),
                     ),
                   ),
               ],

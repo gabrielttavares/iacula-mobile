@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
@@ -59,79 +60,136 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isFallback =
         ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false;
 
+    final authState = ref.watch(authStateProvider);
+    final localName = ref.watch(localDisplayNameProvider).valueOrNull;
+    final greeting =
+        authState.whenData((user) {
+          final name = user?.displayName ?? localName;
+          final isFemale = user?.gender == Gender.female;
+          final welcome = isFemale ? 'Bem vinda' : 'Bem vindo';
+          return name != null && name.isNotEmpty
+              ? '$welcome, $name!'
+              : '$welcome!';
+        }).value ??
+        'Bem vindo!';
+
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      child: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      const _HomeHeader(),
-                      const SizedBox(height: IaculaSpacing.lg),
-                      _AnimatedHomeBlock(
-                        visible: _animateIn,
-                        offsetY: 0.04,
-                        child: _HomeHeroSection(
-                          isFallback: isFallback,
-                          onOpenPremium: () => PremiumGate.showModal(
-                            context,
-                            feature: PremiumFeature.meditation,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 460),
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              CupertinoSliverNavigationBar(
+                backgroundColor: context.colors.background,
+                border: null,
+                middle: Text('Iacula', style: context.textStyles.cardTitle),
+                largeTitle: Text(greeting),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(32, 32),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const NotificationsScreen(),
                           ),
-                        ),
+                        );
+                      },
+                      child: Icon(
+                        CupertinoIcons.bell,
+                        color: context.colors.textSecondary,
                       ),
-                      const SizedBox(height: IaculaSpacing.lg),
-                      _AnimatedHomeBlock(
-                        visible: _animateIn,
-                        offsetY: 0.06,
-                        child: HomeActionGrid(
-                          onOpenPrayers: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) => const PrayerCollectionsScreen(),
-                              ),
-                            );
-                          },
-                          onOpenLiturgy: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) => const LiturgiaScreen(),
-                              ),
-                            );
-                          },
-                          onOpenRosary: () =>
-                              _showEmBreveDialog(context, 'Rosário'),
-                          onOpenNovenas: () {
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) => const PrayerCollectionsScreen(),
-                              ),
-                            );
-                          },
-                        ),
+                    ),
+                    const SizedBox(width: 8),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(32, 32),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                              builder: (_) => const SearchScreen()),
+                        );
+                      },
+                      child: Icon(
+                        CupertinoIcons.search,
+                        color: context.colors.textSecondary,
                       ),
-                      const SizedBox(height: IaculaSpacing.xl),
-                      const IaculaSectionHeader(title: 'Sugestão do Dia'),
-                      const SizedBox(height: IaculaSpacing.sm),
-                      const _DailyPrayerList(),
-                      const SizedBox(height: IaculaSpacing.xl),
-                      const IaculaSectionHeader(title: 'Orações temáticas'),
-                      const SizedBox(height: IaculaSpacing.sm),
-                      const _ThematicPrayerRail(),
-                      const SizedBox(height: IaculaSpacing.xl),
-                      const IaculaSectionHeader(title: 'Orações de Santos'),
-                      const SizedBox(height: IaculaSpacing.sm),
-                      const _SaintPrayerList(),
-                    ]),
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    _AnimatedHomeBlock(
+                      visible: _animateIn,
+                      offsetY: 0.04,
+                      child: _HomeHeroSection(
+                        isFallback: isFallback,
+                        onOpenPremium: () => PremiumGate.showModal(
+                          context,
+                          feature: PremiumFeature.meditation,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: IaculaSpacing.lg),
+                    _AnimatedHomeBlock(
+                      visible: _animateIn,
+                      offsetY: 0.06,
+                      child: HomeActionGrid(
+                        onOpenPrayers: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (_) => const PrayerCollectionsScreen(),
+                            ),
+                          );
+                        },
+                        onOpenLiturgy: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (_) => const LiturgiaScreen(),
+                            ),
+                          );
+                        },
+                        onOpenRosary: () {
+                          HapticFeedback.lightImpact();
+                          _showEmBreveDialog(context, 'Rosário');
+                        },
+                        onOpenNovenas: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (_) => const PrayerCollectionsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: IaculaSpacing.xl),
+                    const IaculaSectionHeader(title: 'Sugestão do Dia'),
+                    const SizedBox(height: IaculaSpacing.sm),
+                    const _DailyPrayerList(),
+                    const SizedBox(height: IaculaSpacing.xl),
+                    const IaculaSectionHeader(title: 'Orações temáticas'),
+                    const SizedBox(height: IaculaSpacing.sm),
+                    const _ThematicPrayerRail(),
+                    const SizedBox(height: IaculaSpacing.xl),
+                    const IaculaSectionHeader(title: 'Orações de Santos'),
+                    const SizedBox(height: IaculaSpacing.sm),
+                    const _SaintPrayerList(),
+                  ]),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -193,73 +251,6 @@ class _HomeHeroSection extends ConsumerWidget {
         message: 'Tente novamente em instantes.',
         onRetry: () => ref.invalidate(_homeQuoteProvider),
       ),
-    );
-  }
-}
-
-class _HomeHeader extends ConsumerWidget {
-  const _HomeHeader();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
-    final localName = ref.watch(localDisplayNameProvider).valueOrNull;
-    final greeting =
-        authState.whenData((user) {
-          final name = user?.displayName ?? localName;
-          final isFemale = user?.gender == Gender.female;
-          final welcome = isFemale ? 'Bem vinda' : 'Bem vindo';
-          return name != null && name.isNotEmpty
-              ? '$welcome, $name!'
-              : '$welcome!';
-        }).value ??
-        'Bem vindo!';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Iacula', style: context.textStyles.cardTitle),
-            Row(
-              children: [
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(32, 32),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => const NotificationsScreen(),
-                      ),
-                    );
-                  },
-                  child: Icon(
-                    CupertinoIcons.bell,
-                    color: context.colors.textSecondary,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(32, 32),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(builder: (_) => const SearchScreen()),
-                    );
-                  },
-                  child: Icon(
-                    CupertinoIcons.search,
-                    color: context.colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: IaculaSpacing.sm),
-        IaculaLargeTitle(greeting),
-      ],
     );
   }
 }

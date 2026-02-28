@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
@@ -7,6 +8,7 @@ import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../auth/presentation/auth_action_sheet.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
@@ -95,172 +97,210 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      child: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(IaculaSpacing.md),
-          children: [
-            const IaculaLargeTitle('Configurações'),
-            const SizedBox(height: IaculaSpacing.lg),
-            const IaculaSectionHeader(title: 'Aparência'),
-            const SizedBox(height: IaculaSpacing.sm),
-            IaculaSoftCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _fieldLabel(context, 'Tema'),
-                  const SizedBox(height: 8),
-                  CupertinoSlidingSegmentedControl<String>(
-                    groupValue: _themeMode,
-                    children: const {
-                      'light': Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('Claro'),
-                      ),
-                      'dark': Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('Escuro'),
-                      ),
-                      'system': Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('Sistema'),
-                      ),
-                    },
-                    onValueChanged: (value) {
-                      if (value != null) {
-                        setState(() => _themeMode = value);
-                        ref.read(themeModeProvider.notifier).state = value;
-                      }
-                    },
-                  ),
-                ],
-              ),
+      child: IaculaKeyboardDismiss(
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            CupertinoSliverNavigationBar(
+              largeTitle: const Text('Configurações'),
+              backgroundColor: context.colors.background,
+              border: null,
             ),
-            const SizedBox(height: IaculaSpacing.lg),
-            const IaculaSectionHeader(title: 'Dados da conta'),
-            const SizedBox(height: IaculaSpacing.sm),
-            IaculaSoftCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _fieldLabel(context, 'Intervalo (minutos)'),
-                  IaculaTextInput(
-                    controller: _intervalController,
-                    placeholder: '1..60',
-                    keyboardType: TextInputType.number,
+            SliverPadding(
+              padding: const EdgeInsets.all(IaculaSpacing.md),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  const IaculaSectionHeader(title: 'Aparência'),
+                  const SizedBox(height: IaculaSpacing.sm),
+                  IaculaSoftCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _fieldLabel(context, 'Tema'),
+                        const SizedBox(height: 8),
+                        CupertinoSlidingSegmentedControl<String>(
+                          groupValue: _themeMode,
+                          children: const {
+                            'light': Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 6,
+                              ),
+                              child: Text('Claro'),
+                            ),
+                            'dark': Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 6,
+                              ),
+                              child: Text('Escuro'),
+                            ),
+                            'system': Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 6,
+                              ),
+                              child: Text('Sistema'),
+                            ),
+                          },
+                          onValueChanged: (value) {
+                            if (value != null) {
+                              HapticFeedback.selectionClick();
+                              setState(() => _themeMode = value);
+                              ref.read(themeModeProvider.notifier).state = value;
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: IaculaSpacing.lg),
+                  const IaculaSectionHeader(title: 'Dados da conta'),
+                  const SizedBox(height: IaculaSpacing.sm),
+                  IaculaSoftCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _fieldLabel(context, 'Intervalo (minutos)'),
+                        IaculaTextInput(
+                          controller: _intervalController,
+                          placeholder: '1..60',
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: IaculaSpacing.md),
+                        _fieldLabel(context, 'Idioma'),
+                        const SizedBox(height: 8),
+                        CupertinoSlidingSegmentedControl<String>(
+                          groupValue: _language,
+                          children: const {
+                            'pt-br': Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 6,
+                              ),
+                              child: Text('Portugues'),
+                            ),
+                            'en': Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 6,
+                              ),
+                              child: Text('English'),
+                            ),
+                            'la': Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 6,
+                              ),
+                              child: Text('Latin'),
+                            ),
+                          },
+                          onValueChanged: (value) {
+                            if (value != null) {
+                              HapticFeedback.selectionClick();
+                              setState(() => _language = value);
+                            }
+                          },
+                        ),
+                        const SizedBox(height: IaculaSpacing.md),
+                        _switchRow(
+                          context,
+                          title: 'Som no lembrete liturgico',
+                          value: _soundEnabled,
+                          onChanged: (v) {
+                            HapticFeedback.selectionClick();
+                            setState(() => _soundEnabled = v);
+                          },
+                        ),
+                        CupertinoSlider(
+                          min: 0,
+                          max: 1,
+                          divisions: 20,
+                          value: _soundVolume,
+                          onChanged: _soundEnabled
+                              ? (v) => setState(() => _soundVolume = v)
+                              : null,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: IaculaSpacing.lg),
+                  const IaculaSectionHeader(title: 'Liturgia das Horas'),
+                  const SizedBox(height: IaculaSpacing.sm),
+                  IaculaSoftCard(
+                    child: Column(
+                      children: [
+                        _moduleRow(
+                          context,
+                          'Laudes',
+                          _laudesEnabled,
+                          (v) {
+                            HapticFeedback.selectionClick();
+                            setState(() => _laudesEnabled = v);
+                          },
+                          _laudesTimeController,
+                        ),
+                        _moduleRow(
+                          context,
+                          'Vesperas',
+                          _vespersEnabled,
+                          (v) {
+                            HapticFeedback.selectionClick();
+                            setState(() => _vespersEnabled = v);
+                          },
+                          _vespersTimeController,
+                        ),
+                        _moduleRow(
+                          context,
+                          'Completas',
+                          _complineEnabled,
+                          (v) {
+                            HapticFeedback.selectionClick();
+                            setState(() => _complineEnabled = v);
+                          },
+                          _complineTimeController,
+                        ),
+                        _moduleRow(
+                          context,
+                          'Ora Media',
+                          _oraMediaEnabled,
+                          (v) {
+                            HapticFeedback.selectionClick();
+                            setState(() => _oraMediaEnabled = v);
+                          },
+                          _oraMediaTimeController,
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: IaculaSpacing.md),
-                  _fieldLabel(context, 'Idioma'),
-                  const SizedBox(height: 8),
-                  CupertinoSlidingSegmentedControl<String>(
-                    groupValue: _language,
-                    children: const {
-                      'pt-br': Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('Portugues'),
-                      ),
-                      'en': Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('English'),
-                      ),
-                      'la': Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('Latin'),
-                      ),
-                    },
-                    onValueChanged: (value) {
-                      if (value != null) {
-                        setState(() => _language = value);
-                      }
-                    },
+                  _buildAuthSyncSection(),
+                  if (_validationMessage != null) ...[
+                    const SizedBox(height: IaculaSpacing.md),
+                    IaculaInlineMessage(
+                      message: _validationMessage!,
+                      color: context.colors.error,
+                    ),
+                  ],
+                  const SizedBox(height: IaculaSpacing.lg),
+                  CupertinoButton.filled(
+                    borderRadius: BorderRadius.circular(26),
+                    onPressed: _saving
+                        ? null
+                        : () {
+                            HapticFeedback.lightImpact();
+                            _save();
+                          },
+                    child: Text(_saving ? 'Salvando...' : 'Salvar'),
                   ),
-                  const SizedBox(height: IaculaSpacing.md),
-                  _switchRow(context,
-                    title: 'Som no lembrete liturgico',
-                    value: _soundEnabled,
-                    onChanged: (v) => setState(() => _soundEnabled = v),
-                  ),
-                  CupertinoSlider(
-                    min: 0,
-                    max: 1,
-                    divisions: 20,
-                    value: _soundVolume,
-                    onChanged: _soundEnabled
-                        ? (v) => setState(() => _soundVolume = v)
-                        : null,
-                  ),
-                ],
+                ]),
               ),
-            ),
-            const SizedBox(height: IaculaSpacing.lg),
-            const IaculaSectionHeader(title: 'Liturgia das Horas'),
-            const SizedBox(height: IaculaSpacing.sm),
-            IaculaSoftCard(
-              child: Column(
-                children: [
-                  _moduleRow(context,
-                    'Laudes',
-                    _laudesEnabled,
-                    (v) => setState(() => _laudesEnabled = v),
-                    _laudesTimeController,
-                  ),
-                  _moduleRow(context,
-                    'Vesperas',
-                    _vespersEnabled,
-                    (v) => setState(() => _vespersEnabled = v),
-                    _vespersTimeController,
-                  ),
-                  _moduleRow(context,
-                    'Completas',
-                    _complineEnabled,
-                    (v) => setState(() => _complineEnabled = v),
-                    _complineTimeController,
-                  ),
-                  _moduleRow(context,
-                    'Ora Media',
-                    _oraMediaEnabled,
-                    (v) => setState(() => _oraMediaEnabled = v),
-                    _oraMediaTimeController,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: IaculaSpacing.md),
-            _buildAuthSyncSection(),
-            if (_validationMessage != null) ...[
-              const SizedBox(height: IaculaSpacing.md),
-              IaculaInlineMessage(
-                message: _validationMessage!,
-                color: context.colors.error,
-              ),
-            ],
-            const SizedBox(height: IaculaSpacing.lg),
-            CupertinoButton.filled(
-              borderRadius: BorderRadius.circular(26),
-              onPressed: _saving ? null : _save,
-              child: Text(_saving ? 'Salvando...' : 'Salvar'),
             ),
           ],
         ),
       ),
     );
+
   }
 
   Widget _fieldLabel(BuildContext context, String label) {

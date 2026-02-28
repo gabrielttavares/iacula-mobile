@@ -64,10 +64,10 @@ class PrayerCatalogGroupScreen extends ConsumerWidget {
     );
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       navigationBar: CupertinoNavigationBar(
         middle: Text(title),
-        backgroundColor: IaculaColors.background,
+        backgroundColor: context.colors.background,
       ),
       child: SafeArea(
         child: entriesAsync.when(
@@ -76,7 +76,7 @@ class PrayerCatalogGroupScreen extends ConsumerWidget {
               return Center(
                 child: Text(
                   'Nenhuma oração encontrada',
-                  style: IaculaText.secondary,
+                  style: context.textStyles.secondary,
                 ),
               );
             }
@@ -95,7 +95,7 @@ class PrayerCatalogGroupScreen extends ConsumerWidget {
           error: (error, stackTrace) => Center(
             child: Text(
               'Não foi possível carregar as orações',
-              style: IaculaText.secondary,
+              style: context.textStyles.secondary,
             ),
           ),
         ),
@@ -122,17 +122,19 @@ class _PrayerItemCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(IaculaSpacing.md),
         decoration: BoxDecoration(
-          color: IaculaColors.card,
+          color: context.colors.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: IaculaColors.separator),
+          border: Border.all(color: context.colors.separator),
         ),
         child: Row(
           children: [
-            Expanded(child: Text(entry.title, style: IaculaText.cardTitle)),
-            const Icon(
+            Expanded(
+              child: Text(entry.title, style: context.textStyles.cardTitle),
+            ),
+            Icon(
               CupertinoIcons.chevron_right,
               size: 18,
-              color: IaculaColors.textSecondary,
+              color: context.colors.textSecondary,
             ),
           ],
         ),

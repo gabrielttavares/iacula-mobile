@@ -7,7 +7,7 @@ final class AppTheme {
 
   static CupertinoThemeData dark() {
     const colors = IaculaColorScheme.dark;
-    final texts = IaculaTextScheme.from(colors);
+    final texts = IaculaTextScheme.fromColors(colors);
     return CupertinoThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: colors.background,
@@ -29,7 +29,7 @@ final class AppTheme {
 
   static CupertinoThemeData light() {
     const colors = IaculaColorScheme.light;
-    final texts = IaculaTextScheme.from(colors);
+    final texts = IaculaTextScheme.fromColors(colors);
     return CupertinoThemeData(
       brightness: Brightness.light,
       scaffoldBackgroundColor: colors.background,

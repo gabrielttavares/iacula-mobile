@@ -11,6 +11,7 @@ class IaculaTextInput extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.autofocus = false,
     this.maxLines = 1,
+    this.readOnly = false,
     this.onChanged,
   });
 
@@ -20,6 +21,7 @@ class IaculaTextInput extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final bool autofocus;
   final int maxLines;
+  final bool readOnly;
   final ValueChanged<String>? onChanged;
 
   @override
@@ -31,6 +33,7 @@ class IaculaTextInput extends StatelessWidget {
       textCapitalization: textCapitalization,
       autofocus: autofocus,
       maxLines: maxLines,
+      readOnly: readOnly,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: context.colors.card,
@@ -54,13 +57,69 @@ class IaculaTimeInput extends StatelessWidget {
   final String placeholder;
   final ValueChanged<String>? onChanged;
 
+  void _showPicker(BuildContext context) {
+    final now = DateTime.now();
+    DateTime initialDate = now;
+
+    if (controller != null && controller!.text.isNotEmpty) {
+      final parts = controller!.text.split(':');
+      if (parts.length == 2) {
+        final hour = int.tryParse(parts[0]) ?? 0;
+        final minute = int.tryParse(parts[1]) ?? 0;
+        initialDate = DateTime(now.year, now.month, now.day, hour, minute);
+      }
+    }
+
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (ctx) => Container(
+        height: 250,
+        color: context.colors.card,
+        child: Column(
+          children: [
+            Container(
+              height: 44,
+              color: context.colors.background,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CupertinoButton(
+                    child: const Text('OK'),
+                    onPressed: () => Navigator.of(ctx).pop(),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.time,
+                use24hFormat: true,
+                initialDateTime: initialDate,
+                onDateTimeChanged: (DateTime newDate) {
+                  final hh = newDate.hour.toString().padLeft(2, '0');
+                  final mm = newDate.minute.toString().padLeft(2, '0');
+                  final time = '$hh:$mm';
+                  controller?.text = time;
+                  onChanged?.call(time);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return IaculaTextInput(
-      controller: controller,
-      placeholder: placeholder,
-      keyboardType: TextInputType.datetime,
-      onChanged: onChanged,
+    return GestureDetector(
+      onTap: () => _showPicker(context),
+      child: IaculaTextInput(
+        controller: controller,
+        placeholder: placeholder,
+        keyboardType: TextInputType.datetime,
+        readOnly: true,
+      ),
     );
   }
 }

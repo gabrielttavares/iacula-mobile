@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
@@ -6,6 +7,7 @@ import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_calendar_modal.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
@@ -79,9 +81,10 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      child: SafeArea(
-        child: Column(
-          children: [
+      child: IaculaKeyboardDismiss(
+        child: SafeArea(
+          child: Column(
+            children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Row(
@@ -92,13 +95,17 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                     children: [
                       CupertinoButton(
                         padding: EdgeInsets.zero,
-                        onPressed: () => _showEditItemModal(context, null),
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          _showEditItemModal(context, null);
+                        },
                         child: const Icon(CupertinoIcons.add),
                       ),
                       const SizedBox(width: 10),
                       CupertinoButton(
                         padding: EdgeInsets.zero,
                         onPressed: () async {
+                          HapticFeedback.lightImpact();
                           final picked = await _showCalendarSheet(
                             context,
                             state.selectedDate,
@@ -164,6 +171,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -194,7 +202,10 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
           ][date.weekday - 1];
 
           return GestureDetector(
-            onTap: () => notifier.selectDate(date),
+            onTap: () {
+              HapticFeedback.selectionClick();
+              notifier.selectDate(date);
+            },
             child: Container(
               width: 56,
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -284,16 +295,27 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                 color: context.colors.background,
               ),
             ),
-            onDismissed: (_) => notifier.deleteItem(item.id),
+            onDismissed: (_) {
+              HapticFeedback.mediumImpact();
+              notifier.deleteItem(item.id);
+            },
             child: GestureDetector(
-              onLongPress: () => _showEditItemModal(context, item),
+              onLongPress: () {
+                HapticFeedback.selectionClick();
+                _showEditItemModal(context, item);
+              },
               child: PlanItemRow(
                 title: item.title,
                 scheduleSummary: _scheduleSummary(item.schedule),
                 isCompleted: item.isCompleted,
-                onToggle: (bool newValue) =>
-                    notifier.toggleItem(item.id, newValue),
-                onEdit: () => _showEditItemModal(context, item),
+                onToggle: (bool newValue) {
+                  HapticFeedback.selectionClick();
+                  notifier.toggleItem(item.id, newValue);
+                },
+                onEdit: () {
+                  HapticFeedback.lightImpact();
+                  _showEditItemModal(context, item);
+                },
               ),
             ),
           );
@@ -433,7 +455,10 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                     ),
                     CupertinoSwitch(
                       value: _notify,
-                      onChanged: (v) => setState(() => _notify = v),
+                      onChanged: (v) {
+                        HapticFeedback.selectionClick();
+                        setState(() => _notify = v);
+                      },
                     ),
                   ],
                 ),
@@ -454,7 +479,10 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                     ][index];
                     final selected = _days[index];
                     return GestureDetector(
-                      onTap: () => setState(() => _days[index] = !selected),
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        setState(() => _days[index] = !selected);
+                      },
                       child: Container(
                         width: 32,
                         height: 32,
@@ -481,6 +509,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                 const SizedBox(height: 24),
                 CupertinoButton.filled(
                   onPressed: () {
+                    HapticFeedback.lightImpact();
                     final title = isDefault
                         ? (widget.item?.title ?? '')
                         : _titleController.text.trim();
@@ -516,6 +545,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                   const SizedBox(height: 12),
                   CupertinoButton(
                     onPressed: () async {
+                      HapticFeedback.lightImpact();
                       final confirmed = await IaculaModal.showConfirm(
                         context: context,
                         title: 'Remover item',
@@ -525,6 +555,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                         destructive: true,
                       );
                       if (confirmed && context.mounted) {
+                        HapticFeedback.mediumImpact();
                         notifier.deleteItem(widget.item!.id);
                         Navigator.pop(context);
                       }

@@ -25,9 +25,9 @@ class IaculaListItem extends StatelessWidget {
             Container(
               width: 44,
               height: 44,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xFFE7E7EC),
+                color: context.colors.placeholder,
               ),
             ),
             const SizedBox(width: IaculaSpacing.md),

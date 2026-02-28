@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
@@ -17,55 +18,56 @@ class FavoritesScreen extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      child: SafeArea(
-        child: favoritesAsync.when(
-          data: (favorites) {
-            if (favorites.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.all(IaculaSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IaculaLargeTitle('Favoritos'),
-                    SizedBox(height: IaculaSpacing.lg),
-                    IaculaEmptyState(
+      child: favoritesAsync.when(
+        data: (favorites) {
+          return CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              CupertinoSliverNavigationBar(
+                largeTitle: const Text('Favoritos'),
+                backgroundColor: context.colors.background,
+                border: null,
+              ),
+              if (favorites.isEmpty)
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: IaculaEmptyState(
                       title: 'Sem favoritos',
                       message: 'Seus itens salvos aparecerão aqui.',
                     ),
-                  ],
-                ),
-              );
-            }
-
-            return ListView.builder(
-              padding: const EdgeInsets.all(IaculaSpacing.md),
-              itemCount: favorites.length + 1, // +1 for header
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return const Padding(
-                    padding: EdgeInsets.only(bottom: IaculaSpacing.md),
-                    child: IaculaLargeTitle('Favoritos'),
-                  );
-                }
-                final item = favorites[index - 1];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: _FavoriteCard(
-                    item: item,
-                    onRemove: () {
-                      ref.read(favoriteRepositoryProvider).remove(item.id);
-                    },
                   ),
-                );
-              },
-            );
-          },
-          loading: () => const Center(child: CupertinoActivityIndicator()),
-          error: (error, stackTrace) => const Center(
-            child: IaculaErrorState(
-              title: 'Erro ao carregar favoritos',
-              message: 'Tente novamente em instantes.',
-            ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.all(IaculaSpacing.md),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final item = favorites[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: _FavoriteCard(
+                            item: item,
+                            onRemove: () {
+                              HapticFeedback.mediumImpact();
+                              ref.read(favoriteRepositoryProvider).remove(item.id);
+                            },
+                          ),
+                        );
+                      },
+                      childCount: favorites.length,
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+        loading: () => const Center(child: CupertinoActivityIndicator()),
+        error: (error, stackTrace) => const Center(
+          child: IaculaErrorState(
+            title: 'Erro ao carregar favoritos',
+            message: 'Tente novamente em instantes.',
           ),
         ),
       ),

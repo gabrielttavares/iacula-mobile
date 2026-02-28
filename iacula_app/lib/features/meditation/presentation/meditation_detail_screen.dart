@@ -168,7 +168,7 @@ class _MediaContent extends StatelessWidget {
           Container(
             height: 180,
             decoration: BoxDecoration(
-              color: const Color(0xFFF2F2F7),
+              color: context.colors.systemGray6,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
@@ -283,7 +283,7 @@ class _DetailBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F7),
+        color: context.colors.systemGray6,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(

@@ -51,11 +51,11 @@ class HomeHeroCard extends ConsumerWidget {
         key: const Key('home_hero_card'),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(IaculaRadius.banner),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color(0x12000000),
+              color: context.colors.separator,
               blurRadius: 10,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -72,14 +72,16 @@ class HomeHeroCard extends ConsumerWidget {
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,
                           errorBuilder: (context, error, stackTrace) =>
-                              const DecoratedBox(
+                              DecoratedBox(
                                 decoration: BoxDecoration(
-                                  color: Color(0xFF3D3125),
+                                  color: context.colors.homeHeroFallback,
                                 ),
                               ),
                         )
-                      : const DecoratedBox(
-                          decoration: BoxDecoration(color: Color(0xFF3D3125)),
+                      : DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: context.colors.homeHeroFallback,
+                          ),
                         ),
                 ),
                 Positioned.fill(
@@ -89,8 +91,8 @@ class HomeHeroCard extends ConsumerWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          CupertinoColors.black.withValues(alpha: 0.3),
-                          CupertinoColors.black.withValues(alpha: 0.86),
+                          context.colors.homeHeroTop,
+                          context.colors.homeHeroBottom,
                         ],
                       ),
                     ),
@@ -116,7 +118,8 @@ class HomeHeroCard extends ConsumerWidget {
                               if (!alreadySaved) {
                                 await repo.save(
                                   FavoriteItem(
-                                    id: DateTime.now().millisecondsSinceEpoch
+                                    id: DateTime.now()
+                                        .millisecondsSinceEpoch
                                         .toString(),
                                     quoteText: quote.text,
                                     theme: quote.theme,
@@ -142,20 +145,20 @@ class HomeHeroCard extends ConsumerWidget {
                         children: [
                           Text(
                             quote.text,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
-                              color: Color(0xFFF6F6F8),
+                              color: context.colors.homeHeroText,
                               height: 1.5,
                             ),
                           ),
                           if (isFallback)
-                            const Padding(
-                              padding: EdgeInsets.only(top: 4),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
                               child: Text(
                                 'Tempo litúrgico indisponível',
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: Color(0x99F6F6F8),
+                                  color: context.colors.homeHeroSubtext,
                                 ),
                               ),
                             ),
@@ -171,10 +174,10 @@ class HomeHeroCard extends ConsumerWidget {
                   child: Text(
                     labelText.toLowerCase(),
                     key: const Key('home_hero_season_label'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       letterSpacing: 0.8,
-                      color: Color(0x47FFFFFF),
+                      color: context.colors.homeHeroLabel,
                     ),
                   ),
                 ),

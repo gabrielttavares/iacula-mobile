@@ -1,4 +1,11 @@
-﻿import 'package:flutter/material.dart';
+﻿class TimeOfDay {
+  const TimeOfDay({required this.hour, required this.minute});
+  final int hour;
+  final int minute;
+
+  @override
+  String toString() => '$hour:$minute';
+}
 
 TimeOfDay parseHourMinute(String value) {
   final parts = value.split(':');

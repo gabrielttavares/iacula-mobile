@@ -24,24 +24,24 @@ class DoctrineCollectionsScreen extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(IaculaSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const IaculaLargeTitle('Doutrina Católica'),
-              const SizedBox(height: IaculaSpacing.lg),
-              catalogAsync.when(
-                data: (entries) => Expanded(
-                  child: ListView.separated(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: entries.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: IaculaSpacing.sm),
-                    itemBuilder: (context, index) {
-                      final entry = entries[index];
-                      return _DoctrineCard(
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          CupertinoSliverNavigationBar(
+            largeTitle: const Text('Doutrina Católica'),
+            backgroundColor: context.colors.background,
+            border: null,
+          ),
+          catalogAsync.when(
+            data: (entries) => SliverPadding(
+              padding: const EdgeInsets.all(IaculaSpacing.md),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final entry = entries[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+                      child: _DoctrineCard(
                         title: entry.title,
                         category: entry.category,
                         onTap: () {
@@ -52,22 +52,29 @@ class DoctrineCollectionsScreen extends ConsumerWidget {
                             ),
                           );
                         },
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
+                  childCount: entries.length,
                 ),
-                loading: () =>
-                    const Center(child: CupertinoActivityIndicator()),
-                error: (error, stackTrace) => Text(
+              ),
+            ),
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CupertinoActivityIndicator()),
+            ),
+            error: (error, stackTrace) => SliverFillRemaining(
+              child: Center(
+                child: Text(
                   'Erro ao carregar doutrina',
                   style: context.textStyles.secondary,
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
+
   }
 }
 
@@ -93,7 +100,7 @@ class _DoctrineCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0x1AFFFFFF),
+                color: context.colors.systemGray6,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -101,6 +108,7 @@ class _DoctrineCard extends StatelessWidget {
                 color: context.colors.primaryButton,
               ),
             ),
+
             const SizedBox(width: 16),
             Expanded(
               child: Column(
