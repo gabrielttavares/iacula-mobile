@@ -27,7 +27,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             constraints: const BoxConstraints(maxWidth: 460),
             child: ListView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(IaculaSpacing.md),
+              padding: EdgeInsets.fromLTRB(
+                IaculaSpacing.md,
+                IaculaSpacing.md,
+                IaculaSpacing.md,
+                IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+              ),
               children: [
                 const _BrandBlock(),
                 const SizedBox(height: IaculaSpacing.md),

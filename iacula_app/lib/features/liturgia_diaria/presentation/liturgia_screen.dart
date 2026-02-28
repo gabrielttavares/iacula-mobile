@@ -178,6 +178,10 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                   Expanded(
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.paddingOf(context).bottom +
+                            IaculaSpacing.md,
+                      ),
                       child: IaculaSoftCard(
                         child: _SegmentedContent(
                           day: selected,

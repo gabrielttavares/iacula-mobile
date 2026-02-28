@@ -133,8 +133,10 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                           ),
                         )
                       : ListView(
-                          padding:
-                              const EdgeInsets.only(bottom: 80.0, top: 8.0),
+                          padding: EdgeInsets.only(
+                            bottom: 80.0 + MediaQuery.paddingOf(context).bottom,
+                            top: 8.0,
+                          ),
                           physics: const BouncingScrollPhysics(),
                           children: [
                             if (morningItems.isNotEmpty)
@@ -425,6 +427,9 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
         child: SafeArea(
           top: false,
           child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

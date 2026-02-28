@@ -23,7 +23,12 @@ class MeditationDetailScreen extends StatelessWidget {
       child: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(IaculaSpacing.md),
+          padding: EdgeInsets.fromLTRB(
+            IaculaSpacing.md,
+            IaculaSpacing.md,
+            IaculaSpacing.md,
+            IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -75,7 +75,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 520),
             child: ListView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.fromLTRB(
+                20,
+                20,
+                20,
+                20 + MediaQuery.paddingOf(context).bottom,
+              ),
               children: [
                 Text('Iacula Premium', style: context.textStyles.sectionTitle),
                 const SizedBox(height: 10),

@@ -86,7 +86,12 @@ class PrayerCatalogGroupScreen extends ConsumerWidget {
               );
             }
             return ListView.separated(
-              padding: const EdgeInsets.all(IaculaSpacing.md),
+              padding: EdgeInsets.fromLTRB(
+                IaculaSpacing.md,
+                IaculaSpacing.md,
+                IaculaSpacing.md,
+                IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+              ),
               itemCount: entries.length,
               separatorBuilder: (context, index) =>
                   const SizedBox(height: IaculaSpacing.sm),

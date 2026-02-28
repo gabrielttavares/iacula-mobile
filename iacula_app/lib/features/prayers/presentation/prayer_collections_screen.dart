@@ -97,6 +97,10 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                   return Expanded(
                     child: ListView.builder(
                       physics: const BouncingScrollPhysics(),
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.paddingOf(context).bottom +
+                            IaculaSpacing.md,
+                      ),
                       itemCount: grouped.length,
                       itemBuilder: (context, index) {
                         final group = grouped[index];

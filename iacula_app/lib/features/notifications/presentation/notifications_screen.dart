@@ -35,7 +35,12 @@ class NotificationsScreen extends ConsumerWidget {
               );
             }
             return ListView(
-              padding: const EdgeInsets.all(IaculaSpacing.md),
+              padding: EdgeInsets.fromLTRB(
+                IaculaSpacing.md,
+                IaculaSpacing.md,
+                IaculaSpacing.md,
+                IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+              ),
               children: [
                 const IaculaLargeTitle('Última notificação'),
                 const SizedBox(height: IaculaSpacing.md),

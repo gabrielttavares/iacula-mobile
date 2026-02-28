@@ -55,11 +55,11 @@ class _HeroReflectionContent extends StatelessWidget {
         HeroReflectionSheet._seasonReflections[LiturgicalSeason.ordinary]!;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
         IaculaSpacing.md,
         IaculaSpacing.lg,
         IaculaSpacing.md,
-        IaculaSpacing.xl,
+        IaculaSpacing.xl + MediaQuery.paddingOf(context).bottom,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -103,8 +103,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       ),
                     )
                   : ListView.separated(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: IaculaSpacing.md,
+                      padding: EdgeInsets.only(
+                        left: IaculaSpacing.md,
+                        right: IaculaSpacing.md,
+                        bottom: MediaQuery.paddingOf(context).bottom +
+                            IaculaSpacing.md,
                       ),
                       itemCount: _results.length,
                       separatorBuilder: (context, index) => const SizedBox(height: 8),

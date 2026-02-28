@@ -115,6 +115,10 @@ class _PrayerCatalogDetailScreenState
                   Expanded(
                     child: ListView.separated(
                       physics: const BouncingScrollPhysics(),
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.paddingOf(context).bottom +
+                            IaculaSpacing.md,
+                      ),
                       itemCount: contentBlocks.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: IaculaSpacing.md),

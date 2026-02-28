@@ -123,7 +123,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  12,
+                  16,
+                  28 + MediaQuery.paddingOf(context).bottom,
+                ),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     _AnimatedHomeBlock(

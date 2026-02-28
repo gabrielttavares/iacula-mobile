@@ -28,7 +28,12 @@ class DoctrineDetailScreen extends ConsumerWidget {
           ),
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(IaculaSpacing.md),
+              padding: EdgeInsets.fromLTRB(
+                IaculaSpacing.md,
+                IaculaSpacing.md,
+                IaculaSpacing.md,
+                IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+              ),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(

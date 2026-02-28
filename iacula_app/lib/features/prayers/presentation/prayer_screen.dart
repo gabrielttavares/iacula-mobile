@@ -82,6 +82,10 @@ class PrayerScreen extends ConsumerWidget {
                       Expanded(
                         child: ListView.separated(
                           physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.paddingOf(context).bottom +
+                                IaculaSpacing.md,
+                          ),
                           itemCount: prayer.verses.length + 1,
                           separatorBuilder: (_, _) =>
                               const SizedBox(height: 12),

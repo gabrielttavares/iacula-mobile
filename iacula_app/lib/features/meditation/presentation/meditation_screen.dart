@@ -94,6 +94,9 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
 
     return ListView.separated(
       physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+      ),
       itemCount: items.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {

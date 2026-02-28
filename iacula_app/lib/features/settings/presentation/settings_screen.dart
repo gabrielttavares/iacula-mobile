@@ -296,6 +296,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ]),
               ),
             ),
+            SliverPadding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+              ),
+            ),
           ],
         ),
       ),
