@@ -49,6 +49,33 @@ flutter:
     - assets/seed/prayers/pt-br/
     - assets/seed/prayers/details/
     - assets/seed/images/
+    - assets/seed/images/advent/
+    - assets/seed/images/angelus/
+    - assets/seed/images/christmas/
+    - assets/seed/images/easter/
+    - assets/seed/images/feasts/all-saints/
+    - assets/seed/images/feasts/assumption/
+    - assets/seed/images/feasts/corpus-christi/
+    - assets/seed/images/feasts/easter-sunday/
+    - assets/seed/images/feasts/easter-vigil/
+    - assets/seed/images/feasts/good-friday/
+    - assets/seed/images/feasts/holy-thursday/
+    - assets/seed/images/feasts/holy-trinity/
+    - assets/seed/images/feasts/immaculate-conception/
+    - assets/seed/images/feasts/our-lady-aparecida/
+    - assets/seed/images/feasts/palm-sunday/
+    - assets/seed/images/feasts/pentecost/
+    - assets/seed/images/feasts/st-joseph/
+    - assets/seed/images/feasts/sts-peter-paul/
+    - assets/seed/images/lent/
+    - assets/seed/images/ordinary/1/
+    - assets/seed/images/ordinary/2/
+    - assets/seed/images/ordinary/3/
+    - assets/seed/images/ordinary/4/
+    - assets/seed/images/ordinary/5/
+    - assets/seed/images/ordinary/6/
+    - assets/seed/images/ordinary/7/
+    - assets/seed/images/reginaCaeli/
     - assets/seed/audio/
     - assets/seed/meditations/
     - assets/seed/doctrina/pt-br/
