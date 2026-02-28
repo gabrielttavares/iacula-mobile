@@ -40,140 +40,124 @@ class HomeHeroCard extends ConsumerWidget {
         key: const Key('home_hero_card'),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(IaculaRadius.banner),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x12000000),
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 240),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(IaculaRadius.banner),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: imagePath != null
-                    ? Image.asset(
-                        imagePath,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: Color(0xFF3D3125),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x12000000),
+              blurRadius: 10,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 240),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(IaculaRadius.banner),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: imagePath != null
+                      ? Image.asset(
+                          imagePath,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF3D3125),
+                                ),
                               ),
-                            ),
-                      )
-                    : const DecoratedBox(
-                        decoration: BoxDecoration(color: Color(0xFF3D3125)),
+                        )
+                      : const DecoratedBox(
+                          decoration: BoxDecoration(color: Color(0xFF3D3125)),
+                        ),
+                ),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          CupertinoColors.black.withValues(alpha: 0.3),
+                          CupertinoColors.black.withValues(alpha: 0.86),
+                        ],
                       ),
-              ),
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        CupertinoColors.black.withValues(alpha: 0.3),
-                        CupertinoColors.black.withValues(alpha: 0.86),
-                      ],
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(32, 32),
-                          onPressed: () async {
-                            final repo = ref.read(favoriteRepositoryProvider);
-                            final alreadySaved = await repo.isFavorite(
-                              quote.text,
-                            );
-                            if (!alreadySaved) {
-                              await repo.save(
-                                FavoriteItem(
-                                  id: DateTime.now().millisecondsSinceEpoch
-                                      .toString(),
-                                  quoteText: quote.text,
-                                  theme: quote.theme,
-                                  season: quote.season.name,
-                                  savedAt: DateTime.now(),
-                                  imagePath: quote.imagePath,
-                                  feastName: quote.feastName,
-                                ),
+                Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(32, 32),
+                            onPressed: () async {
+                              final repo = ref.read(favoriteRepositoryProvider);
+                              final alreadySaved = await repo.isFavorite(
+                                quote.text,
                               );
-                            }
-                          },
-                          child: Icon(
-                            CupertinoIcons.bookmark,
-                            color: context.colors.primaryButton,
-                            size: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          quote.text,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Color(0xFFF6F6F8),
-                            height: 1.5,
-                          ),
-                        ),
-                        if (isFallback)
-                          const Padding(
-                            padding: EdgeInsets.only(top: 4),
-                            child: Text(
-                              'Tempo litúrgico indisponível',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Color(0x99F6F6F8),
-                              ),
+                              if (!alreadySaved) {
+                                await repo.save(
+                                  FavoriteItem(
+                                    id: DateTime.now().millisecondsSinceEpoch
+                                        .toString(),
+                                    quoteText: quote.text,
+                                    theme: quote.theme,
+                                    season: quote.season.name,
+                                    savedAt: DateTime.now(),
+                                    imagePath: quote.imagePath,
+                                    feastName: quote.feastName,
+                                  ),
+                                );
+                              }
+                            },
+                            child: Icon(
+                              CupertinoIcons.bookmark,
+                              color: context.colors.primaryButton,
+                              size: 20,
                             ),
                           ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    CupertinoButton(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
+                        ],
                       ),
-                      minimumSize: Size.zero,
-                      color: const Color(0x26FFFFFF),
-                      borderRadius: BorderRadius.circular(20),
-                      onPressed: onOpenPremium,
-                      child: Text(
-                        'Conhecer Premium',
-                        style: TextStyle(
-                          color: context.colors.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      const SizedBox(height: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            quote.text,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFFF6F6F8),
+                              height: 1.5,
+                            ),
+                          ),
+                          if (isFallback)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 4),
+                              child: Text(
+                                'Tempo litúrgico indisponível',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0x99F6F6F8),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 10),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 }
