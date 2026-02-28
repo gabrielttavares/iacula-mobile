@@ -48,7 +48,7 @@ class PrayerCollectionsScreen extends ConsumerWidget {
     final catalogAsync = ref.watch(_catalogProvider);
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(IaculaSpacing.md),
@@ -116,9 +116,9 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                                   ),
                                   child: Text(
                                     'Recursos Adicionais',
-                                    style: IaculaText.sectionTitle.copyWith(
+                                    style: context.textStyles.sectionTitle.copyWith(
                                       fontSize: 20,
-                                      color: IaculaColors.textPrimary,
+                                      color: context.colors.textPrimary,
                                     ),
                                   ),
                                 ),
@@ -126,8 +126,8 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                               ],
                               Text(
                                 group.sectionTitle,
-                                style: IaculaText.secondary.copyWith(
-                                  color: IaculaColors.textSecondary,
+                                style: context.textStyles.secondary.copyWith(
+                                  color: context.colors.textSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -164,7 +164,7 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                     const Center(child: CupertinoActivityIndicator()),
                 error: (error, stackTrace) => Text(
                   'Erro ao carregar orações',
-                  style: IaculaText.secondary,
+                  style: context.textStyles.secondary,
                 ),
               ),
             ],
@@ -200,13 +200,13 @@ class _PrayerCategoryCard extends StatelessWidget {
                 color: const Color(0x1AFFFFFF),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: IaculaColors.primaryButton),
+              child: Icon(icon, color: context.colors.primaryButton),
             ),
             const SizedBox(width: 16),
-            Expanded(child: Text(title, style: IaculaText.cardTitle)),
-            const Icon(
+            Expanded(child: Text(title, style: context.textStyles.cardTitle)),
+            Icon(
               CupertinoIcons.chevron_right,
-              color: IaculaColors.textSecondary,
+              color: context.colors.textSecondary,
             ),
           ],
         ),

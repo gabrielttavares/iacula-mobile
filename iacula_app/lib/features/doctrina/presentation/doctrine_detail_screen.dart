@@ -21,10 +21,10 @@ class DoctrineDetailScreen extends ConsumerWidget {
         final fontSize = snapshot.data?.prayerFontSize ?? 15.0;
 
         return CupertinoPageScaffold(
-          backgroundColor: IaculaColors.background,
+          backgroundColor: context.colors.background,
           navigationBar: CupertinoNavigationBar(
             middle: Text(entry.title),
-            backgroundColor: IaculaColors.background,
+            backgroundColor: context.colors.background,
           ),
           child: SafeArea(
             child: Padding(
@@ -39,7 +39,7 @@ class DoctrineDetailScreen extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             entry.title,
-                            style: IaculaText.sectionTitle.copyWith(
+                            style: context.textStyles.sectionTitle.copyWith(
                               fontSize: fontSize + 7,
                             ),
                           ),
@@ -50,8 +50,8 @@ class DoctrineDetailScreen extends ConsumerWidget {
                     const SizedBox(height: IaculaSpacing.lg),
                     Text(
                       entry.content,
-                      style: IaculaText.secondary.copyWith(
-                        color: IaculaColors.textPrimary,
+                      style: context.textStyles.secondary.copyWith(
+                        color: context.colors.textPrimary,
                         height: 1.6,
                         fontSize: fontSize,
                       ),

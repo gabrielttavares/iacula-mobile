@@ -51,7 +51,7 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
           children: [
             Text(
               'Escolha a data',
-              style: IaculaText.cardTitle,
+              style: context.textStyles.cardTitle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: IaculaSpacing.md),
@@ -72,7 +72,7 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
                 ),
                 Text(
                   '${_monthName(_visibleMonth.month)} ${_visibleMonth.year}',
-                  style: IaculaText.cardTitle,
+                  style: context.textStyles.cardTitle,
                 ),
                 CupertinoButton(
                   padding: EdgeInsets.zero,
@@ -134,7 +134,7 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: isSelected
-                              ? IaculaColors.primaryButton
+                              ? context.colors.primaryButton
                               : CupertinoColors.transparent,
                         ),
                         alignment: Alignment.center,
@@ -142,8 +142,8 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
                           '$dayNumber',
                           style: TextStyle(
                             color: isSelected
-                                ? IaculaColors.background
-                                : IaculaColors.textPrimary,
+                                ? context.colors.background
+                                : context.colors.textPrimary,
                             fontWeight: isSelected
                                 ? FontWeight.w600
                                 : FontWeight.w400,
@@ -203,7 +203,7 @@ class _WeekdayHeader extends StatelessWidget {
       child: Text(
         label,
         textAlign: TextAlign.center,
-        style: IaculaText.secondary,
+        style: context.textStyles.secondary,
       ),
     );
   }

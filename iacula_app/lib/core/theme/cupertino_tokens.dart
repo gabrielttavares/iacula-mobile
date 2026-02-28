@@ -1,6 +1,72 @@
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+class IaculaColorScheme {
+  final Color background;
+  final Color card;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color primaryButton;
+  final Color success;
+  final Color warning;
+  final Color error;
+  final Color separator;
+  final Color homeWarmBackground;
+  final Color homeSacredAccent;
+  final Color homeHeroTop;
+  final Color homeHeroBottom;
+
+  const IaculaColorScheme._({
+    required this.background,
+    required this.card,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.primaryButton,
+    required this.success,
+    required this.warning,
+    required this.error,
+    required this.separator,
+    required this.homeWarmBackground,
+    required this.homeSacredAccent,
+    required this.homeHeroTop,
+    required this.homeHeroBottom,
+  });
+
+  static const dark = IaculaColorScheme._(
+    background: Color(0xFF030D22),
+    card: Color(0xFF0C1938),
+    textPrimary: Color(0xFFFFFFFF),
+    textSecondary: Color(0xFF9AA9CD),
+    primaryButton: Color(0xFFF7F5EC),
+    success: Color(0xFF34C759),
+    warning: Color(0xFFFF9500),
+    error: Color(0xFFFF3B30),
+    separator: Color(0x33000000),
+    homeWarmBackground: Color(0xFF030D22),
+    homeSacredAccent: Color(0xFFF7F5EC),
+    homeHeroTop: Color(0xFF030D22),
+    homeHeroBottom: Color(0xFF05102A),
+  );
+
+  static const light = IaculaColorScheme._(
+    background: Color(0xFFF5F3EF),
+    card: Color(0xFFFFFFFF),
+    textPrimary: Color(0xFF030D22),
+    textSecondary: Color(0xFF5A6478),
+    primaryButton: Color(0xFF0975C8),
+    success: Color(0xFF34C759),
+    warning: Color(0xFFFF9500),
+    error: Color(0xFFFF3B30),
+    separator: Color(0x1A000000),
+    homeWarmBackground: Color(0xFFF5F3EF),
+    homeSacredAccent: Color(0xFF0975C8),
+    homeHeroTop: Color(0xFFF5F3EF),
+    homeHeroBottom: Color(0xFFEDE9DD),
+  );
+}
+
+/// Deprecated: use `context.colors` instead.
+@Deprecated('Use context.colors instead')
 final class IaculaColors {
   IaculaColors._();
 
@@ -17,6 +83,95 @@ final class IaculaColors {
   static const homeSacredAccent = Color(0xFFF7F5EC);
   static const homeHeroTop = Color(0xFF030D22);
   static const homeHeroBottom = Color(0xFF05102A);
+}
+
+class IaculaTextScheme {
+  final TextStyle largeTitle;
+  final TextStyle sectionTitle;
+  final TextStyle cardTitle;
+  final TextStyle secondary;
+  final TextStyle tabLabel;
+
+  const IaculaTextScheme._({
+    required this.largeTitle,
+    required this.sectionTitle,
+    required this.cardTitle,
+    required this.secondary,
+    required this.tabLabel,
+  });
+
+  factory IaculaTextScheme.from(IaculaColorScheme colors) => IaculaTextScheme._(
+    largeTitle: GoogleFonts.lora(
+      fontSize: 34,
+      fontWeight: FontWeight.w700,
+      color: colors.primaryButton,
+    ),
+    sectionTitle: GoogleFonts.lora(
+      fontSize: 22,
+      fontWeight: FontWeight.w600,
+      color: colors.primaryButton,
+    ),
+    cardTitle: GoogleFonts.lora(
+      fontSize: 17,
+      fontWeight: FontWeight.w600,
+      color: colors.primaryButton,
+    ),
+    secondary: GoogleFonts.lora(
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
+      color: colors.textSecondary,
+    ),
+    tabLabel: GoogleFonts.lora(
+      fontSize: 11,
+      fontWeight: FontWeight.w500,
+    ),
+  );
+}
+
+/// Deprecated: use `context.textStyles` instead.
+@Deprecated('Use context.textStyles instead')
+final class IaculaText {
+  IaculaText._();
+
+  static final largeTitle = GoogleFonts.lora(
+    fontSize: 34,
+    fontWeight: FontWeight.w700,
+    color: const Color(0xFFF7F5EC),
+  );
+
+  static final sectionTitle = GoogleFonts.lora(
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
+    color: const Color(0xFFF7F5EC),
+  );
+
+  static final cardTitle = GoogleFonts.lora(
+    fontSize: 17,
+    fontWeight: FontWeight.w600,
+    color: const Color(0xFFF7F5EC),
+  );
+
+  static final secondary = GoogleFonts.lora(
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+    color: IaculaColorScheme.dark.textSecondary,
+  );
+
+  static final tabLabel = GoogleFonts.lora(
+    fontSize: 11,
+    fontWeight: FontWeight.w500,
+  );
+}
+
+extension IaculaThemeX on BuildContext {
+  IaculaColorScheme get colors {
+    final brightness = CupertinoTheme.brightnessOf(this);
+    return brightness == Brightness.dark
+        ? IaculaColorScheme.dark
+        : IaculaColorScheme.light;
+  }
+
+  IaculaTextScheme get textStyles => IaculaTextScheme.from(colors);
 }
 
 final class IaculaShadows {
@@ -51,37 +206,4 @@ final class IaculaMetrics {
   static const inputHeight = 44.0;
   static const modalCornerRadius = 24.0;
   static const minTapTarget = 44.0;
-}
-
-final class IaculaText {
-  IaculaText._();
-
-  static final largeTitle = GoogleFonts.lora(
-    fontSize: 34,
-    fontWeight: FontWeight.w700,
-    color: const Color(0xFFF7F5EC),
-  );
-
-  static final sectionTitle = GoogleFonts.lora(
-    fontSize: 22,
-    fontWeight: FontWeight.w600,
-    color: const Color(0xFFF7F5EC),
-  );
-
-  static final cardTitle = GoogleFonts.lora(
-    fontSize: 17,
-    fontWeight: FontWeight.w600,
-    color: const Color(0xFFF7F5EC),
-  );
-
-  static final secondary = GoogleFonts.lora(
-    fontSize: 15,
-    fontWeight: FontWeight.w400,
-    color: IaculaColors.textSecondary,
-  );
-
-  static final tabLabel = GoogleFonts.lora(
-    fontSize: 11, 
-    fontWeight: FontWeight.w500,
-  );
 }

@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 5,
+      version: 6,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -41,7 +41,8 @@ final class AppDatabase {
             ora_media_time TEXT NOT NULL,
             onboarding_completed INTEGER NOT NULL DEFAULT 0,
             display_name TEXT,
-            prayer_font_size REAL NOT NULL DEFAULT 15.0
+            prayer_font_size REAL NOT NULL DEFAULT 15.0,
+            theme_mode TEXT NOT NULL DEFAULT 'dark'
           )
         ''');
 
@@ -102,6 +103,11 @@ final class AppDatabase {
         if (oldVersion < 5) {
           await db.execute(
             'ALTER TABLE settings ADD COLUMN prayer_font_size REAL NOT NULL DEFAULT 15.0',
+          );
+        }
+        if (oldVersion < 6) {
+          await db.execute(
+            "ALTER TABLE settings ADD COLUMN theme_mode TEXT NOT NULL DEFAULT 'dark'",
           );
         }
       },

@@ -36,10 +36,10 @@ class _PrayerCatalogDetailScreenState
     final settingsAsync = ref.watch(getSettingsUseCaseProvider).call();
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.entry.title),
-        backgroundColor: IaculaColors.background,
+        backgroundColor: context.colors.background,
       ),
       child: SafeArea(
         child: FutureBuilder(
@@ -50,7 +50,7 @@ class _PrayerCatalogDetailScreenState
             return detailAsync.when(
               loading: () => const Center(child: CupertinoActivityIndicator()),
               error: (error, stackTrace) => Center(
-                child: Text('Erro ao carregar oração', style: IaculaText.secondary),
+                child: Text('Erro ao carregar oração', style: context.textStyles.secondary),
               ),
               data: (detail) {
                 final available = detail.blocksByLanguage.keys.toList(
@@ -107,7 +107,7 @@ class _PrayerCatalogDetailScreenState
                       Text(
                         detail.titlesByLanguage[selectedLanguage] ??
                             widget.entry.title,
-                        style: IaculaText.sectionTitle.copyWith(
+                        style: context.textStyles.sectionTitle.copyWith(
                           fontSize: fontSize + 7,
                         ),
                       ),
@@ -121,8 +121,8 @@ class _PrayerCatalogDetailScreenState
                       itemBuilder: (context, index) {
                         return Text(
                           contentBlocks[index],
-                          style: IaculaText.secondary.copyWith(
-                            color: IaculaColors.textPrimary,
+                          style: context.textStyles.secondary.copyWith(
+                            color: context.colors.textPrimary,
                             height: 1.6,
                             fontSize: fontSize,
                           ),

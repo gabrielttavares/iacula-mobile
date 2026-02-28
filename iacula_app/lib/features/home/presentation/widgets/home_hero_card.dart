@@ -116,9 +116,9 @@ class HomeHeroCard extends ConsumerWidget {
                               );
                             }
                           },
-                          child: const Icon(
+                          child: Icon(
                             CupertinoIcons.bookmark,
-                            color: IaculaColors.primaryButton,
+                            color: context.colors.primaryButton,
                             size: 20,
                           ),
                         ),
@@ -159,10 +159,10 @@ class HomeHeroCard extends ConsumerWidget {
                       color: const Color(0x26FFFFFF),
                       borderRadius: BorderRadius.circular(20),
                       onPressed: onOpenPremium,
-                      child: const Text(
+                      child: Text(
                         'Conhecer Premium',
                         style: TextStyle(
-                          color: IaculaColors.textPrimary,
+                          color: context.colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

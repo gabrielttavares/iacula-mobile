@@ -20,7 +20,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -34,7 +34,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 Text(
                   'Jaculatórias, liturgia e plano de vida para rezar no ritmo do seu dia.',
                   textAlign: TextAlign.center,
-                  style: IaculaText.secondary,
+                  style: context.textStyles.secondary,
                 ),
                 const SizedBox(height: IaculaSpacing.xl),
                 const _ExclusiveFeatureCard(),
@@ -122,7 +122,7 @@ class _BrandBlock extends StatelessWidget {
           Text(
             'Iacula',
             textAlign: TextAlign.center,
-            style: IaculaText.largeTitle,
+            style: context.textStyles.largeTitle,
           ),
       ],
     );
@@ -143,11 +143,11 @@ class _ExclusiveFeatureCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(CupertinoIcons.bell_fill, color: IaculaColors.primaryButton),
-              const Text(
+              Icon(CupertinoIcons.bell_fill, color: context.colors.primaryButton),
+              Text(
                 'EXCLUSIVO',
                 style: TextStyle(
-                  color: IaculaColors.primaryButton,
+                  color: context.colors.primaryButton,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
                   letterSpacing: 0.6,
@@ -158,12 +158,12 @@ class _ExclusiveFeatureCard extends StatelessWidget {
           const SizedBox(height: IaculaSpacing.sm),
           Text(
             'Notificações diárias com Jaculatórias',
-            style: IaculaText.cardTitle,
+            style: context.textStyles.cardTitle,
           ),
           const SizedBox(height: 4),
           Text(
             'Angelus / Regina Caeli às 12:00 PM',
-            style: IaculaText.secondary,
+            style: context.textStyles.secondary,
           ),
         ],
       ),
@@ -194,11 +194,11 @@ class _FeatureCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: IaculaColors.primaryButton),
+            Icon(icon, color: context.colors.primaryButton),
             const SizedBox(height: IaculaSpacing.sm),
-            Text(title, style: IaculaText.cardTitle),
+            Text(title, style: context.textStyles.cardTitle),
             const SizedBox(height: 4),
-            Text(subtitle, style: IaculaText.secondary),
+            Text(subtitle, style: context.textStyles.secondary),
           ],
         ),
       ),

@@ -82,7 +82,7 @@ class _HorizontalFeatureCard extends StatelessWidget {
         child: Center(
           child: Text(
             label,
-            style: IaculaText.cardTitle.copyWith(fontSize: 16),
+            style: context.textStyles.cardTitle.copyWith(fontSize: 16),
             textAlign: TextAlign.center,
           ),
         ),

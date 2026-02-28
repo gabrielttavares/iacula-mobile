@@ -31,7 +31,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
     final catalogAsync = ref.watch(meditationCatalogProvider);
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(IaculaSpacing.md),
@@ -42,7 +42,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
               const SizedBox(height: 4),
               Text(
                 'Escolha pelo seu momento',
-                style: IaculaText.secondary,
+                style: context.textStyles.secondary,
               ),
               const SizedBox(height: IaculaSpacing.md),
               _FilterChips(
@@ -53,14 +53,14 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
               const SizedBox(height: IaculaSpacing.md),
               Expanded(
                 child: catalogAsync.when(
-                  data: (items) => _buildFeed(_applyFilter(items)),
+                  data: (items) => _buildFeed(context, _applyFilter(items)),
                   loading: () => const Center(
                     child: CupertinoActivityIndicator(),
                   ),
                   error: (_, _) => Center(
                     child: Text(
                       'Não foi possível carregar as meditações.',
-                      style: IaculaText.secondary,
+                      style: context.textStyles.secondary,
                     ),
                   ),
                 ),
@@ -80,12 +80,12 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
         .toList(growable: false);
   }
 
-  Widget _buildFeed(List<MeditationItem> items) {
+  Widget _buildFeed(BuildContext context, List<MeditationItem> items) {
     if (items.isEmpty) {
       return Center(
         child: Text(
           'Nenhuma meditação encontrada para este filtro.',
-          style: IaculaText.secondary,
+          style: context.textStyles.secondary,
         ),
       );
     }
@@ -139,8 +139,8 @@ class _FilterChips extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? IaculaColors.primaryButton
-                    : IaculaColors.card,
+                    ? context.colors.primaryButton
+                    : context.colors.card,
                 borderRadius: BorderRadius.circular(18),
                 border: isSelected
                     ? null
@@ -152,8 +152,8 @@ class _FilterChips extends StatelessWidget {
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isSelected
-                      ? IaculaColors.background
-                      : IaculaColors.textPrimary,
+                      ? context.colors.background
+                      : context.colors.textPrimary,
                 ),
               ),
             ),
@@ -187,11 +187,11 @@ class _MeditationFeedCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.title, style: IaculaText.cardTitle),
+                  Text(item.title, style: context.textStyles.cardTitle),
                   const SizedBox(height: 4),
                   Text(
                     item.summary,
-                    style: IaculaText.secondary,
+                    style: context.textStyles.secondary,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -214,9 +214,9 @@ class _MeditationFeedCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(
+            Icon(
               CupertinoIcons.chevron_right,
-              color: IaculaColors.textSecondary,
+              color: context.colors.textSecondary,
               size: 16,
             ),
           ],
@@ -234,7 +234,7 @@ class _TypeGlyph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (icon, color) = switch (type) {
-      MeditationType.video => (CupertinoIcons.play_circle, IaculaColors.primaryButton),
+      MeditationType.video => (CupertinoIcons.play_circle, context.colors.primaryButton),
       MeditationType.audio => (CupertinoIcons.waveform, const Color(0xFF34C759)),
       MeditationType.text => (CupertinoIcons.doc_text, const Color(0xFFFF9500)),
     };
@@ -261,15 +261,15 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: IaculaColors.textPrimary,
+        color: context.colors.textPrimary,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         text,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: IaculaColors.background,
+          color: context.colors.background,
         ),
       ),
     );

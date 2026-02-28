@@ -36,15 +36,15 @@ class IaculaListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: IaculaText.cardTitle),
+                  Text(title, style: context.textStyles.cardTitle),
                   const SizedBox(height: 2),
-                  Text(subtitle, style: IaculaText.secondary),
+                  Text(subtitle, style: context.textStyles.secondary),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               CupertinoIcons.bookmark,
-              color: IaculaColors.textSecondary,
+              color: context.colors.textSecondary,
             ),
           ],
         ),

@@ -23,7 +23,7 @@ class ProfileScreen extends ConsumerWidget {
     final email = user?.email ?? '\u2014';
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(IaculaSpacing.md),
@@ -73,12 +73,12 @@ class ProfileScreen extends ConsumerWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Text('Configurações', style: IaculaText.cardTitle),
+                      child: Text('Configurações', style: context.textStyles.cardTitle),
                     ),
                     Icon(
                       CupertinoIcons.chevron_right,
                       size: 18,
-                      color: IaculaColors.textSecondary,
+                      color: context.colors.textSecondary,
                     ),
                   ],
                 ),
@@ -116,7 +116,7 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             Text(
               'Editar nome',
-              style: IaculaText.cardTitle,
+              style: ctx.textStyles.cardTitle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: IaculaSpacing.md),
@@ -180,17 +180,17 @@ class _Avatar extends StatelessWidget {
           Container(
             width: 104,
             height: 104,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: IaculaColors.card,
+              color: context.colors.card,
             ),
             alignment: Alignment.center,
             child: Text(
               _initials,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
-                color: IaculaColors.textPrimary,
+                color: context.colors.textPrimary,
               ),
             ),
           ),
@@ -201,14 +201,14 @@ class _Avatar extends StatelessWidget {
               child: Container(
                 width: 32,
                 height: 32,
-                decoration: const BoxDecoration(
-                  color: IaculaColors.primaryButton,
+                decoration: BoxDecoration(
+                  color: context.colors.primaryButton,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   CupertinoIcons.pencil,
                   size: 16,
-                  color: IaculaColors.background,
+                  color: context.colors.background,
                 ),
               ),
             ),
@@ -237,10 +237,10 @@ class _Section extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,
                   onPressed: onEdit,
-                  child: const Text(
+                  child: Text(
                     'Editar',
                     style: TextStyle(
-                      color: IaculaColors.primaryButton,
+                      color: context.colors.primaryButton,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -281,9 +281,9 @@ class _InfoRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: IaculaText.secondary),
+        Text(label, style: context.textStyles.secondary),
         const SizedBox(height: 4),
-        Text(value, style: IaculaText.cardTitle),
+        Text(value, style: context.textStyles.cardTitle),
       ],
     );
   }

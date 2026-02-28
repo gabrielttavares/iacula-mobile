@@ -69,7 +69,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     ref.listen(authStateProvider, _onAuthTransition);
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -77,15 +77,16 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                Text('Iacula Premium', style: IaculaText.sectionTitle),
+                Text('Iacula Premium', style: context.textStyles.sectionTitle),
                 const SizedBox(height: 10),
               Text(
                 'Acesso vitalício por R\$ 39,90.',
-                style: IaculaText.secondary,
+                style: context.textStyles.secondary,
               ),
                 const SizedBox(height: 20),
-                _featureTile(CupertinoIcons.play_circle, 'Meditações'),
+                _featureTile(context, CupertinoIcons.play_circle, 'Meditações'),
                 _featureTile(
+                  context,
                   CupertinoIcons.check_mark_circled,
                   'Plano de vida',
                 ),
@@ -140,17 +141,17 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _featureTile(IconData icon, String label) {
+  Widget _featureTile(BuildContext context, IconData icon, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Icon(icon, color: IaculaColors.primaryButton),
+          Icon(icon, color: context.colors.primaryButton),
           const SizedBox(width: 10),
           Text(
             label,
-            style: IaculaText.secondary.copyWith(
-              color: IaculaColors.textPrimary,
+            style: context.textStyles.secondary.copyWith(
+              color: context.colors.textPrimary,
             ),
           ),
         ],

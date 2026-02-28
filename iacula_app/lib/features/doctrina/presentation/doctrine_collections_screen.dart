@@ -23,7 +23,7 @@ class DoctrineCollectionsScreen extends ConsumerWidget {
     final catalogAsync = ref.watch(_catalogProvider);
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(IaculaSpacing.md),
@@ -60,7 +60,7 @@ class DoctrineCollectionsScreen extends ConsumerWidget {
                     const Center(child: CupertinoActivityIndicator()),
                 error: (error, stackTrace) => Text(
                   'Erro ao carregar doutrina',
-                  style: IaculaText.secondary,
+                  style: context.textStyles.secondary,
                 ),
               ),
             ],
@@ -96,9 +96,9 @@ class _DoctrineCard extends StatelessWidget {
                 color: const Color(0x1AFFFFFF),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: Icon(
                 CupertinoIcons.book,
-                color: IaculaColors.primaryButton,
+                color: context.colors.primaryButton,
               ),
             ),
             const SizedBox(width: 16),
@@ -106,18 +106,18 @@ class _DoctrineCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: IaculaText.cardTitle),
+                  Text(title, style: context.textStyles.cardTitle),
                   if (category.isNotEmpty)
                     Text(
                       category,
-                      style: IaculaText.secondary,
+                      style: context.textStyles.secondary,
                     ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               CupertinoIcons.chevron_right,
-              color: IaculaColors.textSecondary,
+              color: context.colors.textSecondary,
             ),
           ],
         ),

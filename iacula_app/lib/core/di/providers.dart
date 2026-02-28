@@ -79,6 +79,8 @@ import '../bootstrap/bootstrap_status.dart';
 import '../config/app_env.dart';
 import '../storage/isar/isar_store.dart';
 
+final themeModeProvider = StateProvider<String>((ref) => 'dark');
+
 final appEnvProvider = Provider<AppEnv>((ref) => AppEnv.fromDartDefines());
 
 final bootstrapStatusProvider = Provider<BootstrapStatus>((ref) {

@@ -17,6 +17,7 @@ final class Settings {
     required this.onboardingCompleted,
     this.displayName,
     this.prayerFontSize = 15.0,
+    this.themeMode = 'dark',
   });
 
   final int intervalMinutes;
@@ -36,6 +37,7 @@ final class Settings {
   final bool onboardingCompleted;
   final String? displayName;
   final double prayerFontSize;
+  final String themeMode;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -74,6 +76,7 @@ final class Settings {
     bool? onboardingCompleted,
     String? displayName,
     double? prayerFontSize,
+    String? themeMode,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
@@ -95,6 +98,7 @@ final class Settings {
       onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
       displayName: displayName ?? this.displayName,
       prayerFontSize: prayerFontSize ?? this.prayerFontSize,
+      themeMode: themeMode ?? this.themeMode,
     );
   }
 }

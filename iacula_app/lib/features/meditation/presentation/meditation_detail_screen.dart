@@ -14,10 +14,10 @@ class MeditationDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       navigationBar: CupertinoNavigationBar(
         middle: Text(item.sourceName),
-        backgroundColor: IaculaColors.background,
+        backgroundColor: context.colors.background,
         border: null,
       ),
       child: SafeArea(
@@ -59,9 +59,9 @@ class _Header extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.title, style: IaculaText.sectionTitle),
+                    Text(item.title, style: context.textStyles.sectionTitle),
                     const SizedBox(height: 4),
-                    Text(item.sourceName, style: IaculaText.secondary),
+                    Text(item.sourceName, style: context.textStyles.secondary),
                   ],
                 ),
               ),
@@ -125,15 +125,15 @@ class _TextContent extends StatelessWidget {
             for (final section in content.sections!) ...[
               Text(
                 section.heading,
-                style: IaculaText.cardTitle,
+                style: context.textStyles.cardTitle,
               ),
               const SizedBox(height: 8),
               Text(
                 section.body,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   height: 1.6,
-                  color: IaculaColors.textPrimary,
+                  color: context.colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 16),
@@ -141,10 +141,10 @@ class _TextContent extends StatelessWidget {
           else
             Text(
               content.body,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 height: 1.6,
-                color: IaculaColors.textPrimary,
+                color: context.colors.textPrimary,
               ),
             ),
         ],
@@ -177,17 +177,17 @@ class _MediaContent extends StatelessWidget {
                     ? CupertinoIcons.play_circle_fill
                     : CupertinoIcons.waveform_circle_fill,
                 size: 64,
-                color: IaculaColors.primaryButton,
+                color: context.colors.primaryButton,
               ),
             ),
           ),
           const SizedBox(height: 16),
           Text(
             item.summary,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               height: 1.5,
-              color: IaculaColors.textSecondary,
+              color: context.colors.textSecondary,
             ),
           ),
         ],
@@ -255,7 +255,7 @@ class _TypeIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (icon, color) = switch (type) {
-      MeditationType.video => (CupertinoIcons.play_circle, IaculaColors.primaryButton),
+      MeditationType.video => (CupertinoIcons.play_circle, context.colors.primaryButton),
       MeditationType.audio => (CupertinoIcons.waveform, const Color(0xFF34C759)),
       MeditationType.text => (CupertinoIcons.doc_text, const Color(0xFFFF9500)),
     };
@@ -290,15 +290,15 @@ class _DetailBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 13, color: IaculaColors.textSecondary),
+            Icon(icon, size: 13, color: context.colors.textSecondary),
             const SizedBox(width: 4),
           ],
           Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: IaculaColors.textSecondary,
+              color: context.colors.textSecondary,
             ),
           ),
         ],

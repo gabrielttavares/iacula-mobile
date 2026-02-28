@@ -35,6 +35,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _complineEnabled = false;
   bool _oraMediaEnabled = false;
   bool _onboardingCompleted = false;
+  String _themeMode = 'dark';
 
   bool _loading = true;
   bool _saving = false;
@@ -67,6 +68,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _complineEnabled = settings.complineEnabled;
     _oraMediaEnabled = settings.oraMediaEnabled;
     _onboardingCompleted = settings.onboardingCompleted;
+    _themeMode = settings.themeMode;
 
     if (mounted) {
       setState(() => _loading = false);
@@ -92,12 +94,56 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(IaculaSpacing.md),
           children: [
             const IaculaLargeTitle('Configurações'),
+            const SizedBox(height: IaculaSpacing.lg),
+            const IaculaSectionHeader(title: 'Aparência'),
+            const SizedBox(height: IaculaSpacing.sm),
+            IaculaSoftCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _fieldLabel(context, 'Tema'),
+                  const SizedBox(height: 8),
+                  CupertinoSlidingSegmentedControl<String>(
+                    groupValue: _themeMode,
+                    children: const {
+                      'light': Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text('Claro'),
+                      ),
+                      'dark': Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text('Escuro'),
+                      ),
+                      'system': Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        child: Text('Sistema'),
+                      ),
+                    },
+                    onValueChanged: (value) {
+                      if (value != null) {
+                        setState(() => _themeMode = value);
+                        ref.read(themeModeProvider.notifier).state = value;
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: IaculaSpacing.lg),
             const IaculaSectionHeader(title: 'Dados da conta'),
             const SizedBox(height: IaculaSpacing.sm),
@@ -105,14 +151,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _fieldLabel('Intervalo (minutos)'),
+                  _fieldLabel(context, 'Intervalo (minutos)'),
                   IaculaTextInput(
                     controller: _intervalController,
                     placeholder: '1..60',
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: IaculaSpacing.md),
-                  _fieldLabel('Idioma'),
+                  _fieldLabel(context, 'Idioma'),
                   const SizedBox(height: 8),
                   CupertinoSlidingSegmentedControl<String>(
                     groupValue: _language,
@@ -146,7 +192,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     },
                   ),
                   const SizedBox(height: IaculaSpacing.md),
-                  _switchRow(
+                  _switchRow(context,
                     title: 'Som no lembrete liturgico',
                     value: _soundEnabled,
                     onChanged: (v) => setState(() => _soundEnabled = v),
@@ -169,25 +215,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             IaculaSoftCard(
               child: Column(
                 children: [
-                  _moduleRow(
+                  _moduleRow(context,
                     'Laudes',
                     _laudesEnabled,
                     (v) => setState(() => _laudesEnabled = v),
                     _laudesTimeController,
                   ),
-                  _moduleRow(
+                  _moduleRow(context,
                     'Vesperas',
                     _vespersEnabled,
                     (v) => setState(() => _vespersEnabled = v),
                     _vespersTimeController,
                   ),
-                  _moduleRow(
+                  _moduleRow(context,
                     'Completas',
                     _complineEnabled,
                     (v) => setState(() => _complineEnabled = v),
                     _complineTimeController,
                   ),
-                  _moduleRow(
+                  _moduleRow(context,
                     'Ora Media',
                     _oraMediaEnabled,
                     (v) => setState(() => _oraMediaEnabled = v),
@@ -202,7 +248,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: IaculaSpacing.md),
               IaculaInlineMessage(
                 message: _validationMessage!,
-                color: IaculaColors.error,
+                color: context.colors.error,
               ),
             ],
             const SizedBox(height: IaculaSpacing.lg),
@@ -217,14 +263,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  Widget _fieldLabel(String label) {
+  Widget _fieldLabel(BuildContext context, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: Text(label, style: IaculaText.secondary),
+      child: Text(label, style: context.textStyles.secondary),
     );
   }
 
-  Widget _switchRow({
+  Widget _switchRow(BuildContext context, {
     required String title,
     required bool value,
     required ValueChanged<bool> onChanged,
@@ -232,13 +278,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(child: Text(title, style: IaculaText.cardTitle)),
+        Expanded(child: Text(title, style: context.textStyles.cardTitle)),
         CupertinoSwitch(value: value, onChanged: onChanged),
       ],
     );
   }
 
-  Widget _moduleRow(
+  Widget _moduleRow(BuildContext context,
     String label,
     bool enabled,
     ValueChanged<bool> onChanged,
@@ -248,11 +294,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       padding: const EdgeInsets.only(bottom: IaculaSpacing.md),
       child: Column(
         children: [
-          _switchRow(title: label, value: enabled, onChanged: onChanged),
+          _switchRow(context, title: label, value: enabled, onChanged: onChanged),
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerLeft,
-            child: _fieldLabel('Horario (HH:MM)'),
+            child: _fieldLabel(context, 'Horario (HH:MM)'),
           ),
           IaculaTimeInput(controller: controller),
         ],
@@ -317,6 +363,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       complineTime: _complineTimeController.text,
       oraMediaTime: _oraMediaTimeController.text,
       onboardingCompleted: _onboardingCompleted,
+      themeMode: _themeMode,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);

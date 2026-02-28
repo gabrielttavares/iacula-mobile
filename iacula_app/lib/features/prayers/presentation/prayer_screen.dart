@@ -21,7 +21,7 @@ class PrayerScreen extends ConsumerWidget {
         final fontSize = snapshot.data?.prayerFontSize ?? 15.0;
 
         return CupertinoPageScaffold(
-          backgroundColor: IaculaColors.background,
+          backgroundColor: context.colors.background,
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -55,15 +55,15 @@ class PrayerScreen extends ConsumerWidget {
                           CupertinoButton(
                             padding: EdgeInsets.zero,
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(CupertinoIcons.back,
-                                    size: 18, color: IaculaColors.primaryButton),
-                                SizedBox(width: 4),
+                                    size: 18, color: context.colors.primaryButton),
+                                const SizedBox(width: 4),
                                 Text('Orações',
                                     style: TextStyle(
-                                        color: IaculaColors.primaryButton)),
+                                        color: context.colors.primaryButton)),
                               ],
                             ),
                           ),
@@ -73,9 +73,9 @@ class PrayerScreen extends ConsumerWidget {
                       ),
                       Text(
                         prayer.title,
-                        style: IaculaText.sectionTitle.copyWith(
+                        style: context.textStyles.sectionTitle.copyWith(
                           fontSize: fontSize + 7,
-                          color: IaculaColors.primaryButton,
+                          color: context.colors.primaryButton,
                         ),
                       ),
                       const SizedBox(height: IaculaSpacing.sm),
@@ -89,8 +89,8 @@ class PrayerScreen extends ConsumerWidget {
                             if (index == prayer.verses.length) {
                               return Text(
                                 prayer.prayer,
-                                style: IaculaText.secondary.copyWith(
-                                  color: IaculaColors.textSecondary,
+                                style: context.textStyles.secondary.copyWith(
+                                  color: context.colors.textSecondary,
                                   height: 1.5,
                                   fontSize: fontSize,
                                 ),
@@ -103,8 +103,8 @@ class PrayerScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   verse.verse,
-                                  style: IaculaText.secondary.copyWith(
-                                    color: IaculaColors.textPrimary,
+                                  style: context.textStyles.secondary.copyWith(
+                                    color: context.colors.textPrimary,
                                     height: 1.5,
                                     fontSize: fontSize,
                                   ),
@@ -113,8 +113,8 @@ class PrayerScreen extends ConsumerWidget {
                                   const SizedBox(height: 4),
                                   Text(
                                     verse.response,
-                                    style: IaculaText.secondary.copyWith(
-                                      color: IaculaColors.textSecondary,
+                                    style: context.textStyles.secondary.copyWith(
+                                      color: context.colors.textSecondary,
                                       fontStyle: FontStyle.italic,
                                       height: 1.45,
                                       fontSize: fontSize,

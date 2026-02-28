@@ -70,22 +70,22 @@ class _LockedFallback extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 CupertinoIcons.lock,
                 size: 48,
-                color: IaculaColors.primaryButton,
+                color: context.colors.primaryButton,
               ),
               const SizedBox(height: 16),
               Text(
                 'Recurso Premium',
                 textAlign: TextAlign.center,
-                style: IaculaText.sectionTitle,
+                style: context.textStyles.sectionTitle,
               ),
               const SizedBox(height: 12),
               Text(
                 '${_label(feature)} está disponível no acesso Premium vitalício por R\$ 39,90.',
                 textAlign: TextAlign.center,
-                style: IaculaText.secondary,
+                style: context.textStyles.secondary,
               ),
               const SizedBox(height: 24),
               IaculaPrimaryPillButton(
@@ -126,22 +126,22 @@ class _PremiumGateModal extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(
+            Icon(
               CupertinoIcons.lock,
               size: 48,
-              color: IaculaColors.primaryButton,
+              color: context.colors.primaryButton,
             ),
             const SizedBox(height: 16),
             Text(
               'Recurso Premium',
               textAlign: TextAlign.center,
-              style: IaculaText.sectionTitle,
+              style: context.textStyles.sectionTitle,
             ),
             const SizedBox(height: 12),
             Text(
               '${_LockedFallback._label(feature)} está disponível no acesso Premium vitalício por R\$ 39,90.',
               textAlign: TextAlign.center,
-              style: IaculaText.secondary,
+              style: context.textStyles.secondary,
             ),
             const SizedBox(height: 24),
             IaculaPrimaryPillButton(

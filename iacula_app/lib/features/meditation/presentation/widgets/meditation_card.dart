@@ -43,12 +43,12 @@ class MeditationCard extends StatelessWidget {
         radius: 16,
         child: Row(
           children: [
-            Icon(platformIcon, color: IaculaColors.primaryButton, size: 28),
+            Icon(platformIcon, color: context.colors.primaryButton, size: 28),
             const SizedBox(width: 16),
-            Expanded(child: Text(title, style: IaculaText.cardTitle)),
-            const Icon(
+            Expanded(child: Text(title, style: context.textStyles.cardTitle)),
+            Icon(
               CupertinoIcons.chevron_right,
-              color: IaculaColors.textSecondary,
+              color: context.colors.textSecondary,
               size: 16,
             ),
           ],

@@ -85,20 +85,20 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
         children: [
           Text(
             widget.title,
-            style: IaculaText.cardTitle,
+            style: context.textStyles.cardTitle,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             widget.subtitle,
-            style: IaculaText.secondary,
+            style: context.textStyles.secondary,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: IaculaSpacing.lg),
           if (_errorMessage != null) ...[
             IaculaInlineMessage(
               message: _errorMessage!,
-              color: IaculaColors.error,
+              color: context.colors.error,
             ),
             const SizedBox(height: IaculaSpacing.md),
           ],
@@ -106,10 +106,11 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
             Text(
               'Conectado como ${widget.signedInEmail}',
               textAlign: TextAlign.center,
-              style: IaculaText.secondary,
+              style: context.textStyles.secondary,
             ),
             const SizedBox(height: IaculaSpacing.md),
             _buildButton(
+              context: context,
               label: 'Sair da conta',
               provider: _AuthProvider.signout,
               onPressed: widget.onSignOut,
@@ -118,6 +119,7 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
           ] else ...[
             if (showApple && platform == TargetPlatform.iOS) ...[
               _buildButton(
+                context: context,
                 label: 'Continuar com Apple',
                 provider: _AuthProvider.apple,
                 onPressed: widget.onApple,
@@ -126,6 +128,7 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
               const SizedBox(height: IaculaSpacing.sm),
             ],
             _buildButton(
+              context: context,
               label: 'Continuar com Google',
               provider: _AuthProvider.google,
               onPressed: widget.onGoogle,
@@ -133,6 +136,7 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
             ),
             const SizedBox(height: IaculaSpacing.sm),
             _buildButton(
+              context: context,
               label: 'Continuar com Microsoft',
               provider: _AuthProvider.microsoft,
               onPressed: widget.onMicrosoft,
@@ -141,6 +145,7 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
             if (showApple && platform != TargetPlatform.iOS) ...[
               const SizedBox(height: IaculaSpacing.sm),
               _buildButton(
+                context: context,
                 label: 'Continuar com Apple',
                 provider: _AuthProvider.apple,
                 onPressed: widget.onApple,
@@ -151,7 +156,7 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
           const SizedBox(height: IaculaSpacing.lg),
           Text(
             'Ao continuar, você concorda com nossos Termos de Serviço e Política de Privacidade.',
-            style: IaculaText.secondary,
+            style: context.textStyles.secondary,
             textAlign: TextAlign.center,
           ),
         ],
@@ -160,6 +165,7 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
   }
 
   Widget _buildButton({
+    required BuildContext context,
     required String label,
     required _AuthProvider provider,
     required Future<void> Function()? onPressed,
@@ -175,7 +181,7 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: primary
-                ? IaculaColors.primaryButton
+                ? context.colors.primaryButton
                 : const Color(0x33000000),
             borderRadius: BorderRadius.circular(26),
           ),

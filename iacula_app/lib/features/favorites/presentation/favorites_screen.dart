@@ -16,7 +16,7 @@ class FavoritesScreen extends ConsumerWidget {
     final favoritesAsync = ref.watch(favoritesProvider);
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: favoritesAsync.when(
           data: (favorites) {
@@ -89,12 +89,12 @@ class _FavoriteCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.theme, style: IaculaText.secondary),
+                Text(item.theme, style: context.textStyles.secondary),
                 const SizedBox(height: 4),
-                Text(item.quoteText, style: IaculaText.cardTitle),
+                Text(item.quoteText, style: context.textStyles.cardTitle),
                 if (item.feastName != null) ...[
                   const SizedBox(height: 4),
-                  Text(item.feastName!, style: IaculaText.secondary),
+                  Text(item.feastName!, style: context.textStyles.secondary),
                 ],
               ],
             ),

@@ -46,7 +46,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
     final asyncDays = ref.watch(_liturgyPeriodProvider(_anchorDate));
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: asyncDays.when(
           data: (days) {
@@ -54,7 +54,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
               return Center(
                 child: Text(
                   'A liturgia não está disponível agora.',
-                  style: IaculaText.secondary,
+                  style: context.textStyles.secondary,
                 ),
               );
             }
@@ -87,10 +87,10 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                           if (!mounted) return;
                           _selectDateFromCalendar(picked, days);
                         },
-                        child: const Text(
+                        child: Text(
                           'Calendário',
                           style: TextStyle(
-                            color: IaculaColors.primaryButton,
+                            color: context.colors.primaryButton,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -116,7 +116,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                               borderRadius: BorderRadius.circular(20),
                               color: selectedDay
                                   ? accent.withValues(alpha: 0.18)
-                                  : IaculaColors.background,
+                                  : context.colors.background,
                               border: Border.all(
                                 color: selectedDay
                                     ? accent
@@ -127,8 +127,8 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                               _dayLabel(day.date),
                               style: TextStyle(
                                 color: selectedDay
-                                    ? IaculaColors.textPrimary
-                                    : IaculaColors.textSecondary,
+                                    ? context.colors.textPrimary
+                                    : context.colors.textSecondary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -173,7 +173,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                     },
                   ),
                   const SizedBox(height: IaculaSpacing.md),
-                  Text(selected.title, style: IaculaText.sectionTitle),
+                  Text(selected.title, style: context.textStyles.sectionTitle),
                   const SizedBox(height: IaculaSpacing.sm),
                   Expanded(
                     child: SingleChildScrollView(
@@ -193,7 +193,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
           error: (error, _) => Center(
             child: Text(
               'Não foi possível carregar a liturgia: $error',
-              style: IaculaText.secondary,
+              style: context.textStyles.secondary,
             ),
           ),
           loading: () => const Center(child: CupertinoActivityIndicator()),
@@ -294,7 +294,7 @@ class _SegmentedContent extends StatelessWidget {
               )
             else
               for (final reading in day.readings) ...[
-                Text(reading.title, style: IaculaText.cardTitle),
+                Text(reading.title, style: context.textStyles.cardTitle),
                 const SizedBox(height: 4),
                 _Line(
                   label: reading.reference.isEmpty
@@ -349,7 +349,7 @@ class _Line extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(
         '$label: $text',
-        style: IaculaText.secondary.copyWith(color: IaculaColors.textPrimary),
+        style: context.textStyles.secondary.copyWith(color: context.colors.textPrimary),
       ),
     );
   }

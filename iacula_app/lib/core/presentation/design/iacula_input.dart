@@ -33,8 +33,8 @@ class IaculaTextInput extends StatelessWidget {
       maxLines: maxLines,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: IaculaColors.card,
-        border: Border.all(color: IaculaColors.separator),
+        color: context.colors.card,
+        border: Border.all(color: context.colors.separator),
         borderRadius: BorderRadius.circular(IaculaRadius.small),
       ),
       onChanged: onChanged,
@@ -82,14 +82,14 @@ class IaculaValidatedInput extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: IaculaText.secondary),
+        Text(label, style: context.textStyles.secondary),
         const SizedBox(height: 6),
         child,
         if (errorText != null) ...[
           const SizedBox(height: 6),
           Text(
             errorText!,
-            style: IaculaText.secondary.copyWith(color: IaculaColors.error),
+            style: context.textStyles.secondary.copyWith(color: context.colors.error),
           ),
         ],
       ],

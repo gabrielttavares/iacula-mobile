@@ -26,8 +26,8 @@ class FontSizeControls extends ConsumerWidget {
         final fontSize = snapshot.data?.prayerFontSize ?? 15.0;
 
             final iconColor = isDarkBackground
-            ? IaculaColors.primaryButton.withValues(alpha: 0.7)
-            : IaculaColors.textSecondary;
+            ? context.colors.primaryButton.withValues(alpha: 0.7)
+            : context.colors.textSecondary;
 
         return Row(
           mainAxisSize: MainAxisSize.min,
@@ -54,7 +54,7 @@ class FontSizeControls extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: isDarkBackground
-                    ? IaculaColors.primaryButton.withValues(alpha: 0.1)
+                    ? context.colors.primaryButton.withValues(alpha: 0.1)
                     : CupertinoColors.systemGrey6,
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -64,8 +64,8 @@ class FontSizeControls extends ConsumerWidget {
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: isDarkBackground
-                      ? IaculaColors.primaryButton.withValues(alpha: 0.9)
-                      : IaculaColors.textPrimary,
+                      ? context.colors.primaryButton.withValues(alpha: 0.9)
+                      : context.colors.textPrimary,
                 ),
               ),
             ),

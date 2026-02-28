@@ -19,7 +19,7 @@ class NotificationsScreen extends ConsumerWidget {
     final cardAsync = ref.watch(_lastCardProvider);
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       navigationBar: const CupertinoNavigationBar(
         middle: Text('Notificações'),
       ),
@@ -30,7 +30,7 @@ class NotificationsScreen extends ConsumerWidget {
               return Center(
                 child: Text(
                   'Nenhuma notificação ainda.',
-                  style: IaculaText.secondary,
+                  style: context.textStyles.secondary,
                 ),
               );
             }
@@ -43,17 +43,17 @@ class NotificationsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(card.theme, style: IaculaText.secondary),
+                      Text(card.theme, style: context.textStyles.secondary),
                       const SizedBox(height: 8),
-                      Text(card.quoteText, style: IaculaText.cardTitle),
+                      Text(card.quoteText, style: context.textStyles.cardTitle),
                       const SizedBox(height: 12),
                       Text(
                         _formatDate(card.deliveredAt),
-                        style: IaculaText.secondary,
+                        style: context.textStyles.secondary,
                       ),
                       if (card.feastName != null) ...[
                         const SizedBox(height: 4),
-                        Text(card.feastName!, style: IaculaText.secondary),
+                        Text(card.feastName!, style: context.textStyles.secondary),
                       ],
                     ],
                   ),
@@ -63,7 +63,7 @@ class NotificationsScreen extends ConsumerWidget {
           },
           loading: () => const Center(child: CupertinoActivityIndicator()),
           error: (error, stackTrace) => Center(
-            child: Text('Erro ao carregar notificações.', style: IaculaText.secondary),
+            child: Text('Erro ao carregar notificações.', style: context.textStyles.secondary),
           ),
         ),
       ),

@@ -43,8 +43,8 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
     return CupertinoTabScaffold(
       controller: _tabController,
       tabBar: CupertinoTabBar(
-        activeColor: IaculaColors.primaryButton,
-        inactiveColor: IaculaColors.textSecondary,
+        activeColor: context.colors.primaryButton,
+        inactiveColor: context.colors.textSecondary,
         onTap: (index) async {
           if (_premiumIndexes.contains(index)) {
             final asyncStatus = ref.read(premiumStatusProvider);

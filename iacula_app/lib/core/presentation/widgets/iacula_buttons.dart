@@ -20,14 +20,14 @@ class IaculaPrimaryPillButton extends StatelessWidget {
       child: CupertinoButton(
         onPressed: onPressed,
         padding: EdgeInsets.zero,
-        color: IaculaColors.primaryButton,
+        color: context.colors.primaryButton,
         borderRadius: BorderRadius.circular(
           (IaculaMetrics.inputHeight + IaculaSpacing.xs) / 2,
         ),
         child: Text(
           label,
-          style: const TextStyle(
-            color: IaculaColors.background,
+          style: TextStyle(
+            color: context.colors.background,
             fontWeight: FontWeight.w600,
             fontSize: 16,
           ),
@@ -61,8 +61,8 @@ class IaculaSecondaryPillButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: const TextStyle(
-            color: IaculaColors.textPrimary,
+          style: TextStyle(
+            color: context.colors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 16,
           ),

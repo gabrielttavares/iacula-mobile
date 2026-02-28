@@ -29,19 +29,19 @@ class IaculaLargeTitleScaffold extends StatelessWidget {
     required this.child,
     this.trailing,
     this.padding = const EdgeInsets.all(IaculaSpacing.md),
-    this.backgroundColor = IaculaColors.background,
+    this.backgroundColor,
   });
 
   final String title;
   final Widget child;
   final Widget? trailing;
   final EdgeInsetsGeometry padding;
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: backgroundColor ?? context.colors.background,
       child: SafeArea(
         child: Padding(
           padding: padding,

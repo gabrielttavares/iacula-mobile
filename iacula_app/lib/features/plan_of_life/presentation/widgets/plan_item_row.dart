@@ -37,21 +37,21 @@ class PlanItemRow extends StatelessWidget {
                   children: [
                     AnimatedDefaultTextStyle(
                       duration: const Duration(milliseconds: 220),
-                      style: IaculaText.cardTitle.copyWith(
+                      style: context.textStyles.cardTitle.copyWith(
                         color: isCompleted
-                            ? IaculaColors.textSecondary
-                            : IaculaColors.textPrimary,
+                            ? context.colors.textSecondary
+                            : context.colors.textPrimary,
                         decoration: isCompleted
                             ? TextDecoration.lineThrough
                             : TextDecoration.none,
-                        decorationColor: IaculaColors.textSecondary,
+                        decorationColor: context.colors.textSecondary,
                       ),
                       child: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       scheduleSummary,
-                      style: IaculaText.secondary.copyWith(fontSize: 13),
+                      style: context.textStyles.secondary.copyWith(fontSize: 13),
                     ),
                   ],
                 ),
@@ -60,10 +60,10 @@ class PlanItemRow extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(32, 32),
                 onPressed: onEdit,
-                child: const Icon(
+                child: Icon(
                   CupertinoIcons.ellipsis_circle,
                   size: 20,
-                  color: IaculaColors.textSecondary,
+                  color: context.colors.textSecondary,
                 ),
               ),
               const SizedBox(width: 12),

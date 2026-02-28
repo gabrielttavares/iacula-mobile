@@ -7,23 +7,24 @@ class IaculaInlineMessage extends StatelessWidget {
   const IaculaInlineMessage({
     super.key,
     required this.message,
-    this.color = IaculaColors.warning,
+    this.color,
   });
 
   final String message;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = color ?? context.colors.warning;
     return Container(
       padding: const EdgeInsets.all(IaculaSpacing.sm),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
+        color: effectiveColor.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(IaculaRadius.small),
       ),
       child: Text(
         message,
-        style: IaculaText.secondary.copyWith(color: IaculaColors.textPrimary),
+        style: context.textStyles.secondary.copyWith(color: context.colors.textPrimary),
       ),
     );
   }
@@ -50,13 +51,13 @@ class IaculaEmptyState extends StatelessWidget {
           children: [
             Text(
               title,
-              style: IaculaText.cardTitle,
+              style: context.textStyles.cardTitle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: IaculaSpacing.xs),
             Text(
               message,
-              style: IaculaText.secondary,
+              style: context.textStyles.secondary,
               textAlign: TextAlign.center,
             ),
             if (action != null) ...[

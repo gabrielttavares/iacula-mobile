@@ -78,7 +78,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
     }
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: Column(
           children: [
@@ -122,7 +122,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                       ? Center(
                           child: Text(
                             'Ainda não há itens para este dia.',
-                            style: IaculaText.secondary,
+                            style: context.textStyles.secondary,
                           ),
                         )
                       : ListView(
@@ -200,12 +200,12 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
               decoration: BoxDecoration(
                 color: isActive
-                    ? IaculaColors.primaryButton
+                    ? context.colors.primaryButton
                     : CupertinoColors.transparent,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isActive
-                      ? IaculaColors.primaryButton
+                      ? context.colors.primaryButton
                       : CupertinoColors.systemGrey4,
                 ),
               ),
@@ -217,21 +217,21 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       color: isActive
-                          ? IaculaColors.background
-                          : IaculaColors.textSecondary,
+                          ? context.colors.background
+                          : context.colors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     date.day.toString().padLeft(2, '0'),
-                    style: IaculaText.cardTitle.copyWith(
+                    style: context.textStyles.cardTitle.copyWith(
                       fontSize: 18,
                       fontWeight: isActive
                           ? FontWeight.bold
                           : FontWeight.normal,
                       color: isActive
-                          ? IaculaColors.background
-                          : IaculaColors.textPrimary,
+                          ? context.colors.background
+                          : context.colors.textPrimary,
                     ),
                   ),
                 ],
@@ -265,9 +265,9 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
           ),
           child: Row(
             children: [
-              Icon(icon, size: 20, color: IaculaColors.textSecondary),
+              Icon(icon, size: 20, color: context.colors.textSecondary),
               const SizedBox(width: 8),
-              Text(title, style: IaculaText.cardTitle),
+              Text(title, style: context.textStyles.cardTitle),
             ],
           ),
         ),
@@ -281,9 +281,9 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
               color: CupertinoColors.destructiveRed,
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 20),
-              child: const Icon(
+              child: Icon(
                 CupertinoIcons.delete,
-                color: IaculaColors.background,
+                color: context.colors.background,
               ),
             ),
             onDismissed: (_) => notifier.deleteItem(item.id),
@@ -397,8 +397,8 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
       alignment: Alignment.bottomCenter,
       child: Container(
         padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-        decoration: const BoxDecoration(
-          color: IaculaColors.card,
+        decoration: BoxDecoration(
+          color: context.colors.card,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SafeArea(
@@ -410,7 +410,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
               children: [
                 Text(
                   widget.item == null ? 'Novo Item' : 'Editar Item',
-                  style: IaculaText.sectionTitle,
+                  style: context.textStyles.sectionTitle,
                 ),
                 const SizedBox(height: 16),
                 if (!isDefault) ...[
@@ -430,7 +430,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                   children: [
                     Text(
                       'Lembrete (Notificação)',
-                      style: IaculaText.secondary,
+                      style: context.textStyles.secondary,
                     ),
                     CupertinoSwitch(
                       value: _notify,
@@ -439,7 +439,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                Text('Dias da semana:', style: IaculaText.secondary),
+                Text('Dias da semana:', style: context.textStyles.secondary),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -462,7 +462,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: selected
-                              ? IaculaColors.primaryButton
+                              ? context.colors.primaryButton
                               : CupertinoColors.systemGrey5,
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -470,8 +470,8 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                           dayName,
                           style: TextStyle(
                             color: selected
-                                ? IaculaColors.background
-                                : IaculaColors.textSecondary,
+                                ? context.colors.background
+                                : context.colors.textSecondary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

@@ -30,13 +30,13 @@ class HomeContinuationCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: IaculaColors.homeWarmBackground,
+                color: context.colors.homeWarmBackground,
                 borderRadius: BorderRadius.circular(12),
               ),
               alignment: Alignment.center,
-              child: const Icon(
+              child: Icon(
                 CupertinoIcons.forward_end_alt_fill,
-                color: IaculaColors.homeSacredAccent,
+                color: context.colors.homeSacredAccent,
                 size: 18,
               ),
             ),
@@ -45,15 +45,15 @@ class HomeContinuationCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: IaculaText.cardTitle),
+                  Text(title, style: context.textStyles.cardTitle),
                   const SizedBox(height: 2),
-                  Text(subtitle, style: IaculaText.secondary),
+                  Text(subtitle, style: context.textStyles.secondary),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               CupertinoIcons.chevron_right,
-              color: IaculaColors.textSecondary,
+              color: context.colors.textSecondary,
               size: 18,
             ),
           ],

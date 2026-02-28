@@ -58,7 +58,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false;
 
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       child: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -219,7 +219,7 @@ class _HomeHeader extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Iacula', style: IaculaText.cardTitle),
+            Text('Iacula', style: context.textStyles.cardTitle),
             Row(
               children: [
                 CupertinoButton(
@@ -232,9 +232,9 @@ class _HomeHeader extends ConsumerWidget {
                       ),
                     );
                   },
-                  child: const Icon(
+                  child: Icon(
                     CupertinoIcons.bell,
-                    color: IaculaColors.textSecondary,
+                    color: context.colors.textSecondary,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -246,9 +246,9 @@ class _HomeHeader extends ConsumerWidget {
                       CupertinoPageRoute(builder: (_) => const SearchScreen()),
                     );
                   },
-                  child: const Icon(
+                  child: Icon(
                     CupertinoIcons.search,
-                    color: IaculaColors.textSecondary,
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ],

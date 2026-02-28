@@ -38,6 +38,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       onboardingCompleted: (row['onboarding_completed'] as int? ?? 0) == 1,
       displayName: row['display_name'] as String?,
       prayerFontSize: (row['prayer_font_size'] as num? ?? 15.0).toDouble(),
+      themeMode: row['theme_mode'] as String? ?? 'dark',
     );
   }
 
@@ -63,6 +64,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       'onboarding_completed': settings.onboardingCompleted ? 1 : 0,
       'display_name': settings.displayName,
       'prayer_font_size': settings.prayerFontSize,
+      'theme_mode': settings.themeMode,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }

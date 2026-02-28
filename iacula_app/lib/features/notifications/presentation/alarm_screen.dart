@@ -20,14 +20,14 @@ class AlarmScreen extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: IaculaText.sectionTitle.copyWith(
-                  color: IaculaColors.primaryButton,
+                style: context.textStyles.sectionTitle.copyWith(
+                  color: context.colors.primaryButton,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
                 body,
-                style: IaculaText.secondary.copyWith(
+                style: context.textStyles.secondary.copyWith(
                   color: CupertinoColors.systemGrey4,
                 ),
               ),

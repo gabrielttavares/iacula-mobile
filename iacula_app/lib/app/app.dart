@@ -95,18 +95,34 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
   Future<void> _loadSettings() async {
     final settings = await ref.read(getSettingsUseCaseProvider).call();
     if (mounted) {
+      ref.read(themeModeProvider.notifier).state = settings.themeMode;
       setState(() => _settings = settings);
+    }
+  }
+
+  CupertinoThemeData _resolveTheme(String mode, BuildContext context) {
+    switch (mode) {
+      case 'light':
+        return AppTheme.light();
+      case 'dark':
+        return AppTheme.dark();
+      default:
+        final brightness = MediaQuery.platformBrightnessOf(context);
+        return brightness == Brightness.dark
+            ? AppTheme.dark()
+            : AppTheme.light();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final settings = _settings;
+    final themeMode = ref.watch(themeModeProvider);
     return CupertinoApp(
       title: 'Iacula',
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark(),
+      theme: _resolveTheme(themeMode, context),
       localizationsDelegates: const [
         GlobalCupertinoLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

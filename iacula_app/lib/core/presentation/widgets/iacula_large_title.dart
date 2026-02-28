@@ -9,6 +9,6 @@ class IaculaLargeTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: IaculaText.largeTitle);
+    return Text(text, style: context.textStyles.largeTitle);
   }
 }

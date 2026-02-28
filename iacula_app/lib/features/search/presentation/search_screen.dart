@@ -73,7 +73,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      backgroundColor: IaculaColors.background,
+      backgroundColor: context.colors.background,
       navigationBar: const CupertinoNavigationBar(middle: Text('Pesquisar')),
       child: SafeArea(
         child: Column(
@@ -139,9 +139,9 @@ class _ResultCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(result.category, style: IaculaText.secondary),
+          Text(result.category, style: context.textStyles.secondary),
           const SizedBox(height: 4),
-          Text(result.text, style: IaculaText.cardTitle),
+          Text(result.text, style: context.textStyles.cardTitle),
         ],
       ),
     );
