@@ -6,7 +6,6 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 
-import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/image_background_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -14,14 +13,13 @@ import '../../auth/domain/entities/auth_user.dart';
 import '../../liturgia_diaria/presentation/liturgia_screen.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../notifications/presentation/notifications_screen.dart';
-import '../../premium/domain/entities/premium_feature.dart';
 import '../../search/presentation/search_screen.dart';
-import '../../premium/presentation/premium_gate.dart';
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../../prayers/presentation/prayer_catalog_group_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
+import 'hero_reflection_sheet.dart';
 import 'home_prayer_groups.dart';
 import 'widgets/home_action_grid.dart';
 import 'widgets/home_hero_card.dart';
@@ -133,10 +131,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       offsetY: 0.04,
                       child: _HomeHeroSection(
                         isFallback: isFallback,
-                        onOpenPremium: () => PremiumGate.showModal(
-                          context,
-                          feature: PremiumFeature.meditation,
-                        ),
+                        onHeroTap: (quote) =>
+                            HeroReflectionSheet.show(context, quote: quote),
                       ),
                     ),
                     const SizedBox(height: IaculaSpacing.lg),
@@ -227,11 +223,11 @@ class _AnimatedHomeBlock extends StatelessWidget {
 class _HomeHeroSection extends ConsumerWidget {
   const _HomeHeroSection({
     required this.isFallback,
-    required this.onOpenPremium,
+    required this.onHeroTap,
   });
 
   final bool isFallback;
-  final VoidCallback onOpenPremium;
+  final ValueChanged<Quote> onHeroTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -240,7 +236,7 @@ class _HomeHeroSection extends ConsumerWidget {
       data: (quote) => HomeHeroCard(
         quote: quote,
         isFallback: isFallback,
-        onOpenPremium: onOpenPremium,
+        onTap: onHeroTap,
       ),
       loading: () => const SizedBox(
         height: 240,

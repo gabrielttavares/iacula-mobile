@@ -1,0 +1,90 @@
+import 'package:flutter/cupertino.dart';
+
+import '../../../core/presentation/design/iacula_modal.dart';
+import '../../../core/theme/cupertino_tokens.dart';
+import '../../liturgical/domain/liturgical_season.dart';
+import '../../quotes/domain/entities/quote.dart';
+
+final class HeroReflectionSheet {
+  HeroReflectionSheet._();
+
+  static const _seasonReflections = <LiturgicalSeason, String>{
+    LiturgicalSeason.ordinary:
+        'Os cards do início acompanham o Tempo Comum e o ritmo do ano litúrgico. '
+        'Cada dia traz uma jaculatória ou reflexão que se harmoniza com a vida da Igreja.',
+    LiturgicalSeason.advent:
+        'Os cards refletem a espera e a preparação do Advento. '
+        'São um convite a vigiar e a preparar o coração para a vinda do Senhor.',
+    LiturgicalSeason.lent:
+        'Os cards acompanham a Quaresma: conversão, jejum e preparação para a Páscoa. '
+        'As reflexões ajudam a percorrer esse caminho com o coração voltado para Deus.',
+    LiturgicalSeason.easter:
+        'Os cards celebram o Tempo Pascal e a alegria da Ressurreição. '
+        'Mantêm viva no cotidiano a luz do Cristo ressuscitado.',
+    LiturgicalSeason.christmas:
+        'Os cards refletem o Natal e a manifestação do Senhor. '
+        'Ajudam a prolongar no dia a dia a alegria do Deus que se fez próximo.',
+  };
+
+  static const _exclusivityBody =
+      'O Iacula foi pensado para ajudar você a manter viva a oração breve no meio '
+      'das tarefas normais do dia. Uma jaculatória, um versículo, um lembrete discreto '
+      '— e o coração se volta a Deus sem interromper o trabalho.\n\n'
+      'Inspirado na espiritualidade do trabalho santificado, o app acompanha você '
+      'nos momentos certos. Como escreveu São João Crisóstomo: '
+      '«Ergue um altar a Deus no meio de teus trabalhos, e oferece ali a oração do coração.»';
+
+  static Future<void> show(BuildContext context, {required Quote quote}) {
+    return IaculaModal.showSheet<void>(
+      context: context,
+      maxHeightFraction: 0.85,
+      builder: (context) => _HeroReflectionContent(quote: quote),
+    );
+  }
+}
+
+class _HeroReflectionContent extends StatelessWidget {
+  const _HeroReflectionContent({required this.quote});
+
+  final Quote quote;
+
+  @override
+  Widget build(BuildContext context) {
+    final reflectionText =
+        HeroReflectionSheet._seasonReflections[quote.season] ??
+        HeroReflectionSheet._seasonReflections[LiturgicalSeason.ordinary]!;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(
+        IaculaSpacing.md,
+        IaculaSpacing.lg,
+        IaculaSpacing.md,
+        IaculaSpacing.xl,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Os cards e o tempo litúrgico',
+            style: context.textStyles.sectionTitle,
+          ),
+          const SizedBox(height: IaculaSpacing.sm),
+          Text(
+            reflectionText,
+            style: context.textStyles.secondary,
+          ),
+          const SizedBox(height: IaculaSpacing.xl),
+          Text(
+            'O que torna o Iacula único',
+            style: context.textStyles.sectionTitle,
+          ),
+          const SizedBox(height: IaculaSpacing.sm),
+          Text(
+            HeroReflectionSheet._exclusivityBody,
+            style: context.textStyles.secondary,
+          ),
+        ],
+      ),
+    );
+  }
+}

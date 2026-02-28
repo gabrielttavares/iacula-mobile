@@ -185,7 +185,11 @@ void main() {
     expect(quoteText.maxLines, isNull);
     expect(quoteText.overflow, isNull);
     expect(find.byType(SingleChildScrollView), findsNothing);
-    expect(find.text('Conhecer Premium'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('home_hero_card')));
+    await tester.pumpAndSettle();
+    expect(find.text('Os cards e o tempo litúrgico'), findsOneWidget);
+    expect(find.text('O que torna o Iacula único'), findsOneWidget);
   });
 
   testWidgets('home follows required section order', (tester) async {
