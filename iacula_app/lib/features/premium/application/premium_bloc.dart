@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:iacula_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:iacula_app/features/premium/domain/entities/premium_status.dart';
@@ -71,7 +72,7 @@ final class PremiumBloc {
        _authRepository = authRepository,
        _now = now ?? DateTime.now {
     _purchaseSubscription = _purchaseService.purchaseStream.listen(
-      _handlePurchaseStatus,
+      _handlePurchaseUpdate,
     );
     _authSubscription = _authRepository.authStateChanges().listen((_) {
       unawaited(_checkPremium());
@@ -85,7 +86,7 @@ final class PremiumBloc {
 
   final StreamController<PremiumState> _states =
       StreamController<PremiumState>.broadcast();
-  late final StreamSubscription<PurchaseStatus> _purchaseSubscription;
+  late final StreamSubscription<PurchaseDetails> _purchaseSubscription;
   late final StreamSubscription _authSubscription;
 
   PremiumState _state = const PremiumInitial();
@@ -157,22 +158,50 @@ final class PremiumBloc {
     _emit(const PremiumFree());
   }
 
-  Future<void> _handlePurchaseStatus(PurchaseStatus status) async {
-    switch (status) {
+  Future<void> _handlePurchaseUpdate(PurchaseDetails details) async {
+    switch (details.status) {
       case PurchaseStatus.pending:
         _emit(const PremiumLoading());
+
       case PurchaseStatus.purchased:
       case PurchaseStatus.restored:
         final user = await _authRepository.currentUser();
+        final verificationData =
+            details.verificationData.serverVerificationData;
+        final transactionId = details.purchaseID;
+
+        if (verificationData.isEmpty) {
+          developer.log(
+            'Purchase completed without verification data — '
+            'transaction $transactionId cannot be validated.',
+            name: 'PremiumBloc',
+          );
+          _emit(const PremiumError('Purchase could not be verified.'));
+          if (details.pendingCompletePurchase) {
+            await _purchaseService.completePurchase(details);
+          }
+          return;
+        }
+
         final unlocked = PremiumStatus(
           isPremium: true,
           purchaseDate: _now().toUtc(),
+          storeTransactionId: transactionId,
           userId: user?.id,
         );
         await _repository.unlockPremium(unlocked);
         _emit(PremiumUnlocked(unlocked));
+
+        if (details.pendingCompletePurchase) {
+          await _purchaseService.completePurchase(details);
+        }
+
       case PurchaseStatus.error:
         _emit(const PremiumError('Purchase failed.'));
+        if (details.pendingCompletePurchase) {
+          await _purchaseService.completePurchase(details);
+        }
+
       case PurchaseStatus.canceled:
         _emit(const PremiumFree());
     }

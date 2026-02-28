@@ -39,11 +39,11 @@ final class _FakePurchaseService implements PurchaseService {
   _FakePurchaseService({required this.purchaseResult});
 
   final bool purchaseResult;
-  final StreamController<PurchaseStatus> _controller =
-      StreamController<PurchaseStatus>.broadcast();
+  final StreamController<PurchaseDetails> _controller =
+      StreamController<PurchaseDetails>.broadcast();
 
   @override
-  Stream<PurchaseStatus> get purchaseStream => _controller.stream;
+  Stream<PurchaseDetails> get purchaseStream => _controller.stream;
 
   int purchaseCallCount = 0;
   int restoreCallCount = 0;
@@ -60,8 +60,20 @@ final class _FakePurchaseService implements PurchaseService {
     return true;
   }
 
+  @override
+  Future<void> completePurchase(PurchaseDetails details) async {}
+
   void emit(PurchaseStatus status) {
-    _controller.add(status);
+    _controller.add(PurchaseDetails(
+      productID: 'premium_lifetime',
+      verificationData: PurchaseVerificationData(
+        localVerificationData: 'local',
+        serverVerificationData: 'server',
+        source: 'test',
+      ),
+      transactionDate: DateTime.now().millisecondsSinceEpoch.toString(),
+      status: status,
+    ));
   }
 
   Future<void> dispose() async {

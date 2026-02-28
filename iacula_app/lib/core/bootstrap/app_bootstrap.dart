@@ -1,6 +1,5 @@
 import 'dart:developer' as developer;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -58,9 +57,15 @@ final class AppBootstrap {
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
     final favoriteRepo = IsarFavoriteRepository(store: isarStore);
     final localPremiumRepo = IsarPremiumRepository(store: isarStore);
-    if (kDebugMode) {
+    const devPremiumOverride =
+        String.fromEnvironment('DEV_PREMIUM_OVERRIDE') == 'true';
+    if (devPremiumOverride) {
       await localPremiumRepo.unlockPremium(
-        PremiumStatus(isPremium: true, purchaseDate: DateTime.now()),
+        PremiumStatus(
+          isPremium: true,
+          purchaseDate: DateTime.now(),
+          storeTransactionId: 'dev-override',
+        ),
       );
     }
     final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(isarStore);

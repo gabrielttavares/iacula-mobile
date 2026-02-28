@@ -28,16 +28,19 @@ final class _FakePremiumRepository implements PremiumRepository {
 }
 
 final class _FakePurchaseService implements PurchaseService {
-  final _controller = StreamController<PurchaseStatus>.broadcast();
+  final _controller = StreamController<PurchaseDetails>.broadcast();
 
   @override
-  Stream<PurchaseStatus> get purchaseStream => _controller.stream;
+  Stream<PurchaseDetails> get purchaseStream => _controller.stream;
 
   @override
   Future<bool> purchasePremium(String productId) async => false;
 
   @override
   Future<bool> restorePurchases() async => false;
+
+  @override
+  Future<void> completePurchase(PurchaseDetails details) async {}
 }
 
 void main() {

@@ -25,12 +25,25 @@ final class SupabaseSpiritualSyncGateway implements SpiritualSyncGateway {
 
   final SupabaseClient _client;
 
+  void _assertAuthenticatedUser(String userId) {
+    final currentUserId = _client.auth.currentUser?.id;
+    if (currentUserId == null) {
+      throw StateError('Cannot perform sync operation without authenticated user.');
+    }
+    if (currentUserId != userId) {
+      throw StateError(
+        'UserId mismatch: query targets a different user than the authenticated session.',
+      );
+    }
+  }
+
   @override
   Future<List<Map<String, dynamic>>> fetchChangedRows({
     required String table,
     required String userId,
     required DateTime? since,
   }) async {
+    _assertAuthenticatedUser(userId);
     dynamic query = _client.from(table).select().eq('user_id', userId);
     if (since != null) {
       query = query.gt('updated_at', since.toUtc().toIso8601String());
@@ -46,6 +59,7 @@ final class SupabaseSpiritualSyncGateway implements SpiritualSyncGateway {
     required String userId,
     required List<Map<String, dynamic>> rows,
   }) async {
+    _assertAuthenticatedUser(userId);
     if (rows.isEmpty) {
       return const <Map<String, dynamic>>[];
     }

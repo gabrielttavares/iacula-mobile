@@ -3,7 +3,8 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 abstract interface class PurchaseService {
   Future<bool> purchasePremium(String productId);
   Future<bool> restorePurchases();
-  Stream<PurchaseStatus> get purchaseStream;
+  Stream<PurchaseDetails> get purchaseStream;
+  Future<void> completePurchase(PurchaseDetails details);
 }
 
 abstract interface class InAppPurchaseStore {
@@ -11,6 +12,7 @@ abstract interface class InAppPurchaseStore {
   Future<ProductDetailsResponse> queryProductDetails(Set<String> identifiers);
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam});
   Future<void> restorePurchases({String? applicationUserName});
+  Future<void> completePurchase(PurchaseDetails purchase);
 }
 
 final class InAppPurchaseStoreAdapter implements InAppPurchaseStore {
@@ -39,6 +41,11 @@ final class InAppPurchaseStoreAdapter implements InAppPurchaseStore {
       applicationUserName: applicationUserName,
     );
   }
+
+  @override
+  Future<void> completePurchase(PurchaseDetails purchase) {
+    return _inAppPurchase.completePurchase(purchase);
+  }
 }
 
 final class StorePurchaseService implements PurchaseService {
@@ -48,10 +55,8 @@ final class StorePurchaseService implements PurchaseService {
   final InAppPurchaseStore _store;
 
   @override
-  Stream<PurchaseStatus> get purchaseStream {
-    return _store.purchaseStream.expand(
-      (purchases) => purchases.map((purchase) => purchase.status),
-    );
+  Stream<PurchaseDetails> get purchaseStream {
+    return _store.purchaseStream.expand((purchases) => purchases);
   }
 
   @override
@@ -86,5 +91,10 @@ final class StorePurchaseService implements PurchaseService {
     } catch (_) {
       return false;
     }
+  }
+
+  @override
+  Future<void> completePurchase(PurchaseDetails details) {
+    return _store.completePurchase(details);
   }
 }

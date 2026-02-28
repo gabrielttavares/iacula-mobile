@@ -40,6 +40,9 @@ final class _FakeInAppPurchaseStore implements InAppPurchaseStore {
     }
   }
 
+  @override
+  Future<void> completePurchase(PurchaseDetails purchase) async {}
+
   void emit(PurchaseStatus status) {
     _purchases.add(<PurchaseDetails>[
       PurchaseDetails(
@@ -113,13 +116,13 @@ void main() {
     );
     final service = StorePurchaseService(store: store);
 
-    final statuses = <PurchaseStatus>[];
-    final sub = service.purchaseStream.listen(statuses.add);
+    final details = <PurchaseDetails>[];
+    final sub = service.purchaseStream.listen(details.add);
 
     store.emit(PurchaseStatus.purchased);
     await Future<void>.delayed(Duration.zero);
 
-    expect(statuses, contains(PurchaseStatus.purchased));
+    expect(details.map((d) => d.status), contains(PurchaseStatus.purchased));
 
     await sub.cancel();
     await store.dispose();

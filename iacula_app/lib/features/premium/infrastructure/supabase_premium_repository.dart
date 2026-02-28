@@ -13,8 +13,23 @@ final class SupabasePremiumGateway implements PremiumRemoteGateway {
 
   final SupabaseClient _client;
 
+  void _assertAuthenticatedUser(String userId) {
+    final currentUserId = _client.auth.currentUser?.id;
+    if (currentUserId == null) {
+      throw StateError(
+        'Cannot access premium data without authenticated user.',
+      );
+    }
+    if (currentUserId != userId) {
+      throw StateError(
+        'UserId mismatch: query targets a different user than the authenticated session.',
+      );
+    }
+  }
+
   @override
   Future<PremiumStatus?> fetchForUser(String userId) async {
+    _assertAuthenticatedUser(userId);
     final rows = await _client
         .from('user_premium')
         .select()
@@ -39,6 +54,7 @@ final class SupabasePremiumGateway implements PremiumRemoteGateway {
 
   @override
   Future<void> upsertForUser(String userId, PremiumStatus status) async {
+    _assertAuthenticatedUser(userId);
     await _client.from('user_premium').upsert(<String, dynamic>{
       'id': userId,
       'is_premium': status.isPremium,

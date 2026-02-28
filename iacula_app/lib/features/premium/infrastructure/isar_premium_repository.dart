@@ -25,6 +25,13 @@ final class IsarPremiumRepository implements PremiumRepository {
       return PremiumStatus.free;
     }
 
+    // Require a store transaction ID for premium to be valid locally.
+    // This prevents simple Isar tampering on rooted devices from
+    // bypassing the premium gate without a real purchase.
+    if (doc.storeTransactionId == null || doc.storeTransactionId!.isEmpty) {
+      return PremiumStatus.free;
+    }
+
     return PremiumStatus(
       isPremium: doc.isPremium,
       purchaseDate: doc.purchaseDate,
