@@ -2,19 +2,31 @@
   "slug": "bem-aventurancas",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Bem-Aventuranças"
+    "pt-br": "Bem-Aventuranças",
+    "la": "Beatitudines"
   },
   "blocks": {
     "pt-br": [
-      "Bem-aventurados os pobres de espírito, porque deles é o reino dos céus.",
-      "Bem-aventurados os que choram, porque eles serão consolados.",
-      "Bem-aventurados os mansos, porque eles possuirão a terra.",
-      "Bem-aventurados os que têm fome e sede de justiça, porque eles serão saciados.",
-      "Bem-aventurados os misericordiosos, porque eles alcançarão misericórdia.",
-      "Bem-aventurados os limpos de coração, porque eles verão a Deus.",
-      "Bem-aventurados os pacificadores, porque eles serão chamados filhos de Deus.",
+      "Bem-aventurados os pobres de coração, porque deles é o reino dos céus.",
+      "Bem-aventurados os mansos, porque herdarão a terra.",
+      "Bem-aventurados os que choram, porque serão consolados.",
+      "Bem-aventurados os que têm fome e sede de justiça, porque serão saciados.",
+      "Bem-aventurados os misericordiosos, porque alcançarão misericórdia.",
+      "Bem-aventurados os puros de coração, porque verão a Deus.",
+      "Bem-aventurados os pacificadores, porque serão chamados filhos de Deus.",
       "Bem-aventurados os perseguidos por causa da justiça, porque deles é o reino dos céus.",
-      "Bem-aventurados sois vós, quando vos injuriarem, e perseguirem, e disserem toda a espécie de mal contra vós, mentindo, por minha causa. Alegrai-vos e exultai, porque é grande no céu a vossa recompensa."
+      "Bem-aventurados sois vós quando vos insultam, vos perseguem e, mentindo, dizem toda espécie de mal contra vós por minha causa. Alegrai-vos e exultai, porque grande é a vossa recompensa nos céus."
+    ],
+    "la": [
+      "1. Beati pauperes spiritu, quoniam ipsorum est Regnum caelorum.",
+      "2. Beati, qui lugent, quoniam ipsi consolabuntur.",
+      "3. Beati mites, quoniam ipsi possidebunt terram.",
+      "4. Beati, qui esuriunt et sitiunt iustitiam, quoniam ipsi saturabuntur.",
+      "5. Beati misericordes, quia ipsi misericordiam consequentur.",
+      "6. Beati mundo corde, quoniam ipsi Deum videbunt.",
+      "7. Beati pacifici, quoniam filii Dei vocabuntur.",
+      "8. Beati, qui persecutionem patiuntur propter iustitiam, quoniam ipsorum est Regnum caelorum.",
+      "﻿–﻿ Beati estis, cum maledixerint vobis et persecuti vos fuerint et dixerint omne malum adversum vos, mentientes, propter me. Gaudete et exsultate, quoniam merces vestra copiosa est in caelis."
     ]
   }
 }

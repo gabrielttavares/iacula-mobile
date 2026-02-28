@@ -2,15 +2,21 @@
   "slug": "virtudes-cardeais",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Virtudes Cardeais"
+    "pt-br": "Virtudes Cardeais",
+    "la": "Quattuor virtutes cardinales"
   },
   "blocks": {
     "pt-br": [
-      "Prudência, Justiça, Fortaleza e Temperança.",
-      "A prudência é a virtude que nos ensina a discernir o bem e a escolher os meios mais adequados para realizá-lo.",
-      "A justiça é a virtude que nos inclina a dar a cada um o que lhe é devido, respeitando os direitos de Deus e do próximo.",
-      "A fortaleza é a virtude que nos dá ânimo e constância para praticar o bem e suportar as adversidades.",
-      "A temperança é a virtude que regula o uso dos bens temporais, moderando os apetites e paixões."
+      "1. Prudência",
+      "2. Justiça",
+      "3. Fortaleza",
+      "4. Temperança"
+    ],
+    "la": [
+      "1. Prudentia.",
+      "2. Iustitia.",
+      "3. Fortitudo.",
+      "4. Temperantia."
     ]
   }
 }

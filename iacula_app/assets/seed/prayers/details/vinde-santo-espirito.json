@@ -2,11 +2,35 @@
   "slug": "vinde-santo-espirito",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Vinde Santo Espírito"
+    "pt-br": "Vinde Santo Espírito",
+    "la": "Veni, Sancte Spíritus"
   },
   "blocks": {
     "pt-br": [
-      "Vinde Santo Espírito e do céu mandai luminoso raio; vinde pai dos pobres, doador dos dons, luz dos corações. Grande defensor em nós habitais e nos confortais. Na fadiga, pouso, no ardor, brandura e na dor, ternura."
+      "Sequência de Pentecostes",
+      "Vinde Santo Espírito e do céu mandai luminoso raio.",
+      "Vinde pai dos pobres doador dos dons luz dos corações.",
+      "Grande defensor em nós habitais e nos confortais.",
+      "Na fadiga, pouso, no ardor, brandura e na dor, ternura.",
+      "Ó luz venturosa, que vossos clarões encham os corações.",
+      "Sem vosso poder em qualquer vivente nada há de inocente.",
+      "Lavai o impuro e regai o seco, curai o enfermo.",
+      "Dobrai a dureza, aquecei o frio, livrai do desvio.",
+      "Aos vossos fiéis que oram com vibrantes sons dai os sete dons.",
+      "Dai virtude e prêmio e no fim dos dias eterna alegria."
+    ],
+    "la": [
+      "Sequentia",
+      "Veni, Sancte Spíritus, et emítte cǽlitus lucis tuæ rádium.",
+      "Veni, pater páuperum, veni, dator múnerum, veni, lumen córdium.",
+      "Consolátor óptime, dulcis hospes ánimæ, dulce refrigérium.",
+      "In labóre réquies, in æstu tempéries, in fletu solácium.",
+      "O lux beatíssima, reple cordis íntima tuórum fidélium.",
+      "Sine tuo númine, nihil est in hómine, nihil est innóxium.",
+      "Lava quod est sórdidum, riga quod est áridum, sana quod est sáucium.",
+      "Flecte quod est rígidum, fove quod est frígidum, rege quod est dévium.",
+      "Da tuis fidélibus, in te confidéntibus, sacrum septenárium.",
+      "Da virtútis méritum, da salútis éxitum, da perénne gáudium."
     ]
   }
 }

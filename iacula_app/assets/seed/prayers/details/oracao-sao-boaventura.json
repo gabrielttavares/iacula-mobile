@@ -2,11 +2,21 @@
   "slug": "oracao-sao-boaventura",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Oração de São Boaventura"
+    "pt-br": "Oração de São Boaventura",
+    "la": "Orátio S. Bonaventúræ"
   },
   "blocks": {
     "pt-br": [
-      "Ó Deus, que iluminastes São Boaventura com a luz da sabedoria divina, concedei-me que, seguindo os seus ensinamentos, walk in vossos caminhos e alcance a glória eterna."
+      "Trespassai, dulcíssimo Senhor Jesus, a medula de minha alma com o suave e salutar dardo do vosso amor, com a verdadeira, pura e santíssima caridade apostólica, a fim de que a minha alma desfaleça e se desfaça sempre só com o amor e o desejo de Vos possuir; que por Vós suspire, e desfaleça por achar-se nos átrios da vossa casa; deseje separar-se do corpo para se unir a Vós.",
+      "Fazei que a minha alma tenha fome de Vós, Pão dos anjos, Alimento das almas santas, Pão nosso de cada dia, cheio de força, de toda a doçura e sabor, e de todo o suave deleite.",
+      "Ó Jesus, a quem os anjos desejam contemplar, tenha sempre o meu coração fome de Vós, e o interior da minha alma transborde com a doçura do vosso sabor; tenha sempre sede de Vós, fonte de vida, manancial de sabedoria e de ciência, rio de luz eterna, torrente de delícias, abundância da Casa de Deus.",
+      "Que Vos deseje, Vos procure, Vos encontre; que para Vós caminhe e para Vós chegue; que em Vós pense, de Vós fale, e todas as minhas ações encaminhe para a honra e glória do vosso nome, com humildade e discrição, com amor e deleite, com facilidade e afeto, com perseverança até o fim; para que Vós sejais sempre a minha esperança, meu gozo, meu descanso e minha tranquilidade, minha paz, minha suavidade, meu perfume, minha doçura, minha comida, meu alimento, meu refúgio, meu auxílio, minha sabedoria, minha herança, minha posse, meu tesouro, no qual estejam sempre fixos e firme e inabalavelmente arraigados a minha alma e o meu coração. Amém."
+    ],
+    "la": [
+      "Transfíge, dulcíssime Dómine Iesu, medúllas et víscera ánimæ meæ suavíssimo ac salubérrimo amóris tui vúlnere, vera serenáque et apostólica sanctíssima caritáte, ut lángueat et liquefíat ánima mea solo semper amóre et desidério tui; te concupíscat et defíciat in átria tua, cúpiat dissólvi et esse tecum.",
+      "Da ut ánima mea te esúriat, panem Angelórum, refectiónem animárum sanctárum; panem nostrum cotidiánum, supersubstantiálem, habéntem omnem dulcédinem et sapórem et omne delectaméntum suavitátis.",
+      "Te, in quem desíderant Ángeli prospícere, semper esúriat et cómedat cor meum, et dulcédine sapóris tui repleántur víscera ánimæ meæ; te semper sítiat fontem vitæ, fontem sapiéntiæ et sciéntiæ, fontem ætérni lúminis, torréntem voluptátis, ubertátem domus Dei.",
+      "Te semper ámbiat, te quærat, te invéniat, ad te tendat, ad te pervéniat, te meditétur, te loquátur, et ómnia operétur in laudem et glóriam nóminis tui, cum humilitáte et discretióne, cum dilectióne, et delectatióne, cum facilitáte et afféctu, cum perseverántia usque in finem; ut tu sis solus semper spes mea, tota fidúcia mea, divítiæ meæ, delectátio mea, iucúnditas mea, gáudium meum, quies et tranquíllitas mea, pax mea, suávitas mea, odor meus, dulcédo mea, cibus meus, reféctio mea, refúgium meum, auxílium meum, sapiéntia mea, pórtio mea, posséssio mea, thesáurus meus, in quo fixa et firma et immobíliter semper sit radicáta mens mea et cor meum. Amen."
     ]
   }
 }

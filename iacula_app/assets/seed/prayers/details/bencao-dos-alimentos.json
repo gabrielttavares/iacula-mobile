@@ -2,11 +2,41 @@
   "slug": "bencao-dos-alimentos",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Benção dos Alimentos"
+    "pt-br": "Benção dos Alimentos",
+    "la": "Benedíctio mensæ"
   },
   "blocks": {
     "pt-br": [
-      "Ó Deus, que criastes todos os alimentos para sustentaçao do corpo humano, abençoai + estes alimentos que vamos receber, para que nos deem saúde e forças para Vos servir."
+      ". Abençoai-nos, Senhor, a nós e a estes dons que da vossa liberalidade recebemos. Por Cristo Senhor Nosso.",
+      ". Amém.",
+      "Antes do almoço:",
+      ". Que o Rei da eterna glória nos faça participantes da mesa Celestial.",
+      ". Amém.",
+      "Antes do jantar:",
+      ". Que o Rei da eterna glória nos conduza à ceia da vida eterna.",
+      ". Amém",
+      "Ação de Graças depois do almoço e do jantar:",
+      ". Nós Vos damos graças, Deus onipotente, por todos os vossos benefícios, Vós que viveis e reinais por todos os séculos dos séculos.",
+      ". Amém.",
+      ". Que o Senhor nos dê a Sua paz,",
+      ". e a vida eterna.",
+      ". Amém."
+    ],
+    "la": [
+      ". Bénedic, Dómine, nos et hæc tua dona quæ de tua largitáte sumus sumptúri. Per Christum Dóminum nostrum.",
+      ". Amen.",
+      "Ante prándium:",
+      ". Mensæ cæléstis partícipes faciat nos, Rex ætérnæ glóriæ.",
+      ". Amen.",
+      "Ante cenam:",
+      ". Ad cenam vitæ ætérnæ perdúcat nos, Rex ætérnæ glóriæ.",
+      ". Amen.",
+      "Post prándium vel cenam:",
+      ". Ágimus tibi gratias, omnípotens Deus, pro univérsis benefíciis tuis, qui vivis et regnas in sǽcula sæculórum.",
+      ". Amen.",
+      ". Deus det nobis suam pacem.",
+      ". Et vitam ætérnam.",
+      ". Amen."
     ]
   }
 }

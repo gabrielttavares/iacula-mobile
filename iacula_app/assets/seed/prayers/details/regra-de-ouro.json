@@ -2,13 +2,15 @@
   "slug": "regra-de-ouro",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Regra de Ouro"
+    "pt-br": "Regra de Ouro",
+    "la": "Regula aurea (Mt 7, 12)"
   },
   "blocks": {
     "pt-br": [
-      "Fazei aos outros o que quereis que vos façam.",
-      "Esta é a lei e os profetas. A regra de ouro é o princípio fundamental da moralidade cristã, resumindo todo o ensinamento de Jesus sobre o amor ao próximo.",
-      "Se cada homem tratasse o seu irmão como gostaria de ser tratado, haveria paz na terra e a sociedade humana seria uma preparação para o céu. A caridade é o vínculo da perfeição."
+      "Tudo aquilo que quereis que os homens façam a vós, Fazei-o vós mesmos a eles."
+    ],
+    "la": [
+      "Omnia quaecumque vultis ut faciant vobis homines, ita et vos facite eis."
     ]
   }
 }

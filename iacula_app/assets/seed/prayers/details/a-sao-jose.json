@@ -2,11 +2,23 @@
   "slug": "a-sao-jose",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "A São José"
+    "pt-br": "A São José",
+    "la": "Preces ad S. Ioseph"
   },
   "blocks": {
     "pt-br": [
-      "São José, varão feliz, que tivestes a dita de ver e ouvir o próprio Deus, a quem muitos reis quiseram ver e não viram, ouvir e não ouviram; e não só ver e ouvir, mas ainda trazê-lo em vossos braços, beijá-lo, vesti-lo e guardá-lo! Rogai por nós, bem-aventurado São José, para que sejamos dignos das promessas de Cristo."
+      "São José, varão feliz, que tivestes a dita de ver e ouvir o próprio Deus, a quem muitos reis quiseram ver e não viram, ouvir e não ouviram; e não só ver e ouvir, mas ainda trazê-lo em vossos bra- ços, beijá-lo, vesti-lo e guardá-lo!",
+      ". Rogai por nós, bem-aventurado São José.",
+      ". Para que sejamos dignos das promessas de Cristo.",
+      "Oremos",
+      "Ó Deus, que nos concedestes o sacerdócio real, nós Vos pedimos que, assim como São José mereceu cuidar e trazer em seus braços com carinho o vosso Filho unigênito, nascido da Virgem Maria, façais que nós Vos sirvamos com coração limpo e boas obras, de modo que hoje recebamos dignamente o sacros- santo Corpo e Sangue do vosso Filho, e na vida futura mereça- mos alcançar o prêmio eterno. Amém."
+    ],
+    "la": [
+      "O felícem virum, beátum Ioseph, cui datum est Deum, quem multi reges voluérunt vidére et non vidérunt, audíre et non audiérunt, non solum vidére et audíre, sed portáre, deosculári, vestíre et custodíre!",
+      ". Ora pro nobis, beáte Ioseph.",
+      ". Ut digni efficiámur promissiónibus Christi.",
+      "Orémus",
+      "Deus, qui dedísti nobis regále sacerdótium, præsta, quǽsumus, ut, sicut beátus Ioseph unigénitum Fílium tuum, natum ex Maria Vírgine, suis mánibus reverénter tractáre méruit et portáre, ita nos facias cum cordis mundítia et óperis innocéntia tuis sanctis altáribus deservíre, ut sacrosánctum Fílii tui Corpus et Sánguinem hódie digne sumámus, et in futúro sǽculo prǽmium habére mereámur ætérnum. Per Christum Dóminum nostrum. Amen."
     ]
   }
 }

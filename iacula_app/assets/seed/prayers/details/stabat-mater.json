@@ -2,11 +2,53 @@
   "slug": "stabat-mater",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Stabat Mater"
+    "pt-br": "Stabat Mater",
+    "la": "Stabat Mater"
   },
   "blocks": {
     "pt-br": [
-      "De pé a Mãe dolorosa, junto da cruz, lacrimosa, via Jesus que pendia. No coração transpassado sentia o gládio enterrado de uma cruel profecia. Mãe entre todas bendita, do Filho único, aflita, a imensa dor assistia. E, suspirando, chorava, e da cruz não se afastava, ao ver que o Filho morria."
+      "De pé a Mãe dolorosa, junto da cruz, lacrimosa, via Jesus que pendia.",
+      "No coração transpassado sentia o gládio enterrado de uma cruel profecia.",
+      "Mãe entre todas bendita, do Filho único, aflita, a imensa dor assistia,",
+      "E, suspirando, chorava, e da cruz não se afastava, ao ver que o Filho morria.",
+      "Pobre mãe, tão desolada, ao vê-la assim transpassada, quem de dor não choraria?",
+      "Quem na terra há que resista, se a mãe assim se contrista ante uma tal agonia?",
+      "Para salvar sua gente, eis que seu Filho inocente suor e sangue vertia.",
+      "Na cruz por seu Pai chamando, vai a cabeça inclinando, enquanto escurece o dia.",
+      "Faze, ó Mãe, fonte de amor, que eu sinta em mim tua dor, para contigo chorar.",
+      "Faze arder meu coração, partilhar tua paixão e teu Jesus consolar..",
+      "Ó santa Mãe, por favor, faze que as chagas do amor em mim se venham gravar.",
+      "O que Jesus padeceu venha a sofrer também eu, causa de tanto penar.",
+      "Ó dá-me, enquanto viver, com Jesus Cristo sofrer, contigo sempre chorar!",
+      "Quero ficar junto à cruz, velar contigo a Jesus, e o teu pranto enxugar.",
+      "Virgem Mãe tão santa e pura, vendo eu a tua amargura, possa contigo chorar.",
+      "Que do Cristo eu traga a morte, sua paixão me conforte, sua cruz possa abraçar!",
+      "Em sangue as chagas me lavem e no meu peito se gravem, para não mais se apagar.",
+      "No julgamento consegue que às chamas não seja entregue quem soube em ti se abrigar.",
+      "Que a santa cruz me proteja, que eu vença a dura peleja, possa do mal triunfar!",
+      "Vindo, ó Jesus, minha hora, por essas dores de agora, no céu mereça um lugar."
+    ],
+    "la": [
+      "Stabat Mater dolorósa iuxta Crucem lacrimósa, dum pendébat Fílius.",
+      "Cuius ánimam geméntem, contristátam et doléntem pertransívit gládius.",
+      "O quam tristis et afflícta fuit illa benedícta, mater Unigéniti!",
+      "Quæ mærébat et dolébat, pia Mater, dum vidébat nati pœnas íncliti.",
+      "Quis est homo qui non fleret, matrem Christi si vidéret in tanto supplício?",
+      "Quis non posset contristári Christi Matrem contemplári doléntem cum Fílio?",
+      "Pro peccátis suæ gentis vidit Iesum in torméntis, et flagéllis súbditum.",
+      "Vidit suum dulcem Natum moriéndo desolátum, dum emísit spíritum.",
+      "Éia, Mater, fons amóris me sentíre vim dolóris fac, ut tecum lúgeam.",
+      "Fac, ut árdeat cor meum in amándo Christum Deum ut sibi compláceam.",
+      "Sancta Mater, istud agas, crucifíxi fige plagas cordi meo válide.",
+      "Tui Nati vulneráti, tam dignáti pro me pati, pœnas mecum dívide.",
+      "Fac me tecum píe flere, crucifíxo condolére, donec ego víxero.",
+      "Iuxta Crucem tecum stare, et me tibi sociáre in planctu desídero.",
+      "Virgo vírginum præclara, mihi iam non sis amára, fac me tecum plángere.",
+      "Fac, ut portem Christi mortem, passiónis fac consórtem, et plagas recólere.",
+      "Fac me plagis vulnerári, fac me Cruce inebriári, et cruóre Fílii.",
+      "Flammis ne urar succénsus, per te, Virgo, sim defénsus in die iudícii.",
+      "Christe, cum sit hinc exíre, da per Matrem me veníre ad palmam victóriæ.",
+      "Quando corpus moriétur, fac, ut ánimæ donétur paradísi glória. Amen."
     ]
   }
 }

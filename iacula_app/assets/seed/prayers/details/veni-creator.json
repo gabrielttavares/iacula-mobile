@@ -2,11 +2,26 @@
   "slug": "veni-creator",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Veni Creator"
+    "pt-br": "Veni Creator",
+    "la": "Veni, Creátor"
   },
   "blocks": {
     "pt-br": [
-      "Vinde, Espírito Criador, visitai a alma dos vossos fiéis; enchei de graça celestial os corações que Vós criastes. Vós, chamado o Consolador, dom do Deus altíssimo, fonte viva, fogo, caridade e unção espiritual. Vós, com vossos sete dons, sois força da destra de Deus, Vós, o promise pelo Pai; a vossa palavra enriquece nossos lábios."
+      "Vinde, Espírito Criador, visitai a alma dos vossos fiéis; enchei de graça celestial os corações que Vós criastes.",
+      "Vós, chamado o Consolador, dom do Deus altíssimo, fonte viva, fogo, caridade e unção espiritual.",
+      "Vós, com vossos sete dons, sois força da destra de Deus, Vós, o prometido pelo Pai; a vossa palavra enriquece nossos lábios.",
+      "Acendei a vossa luz em nossas almas, infundi vosso amor em nossos peitos; e a fraqueza da nossa carne, fortalecei-a com redobrada força.",
+      "O inimigo, afugentai-o bem para longe; dai-nos a paz quanto antes; abrindo-nos caminho como guia, venceremos todos os perigos.",
+      "Que por Vós conheçamos o Pai, conheçamos igualmente o Filho, e em Vós, Espírito de ambos, creiamos todo o tempo."
+    ],
+    "la": [
+      "Veni, Creátor Spíritus, mentes tuórum vísita, imple supérna grátia, quæ tu creásti péctora.",
+      "Qui díceris Paráclitus, altíssimi donum Dei, fons vivus, ignis, cáritas, et spiritális únctio.",
+      "Tu septifórmis múnere, dígitus patérnæ déxteræ, tu rite promíssum Patris, sermóne ditans gúttura.",
+      "Accénde lumen sénsibus, infúnde amórem córdibus, infírma nostri córporis virtúte firmans pérpeti.",
+      "Hostem repéllas lóngius pacémque dones prótinus; ductóre sic te prævio vitémus omne nóxium.",
+      "Per te sciámus da Patrem noscámus atque Fílium, teque utriúsque Spíritum credámus omni témpore.",
+      "Deo Patri sit glória, et Fílio, qui a mórtuis surréxit, ac Paráclito, in sæculórum sǽcula. Amen."
     ]
   }
 }

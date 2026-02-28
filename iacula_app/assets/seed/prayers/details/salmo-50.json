@@ -2,11 +2,51 @@
   "slug": "salmo-50",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Salmo 50"
+    "pt-br": "Salmo 50",
+    "la": "Psalmus L"
   },
   "blocks": {
     "pt-br": [
-      "Tende piedade de mim, ó Deus, segundo a vossa misericórdia; apagai a minha iniiquidade segundo a multidão das vossas compaixões. Lavai-me completamente da minha culpa e purificai-me do meu pecado."
+      "Tende piedade de mim, ó Deus, segundo a vossa infinita misericórdia. E segundo a grandeza da vossa clemência, apagai os traços da minha falta.",
+      "Lavai-me de toda a minha iniquidade; purificai-me do meu pecado.",
+      "Porque reconheço a minha maldade, e tenho sempre o meu pecado diante de mim.",
+      "Só contra Vós pequei, e fiz o mal diante dos vossos olhos. Assim é justa a vossa sentença e reto o vosso juízo.",
+      "Porque reconheço ter sido dado à luz na iniquidade, e em pecado me concebeu a minha mãe.",
+      "Porque amais a sinceridade de coração, implantai a sabedoria no íntimo de minha alma.",
+      "Aspergi-me com o hissopo e serei purificado; lavai-me, e ficarei mais branco que a neve.",
+      "Possa eu ouvir de Vós uma palavra de gozo e de alegria, e exultarão meus ossos que triturastes!",
+      "Desviai a vossa face de meus pecados e apagai todas as minhas iniquidades.",
+      "Criai em mim, ó Deus um coração puro; e renovai em meu íntimo um espírito firme.",
+      "Não me afasteis da vossa presença, nem me retireis o vosso espírito de santidade.",
+      "Restituí-me a alegria do vosso salutar auxílio; e fortalecei-me com um espírito generoso.",
+      "Ensinarei as vossas veredas aos maus, e os pecadores voltarão a Vós. Livrai-me do meu sangue derramado.",
+      "Ó Deus, meu Salvador; possa minha língua aclamar a vossa benignidade.",
+      "Senhor, abri os meus lábios, e a minha boca proclamará os vossos louvores.",
+      "Porque se quisésseis um sacrifício, eu Vo-lo teria oferecido; mas o holocausto não Vos agradam.",
+      "O sacrifício mais agradável a Deus é o espírito vencido pela dor; não desprezeis, ó Deus, um coração contrito e humilhado.",
+      "Em vossa bondade, Senhor, sede benigno a Sião, para que se reedifiquem os muros de Jerusalém.",
+      "Então aceitareis os justos sacrifícios, as oblações e os holocaustos; e Vos oferecerão vítimas sobre o vosso altar."
+    ],
+    "la": [
+      "Miserére mei, Deus, secúndum misericórdiam tuam. Et secúndum multitúdinem miseratiónum tuárum dele iniquitátem meam.",
+      "Ámplius lava me ab iniquitáte mea et a peccáto meo munda me.",
+      "Quóniam iniquitátem meam ego cognósco: et peccátum meum contra me est semper.",
+      "Tibi, tibi soli peccávi, et malum coram te feci, ut iustus inveniáris in senténtia tua et ǽquus in iudício tuo.",
+      "Ecce enim in iniquitáte generátus sum: et in peccáto concépit me mater mea.",
+      "Ecce enim veritátem in corde dilexísti: et in occúlto sapiéntiam manifestásti mihi.",
+      "Aspérges me hyssópo, et mundábor: lavábis me, et super nivem dealbábor.",
+      "Audíre me fácies gáudium et lætítiam, et exsultábunt ossa, quæ contrivísti.",
+      "Avérte fáciem tuam a peccátis meis, et omnes iniquitátes meas dele.",
+      "Cor mundum crea in me, Deus, et spíritum firmum ínnova in viscéribus meis.",
+      "Ne proícias me a fácie tua et spíritum sanctum tuum ne áuferas a me.",
+      "Redde mihi lætítiam salutáris tui, et spíritu promptíssimo confírma me.",
+      "Docébo iníquos vias tuas, et ímpii ad te converténtur.",
+      "Líbera me de sanguínibus, Deus, Deus salútis meæ, et exsultábit língua mea iustítiam tuam.",
+      "Dómine, lábia mea apéries, et os meum annuntiábit laudem tuam.",
+      "Non enim sacrifício delectáris; holocáustum, si ófferam, non placébit.",
+      "Sacrifícium Deo spíritus contribulátus; cor contrítum et humiliátum, Deus, non despícies.",
+      "Benígne fac, Dómine, in bona voluntáte tua Sion, ut ædificéntur muri Ierúsalem.",
+      "Tunc acceptábis sacrifícium iustítiæ, oblatiónes et holocáusta: tunc impónent super altáre tuum vítulos."
     ]
   }
 }

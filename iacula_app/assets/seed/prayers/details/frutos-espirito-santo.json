@@ -2,16 +2,37 @@
   "slug": "frutos-espirito-santo",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Frutos do Espírito Santo"
+    "pt-br": "Frutos do Espírito Santo",
+    "la": "Duodecim Fructus Spiritus Sancti"
   },
   "blocks": {
     "pt-br": [
-      "Caridade, Gozo, Paz, Paciência, Benignidade, Bondade, Longanimidade, Mansidão, Fé, Modéstia, Continência e Castidade.",
-      "Estes são os doze frutos do Espírito Santo que florescem na alma do cristão que vive em estado de graça.",
-      "A caridade é o amor a Deus sobre todas as coisas. O gozo é a alegria espiritual que nasce da união com Deus. A paz é a tranquilidade de consciência que resulta da ordem interior.",
-      "A paciência nos faz suportar as contrariedades. A benignidade nos inclina ao bem. A bondade nos move a fazer o bem sem esperar recompensa.",
-      "A longanimidade nos faz perseverar nas dificuldades. A mansidão tempera a ira. A fé nos mantém firmes na doutrina cristã.",
-      "A modéstia regula o comportamento exterior. A continência domina os apetites. A castidade preserva a pureza do corpo e da alma."
+      "1. Amor",
+      "2. Alegria",
+      "3. Paz",
+      "4. Paciência",
+      "5. Benignidade",
+      "6. Longanimidade",
+      "7. Benevolência",
+      "8. Humildade",
+      "9. Fidelidade",
+      "10. Modéstia",
+      "11. Continência",
+      "12. Castidade"
+    ],
+    "la": [
+      "1. Caritas.",
+      "2. Gaudium.",
+      "3. Pax.",
+      "4. Patientia.",
+      "5. Benignitas.",
+      "6. Bonitas.",
+      "7. Longanimitas.",
+      "8. Mansuetudo.",
+      "9. Fides.",
+      "10. Modestia.",
+      "11. Continentia.",
+      "12. Castitas."
     ]
   }
 }

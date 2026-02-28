@@ -2,11 +2,25 @@
   "slug": "visita-ao-santissimo",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Visita ao Santíssimo"
+    "pt-br": "Visita ao Santíssimo",
+    "la": "Visitátio Ssimi. Sacraménti"
   },
   "blocks": {
     "pt-br": [
-      "V/. Graças e louvores sejam dados a todo momento. R/. Ao santíssimo e diviníssimo Sacramento. Pai-Nosso, Ave-Maria e Glória. Comunhão espiritual: Eu quisera, Senhor, receber-vos com aquela pureza, humildade e devoção com que vos recebeu a vossa Santíssima Mãe, com o espírito e o fervor dos Santos."
+      ". Graças e louvores sejam dados a todo momento.",
+      ". Ao Santíssimo e diviníssimo Sacramento.",
+      "Pai Nosso, Ave Maria, Glória (três vezes).",
+      ". Graças e louvores sejam dados a todo momento.",
+      ". Ao Santíssimo e diviníssimo Sacramento.",
+      "Comunhão espiritual",
+      "Eu quisera, Senhor, receber-Vos com aquela pureza, humildade e devoção com que Vos recebeu a Vossa Santíssima Mãe, com o espírito e o fervor dos Santos."
+    ],
+    "la": [
+      ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+      "Pater noster, Ave Maria, Glória Patri (ter repetitur oratio).",
+      ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+      "Communio spiritualis",
+      "Yo quisiera, Señor, recibiros con aquella pureza, humildad y devoción con que os recibió vuestra Santísima Madre, con el espíritu y fervor de los santos."
     ]
   }
 }

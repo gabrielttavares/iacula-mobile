@@ -2,11 +2,24 @@
   "slug": "salve-rainha",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Salve Rainha"
+    "pt-br": "Salve Rainha",
+    "la": "Salve, Regína"
   },
   "blocks": {
     "pt-br": [
-      "Salve Rainha, Mãe de misericórdia, vida, doçura, esperança nossa, salve! A vós bradamos, os degredados filhos de Eva, a vós suspiramos, gemendo e chorando neste vale de lágrimas. Eia, pois, Advogada nossa, esses vossos olhos misericordiosos a nós volvei, e depois deste desterro mostr-nos Jesus, bendito fruto de vosso ventre, ó clemente, ó piedosa, ó doce sempre Virgem Maria."
+      "Salve, Rainha, mãe de misericórdia, vida, doçura, esperança nossa, salve!",
+      "A Vós bradamos, os degredados filhos de Eva. A Vós suspiramos, gemendo e chorando neste vale de lágrimas.",
+      "Eia, pois, advogada nossa, esses Vossos olhos misericordiosos a nós volvei,",
+      "e, depois deste desterro, mostrai-nos Jesus, bendito fruto do Vosso ventre.",
+      "Ó clemente, ó piedosa, ó doce sempre Virgem Maria.",
+      "Rogai por nós, Santa Mãe de Deus, para que sejamos dignos das promessas de Cristo."
+    ],
+    "la": [
+      "Salve, Regina, Mater misericórdiæ, vita, dulcédo et spes nostra, salve.",
+      "Ad te clamámus, éxsules fílii Hevæ. Ad te suspirámus geméntes et flentes in hac lacrimárum valle.",
+      "Éia ergo, advocáta nostra, illos tuos misericórdes óculos ad nos convérte.",
+      "Et Iesum benedíctum fructum ventris tui, nobis, post hoc exsílium, osténde.",
+      "O clemens, o pia, o dulcis Virgo Maria!"
     ]
   }
 }

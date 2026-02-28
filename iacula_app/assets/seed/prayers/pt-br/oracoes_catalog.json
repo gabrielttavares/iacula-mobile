@@ -6,7 +6,8 @@
     "section_id": "oracoes-comuns",
     "section_title": "Orações Comuns",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "oracoes-comuns"
@@ -15,12 +16,13 @@
   },
   {
     "id": "gloria",
-    "title": "Glória",
+    "title": "Glória ao Pai",
     "content": "Glória ao Pai e ao Filho e ao Espírito Santo. Como era, no princípio, agora e sempre. Amém.",
     "section_id": "oracoes-comuns",
     "section_title": "Orações Comuns",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "oracoes-comuns"
@@ -34,7 +36,8 @@
     "section_id": "oracoes-comuns",
     "section_title": "Orações Comuns",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "oracoes-comuns"
@@ -48,7 +51,8 @@
     "section_id": "oracoes-comuns",
     "section_title": "Orações Comuns",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "oracoes-comuns",
@@ -65,7 +69,8 @@
     "section_id": "oracoes-comuns",
     "section_title": "Orações Comuns",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "mariano"
@@ -96,7 +101,8 @@
     "section_id": "oracoes-comuns",
     "section_title": "Orações Comuns",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "oracoes-comuns"
@@ -124,7 +130,8 @@
     "section_id": "oracoes-comuns",
     "section_title": "Orações Comuns",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "oracoes-comuns",
@@ -141,7 +148,8 @@
     "section_id": "oracoes-santissima-trindade",
     "section_title": "Orações à Santíssima Trindade",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "santissima-trindade"
@@ -155,7 +163,8 @@
     "section_id": "oracoes-santissima-trindade",
     "section_title": "Orações à Santíssima Trindade",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "santissima-trindade"
@@ -211,7 +220,8 @@
     "section_id": "adoracao-eucaristica",
     "section_title": "Adoração Eucarística",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "eucaristica"
@@ -220,12 +230,13 @@
   },
   {
     "id": "adoro-te-devote",
-    "title": "Adoro te Devote",
+    "title": "Adoro te devote",
     "content": "Adoro-Vos com devoção, Deus escondido, que sob estas aparências estais presente. A Vós se submete meu coração por inteiro, e ao contemplar-Vos se rende totalmente. A vista, o tato, o gosto sobre Vós se enganam, mas basta o ouvido para crer com firmeza. Creio em tudo o que disse o Filho de Deus; nada mais verdadeiro que esta palavra de verdade. Na Cruz estava oculta a divindade, mas aqui se esconde também a humanidade; creio, porém, e confesso uma e outra, e peço o que pediu o ladrão arrependido.",
     "section_id": "adoracao-eucaristica",
     "section_title": "Adoração Eucarística",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "eucaristica"
@@ -234,12 +245,13 @@
   },
   {
     "id": "pange-lingua",
-    "title": "Pange Lingua",
+    "title": "Pange, língua",
     "content": "Celebremos o mistério da divina Eucaristia, Corpo e Sangue de Jesus: o mistério do Deus vivo, tão real no seu altar como outrora sobre a Cruz. Veneremos, adoremos a presença do senhor, nossa Luz e Pão da Vida. Cante a alma o seu louvor. Adoremos no sacrário Deus oculto por amor. Demos glória ao Pai do Céu, Infinita Majestade, glória ao Filho e ao Espírito Santo.",
     "section_id": "adoracao-eucaristica",
     "section_title": "Adoração Eucarística",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "eucaristica"
@@ -248,12 +260,13 @@
   },
   {
     "id": "veni-creator",
-    "title": "Veni Creator",
+    "title": "Veni, Creátor",
     "content": "Vinde, Espírito Criador, visitai a alma dos vossos fiéis; enchei de graça celestial os corações que Vós criastes. Vós, chamado o Consolador, dom do Deus altíssimo, fonte viva, fogo, caridade e unção espiritual. Vós, com vossos sete dons, sois força da destra de Deus, Vós, o promise pelo Pai; a vossa palavra enriquece nossos lábios.",
     "section_id": "ao-espirito-santo",
     "section_title": "Ao Espírito Santo",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "espirito-santo"
@@ -290,12 +303,13 @@
   },
   {
     "id": "vinde-santo-espirito",
-    "title": "Vinde Santo Espírito",
+    "title": "Vinde, ó Santo Espírito",
     "content": "Vinde Santo Espírito e do céu mandai luminoso raio; vinde pai dos pobres, doador dos dons, luz dos corações. Grande defensor em nós habitais e nos confortais. Na fadiga, pouso, no ardor, brandura e na dor, ternura.",
     "section_id": "ao-espirito-santo",
     "section_title": "Ao Espírito Santo",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "espirito-santo"
@@ -321,7 +335,7 @@
   },
   {
     "id": "angelus",
-    "title": "Angelus",
+    "title": "Ângelus",
     "content": "V/. Angelus Dómini nuntiávit Maríæ. R/. Et concépit de Spíritu Sancto. Ave, Maria. V/. Ecce ancílla Dómini. R/. Fiat mihi secúndum verbum tuum. Ave, María. V/. Et Verbum caro factum est. R/. Et habitávit in nobis. Ave, María.",
     "section_id": "oracoes-a-nossa-senhora",
     "section_title": "Orações a Nossa Senhora",
@@ -372,7 +386,7 @@
   },
   {
     "id": "lembrai-vos",
-    "title": "Lembrai-vos",
+    "title": "Lembrai-Vos",
     "content": "Lembrai-vos, ó piíssima Virgem Maria, que nunca se ouviu dizer que algum daqueles que recorreram à vossa proteção, imploraram a vossa assistência e reclamaram o vosso socorro, fosse por vós desamparado. Animado eu, pois, com igual confiança, a vós, Virgem, entre todas singular, como à minha Mãe recorro; de vós me valho e, gemendo sob o peso de meus pecados, me prostro aos vossos pés.",
     "section_id": "oracoes-a-nossa-senhora",
     "section_title": "Orações a Nossa Senhora",
@@ -411,7 +425,8 @@
     "section_id": "oracoes-a-nossa-senhora",
     "section_title": "Orações a Nossa Senhora",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "mariano",
@@ -460,7 +475,8 @@
     "section_id": "oracoes-a-nossa-senhora",
     "section_title": "Orações a Nossa Senhora",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "mariano"
@@ -570,12 +586,13 @@
   },
   {
     "id": "a-sao-jose",
-    "title": "A São José",
+    "title": "Oração a São José",
     "content": "São José, varão feliz, que tivestes a dita de ver e ouvir o próprio Deus, a quem muitos reis quiseram ver e não viram, ouvir e não ouviram; e não só ver e ouvir, mas ainda trazê-lo em vossos braços, beijá-lo, vesti-lo e guardá-lo! Rogai por nós, bem-aventurado São José, para que sejamos dignos das promessas de Cristo.",
     "section_id": "preparacao-santa-missa",
     "section_title": "Preparação para a Santa Missa",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "missa-preparacao"
@@ -591,7 +608,8 @@
     "section_id": "preparacao-santa-missa",
     "section_title": "Preparação para a Santa Missa",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "missa-preparacao"
@@ -674,12 +692,13 @@
   },
   {
     "id": "oracao-santo-ambrosio",
-    "title": "Oração de Santo Ambrósio",
+    "title": "Oração de Santo Ambrosio",
     "content": "Ó Deus, que preparastes o vosso povo redimido para a glória eterna, fazei que as almas dos fiéis que dormem no Senhor descansem em paz e na luz da vossa face. Por Jesus Cristo, Senhor nosso.",
     "section_id": "preparacao-santa-missa",
     "section_title": "Preparação para a Santa Missa",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "missa-preparacao"
@@ -732,12 +751,13 @@
   },
   {
     "id": "oracao-sao-tomas-acao-de-gracas",
-    "title": "Oração de São Tomás de Aquino (Ação de Graças)",
+    "title": "Oração de São Tomás de Aquino",
     "content": "Ó Deus, de quem procede todo o bem, que nos haveis nutrido com o Cuerpo e Sangue de vosso Filho, concedei-nos a graça de Vos render ações de graças e de vivir de modo que sejamos dignos de tão grandes benefícios.",
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "missa-acao-de-gracas"
@@ -767,7 +787,8 @@
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "missa-acao-de-gracas"
@@ -808,12 +829,13 @@
   },
   {
     "id": "oracao-a-sao-jose-acao",
-    "title": "Oração a São José (Ação de Graças)",
+    "title": "Oração a São José",
     "content": "São José, guardião de Jesus e da Virgem Maria, proteged a minha alma e o meu corpo. Rogai por mim para que eu possa vivir santamente e alcançar o céu.",
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "missa-acao-de-gracas"
@@ -1047,7 +1069,7 @@
   },
   {
     "id": "ubi-caritas",
-    "title": "Ubi Cáritas",
+    "title": "Ubi caritas",
     "content": "Ubi cáritas et amor, Deus ibi est. Congregavit nos in unum Christi amor. Exsultemus et in ipso iucundemur. Timeamus et amemus Deum vivum. Et ex corde diligamus nos sincero.",
     "section_id": "outras-devocoes",
     "section_title": "Outras Devoções, Hinos e Salmos",
@@ -1080,7 +1102,8 @@
     "section_id": "outras-devocoes",
     "section_title": "Outras Devoções, Hinos e Salmos",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "devocoes"
@@ -1089,12 +1112,13 @@
   },
   {
     "id": "bencao-dos-alimentos",
-    "title": "Benção dos Alimentos",
+    "title": "Bênção dos alimentos",
     "content": "Ó Deus, que criastes todos os alimentos para sustentaçao do corpo humano, abençoai + estes alimentos que vamos receber, para que nos deem saúde e forças para Vos servir.",
     "section_id": "outras-devocoes",
     "section_title": "Outras Devoções, Hinos e Salmos",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "devocoes"
@@ -1191,12 +1215,13 @@
   },
   {
     "id": "mandamentos-da-caridade",
-    "title": "Mandamentos da Caridade",
+    "title": "Os dois mandamentos da caridade",
     "content": "Amarás a Deus sobre todas as coisas e ao próximo como a ti mesmo.",
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "doutrina"
@@ -1205,12 +1230,13 @@
   },
   {
     "id": "regra-de-ouro",
-    "title": "Regra de Ouro",
+    "title": "A regra de ouro (Mt 7, 12)",
     "content": "Fazei aos outros o que quereis que vos façam.",
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "doutrina"
@@ -1219,12 +1245,13 @@
   },
   {
     "id": "bem-aventurancas",
-    "title": "Bem-Aventuranças",
+    "title": "As Bem-aventuranças",
     "content": "Bem-aventurados os pobres de espírito, os que choram, os mansos, os que têm fome e sede de justiça, os misericordiosos, os limpos de coração, os pacificadores, os perseguidos por causa da justiça.",
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "doutrina"
@@ -1247,12 +1274,13 @@
   },
   {
     "id": "virtudes-cardeais",
-    "title": "Virtudes Cardeais",
+    "title": "As quatro virtudes cardeais",
     "content": "Prudência, Justiça, Fortaleza e Temperança.",
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "doutrina"
@@ -1261,12 +1289,13 @@
   },
   {
     "id": "dons-espirito-santo",
-    "title": "Dons do Espírito Santo",
+    "title": "Os sete dons do Espírito Santo",
     "content": "Sabedoria, Entendimento, Conselho, Fortaleza, Ciência, Piedade e Temor de Deus.",
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "doutrina"
@@ -1275,12 +1304,13 @@
   },
   {
     "id": "frutos-espirito-santo",
-    "title": "Frutos do Espírito Santo",
+    "title": "Os doze frutos do Espírito Santo",
     "content": "Caridade, Gozo, Paz, Paciência, Benignidade, Bondade, Longanimidade, Mansidão, Fé, Modéstia, Continência e Castidade.",
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "doutrina"
@@ -1345,12 +1375,13 @@
   },
   {
     "id": "novissimos",
-    "title": "Novíssimos",
+    "title": "Os novíssimos",
     "content": "Morte, Juízo, Inferno ou Paraíso, e Glória.",
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "doutrina"
@@ -1487,7 +1518,7 @@
   },
   {
     "id": "benedictus",
-    "title": "Benedictus",
+    "title": "Benedíctus",
     "content": "Benedictus Dominus Deus Israel, quia visitavit et fecit redemptionem plebis suae.",
     "section_id": "outras-devocoes",
     "section_title": "Outras Devoções, Hinos e Salmos",
