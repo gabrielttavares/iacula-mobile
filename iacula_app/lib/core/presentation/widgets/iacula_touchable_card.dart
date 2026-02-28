@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 /// A card wrapper that animates scale, shadow depth, and vertical position
 /// on press to create a "floating layer sinks toward surface" effect.
+/// In rest state, uses a stronger shadow and optional top highlight for a 3D look.
 class IaculaTouchableCard extends StatefulWidget {
   const IaculaTouchableCard({
     super.key,
@@ -11,6 +12,7 @@ class IaculaTouchableCard extends StatefulWidget {
     this.scaleFactor = 0.92,
     this.pressTranslateY = 2.0,
     this.enableHaptics = true,
+    this.borderRadius = 16.0,
   });
 
   final Widget child;
@@ -18,6 +20,7 @@ class IaculaTouchableCard extends StatefulWidget {
   final double scaleFactor;
   final double pressTranslateY;
   final bool enableHaptics;
+  final double borderRadius;
 
   @override
   State<IaculaTouchableCard> createState() => _IaculaTouchableCardState();
@@ -31,6 +34,7 @@ class _IaculaTouchableCardState extends State<IaculaTouchableCard>
   late final Animation<double> _shadowBlurAnimation;
   late final Animation<double> _shadowOffsetAnimation;
   late final Animation<double> _shadowOpacityAnimation;
+  late final Animation<double> _highlightOpacityAnimation;
 
   @override
   void initState() {
@@ -57,22 +61,26 @@ class _IaculaTouchableCardState extends State<IaculaTouchableCard>
       end: widget.pressTranslateY,
     ).animate(curvedAnimation);
 
-    // Shadow: blur 20 -> 4
+    // Shadow: stronger at rest (3D) -> reduced when pressed
     _shadowBlurAnimation = Tween<double>(
-      begin: 20.0,
+      begin: 26.0,
       end: 4.0,
     ).animate(curvedAnimation);
 
-    // Shadow: offset Y 8 -> 1
     _shadowOffsetAnimation = Tween<double>(
-      begin: 8.0,
+      begin: 11.0,
       end: 1.0,
     ).animate(curvedAnimation);
 
-    // Shadow: opacity 0x0A (10) -> 0x07 (7), normalized 0-255
     _shadowOpacityAnimation = Tween<double>(
-      begin: 10.0 / 255.0,
+      begin: 18.0 / 255.0,
       end: 7.0 / 255.0,
+    ).animate(curvedAnimation);
+
+    // Top highlight (bevel): visible at rest, fades on press
+    _highlightOpacityAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
     ).animate(curvedAnimation);
   }
 
@@ -117,6 +125,8 @@ class _IaculaTouchableCardState extends State<IaculaTouchableCard>
               scale: _scaleAnimation.value,
               child: Container(
                 decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(widget.borderRadius),
                   boxShadow: [
                     BoxShadow(
                       color: Color.fromRGBO(
@@ -124,6 +134,16 @@ class _IaculaTouchableCardState extends State<IaculaTouchableCard>
                       ),
                       blurRadius: _shadowBlurAnimation.value,
                       offset: Offset(0, _shadowOffsetAnimation.value),
+                    ),
+                    BoxShadow(
+                      color: Color.fromRGBO(
+                        255,
+                        255,
+                        255,
+                        0.12 * _highlightOpacityAnimation.value,
+                      ),
+                      blurRadius: 3,
+                      offset: const Offset(0, -2),
                     ),
                   ],
                 ),

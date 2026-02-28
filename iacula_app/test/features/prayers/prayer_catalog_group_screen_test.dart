@@ -33,6 +33,8 @@ final class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
         content: 'Texto',
         themes: ['familia'],
         saints: [],
+        sectionId: 'oracoes-comuns',
+        sectionTitle: 'Orações Comuns',
       ),
       PrayerCatalogEntry(
         slug: 'salve-rainha',
@@ -40,6 +42,8 @@ final class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
         content: 'Texto',
         themes: ['mariano', 'familia'],
         saints: ['virgem-maria'],
+        sectionId: 'oracoes-comuns',
+        sectionTitle: 'Orações Comuns',
       ),
       PrayerCatalogEntry(
         slug: 'anjo-da-guarda',
@@ -47,6 +51,8 @@ final class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
         content: 'Texto',
         themes: ['protecao'],
         saints: ['anjos'],
+        sectionId: 'outras',
+        sectionTitle: 'Outras',
       ),
     ];
   }
@@ -107,5 +113,32 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(PrayerCatalogDetailScreen), findsOneWidget);
+  });
+
+  testWidgets('section group screen lists only matching prayers', (tester) async {
+    final repository = _FakePrayerCatalogRepository();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          settingsRepositoryProvider.overrideWithValue(
+            _FakeSettingsRepository(),
+          ),
+          prayerCatalogRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: const CupertinoApp(
+          home: PrayerCatalogGroupScreen(
+            type: HomePrayerGroupType.section,
+            groupKey: 'oracoes-comuns',
+            title: 'Orações Comuns',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Pai Nosso'), findsOneWidget);
+    expect(find.text('Salve Rainha'), findsOneWidget);
+    expect(find.text('Anjo da Guarda'), findsNothing);
   });
 }

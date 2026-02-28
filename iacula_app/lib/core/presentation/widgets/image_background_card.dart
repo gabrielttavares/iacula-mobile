@@ -26,6 +26,7 @@ class ImageBackgroundCard extends StatelessWidget {
     final hasImage = imageAsset != null;
     return PremiumTouchableCard(
       onTap: onTap,
+      borderRadius: IaculaRadius.card,
       child: Container(
         height: height,
         decoration: BoxDecoration(

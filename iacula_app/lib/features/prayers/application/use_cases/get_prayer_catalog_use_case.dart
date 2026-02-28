@@ -31,6 +31,16 @@ final class GetPrayerCatalogUseCase {
         .toList(growable: false);
   }
 
+  Future<List<PrayerCatalogEntry>> bySection({
+    required String language,
+    required String sectionId,
+  }) async {
+    final catalog = await listAll(language: language);
+    return catalog
+        .where((entry) => entry.sectionId == sectionId)
+        .toList(growable: false);
+  }
+
   Future<PrayerCatalogEntry?> suggestionOfDay({
     required String language,
     required DateTime date,

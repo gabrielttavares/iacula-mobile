@@ -7,8 +7,9 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../doctrina/presentation/doctrine_collections_screen.dart';
+import '../../home/presentation/home_prayer_groups.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
-import 'prayer_catalog_detail_screen.dart';
+import 'prayer_catalog_group_screen.dart';
 import 'prayer_screen.dart';
 
 final _catalogProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
@@ -104,7 +105,7 @@ class PrayerCollectionsScreen extends ConsumerWidget {
 
                         return Padding(
                           padding: const EdgeInsets.only(
-                            bottom: IaculaSpacing.md,
+                            bottom: IaculaSpacing.sm,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,34 +126,20 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                                 ),
                                 const SizedBox(height: IaculaSpacing.sm),
                               ],
-                              Text(
-                                group.sectionTitle,
-                                style: context.textStyles.secondary.copyWith(
-                                  color: context.colors.textSecondary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: IaculaSpacing.sm),
-                              ...group.entries.map(
-                                (entry) => Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: IaculaSpacing.sm,
-                                  ),
-                                  child: _PrayerCategoryCard(
-                                    title: entry.title,
-                                    icon: CupertinoIcons.book,
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (_) =>
-                                              PrayerCatalogDetailScreen(
-                                                entry: entry,
-                                              ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
+                              _PrayerCategoryCard(
+                                title: group.sectionTitle,
+                                icon: CupertinoIcons.book,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    CupertinoPageRoute(
+                                      builder: (_) => PrayerCatalogGroupScreen(
+                                        type: HomePrayerGroupType.section,
+                                        groupKey: group.sectionId,
+                                        title: group.sectionTitle,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),

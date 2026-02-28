@@ -24,6 +24,10 @@ final _groupEntriesProvider = FutureProvider.family
           language: settings.language,
           saint: request.groupKey,
         ),
+        HomePrayerGroupType.section => useCase.bySection(
+          language: settings.language,
+          sectionId: request.groupKey,
+        ),
       };
     });
 

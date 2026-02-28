@@ -26,6 +26,8 @@ void main() {
       content: 'Texto da novena',
       themes: ['familia', 'trabalho'],
       saints: ['sao-jose'],
+      sectionId: 'oracoes-a-sao-jose',
+      sectionTitle: 'Orações a São José',
     ),
     PrayerCatalogEntry(
       slug: 'consagracao-sagrado-coracao',
@@ -33,6 +35,8 @@ void main() {
       content: 'Texto da consagracao',
       themes: ['consagracao'],
       saints: [],
+      sectionId: 'oracoes-diversas',
+      sectionTitle: 'Orações Diversas',
     ),
     PrayerCatalogEntry(
       slug: 'ladainha-santa-teresinha',
@@ -40,6 +44,8 @@ void main() {
       content: 'Texto da ladainha',
       themes: ['intercessao', 'mariano'],
       saints: ['santa-teresinha', 'virgem-maria'],
+      sectionId: 'oracoes-a-sao-jose',
+      sectionTitle: 'Orações a São José',
     ),
   ];
 
@@ -83,6 +89,28 @@ void main() {
     final useCase = GetPrayerCatalogUseCase(repository: repository);
 
     final result = await useCase.bySaint(language: 'pt-br', saint: 'sao-pio');
+    expect(result, isEmpty);
+  });
+
+  test('bySection returns only entries with matching sectionId', () async {
+    final repository = _FakePrayerCatalogRepository(entries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+
+    final result = await useCase.bySection(
+      language: 'pt-br',
+      sectionId: 'oracoes-a-sao-jose',
+    );
+    expect(result.map((e) => e.slug), ['novena-sao-jose', 'ladainha-santa-teresinha']);
+  });
+
+  test('bySection returns empty list when no entry matches', () async {
+    final repository = _FakePrayerCatalogRepository(entries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+
+    final result = await useCase.bySection(
+      language: 'pt-br',
+      sectionId: 'outras',
+    );
     expect(result, isEmpty);
   });
 

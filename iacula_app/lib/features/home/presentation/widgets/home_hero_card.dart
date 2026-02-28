@@ -47,6 +47,7 @@ class HomeHeroCard extends ConsumerWidget {
 
     return PremiumTouchableCard(
       onTap: onOpenPremium,
+      borderRadius: IaculaRadius.banner,
       child: Container(
         key: const Key('home_hero_card'),
         decoration: BoxDecoration(

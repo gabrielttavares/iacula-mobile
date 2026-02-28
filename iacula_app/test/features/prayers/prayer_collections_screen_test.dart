@@ -47,7 +47,7 @@ class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
 }
 
 void main() {
-  testWidgets('renders section headers from catalog entries', (tester) async {
+  testWidgets('renders group cards from catalog entries', (tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -66,7 +66,7 @@ void main() {
 
     expect(find.text('Orações Comuns'), findsOneWidget);
     expect(find.text('Orações Marianas'), findsOneWidget);
-    expect(find.text('Pai Nosso'), findsOneWidget);
-    expect(find.text('Lembrai-vos'), findsOneWidget);
+    expect(find.text('Pai Nosso'), findsNothing);
+    expect(find.text('Lembrai-vos'), findsNothing);
   });
 }

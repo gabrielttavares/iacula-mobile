@@ -1,6 +1,6 @@
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 
-enum HomePrayerGroupType { theme, saint }
+enum HomePrayerGroupType { theme, saint, section }
 
 final class HomePrayerGroup {
   const HomePrayerGroup({
