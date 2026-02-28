@@ -35,40 +35,61 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(IaculaSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const IaculaLargeTitle('Meditações'),
-              const SizedBox(height: 4),
-              Text(
-                'Escolha pelo seu momento',
-                style: context.textStyles.secondary,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(IaculaSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const IaculaLargeTitle('Meditações'),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Escolha pelo seu momento',
+                      style: context.textStyles.secondary,
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: IaculaSpacing.md),
-              _FilterChips(
-                filters: _filters,
-                selected: _selectedFilter,
-                onSelected: (f) => setState(() => _selectedFilter = f),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
+                child: Column(
+                  children: [
+                    _FilterChips(
+                      filters: _filters,
+                      selected: _selectedFilter,
+                      onSelected: (f) => setState(() => _selectedFilter = f),
+                    ),
+                    const SizedBox(height: IaculaSpacing.md),
+                  ],
+                ),
               ),
-              const SizedBox(height: IaculaSpacing.md),
-              Expanded(
-                child: catalogAsync.when(
-                  data: (items) => _buildFeed(context, _applyFilter(items)),
-                  loading: () => const Center(
+            ),
+            ...catalogAsync.maybeWhen(
+              data: (items) => _buildSliverFeed(context, _applyFilter(items)),
+              loading: () => [
+                const SliverFillRemaining(
+                  child: Center(
                     child: CupertinoActivityIndicator(),
                   ),
-                  error: (_, _) => Center(
+                ),
+              ],
+              orElse: () => [
+                SliverFillRemaining(
+                  child: Center(
                     child: Text(
                       'Não foi possível carregar as meditações.',
                       style: context.textStyles.secondary,
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -82,37 +103,76 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
         .toList(growable: false);
   }
 
-  Widget _buildFeed(BuildContext context, List<MeditationItem> items) {
+  List<Widget> _buildSliverFeed(BuildContext context, List<MeditationItem> items) {
     if (items.isEmpty) {
-      return Center(
-        child: Text(
-          'Nenhuma meditação encontrada para este filtro.',
-          style: context.textStyles.secondary,
+      return [
+        SliverFillRemaining(
+          child: Center(
+            child: Text(
+              'Nenhuma meditação encontrada para este filtro.',
+              style: context.textStyles.secondary,
+            ),
+          ),
         ),
-      );
+      ];
     }
 
-    return ListView.separated(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
-      ),
-      itemCount: items.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return _MeditationFeedCard(
-          item: item,
+    final hero = items.first;
+    final heroAdapter = SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
+        child: _MeditationHeroCard(
+          item: hero,
           onTap: () {
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (_) => MeditationDetailScreen(item: item),
+                builder: (_) => MeditationDetailScreen(item: hero),
               ),
             );
           },
-        );
-      },
+        ),
+      ),
     );
+
+    if (items.length == 1) {
+      return [heroAdapter];
+    }
+
+    final library = items.skip(1).toList();
+    final librarySliverPadding = SliverPadding(
+      padding: EdgeInsets.only(
+        top: 16,
+        left: IaculaSpacing.md,
+        right: IaculaSpacing.md,
+        bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+      ),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 0.8,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final item = library[index];
+            return _MeditationGridCard(
+              item: item,
+              onTap: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (_) => MeditationDetailScreen(item: item),
+                  ),
+                );
+              },
+            );
+          },
+          childCount: library.length,
+        ),
+      ),
+    );
+
+    return [heroAdapter, librarySliverPadding];
   }
 }
 
@@ -170,69 +230,6 @@ class _FilterChips extends StatelessWidget {
   }
 }
 
-class _MeditationFeedCard extends StatelessWidget {
-  const _MeditationFeedCard({
-    required this.item,
-    required this.onTap,
-  });
-
-  final MeditationItem item;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return IaculaTouchableCard(
-      onTap: onTap,
-      child: IaculaSoftCard(
-        radius: 16,
-        child: Row(
-          children: [
-            _TypeGlyph(type: item.type),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(item.title, style: context.textStyles.cardTitle),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.summary,
-                    style: context.textStyles.secondary,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      _Badge(text: item.sourceName),
-                      if (item.durationLabel != null) ...[
-                        const SizedBox(width: 8),
-                        _Badge(text: item.durationLabel!),
-                      ],
-                      if (item.availability.kind ==
-                          MeditationAvailabilityKind.daily) ...[
-                        const SizedBox(width: 8),
-                        const _Badge(text: 'Diário'),
-                      ],
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Icon(
-              CupertinoIcons.chevron_right,
-              color: context.colors.textSecondary,
-              size: 16,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ignore: unused_element
 class _MeditationGridCard extends StatelessWidget {
   const _MeditationGridCard({
     required this.item,
@@ -320,7 +317,6 @@ class _TypeGlyph extends StatelessWidget {
   }
 }
 
-// ignore: unused_element
 BoxDecoration _getGradientForType(MeditationType type, BuildContext context) {
   final LinearGradient gradient = switch (type) {
     MeditationType.video => const LinearGradient(
@@ -370,7 +366,6 @@ class _Badge extends StatelessWidget {
   }
 }
 
-// ignore: unused_element
 class _MeditationHeroCard extends StatelessWidget {
   const _MeditationHeroCard({
     required this.item,
@@ -393,7 +388,7 @@ class _MeditationHeroCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 240),
+          height: 280,
           decoration: _getGradientForType(item.type, context).copyWith(
             borderRadius: BorderRadius.circular(24),
           ),
@@ -405,7 +400,7 @@ class _MeditationHeroCard extends StatelessWidget {
                 child: Icon(
                   icon,
                   color: const Color(0xFFFFFFFF).withValues(alpha: 0.1),
-                  size: 120,
+                  size: 160,
                 ),
               ),
               Padding(
@@ -413,18 +408,16 @@ class _MeditationHeroCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         _HeroBadge(text: item.sourceName),
-                        if (item.durationLabel != null) ...[
-                          const SizedBox(width: 8),
+                        if (item.durationLabel != null)
                           _HeroBadge(text: item.durationLabel!),
-                        ],
                         if (item.availability.kind ==
-                            MeditationAvailabilityKind.daily) ...[
-                          const SizedBox(width: 8),
+                            MeditationAvailabilityKind.daily)
                           const _HeroBadge(text: 'Diário'),
-                        ],
                       ],
                     ),
                     const Spacer(),
@@ -460,7 +453,6 @@ class _MeditationHeroCard extends StatelessWidget {
   }
 }
 
-// ignore: unused_element
 class _HeroBadge extends StatelessWidget {
   const _HeroBadge({required this.text});
 
