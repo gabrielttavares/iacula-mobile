@@ -278,11 +278,14 @@ class _SegmentedContent extends StatelessWidget {
           children: [
             const IaculaSectionHeader(title: 'Orações'),
             const SizedBox(height: IaculaSpacing.sm),
-            _Line(label: 'Coleta', text: day.prayers.collect),
-            _Line(label: 'Oferendas', text: day.prayers.offering),
-            _Line(label: 'Comunhão', text: day.prayers.communion),
+            if (day.prayers.collect.isNotEmpty)
+              _LabeledBlock(label: 'Coleta', text: day.prayers.collect),
+            if (day.prayers.offering.isNotEmpty)
+              _LabeledBlock(label: 'Oferendas', text: day.prayers.offering),
+            if (day.prayers.communion.isNotEmpty)
+              _LabeledBlock(label: 'Comunhão', text: day.prayers.communion),
             for (final extra in day.prayers.extra)
-              _Line(label: 'Extra', text: extra),
+              if (extra.isNotEmpty) _LabeledBlock(label: 'Extra', text: extra),
           ],
         );
       case _LiturgySegment.readings:
@@ -292,23 +295,44 @@ class _SegmentedContent extends StatelessWidget {
             const IaculaSectionHeader(title: 'Leituras'),
             const SizedBox(height: IaculaSpacing.sm),
             if (day.readings.isEmpty)
-              const _Line(
+              _LabeledBlock(
                 label: 'Leituras',
                 text: 'Não há leituras disponíveis.',
               )
             else
               for (final reading in day.readings) ...[
                 Text(reading.title, style: context.textStyles.cardTitle),
-                const SizedBox(height: 4),
-                _Line(
-                  label: reading.reference.isEmpty
-                      ? 'Texto'
-                      : reading.reference,
-                  text: reading.text,
+                if (reading.reference.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    reading.reference,
+                    style: context.textStyles.secondary.copyWith(
+                      fontSize: 13,
+                      color: context.colors.textSecondary,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 6),
+                Text(
+                  reading.text,
+                  style: context.textStyles.secondary.copyWith(
+                    color: context.colors.textPrimary,
+                    height: 1.55,
+                    fontSize: 15,
+                  ),
+                  textAlign: TextAlign.start,
                 ),
-                if (reading.response?.isNotEmpty == true)
-                  _Line(label: 'Resposta', text: reading.response!),
-                const SizedBox(height: IaculaSpacing.sm),
+                if (reading.response != null &&
+                    reading.response!.isNotEmpty) ...[
+                  const SizedBox(height: IaculaSpacing.sm),
+                  _ResponseBlock(
+                    label: reading.kind == LiturgyReadingKind.psalm
+                        ? 'Refrão'
+                        : 'Resposta',
+                    text: reading.response!,
+                  ),
+                ],
+                const SizedBox(height: IaculaSpacing.md),
               ],
           ],
         );
@@ -323,17 +347,21 @@ class _SegmentedContent extends StatelessWidget {
             const IaculaSectionHeader(title: 'Antífonas'),
             const SizedBox(height: IaculaSpacing.sm),
             if (!hasAntiphons)
-              const _Line(
+              const _LabeledBlock(
                 label: 'Antífonas',
                 text: 'Não há antífonas disponíveis.',
               )
             else ...[
-              if (day.antiphons.entry != null)
-                _Line(label: 'Entrada', text: day.antiphons.entry!),
-              if (day.antiphons.communion != null)
-                _Line(label: 'Comunhão', text: day.antiphons.communion!),
+              if (day.antiphons.entry != null && day.antiphons.entry!.isNotEmpty)
+                _LabeledBlock(
+                    label: 'Entrada', text: day.antiphons.entry!),
+              if (day.antiphons.communion != null &&
+                  day.antiphons.communion!.isNotEmpty)
+                _LabeledBlock(
+                    label: 'Comunhão', text: day.antiphons.communion!),
               for (final extra in day.antiphons.extra)
-                _Line(label: 'Extra', text: extra),
+                if (extra.isNotEmpty)
+                  _LabeledBlock(label: 'Extra', text: extra),
             ],
           ],
         );
@@ -341,8 +369,49 @@ class _SegmentedContent extends StatelessWidget {
   }
 }
 
-class _Line extends StatelessWidget {
-  const _Line({required this.label, required this.text});
+class _LabeledBlock extends StatelessWidget {
+  const _LabeledBlock({required this.label, required this.text});
+
+  final String label;
+  final String text;
+
+  static TextStyle _labelStyle(BuildContext context) {
+    return context.textStyles.cardTitle.copyWith(
+      fontSize: 13,
+      color: context.colors.textSecondary,
+    );
+  }
+
+  static TextStyle _bodyStyle(BuildContext context) {
+    return context.textStyles.secondary.copyWith(
+      color: context.colors.textPrimary,
+      height: 1.55,
+      fontSize: 15,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: _labelStyle(context)),
+          const SizedBox(height: 4),
+          Text(
+            text,
+            style: _bodyStyle(context),
+            textAlign: TextAlign.start,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ResponseBlock extends StatelessWidget {
+  const _ResponseBlock({required this.label, required this.text});
 
   final String label;
   final String text;
@@ -350,10 +419,29 @@ class _Line extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        '$label: $text',
-        style: context.textStyles.secondary.copyWith(color: context.colors.textPrimary),
+      padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: context.textStyles.cardTitle.copyWith(
+              fontSize: 13,
+              color: context.colors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            text,
+            style: context.textStyles.secondary.copyWith(
+              color: context.colors.textSecondary,
+              fontStyle: FontStyle.italic,
+              height: 1.45,
+              fontSize: 15,
+            ),
+            textAlign: TextAlign.start,
+          ),
+        ],
       ),
     );
   }

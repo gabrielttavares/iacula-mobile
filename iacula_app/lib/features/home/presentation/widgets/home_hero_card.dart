@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Colors;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/providers.dart';
@@ -66,6 +67,7 @@ class HomeHeroCard extends ConsumerWidget {
             borderRadius: BorderRadius.circular(IaculaRadius.banner),
             child: Stack(
               children: [
+                SizedBox(height: 240, width: double.infinity),
                 Positioned.fill(
                   child: imagePath != null
                       ? Image.asset(
@@ -84,6 +86,13 @@ class HomeHeroCard extends ConsumerWidget {
                             color: context.colors.homeHeroFallback,
                           ),
                         ),
+                        ),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.48),
+                    ),
+                  ),
                 ),
                 Positioned.fill(
                   child: DecoratedBox(
@@ -99,55 +108,53 @@ class HomeHeroCard extends ConsumerWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(18),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          CupertinoButton(
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(32, 32),
-                            onPressed: () async {
-                              final repo = ref.read(favoriteRepositoryProvider);
-                              final alreadySaved = await repo.isFavorite(
-                                quote.text,
-                              );
-                              if (!alreadySaved) {
-                                await repo.save(
-                                  FavoriteItem(
-                                    id: DateTime.now()
-                                        .millisecondsSinceEpoch
-                                        .toString(),
-                                    quoteText: quote.text,
-                                    theme: quote.theme,
-                                    season: quote.season.name,
-                                    savedAt: DateTime.now(),
-                                    imagePath: quote.imagePath,
-                                    feastName: quote.feastName,
-                                  ),
-                                );
-                              }
-                            },
-                            child: Icon(
-                              CupertinoIcons.bookmark,
-                              color: context.colors.primaryButton,
-                              size: 20,
-                            ),
+                Positioned(
+                  top: 18,
+                  right: 18,
+                  child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(32, 32),
+                    onPressed: () async {
+                      final repo = ref.read(favoriteRepositoryProvider);
+                      final alreadySaved = await repo.isFavorite(
+                        quote.text,
+                      );
+                      if (!alreadySaved) {
+                        await repo.save(
+                          FavoriteItem(
+                            id: DateTime.now()
+                                .millisecondsSinceEpoch
+                                .toString(),
+                            quoteText: quote.text,
+                            theme: quote.theme,
+                            season: quote.season.name,
+                            savedAt: DateTime.now(),
+                            imagePath: quote.imagePath,
+                            feastName: quote.feastName,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        );
+                      }
+                    },
+                    child: Icon(
+                      CupertinoIcons.bookmark,
+                      color: context.colors.primaryButton,
+                      size: 20,
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
                             quote.text,
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
                               color: context.colors.homeHeroText,
                               height: 1.5,
                             ),
@@ -165,8 +172,7 @@ class HomeHeroCard extends ConsumerWidget {
                             ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                    ],
+                    ),
                   ),
                 ),
                 Positioned(

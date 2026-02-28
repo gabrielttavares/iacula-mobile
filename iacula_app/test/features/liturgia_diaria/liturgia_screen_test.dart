@@ -96,7 +96,7 @@ void main() {
     await tester.pumpWidget(_buildApp(repository));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Coleta: Coleta'), findsOneWidget);
+    expect(find.text('Coleta'), findsAtLeast(1));
 
     await tester.tap(find.text('Leituras'));
     await tester.pumpAndSettle();
@@ -104,7 +104,8 @@ void main() {
 
     await tester.tap(find.text('Antífonas'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Entrada: Antifona'), findsOneWidget);
+    expect(find.text('Entrada'), findsOneWidget);
+    expect(find.text('Antifona'), findsOneWidget);
   });
 
   testWidgets('calendar confirm selects date inside current window', (
