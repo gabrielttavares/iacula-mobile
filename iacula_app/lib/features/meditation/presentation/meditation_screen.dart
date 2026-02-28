@@ -232,12 +232,72 @@ class _MeditationFeedCard extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
+class _MeditationGridCard extends StatelessWidget {
+  const _MeditationGridCard({
+    required this.item,
+    required this.onTap,
+  });
+
+  final MeditationItem item;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return IaculaTouchableCard(
+      onTap: onTap,
+      child: IaculaSoftCard(
+        showShadow: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _TypeGlyph(
+              type: item.type,
+              size: 32,
+              iconSize: 16,
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.cardTitle,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    item.summary,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.secondary,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                if (item.durationLabel != null) _Badge(text: item.durationLabel!),
+                if (item.availability.kind == MeditationAvailabilityKind.daily)
+                  const _Badge(text: 'Diário'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _TypeGlyph extends StatelessWidget {
   const _TypeGlyph({
     required this.type,
-    // ignore: unused_element_parameter
     this.size = 44,
-    // ignore: unused_element_parameter
     this.iconSize = 22,
   });
 
