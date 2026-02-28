@@ -53,8 +53,8 @@ class IaculaColorScheme {
   });
 
   static const dark = IaculaColorScheme._(
-    background: Color(0xFF030D22),
-    card: Color(0xFF0C1938),
+    background: Color(0xFF01060F),
+    card: Color(0xFF050D1C),
     title: Color(0xFFF7F5EC),
     textPrimary: Color(0xFFFFFFFF),
     textSecondary: Color(0xFF9AA9CD),
@@ -63,19 +63,19 @@ class IaculaColorScheme {
     warning: Color(0xFFFF9500),
     error: Color(0xFFFF3B30),
     separator: Color(0x33FFFFFF), // Changed from 0x33000000
-    placeholder: Color(0xFF1F2943),
-    systemGray6: Color(0xFF1C1C1E),
+    placeholder: Color(0xFF0E1422),
+    systemGray6: Color(0xFF0F0F10),
     secondaryButton: Color(0x33FFFFFF),
-    bannerBackground: Color(0xFF1F1B00),
+    bannerBackground: Color(0xFF0F0D00),
     bannerForeground: Color(0xFFFFE082),
-    homeWarmBackground: Color(0xFF030D22),
+    homeWarmBackground: Color(0xFF01060F),
     homeSacredAccent: Color(0xFFF7F5EC),
     homeHeroTop: Color(0x4D000000), // 0.3 opacity black
     homeHeroBottom: Color(0xDB000000), // 0.86 opacity black
     homeHeroText: Color(0xFFF6F6F8),
     homeHeroSubtext: Color(0x99F6F6F8),
     homeHeroLabel: Color(0x47FFFFFF),
-    homeHeroFallback: Color(0xFF3D3125),
+    homeHeroFallback: Color(0xFF1A1610),
   );
 
   static const light = IaculaColorScheme._(
@@ -110,8 +110,8 @@ class IaculaColorScheme {
 final class IaculaColors {
   IaculaColors._();
 
-  static const background = Color(0xFF030D22);
-  static const card = Color(0xFF0C1938);
+  static const background = Color(0xFF01060F);
+  static const card = Color(0xFF050D1C);
   static const textPrimary = Color(0xFFFFFFFF);
   static const textSecondary = Color(0xFF9AA9CD);
   static const primaryButton = Color(0xFFF7F5EC);
@@ -119,10 +119,10 @@ final class IaculaColors {
   static const warning = Color(0xFFFF9500);
   static const error = Color(0xFFFF3B30);
   static const separator = Color(0x33000000);
-  static const homeWarmBackground = Color(0xFF030D22);
+  static const homeWarmBackground = Color(0xFF01060F);
   static const homeSacredAccent = Color(0xFFF7F5EC);
-  static const homeHeroTop = Color(0xFF030D22);
-  static const homeHeroBottom = Color(0xFF05102A);
+  static const homeHeroTop = Color(0xFF01060F);
+  static const homeHeroBottom = Color(0xFF020A14);
 }
 
 class IaculaTextScheme {
