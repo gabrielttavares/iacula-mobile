@@ -257,24 +257,19 @@ class _MeditationGridCard extends StatelessWidget {
               iconSize: 16,
             ),
             const SizedBox(height: 12),
+            Text(
+              item.title,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: context.textStyles.cardTitle,
+            ),
+            const SizedBox(height: 4),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.title,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.textStyles.cardTitle,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.summary,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.textStyles.secondary,
-                  ),
-                ],
+              child: Text(
+                item.summary,
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+                style: context.textStyles.secondary,
               ),
             ),
             const SizedBox(height: 12),
@@ -369,6 +364,122 @@ class _Badge extends StatelessWidget {
           fontSize: 11,
           fontWeight: FontWeight.w600,
           color: context.colors.background,
+        ),
+      ),
+    );
+  }
+}
+
+// ignore: unused_element
+class _MeditationHeroCard extends StatelessWidget {
+  const _MeditationHeroCard({
+    required this.item,
+    required this.onTap,
+  });
+
+  final MeditationItem item;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final icon = switch (item.type) {
+      MeditationType.video => CupertinoIcons.play_circle_fill,
+      MeditationType.audio => CupertinoIcons.waveform,
+      MeditationType.text => CupertinoIcons.doc_text_fill,
+    };
+
+    return IaculaTouchableCard(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 240),
+          decoration: _getGradientForType(item.type, context).copyWith(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                bottom: -20,
+                right: -20,
+                child: Icon(
+                  icon,
+                  color: const Color(0xFFFFFFFF).withValues(alpha: 0.1),
+                  size: 120,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        _HeroBadge(text: item.sourceName),
+                        if (item.durationLabel != null) ...[
+                          const SizedBox(width: 8),
+                          _HeroBadge(text: item.durationLabel!),
+                        ],
+                        if (item.availability.kind ==
+                            MeditationAvailabilityKind.daily) ...[
+                          const SizedBox(width: 8),
+                          const _HeroBadge(text: 'Diário'),
+                        ],
+                      ],
+                    ),
+                    const Spacer(),
+                    Text(
+                      item.title,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFFFFFFFF),
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      item.summary,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: const Color(0xFFFFFFFF).withValues(alpha: 0.7),
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ignore: unused_element
+class _HeroBadge extends StatelessWidget {
+  const _HeroBadge({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF000000),
         ),
       ),
     );
