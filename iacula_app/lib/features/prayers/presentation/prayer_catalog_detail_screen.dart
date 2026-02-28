@@ -49,7 +49,7 @@ class _PrayerCatalogDetailScreenState
 
             return detailAsync.when(
               loading: () => const Center(child: CupertinoActivityIndicator()),
-              error: (_, __) => const Center(
+              error: (_, __) => Center(
                 child: Text('Erro ao carregar oração', style: IaculaText.secondary),
               ),
               data: (detail) {

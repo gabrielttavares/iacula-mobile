@@ -40,7 +40,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
             children: [
               const IaculaLargeTitle('Meditações'),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'Escolha pelo seu momento',
                 style: IaculaText.secondary,
               ),
@@ -57,7 +57,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
                   loading: () => const Center(
                     child: CupertinoActivityIndicator(),
                   ),
-                  error: (_, _) => const Center(
+                  error: (_, _) => Center(
                     child: Text(
                       'Não foi possível carregar as meditações.',
                       style: IaculaText.secondary,
@@ -82,7 +82,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
 
   Widget _buildFeed(List<MeditationItem> items) {
     if (items.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'Nenhuma meditação encontrada para este filtro.',
           style: IaculaText.secondary,

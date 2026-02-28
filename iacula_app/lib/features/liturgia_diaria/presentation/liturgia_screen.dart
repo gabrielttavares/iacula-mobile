@@ -51,7 +51,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
         child: asyncDays.when(
           data: (days) {
             if (days.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
                   'A liturgia não está disponível agora.',
                   style: IaculaText.secondary,

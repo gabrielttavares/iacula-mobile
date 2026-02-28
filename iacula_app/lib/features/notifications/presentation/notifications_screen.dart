@@ -27,7 +27,7 @@ class NotificationsScreen extends ConsumerWidget {
         child: cardAsync.when(
           data: (card) {
             if (card == null) {
-              return const Center(
+              return Center(
                 child: Text(
                   'Nenhuma notificação ainda.',
                   style: IaculaText.secondary,
@@ -62,7 +62,7 @@ class NotificationsScreen extends ConsumerWidget {
             );
           },
           loading: () => const Center(child: CupertinoActivityIndicator()),
-          error: (_, __) => const Center(
+          error: (_, __) => Center(
             child: Text('Erro ao carregar notificações.', style: IaculaText.secondary),
           ),
         ),

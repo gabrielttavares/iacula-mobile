@@ -31,7 +31,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               children: [
                 const _BrandBlock(),
                 const SizedBox(height: IaculaSpacing.md),
-                const Text(
+                Text(
                   'Jaculatórias, liturgia e plano de vida para rezar no ritmo do seu dia.',
                   textAlign: TextAlign.center,
                   style: IaculaText.secondary,
@@ -161,7 +161,7 @@ class _ExclusiveFeatureCard extends StatelessWidget {
             style: IaculaText.cardTitle,
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Angelus / Regina Caeli às 12:00 PM',
             style: IaculaText.secondary,
           ),

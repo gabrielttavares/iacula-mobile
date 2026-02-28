@@ -79,10 +79,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               children: [
                 Text('Iacula Premium', style: IaculaText.sectionTitle),
                 const SizedBox(height: 10),
-                const Text(
-                  'Acesso vitalício por R\$ 39,90.',
-                  style: IaculaText.secondary,
-                ),
+              Text(
+                'Acesso vitalício por R\$ 39,90.',
+                style: IaculaText.secondary,
+              ),
                 const SizedBox(height: 20),
                 _featureTile(CupertinoIcons.play_circle, 'Meditações'),
                 _featureTile(

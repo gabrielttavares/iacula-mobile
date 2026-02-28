@@ -119,7 +119,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
               child: state.isLoading && state.items.isEmpty
                   ? const Center(child: CupertinoActivityIndicator())
                   : state.items.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
                         'Ainda não há itens para este dia.',
                         style: IaculaText.secondary,
@@ -426,7 +426,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Lembrete (Notificação)',
                       style: IaculaText.secondary,
                     ),
@@ -437,7 +437,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                const Text('Dias da semana:', style: IaculaText.secondary),
+                Text('Dias da semana:', style: IaculaText.secondary),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,

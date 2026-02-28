@@ -58,7 +58,7 @@ class DoctrineCollectionsScreen extends ConsumerWidget {
                 ),
                 loading: () =>
                     const Center(child: CupertinoActivityIndicator()),
-                error: (_, __) => const Text(
+                error: (_, __) => Text(
                   'Erro ao carregar doutrina',
                   style: IaculaText.secondary,
                 ),

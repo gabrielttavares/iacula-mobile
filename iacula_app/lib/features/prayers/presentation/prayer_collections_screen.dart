@@ -162,7 +162,7 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                 },
                 loading: () =>
                     const Center(child: CupertinoActivityIndicator()),
-                error: (_, __) => const Text(
+                error: (_, __) => Text(
                   'Erro ao carregar orações',
                   style: IaculaText.secondary,
                 ),
