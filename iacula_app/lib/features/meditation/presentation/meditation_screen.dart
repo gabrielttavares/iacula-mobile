@@ -34,11 +34,12 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      child: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverSafeArea(
+            bottom: false,
+            sliver: SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(IaculaSpacing.md),
                 child: Column(
@@ -54,7 +55,8 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
+          ),
+          SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
                 child: Column(
@@ -89,8 +91,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
                 ),
               ],
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
