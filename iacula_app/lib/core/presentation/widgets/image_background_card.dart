@@ -36,6 +36,7 @@ class ImageBackgroundCard extends StatelessWidget {
               ? DecorationImage(
                   image: AssetImage(imageAsset!),
                   fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
                 )
               : null,
         ),

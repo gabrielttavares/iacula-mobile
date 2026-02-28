@@ -5,6 +5,7 @@ import '../../../../core/di/providers.dart';
 import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../favorites/domain/entities/favorite_item.dart';
+import '../../../liturgical/domain/liturgical_season.dart';
 import '../../../quotes/domain/entities/quote.dart';
 
 class HomeHeroCard extends ConsumerWidget {
@@ -18,6 +19,14 @@ class HomeHeroCard extends ConsumerWidget {
   final Quote quote;
   final VoidCallback onOpenPremium;
   final bool isFallback;
+
+  static const _seasonLabels = <LiturgicalSeason, String>{
+    LiturgicalSeason.ordinary: 'tempo comum',
+    LiturgicalSeason.advent: 'tempo do advento',
+    LiturgicalSeason.lent: 'tempo da quaresma',
+    LiturgicalSeason.easter: 'tempo pascal',
+    LiturgicalSeason.christmas: 'tempo do natal',
+  };
 
   String? _resolveAssetPath(String? path) {
     if (path == null) {
@@ -33,6 +42,8 @@ class HomeHeroCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final imagePath = _resolveAssetPath(quote.imagePath);
+    final labelText =
+        quote.feastName ?? _seasonLabels[quote.season] ?? '';
 
     return PremiumTouchableCard(
       onTap: onOpenPremium,
@@ -59,6 +70,7 @@ class HomeHeroCard extends ConsumerWidget {
                       ? Image.asset(
                           imagePath,
                           fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
                           errorBuilder: (context, error, stackTrace) =>
                               const DecoratedBox(
                                 decoration: BoxDecoration(
@@ -151,6 +163,19 @@ class HomeHeroCard extends ConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                     ],
+                  ),
+                ),
+                Positioned(
+                  left: 18,
+                  bottom: 8,
+                  child: Text(
+                    labelText.toLowerCase(),
+                    key: const Key('home_hero_season_label'),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      letterSpacing: 0.8,
+                      color: Color(0x47FFFFFF),
+                    ),
                   ),
                 ),
               ],
