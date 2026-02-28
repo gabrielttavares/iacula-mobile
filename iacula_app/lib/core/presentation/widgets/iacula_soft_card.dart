@@ -8,11 +8,13 @@ class IaculaSoftCard extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(IaculaSpacing.md),
     this.radius = IaculaRadius.card,
+    this.showShadow = true,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final double radius;
+  final bool showShadow;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class IaculaSoftCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.colors.card,
         borderRadius: BorderRadius.circular(radius),
-        boxShadow: IaculaShadows.card,
+        boxShadow: showShadow ? IaculaShadows.card : null,
       ),
       child: child,
     );

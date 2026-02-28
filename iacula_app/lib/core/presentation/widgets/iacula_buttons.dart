@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:flutter/services.dart';
-
 import '../../theme/cupertino_tokens.dart';
+import 'iacula_spring_button.dart';
 
 class IaculaPrimaryPillButton extends StatelessWidget {
   const IaculaPrimaryPillButton({
@@ -16,21 +15,19 @@ class IaculaPrimaryPillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: IaculaMetrics.inputHeight + IaculaSpacing.xs,
-      width: double.infinity,
-      child: CupertinoButton(
-        onPressed: onPressed != null
-            ? () {
-                HapticFeedback.lightImpact();
-                onPressed!();
-              }
-            : null,
-        padding: EdgeInsets.zero,
-        color: context.colors.primaryButton,
-        borderRadius: BorderRadius.circular(
-          (IaculaMetrics.inputHeight + IaculaSpacing.xs) / 2,
+    final height = IaculaMetrics.inputHeight + IaculaSpacing.xs;
+    return IaculaSpringButton(
+      onTap: onPressed,
+      child: Container(
+        height: height,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: onPressed != null
+              ? context.colors.primaryButton
+              : context.colors.primaryButton.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(height / 2),
         ),
+        alignment: Alignment.center,
         child: Text(
           label,
           style: TextStyle(
@@ -56,21 +53,19 @@ class IaculaSecondaryPillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: IaculaMetrics.inputHeight + IaculaSpacing.xs,
-      width: double.infinity,
-      child: CupertinoButton(
-        onPressed: onPressed != null
-            ? () {
-                HapticFeedback.lightImpact();
-                onPressed!();
-              }
-            : null,
-        padding: EdgeInsets.zero,
-        color: context.colors.secondaryButton,
-        borderRadius: BorderRadius.circular(
-          (IaculaMetrics.inputHeight + IaculaSpacing.xs) / 2,
+    final height = IaculaMetrics.inputHeight + IaculaSpacing.xs;
+    return IaculaSpringButton(
+      onTap: onPressed,
+      child: Container(
+        height: height,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: onPressed != null
+              ? context.colors.secondaryButton
+              : context.colors.secondaryButton.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(height / 2),
         ),
+        alignment: Alignment.center,
         child: Text(
           label,
           style: TextStyle(

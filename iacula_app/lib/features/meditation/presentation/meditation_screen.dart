@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/presentation/widgets/iacula_spring_button.dart';
+import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/meditation_item.dart';
 import 'meditation_detail_screen.dart';
@@ -133,7 +135,8 @@ class _FilterChips extends StatelessWidget {
         itemBuilder: (context, index) {
           final filter = filters[index];
           final isSelected = filter == selected;
-          return GestureDetector(
+          return IaculaSpringButton(
+            scaleFactor: 0.92,
             onTap: () => onSelected(filter),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -175,7 +178,7 @@ class _MeditationFeedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return IaculaTouchableCard(
       onTap: onTap,
       child: IaculaSoftCard(
         radius: 16,

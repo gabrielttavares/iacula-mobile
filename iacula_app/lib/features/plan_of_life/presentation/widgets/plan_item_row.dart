@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import 'animated_checkbox.dart';
 
@@ -24,7 +25,7 @@ class PlanItemRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-      child: GestureDetector(
+      child: IaculaTouchableCard(
         onTap: () => onToggle(!isCompleted),
         child: IaculaSoftCard(
           radius: 16,

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../theme/cupertino_tokens.dart';
+import 'iacula_touchable_card.dart';
 
 class IaculaListItem extends StatelessWidget {
   const IaculaListItem({
@@ -16,7 +17,7 @@ class IaculaListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return IaculaTouchableCard(
       onTap: onTap,
       child: SizedBox(
         height: 68,

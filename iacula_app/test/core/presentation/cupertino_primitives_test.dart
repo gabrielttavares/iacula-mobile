@@ -14,12 +14,8 @@ void main() {
       ),
     );
 
-    final sizedBox = tester.widget<SizedBox>(
-      find
-          .ancestor(of: find.text('Entrar'), matching: find.byType(SizedBox))
-          .first,
-    );
-    expect(sizedBox.height, 52);
+    final size = tester.getSize(find.byType(IaculaPrimaryPillButton));
+    expect(size.height, 52);
   });
 
   testWidgets('IaculaSoftCard uses 20 radius by default', (tester) async {

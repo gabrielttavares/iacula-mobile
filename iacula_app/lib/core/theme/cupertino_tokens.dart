@@ -245,8 +245,23 @@ extension IaculaThemeX on BuildContext {
 final class IaculaShadows {
   IaculaShadows._();
 
-  static const card = [
+  // Card shadows — floating layer metaphor
+  static const cardResting = [
     BoxShadow(color: Color(0x0A000000), blurRadius: 20, offset: Offset(0, 8)),
+  ];
+  static const cardPressed = [
+    BoxShadow(color: Color(0x07000000), blurRadius: 4, offset: Offset(0, 1)),
+  ];
+
+  // Backward compat alias
+  static const card = cardResting;
+
+  // Button shadows — spring compression metaphor
+  static const buttonResting = [
+    BoxShadow(color: Color(0x14000000), blurRadius: 12, offset: Offset(0, 4)),
+  ];
+  static const buttonPressed = [
+    BoxShadow(color: Color(0x0A000000), blurRadius: 2, offset: Offset(0, 1)),
   ];
 }
 

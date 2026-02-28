@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../home/presentation/home_prayer_groups.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
@@ -111,7 +112,7 @@ class _PrayerItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return IaculaTouchableCard(
       onTap: () {
         Navigator.of(context).push(
           CupertinoPageRoute(
