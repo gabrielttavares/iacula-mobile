@@ -18,8 +18,10 @@ import '../../search/presentation/search_screen.dart';
 import '../../premium/presentation/premium_gate.dart';
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
+import '../../prayers/presentation/prayer_catalog_group_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
+import 'home_prayer_groups.dart';
 import 'widgets/home_action_grid.dart';
 import 'widgets/home_hero_card.dart';
 
@@ -285,7 +287,7 @@ class _DailyPrayerList extends ConsumerWidget {
           height: 140,
         );
       },
-      loading: () => const Center(child: CupertinoActivityIndicator()),
+      loading: () => const SizedBox.shrink(),
       error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
@@ -294,51 +296,29 @@ class _DailyPrayerList extends ConsumerWidget {
 class _ThematicPrayerRail extends ConsumerWidget {
   const _ThematicPrayerRail();
 
-  static const _themeLabels = {
-    'familia': 'Família',
-    'trabalho': 'Trabalho',
-    'mariano': 'Mariano',
-    'penitencia': 'Penitência',
-    'protecao': 'Proteção',
-    'esperanca': 'Esperança',
-    'espirito-santo': 'Espírito Santo',
-    'eucaristia': 'Eucaristia',
-  };
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final catalogAsync = ref.watch(_thematicProvider);
+    final groupsAsync = ref.watch(_thematicGroupsProvider);
     final width = MediaQuery.of(context).size.width * 0.7;
 
-    return catalogAsync.when(
-      data: (entries) {
-        if (entries.isEmpty) return const SizedBox.shrink();
+    return groupsAsync.when(
+      data: (groups) {
+        if (groups.isEmpty) return const SizedBox.shrink();
         return SizedBox(
           height: 132,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: entries.length,
+            itemCount: groups.length,
             separatorBuilder: (context, index) =>
                 const SizedBox(width: IaculaSpacing.sm),
             itemBuilder: (context, index) {
-              final entry = entries[index];
-              final themeLabel =
-                  entry.themes
-                      .map((t) => _themeLabels[t])
-                      .where((l) => l != null)
-                      .firstOrNull ??
-                  entry.themes.firstOrNull ??
-                  '';
+              final group = groups[index];
               return SizedBox(
                 width: width,
                 child: ImageBackgroundCard(
-                  title: entry.title,
-                  subtitle: themeLabel,
-                  onTap: () => Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (_) => PrayerCatalogDetailScreen(entry: entry),
-                    ),
-                  ),
+                  title: group.label,
+                  subtitle: prayerCountLabel(group.itemCount),
+                  onTap: () => _openPrayerGroup(context, group),
                   height: 132,
                 ),
               );
@@ -346,7 +326,7 @@ class _ThematicPrayerRail extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Center(child: CupertinoActivityIndicator()),
+      loading: () => const SizedBox.shrink(),
       error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
@@ -355,46 +335,44 @@ class _ThematicPrayerRail extends ConsumerWidget {
 class _SaintPrayerList extends ConsumerWidget {
   const _SaintPrayerList();
 
-  static const _saintLabels = {
-    'virgem-maria': 'Virgem Maria',
-    'sao-jose': 'São José',
-    'sao-tomas-de-aquino': 'São Tomás de Aquino',
-    'sao-josemaria': 'São Josemaria',
-    'anjos': 'Anjos',
-  };
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final catalogAsync = ref.watch(_saintProvider);
+    final groupsAsync = ref.watch(_saintGroupsProvider);
 
-    return catalogAsync.when(
-      data: (entries) {
-        if (entries.isEmpty) return const SizedBox.shrink();
+    return groupsAsync.when(
+      data: (groups) {
+        if (groups.isEmpty) return const SizedBox.shrink();
         return Column(
           children: [
-            for (final entry in entries)
+            for (final group in groups)
               Padding(
                 padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
                 child: ImageBackgroundCard(
-                  title: entry.title,
-                  subtitle: entry.saints
-                      .map((s) => _saintLabels[s] ?? s)
-                      .join(', '),
-                  onTap: () => Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (_) => PrayerCatalogDetailScreen(entry: entry),
-                    ),
-                  ),
+                  title: group.label,
+                  subtitle: prayerCountLabel(group.itemCount),
+                  onTap: () => _openPrayerGroup(context, group),
                   height: 120,
                 ),
               ),
           ],
         );
       },
-      loading: () => const Center(child: CupertinoActivityIndicator()),
+      loading: () => const SizedBox.shrink(),
       error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
+}
+
+void _openPrayerGroup(BuildContext context, HomePrayerGroup group) {
+  Navigator.of(context).push(
+    CupertinoPageRoute(
+      builder: (_) => PrayerCatalogGroupScreen(
+        type: group.type,
+        groupKey: group.key,
+        title: group.label,
+      ),
+    ),
+  );
 }
 
 final _suggestionProvider = FutureProvider<PrayerCatalogEntry?>((ref) async {
@@ -404,20 +382,22 @@ final _suggestionProvider = FutureProvider<PrayerCatalogEntry?>((ref) async {
       .suggestionOfDay(language: settings.language, date: DateTime.now());
 });
 
-final _thematicProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
+final _thematicGroupsProvider = FutureProvider<List<HomePrayerGroup>>((
+  ref,
+) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
   final catalog = await ref
       .watch(getPrayerCatalogUseCaseProvider)
       .listAll(language: settings.language);
-  return catalog.where((e) => e.themes.isNotEmpty).toList(growable: false);
+  return buildThemePrayerGroups(catalog);
 });
 
-final _saintProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
+final _saintGroupsProvider = FutureProvider<List<HomePrayerGroup>>((ref) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
   final catalog = await ref
       .watch(getPrayerCatalogUseCaseProvider)
       .listAll(language: settings.language);
-  return catalog.where((e) => e.saints.isNotEmpty).toList(growable: false);
+  return buildSaintPrayerGroups(catalog);
 });
 
 final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {

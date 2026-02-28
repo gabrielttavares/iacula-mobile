@@ -8,6 +8,9 @@ import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
+import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
+import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
+import 'package:iacula_app/features/prayers/presentation/prayer_catalog_group_screen.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
 
@@ -76,10 +79,49 @@ final class _FakeLiturgiaRepository implements LiturgiaRepository {
   }
 }
 
+final class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
+  @override
+  Future<List<PrayerCatalogEntry>> listCatalog({
+    required String language,
+  }) async {
+    return const <PrayerCatalogEntry>[
+      PrayerCatalogEntry(
+        slug: 'salve-rainha',
+        title: 'Salve Rainha',
+        content: 'Texto',
+        themes: ['mariano'],
+        saints: ['virgem-maria'],
+      ),
+      PrayerCatalogEntry(
+        slug: 'ave-maria',
+        title: 'Ave Maria',
+        content: 'Texto',
+        themes: ['mariano'],
+        saints: ['virgem-maria'],
+      ),
+      PrayerCatalogEntry(
+        slug: 'anjo-da-guarda',
+        title: 'Ao Anjo da Guarda',
+        content: 'Texto',
+        themes: ['protecao'],
+        saints: ['anjos'],
+      ),
+      PrayerCatalogEntry(
+        slug: 'sao-jose-operario',
+        title: 'São José Operário',
+        content: 'Texto',
+        themes: ['trabalho'],
+        saints: ['sao-jose'],
+      ),
+    ];
+  }
+}
+
 Widget _buildApp({
   required _FakeSettingsRepository settingsRepo,
   required _FakeLastDeliveredCardRepository lastCardRepo,
   _FakeLiturgiaRepository? liturgiaRepo,
+  PrayerCatalogRepository? prayerCatalogRepo,
   Map<String, WidgetBuilder>? routes,
 }) {
   return ProviderScope(
@@ -88,6 +130,8 @@ Widget _buildApp({
       lastDeliveredCardRepositoryProvider.overrideWithValue(lastCardRepo),
       if (liturgiaRepo != null)
         liturgiaCacheRepositoryProvider.overrideWithValue(liturgiaRepo),
+      if (prayerCatalogRepo != null)
+        prayerCatalogRepositoryProvider.overrideWithValue(prayerCatalogRepo),
     ],
     child: CupertinoApp(routes: routes ?? const {}, home: const HomeScreen()),
   );
@@ -182,7 +226,7 @@ void main() {
     expect(find.byKey(const Key('home_action_grid')), findsOneWidget);
   });
 
-  testWidgets('home shows continuation card after action grid', (tester) async {
+  testWidgets('home does not render legacy continuation card', (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -191,12 +235,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final cardTitle = find.text('Continue seu caminho');
-    for (var i = 0; i < 20 && cardTitle.evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    expect(cardTitle, findsOneWidget);
+    expect(find.text('Continue seu caminho'), findsNothing);
   });
 
   testWidgets('hero error does not remove quick actions', (tester) async {
@@ -240,9 +279,8 @@ void main() {
 
     expect(find.text('Orações'), findsOneWidget);
     expect(find.text('Liturgia'), findsOneWidget);
-    expect(find.text('Rosário 📿'), findsOneWidget);
+    expect(find.text('Rosário'), findsOneWidget);
     expect(find.text('Novenas'), findsOneWidget);
-    expect(find.textContaining('Doutrina'), findsOneWidget);
     expect(find.text('Premium'), findsNothing);
   });
 
@@ -290,7 +328,7 @@ void main() {
 
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -260));
     await tester.pump(const Duration(milliseconds: 200));
-    await tester.tap(find.text('Rosário 📿').first);
+    await tester.tap(find.text('Rosário').first);
     await tester.pump(const Duration(milliseconds: 200));
 
     expect(find.byType(CupertinoAlertDialog), findsOneWidget);
@@ -317,5 +355,69 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CupertinoAlertDialog), findsNothing);
+  });
+
+  testWidgets('home thematic and saint sections show grouped cards', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+        prayerCatalogRepo: _FakePrayerCatalogRepository(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    Future<void> reveal(String text) async {
+      final finder = find.text(text);
+      for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+        await tester.pump(const Duration(milliseconds: 200));
+      }
+      expect(finder, findsOneWidget);
+    }
+
+    await reveal('Orações temáticas');
+    await reveal('Orações de Santos');
+    await reveal('Trabalho');
+    await reveal('Virgem Maria');
+
+    expect(find.text('Trabalho'), findsOneWidget);
+    expect(find.text('Virgem Maria'), findsOneWidget);
+    expect(find.text('1 oração'), findsWidgets);
+  });
+
+  testWidgets('tapping saint group opens grouped prayer list screen', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+        prayerCatalogRepo: _FakePrayerCatalogRepository(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    for (
+      var i = 0;
+      i < 20 && find.text('Virgem Maria').evaluate().isEmpty;
+      i++
+    ) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+
+    final saintGroupFinder = find.text('Virgem Maria').first;
+    await tester.ensureVisible(saintGroupFinder);
+    await tester.pumpAndSettle();
+    await tester.tap(saintGroupFinder);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PrayerCatalogGroupScreen), findsOneWidget);
+    expect(find.text('Salve Rainha'), findsOneWidget);
+    expect(find.text('Ave Maria'), findsOneWidget);
+    expect(find.text('Ao Anjo da Guarda'), findsNothing);
   });
 }
