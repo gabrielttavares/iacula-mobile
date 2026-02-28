@@ -233,9 +233,17 @@ class _MeditationFeedCard extends StatelessWidget {
 }
 
 class _TypeGlyph extends StatelessWidget {
-  const _TypeGlyph({required this.type});
+  const _TypeGlyph({
+    required this.type,
+    // ignore: unused_element_parameter
+    this.size = 44,
+    // ignore: unused_element_parameter
+    this.iconSize = 22,
+  });
 
   final MeditationType type;
+  final double size;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -246,15 +254,40 @@ class _TypeGlyph extends StatelessWidget {
     };
 
     return Container(
-      width: 44,
-      height: 44,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(icon, color: color, size: 22),
+      child: Icon(icon, color: color, size: iconSize),
     );
   }
+}
+
+// ignore: unused_element
+BoxDecoration _getGradientForType(MeditationType type, BuildContext context) {
+  final LinearGradient gradient = switch (type) {
+    MeditationType.video => const LinearGradient(
+        colors: [Color(0xFF673AB7), Color(0xFFE91E63)], // Deep Purple to Magenta
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    MeditationType.audio => const LinearGradient(
+        colors: [Color(0xFF0D47A1), Color(0xFF00BCD4)], // Deep Blue to Cyan
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    MeditationType.text => const LinearGradient(
+        colors: [Color(0xFFE64A19), Color(0xFFFFEB3B)], // Deep Orange to Yellow
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+  };
+
+  return BoxDecoration(
+    gradient: gradient,
+  );
 }
 
 class _Badge extends StatelessWidget {
