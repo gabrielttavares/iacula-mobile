@@ -25,8 +25,8 @@ class FontSizeControls extends ConsumerWidget {
       builder: (context, snapshot) {
         final fontSize = snapshot.data?.prayerFontSize ?? 15.0;
 
-        final iconColor = isDarkBackground
-            ? CupertinoColors.white.withOpacity(0.7)
+            final iconColor = isDarkBackground
+            ? IaculaColors.primaryButton.withValues(alpha: 0.7)
             : IaculaColors.textSecondary;
 
         return Row(
@@ -34,7 +34,7 @@ class FontSizeControls extends ConsumerWidget {
           children: [
             CupertinoButton(
               padding: EdgeInsets.zero,
-              minSize: 32,
+              minimumSize: const Size(32, 32),
               onPressed: fontSize > _minFontSize
                   ? () => _adjustFontSize(ref, fontSize - _step)
                   : null,
@@ -45,7 +45,7 @@ class FontSizeControls extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                   color: fontSize > _minFontSize
                       ? iconColor
-                      : iconColor.withOpacity(0.3),
+                      : iconColor.withValues(alpha: 0.3),
                 ),
               ),
             ),
@@ -54,7 +54,7 @@ class FontSizeControls extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: isDarkBackground
-                    ? CupertinoColors.white.withOpacity(0.1)
+                    ? IaculaColors.primaryButton.withValues(alpha: 0.1)
                     : CupertinoColors.systemGrey6,
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -64,7 +64,7 @@ class FontSizeControls extends ConsumerWidget {
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: isDarkBackground
-                      ? CupertinoColors.white.withOpacity(0.9)
+                      ? IaculaColors.primaryButton.withValues(alpha: 0.9)
                       : IaculaColors.textPrimary,
                 ),
               ),
@@ -72,7 +72,7 @@ class FontSizeControls extends ConsumerWidget {
             const SizedBox(width: 4),
             CupertinoButton(
               padding: EdgeInsets.zero,
-              minSize: 32,
+              minimumSize: const Size(32, 32),
               onPressed: fontSize < _maxFontSize
                   ? () => _adjustFontSize(ref, fontSize + _step)
                   : null,
@@ -83,7 +83,7 @@ class FontSizeControls extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                   color: fontSize < _maxFontSize
                       ? iconColor
-                      : iconColor.withOpacity(0.3),
+                      : iconColor.withValues(alpha: 0.3),
                 ),
               ),
             ),

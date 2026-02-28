@@ -21,7 +21,6 @@ import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import 'widgets/home_action_grid.dart';
-import 'widgets/home_continuation_card.dart';
 import 'widgets/home_hero_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {

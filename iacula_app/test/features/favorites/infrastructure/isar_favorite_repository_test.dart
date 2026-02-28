@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/storage/isar/favorite_item_doc.dart';
-import 'package:iacula_app/core/storage/isar/isar_store.dart';
 import 'package:iacula_app/features/favorites/domain/entities/favorite_item.dart';
 import 'package:iacula_app/features/favorites/infrastructure/repositories/isar_favorite_repository.dart';
 import 'package:isar/isar.dart';

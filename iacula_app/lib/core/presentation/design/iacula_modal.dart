@@ -66,7 +66,7 @@ final class IaculaModal {
         alignment: Alignment.bottomCenter,
         child: Container(
           decoration: const BoxDecoration(
-            color: CupertinoColors.white,
+            color: IaculaColors.card,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(IaculaMetrics.modalCornerRadius),
             ),

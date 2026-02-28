@@ -152,7 +152,7 @@ class _FilterChips extends StatelessWidget {
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isSelected
-                      ? CupertinoColors.white
+                      ? IaculaColors.background
                       : IaculaColors.textPrimary,
                 ),
               ),
@@ -261,15 +261,15 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F7),
+        color: IaculaColors.textPrimary,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         text,
         style: const TextStyle(
           fontSize: 11,
-          fontWeight: FontWeight.w500,
-          color: IaculaColors.textSecondary,
+          fontWeight: FontWeight.w600,
+          color: IaculaColors.background,
         ),
       ),
     );

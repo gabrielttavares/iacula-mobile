@@ -33,7 +33,7 @@ class IaculaTextInput extends StatelessWidget {
       maxLines: maxLines,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: CupertinoColors.white,
+        color: IaculaColors.card,
         border: Border.all(color: IaculaColors.separator),
         borderRadius: BorderRadius.circular(IaculaRadius.small),
       ),

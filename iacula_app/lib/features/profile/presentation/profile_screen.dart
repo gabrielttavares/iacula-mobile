@@ -182,7 +182,7 @@ class _Avatar extends StatelessWidget {
             height: 104,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: CupertinoColors.white,
+              color: IaculaColors.card,
             ),
             alignment: Alignment.center,
             child: Text(
@@ -208,7 +208,7 @@ class _Avatar extends StatelessWidget {
                 child: const Icon(
                   CupertinoIcons.pencil,
                   size: 16,
-                  color: CupertinoColors.white,
+                  color: IaculaColors.background,
                 ),
               ),
             ),
@@ -235,7 +235,7 @@ class _Section extends StatelessWidget {
           trailing: onEdit != null
               ? CupertinoButton(
                   padding: EdgeInsets.zero,
-                  minSize: 0,
+                  minimumSize: Size.zero,
                   onPressed: onEdit,
                   child: const Text(
                     'Editar',

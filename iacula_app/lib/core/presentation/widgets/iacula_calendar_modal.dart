@@ -142,7 +142,7 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
                           '$dayNumber',
                           style: TextStyle(
                             color: isSelected
-                                ? CupertinoColors.white
+                                ? IaculaColors.background
                                 : IaculaColors.textPrimary,
                             fontWeight: isSelected
                                 ? FontWeight.w600

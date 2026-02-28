@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
 import 'package:iacula_app/features/auth/domain/entities/auth_user.dart';
-import 'package:iacula_app/features/premium/application/premium_bloc.dart';
 import 'package:iacula_app/features/premium/domain/entities/premium_status.dart';
 import 'package:iacula_app/features/premium/domain/repositories/premium_repository.dart';
 import 'package:iacula_app/features/premium/infrastructure/purchase_service.dart';

@@ -62,7 +62,7 @@ class NotificationsScreen extends ConsumerWidget {
             );
           },
           loading: () => const Center(child: CupertinoActivityIndicator()),
-          error: (_, __) => Center(
+          error: (error, stackTrace) => Center(
             child: Text('Erro ao carregar notificações.', style: IaculaText.secondary),
           ),
         ),

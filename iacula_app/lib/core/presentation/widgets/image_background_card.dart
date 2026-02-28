@@ -46,7 +46,7 @@ class ImageBackgroundCard extends StatelessWidget {
               if (imageAsset == null)
                 Positioned.fill(
                   child: Container(
-                    color: IaculaColors.homeSacredAccent.withOpacity(0.1),
+                    color: IaculaColors.homeSacredAccent.withValues(alpha: 0.1),
                   ),
                 ),
               // Gradient for text readability
@@ -93,7 +93,7 @@ class ImageBackgroundCard extends StatelessWidget {
                           child: Text(
                             title,
                             style: IaculaText.cardTitle.copyWith(
-                              color: CupertinoColors.white,
+                              color: IaculaColors.primaryButton,
                               fontSize: 22, // Lora feels a bit smaller sometimes, bumped up slightly
                             ),
                             maxLines: 2,

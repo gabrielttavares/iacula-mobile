@@ -31,7 +31,7 @@ class AnimatedCheckbox extends StatelessWidget {
         child: const Icon(
           CupertinoIcons.check_mark,
           size: 16,
-          color: CupertinoColors.white,
+          color: IaculaColors.background,
         ),
       ),
     );

@@ -116,7 +116,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                               borderRadius: BorderRadius.circular(20),
                               color: selectedDay
                                   ? accent.withValues(alpha: 0.18)
-                                  : CupertinoColors.white,
+                                  : IaculaColors.background,
                               border: Border.all(
                                 color: selectedDay
                                     ? accent

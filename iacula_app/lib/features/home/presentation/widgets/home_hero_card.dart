@@ -118,7 +118,7 @@ class HomeHeroCard extends ConsumerWidget {
                           },
                           child: const Icon(
                             CupertinoIcons.bookmark,
-                            color: CupertinoColors.white,
+                            color: IaculaColors.primaryButton,
                             size: 20,
                           ),
                         ),
@@ -162,7 +162,7 @@ class HomeHeroCard extends ConsumerWidget {
                       child: const Text(
                         'Conhecer Premium',
                         style: TextStyle(
-                          color: CupertinoColors.white,
+                          color: IaculaColors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

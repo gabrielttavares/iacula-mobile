@@ -37,7 +37,7 @@ class DoctrineCollectionsScreen extends ConsumerWidget {
                   child: ListView.separated(
                     physics: const BouncingScrollPhysics(),
                     itemCount: entries.length,
-                    separatorBuilder: (_, __) =>
+                    separatorBuilder: (context, index) =>
                         const SizedBox(height: IaculaSpacing.sm),
                     itemBuilder: (context, index) {
                       final entry = entries[index];
@@ -58,7 +58,7 @@ class DoctrineCollectionsScreen extends ConsumerWidget {
                 ),
                 loading: () =>
                     const Center(child: CupertinoActivityIndicator()),
-                error: (_, __) => Text(
+                error: (error, stackTrace) => Text(
                   'Erro ao carregar doutrina',
                   style: IaculaText.secondary,
                 ),

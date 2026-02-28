@@ -59,11 +59,11 @@ class PrayerScreen extends ConsumerWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(CupertinoIcons.back,
-                                    size: 18, color: CupertinoColors.white),
+                                    size: 18, color: IaculaColors.primaryButton),
                                 SizedBox(width: 4),
                                 Text('Orações',
                                     style: TextStyle(
-                                        color: CupertinoColors.white)),
+                                        color: IaculaColors.primaryButton)),
                               ],
                             ),
                           ),
@@ -75,7 +75,7 @@ class PrayerScreen extends ConsumerWidget {
                         prayer.title,
                         style: IaculaText.sectionTitle.copyWith(
                           fontSize: fontSize + 7,
-                          color: CupertinoColors.white,
+                          color: IaculaColors.primaryButton,
                         ),
                       ),
                       const SizedBox(height: IaculaSpacing.sm),

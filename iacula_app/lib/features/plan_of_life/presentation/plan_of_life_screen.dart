@@ -119,46 +119,47 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
               child: state.isLoading && state.items.isEmpty
                   ? const Center(child: CupertinoActivityIndicator())
                   : state.items.isEmpty
-                  ? Center(
-                      child: Text(
-                        'Ainda não há itens para este dia.',
-                        style: IaculaText.secondary,
-                      ),
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.only(bottom: 80.0, top: 8.0),
-                      physics: const BouncingScrollPhysics(),
-                      children: [
-                        if (morningItems.isNotEmpty)
-                          _buildSection(
-                            'Manhã',
-                            CupertinoIcons.sun_max,
-                            morningItems,
-                            notifier,
+                      ? Center(
+                          child: Text(
+                            'Ainda não há itens para este dia.',
+                            style: IaculaText.secondary,
                           ),
-                        if (afternoonItems.isNotEmpty)
-                          _buildSection(
-                            'Tarde',
-                            CupertinoIcons.cloud,
-                            afternoonItems,
-                            notifier,
-                          ),
-                        if (nightItems.isNotEmpty)
-                          _buildSection(
-                            'Noite',
-                            CupertinoIcons.moon_stars,
-                            nightItems,
-                            notifier,
-                          ),
-                        if (unscheduledItems.isNotEmpty)
-                          _buildSection(
-                            'Outros',
-                            CupertinoIcons.check_mark_circled,
-                            unscheduledItems,
-                            notifier,
-                          ),
-                      ],
-                    ),
+                        )
+                      : ListView(
+                          padding:
+                              const EdgeInsets.only(bottom: 80.0, top: 8.0),
+                          physics: const BouncingScrollPhysics(),
+                          children: [
+                            if (morningItems.isNotEmpty)
+                              _buildSection(
+                                'Manhã',
+                                CupertinoIcons.sun_max,
+                                morningItems,
+                                notifier,
+                              ),
+                            if (afternoonItems.isNotEmpty)
+                              _buildSection(
+                                'Tarde',
+                                CupertinoIcons.cloud,
+                                afternoonItems,
+                                notifier,
+                              ),
+                            if (nightItems.isNotEmpty)
+                              _buildSection(
+                                'Noite',
+                                CupertinoIcons.moon_stars,
+                                nightItems,
+                                notifier,
+                              ),
+                            if (unscheduledItems.isNotEmpty)
+                              _buildSection(
+                                'Outros',
+                                CupertinoIcons.check_mark_circled,
+                                unscheduledItems,
+                                notifier,
+                              ),
+                          ],
+                        ),
             ),
           ],
         ),
@@ -216,7 +217,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       color: isActive
-                          ? CupertinoColors.white
+                          ? IaculaColors.background
                           : IaculaColors.textSecondary,
                     ),
                   ),
@@ -229,7 +230,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
                           ? FontWeight.bold
                           : FontWeight.normal,
                       color: isActive
-                          ? CupertinoColors.white
+                          ? IaculaColors.background
                           : IaculaColors.textPrimary,
                     ),
                   ),
@@ -282,7 +283,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
               padding: const EdgeInsets.only(right: 20),
               child: const Icon(
                 CupertinoIcons.delete,
-                color: CupertinoColors.white,
+                color: IaculaColors.background,
               ),
             ),
             onDismissed: (_) => notifier.deleteItem(item.id),
@@ -371,8 +372,9 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
     );
 
     _days = List.generate(7, (i) {
-      if (widget.item == null || widget.item!.schedule.daysOfWeek.isEmpty)
+      if (widget.item == null || widget.item!.schedule.daysOfWeek.isEmpty) {
         return true;
+      }
       return widget.item!.schedule.daysOfWeek.contains(i + 1);
     });
 
@@ -396,7 +398,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
       child: Container(
         padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
         decoration: const BoxDecoration(
-          color: CupertinoColors.white,
+          color: IaculaColors.card,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SafeArea(
@@ -468,7 +470,7 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                           dayName,
                           style: TextStyle(
                             color: selected
-                                ? CupertinoColors.white
+                                ? IaculaColors.background
                                 : IaculaColors.textSecondary,
                             fontWeight: FontWeight.w600,
                           ),

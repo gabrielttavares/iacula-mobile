@@ -49,7 +49,7 @@ class _PrayerCatalogDetailScreenState
 
             return detailAsync.when(
               loading: () => const Center(child: CupertinoActivityIndicator()),
-              error: (_, __) => Center(
+              error: (error, stackTrace) => Center(
                 child: Text('Erro ao carregar oração', style: IaculaText.secondary),
               ),
               data: (detail) {
@@ -116,7 +116,7 @@ class _PrayerCatalogDetailScreenState
                     child: ListView.separated(
                       physics: const BouncingScrollPhysics(),
                       itemCount: contentBlocks.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (context, index) =>
                           const SizedBox(height: IaculaSpacing.md),
                       itemBuilder: (context, index) {
                         return Text(

@@ -21,7 +21,7 @@ class AlarmScreen extends StatelessWidget {
               Text(
                 title,
                 style: IaculaText.sectionTitle.copyWith(
-                  color: CupertinoColors.white,
+                  color: IaculaColors.primaryButton,
                 ),
               ),
               const SizedBox(height: 12),

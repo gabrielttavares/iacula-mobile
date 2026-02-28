@@ -61,7 +61,7 @@ class FavoritesScreen extends ConsumerWidget {
             );
           },
           loading: () => const Center(child: CupertinoActivityIndicator()),
-          error: (_, __) => const Center(
+          error: (error, stackTrace) => const Center(
             child: IaculaErrorState(
               title: 'Erro ao carregar favoritos',
               message: 'Tente novamente em instantes.',
@@ -101,7 +101,7 @@ class _FavoriteCard extends StatelessWidget {
           ),
           CupertinoButton(
             padding: EdgeInsets.zero,
-            minSize: 32,
+            minimumSize: const Size(32, 32),
             onPressed: onRemove,
             child: const Icon(
               CupertinoIcons.delete,

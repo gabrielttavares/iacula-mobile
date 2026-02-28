@@ -27,7 +27,7 @@ class IaculaPrimaryPillButton extends StatelessWidget {
         child: Text(
           label,
           style: const TextStyle(
-            color: CupertinoColors.white,
+            color: IaculaColors.background,
             fontWeight: FontWeight.w600,
             fontSize: 16,
           ),

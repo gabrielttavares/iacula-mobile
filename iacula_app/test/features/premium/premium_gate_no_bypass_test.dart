@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:iacula_app/features/premium/presentation/premium_gate.dart';
 
 void main() {
   test('PremiumGate does not have a debugPremiumBypass field', () {
