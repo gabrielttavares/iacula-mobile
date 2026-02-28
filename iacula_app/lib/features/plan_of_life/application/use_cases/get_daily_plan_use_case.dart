@@ -11,12 +11,23 @@ class GetDailyPlanUseCase {
   Future<List<PlanItem>> call(DateTime date) async {
     final dateString = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
     
-    final entries = await _spiritualEntryRepository.listLocal();
+    // Load all items including deleted to show historical snapshots
+    final allEntries = await _spiritualEntryRepository.listLocal(includeDeleted: true);
     final completions = await _completionRepository.getCompletionsForDate(dateString);
     
     final completedItemIds = {
       for (final completion in completions) completion.itemId: completion.completedAt,
     };
+
+    // Filter entries to only show items that existed on the selected date:
+    // - createdAt <= selected date
+    // - deletedAt is null OR deletedAt > selected date
+    final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
+    final entries = allEntries.where((entry) {
+      if (entry.createdAt.isAfter(endOfDay)) return false;
+      if (entry.deletedAt != null && entry.deletedAt!.isBefore(date)) return false;
+      return true;
+    }).toList();
 
     final items = entries.map((entry) {
       return PlanItem.fromSpiritualEntry(
