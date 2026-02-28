@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class IaculaColorScheme {
   final Color background;
   final Color card;
+  final Color title;
   final Color textPrimary;
   final Color textSecondary;
   final Color primaryButton;
@@ -19,6 +20,7 @@ class IaculaColorScheme {
   const IaculaColorScheme._({
     required this.background,
     required this.card,
+    required this.title,
     required this.textPrimary,
     required this.textSecondary,
     required this.primaryButton,
@@ -35,6 +37,7 @@ class IaculaColorScheme {
   static const dark = IaculaColorScheme._(
     background: Color(0xFF030D22),
     card: Color(0xFF0C1938),
+    title: Color(0xFFF7F5EC),
     textPrimary: Color(0xFFFFFFFF),
     textSecondary: Color(0xFF9AA9CD),
     primaryButton: Color(0xFFF7F5EC),
@@ -51,6 +54,7 @@ class IaculaColorScheme {
   static const light = IaculaColorScheme._(
     background: Color(0xFFF5F3EF),
     card: Color(0xFFFFFFFF),
+    title: Color(0xFF030D22),
     textPrimary: Color(0xFF030D22),
     textSecondary: Color(0xFF5A6478),
     primaryButton: Color(0xFF0975C8),
@@ -104,27 +108,24 @@ class IaculaTextScheme {
     largeTitle: GoogleFonts.lora(
       fontSize: 34,
       fontWeight: FontWeight.w700,
-      color: colors.primaryButton,
+      color: colors.title,
     ),
     sectionTitle: GoogleFonts.lora(
       fontSize: 22,
       fontWeight: FontWeight.w600,
-      color: colors.primaryButton,
+      color: colors.title,
     ),
     cardTitle: GoogleFonts.lora(
       fontSize: 17,
       fontWeight: FontWeight.w600,
-      color: colors.primaryButton,
+      color: colors.title,
     ),
     secondary: GoogleFonts.lora(
       fontSize: 15,
       fontWeight: FontWeight.w400,
       color: colors.textSecondary,
     ),
-    tabLabel: GoogleFonts.lora(
-      fontSize: 11,
-      fontWeight: FontWeight.w500,
-    ),
+    tabLabel: GoogleFonts.lora(fontSize: 11, fontWeight: FontWeight.w500),
   );
 }
 

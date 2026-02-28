@@ -23,6 +23,7 @@ class ImageBackgroundCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = imageAsset != null;
     return PremiumTouchableCard(
       onTap: onTap,
       child: Container(
@@ -31,7 +32,7 @@ class ImageBackgroundCard extends StatelessWidget {
           color: context.colors.card,
           borderRadius: BorderRadius.circular(IaculaRadius.card),
           boxShadow: IaculaShadows.card,
-          image: imageAsset != null
+          image: hasImage
               ? DecorationImage(
                   image: AssetImage(imageAsset!),
                   fit: BoxFit.cover,
@@ -43,11 +44,9 @@ class ImageBackgroundCard extends StatelessWidget {
           child: Stack(
             children: [
               // Placeholder color if no image
-              if (imageAsset == null)
+              if (!hasImage)
                 Positioned.fill(
-                  child: Container(
-                    color: context.colors.homeSacredAccent.withValues(alpha: 0.1),
-                  ),
+                  child: Container(color: context.colors.background),
                 ),
               // Gradient for text readability
               Positioned(
@@ -60,10 +59,7 @@ class ImageBackgroundCard extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0x00000000),
-                        Color(0xCC000000),
-                      ],
+                      colors: [Color(0x00000000), Color(0xCC000000)],
                     ),
                   ),
                 ),
@@ -93,8 +89,11 @@ class ImageBackgroundCard extends StatelessWidget {
                           child: Text(
                             title,
                             style: context.textStyles.cardTitle.copyWith(
-                              color: context.colors.primaryButton,
-                              fontSize: 22, // Lora feels a bit smaller sometimes, bumped up slightly
+                              color: hasImage
+                                  ? context.colors.primaryButton
+                                  : context.colors.title,
+                              fontSize:
+                                  22, // Lora feels a bit smaller sometimes, bumped up slightly
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
