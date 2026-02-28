@@ -59,12 +59,12 @@ final class IaculaModal {
   static Future<T?> showSheet<T>({
     required BuildContext context,
     required WidgetBuilder builder,
+    double? maxHeightFraction,
   }) {
     return showCupertinoModalPopup<T>(
       context: context,
-      builder: (context) => Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
+      builder: (context) {
+        Widget child = Container(
           decoration: BoxDecoration(
             color: context.colors.card,
             borderRadius: BorderRadius.vertical(
@@ -72,8 +72,19 @@ final class IaculaModal {
             ),
           ),
           child: SafeArea(top: false, child: builder(context)),
-        ),
-      ),
+        );
+
+        if (maxHeightFraction != null) {
+          child = ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * maxHeightFraction,
+            ),
+            child: child,
+          );
+        }
+
+        return Align(alignment: Alignment.bottomCenter, child: child);
+      },
     );
   }
 }

@@ -274,9 +274,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
         ...items.map((item) {
           return Dismissible(
             key: Key(item.id),
-            direction: item.schedule.isDefault
-                ? DismissDirection.none
-                : DismissDirection.endToStart,
+            direction: DismissDirection.endToStart,
             background: Container(
               color: CupertinoColors.destructiveRed,
               alignment: Alignment.centerRight,
@@ -333,6 +331,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
   void _showEditItemModal(BuildContext context, PlanItem? item) {
     IaculaModal.showSheet<void>(
       context: context,
+      maxHeightFraction: 0.85,
       builder: (ctx) => _EditItemForm(item: item),
     );
   }
@@ -513,6 +512,31 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
                   },
                   child: const Text('Salvar'),
                 ),
+                if (widget.item != null) ...[
+                  const SizedBox(height: 12),
+                  CupertinoButton(
+                    onPressed: () async {
+                      final confirmed = await IaculaModal.showConfirm(
+                        context: context,
+                        title: 'Remover item',
+                        message: 'Tem certeza que deseja remover este item?',
+                        confirmLabel: 'Remover',
+                        cancelLabel: 'Cancelar',
+                        destructive: true,
+                      );
+                      if (confirmed && context.mounted) {
+                        notifier.deleteItem(widget.item!.id);
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text(
+                      'Remover',
+                      style: TextStyle(
+                        color: CupertinoColors.destructiveRed,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
