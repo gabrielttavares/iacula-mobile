@@ -53,29 +53,29 @@ class IaculaColorScheme {
   });
 
   static const dark = IaculaColorScheme._(
-    background: Color(0xFF01060F),
-    card: Color(0xFF050D1C),
-    title: Color(0xFFF7F5EC),
+    background: Color(0xFF121212), // soft black, not pure #000000
+    card: Color(0xFF1C1C1E), // secondarySystemGroupedBackground dark
+    title: Color(0xFFFFFFFF), // label
     textPrimary: Color(0xFFFFFFFF),
-    textSecondary: Color(0xFF9AA9CD),
-    primaryButton: Color(0xFFF7F5EC),
-    success: Color(0xFF34C759),
-    warning: Color(0xFFFF9500),
-    error: Color(0xFFFF3B30),
-    separator: Color(0x33FFFFFF), // Changed from 0x33000000
-    placeholder: Color(0xFF0E1422),
-    systemGray6: Color(0xFF0F0F10),
+    textSecondary: Color(0xFF8E8E93), // secondaryLabel dark
+    primaryButton: Color(0xFF0A84FF), // activeBlue dark
+    success: Color(0xFF30D158), // systemGreen dark
+    warning: Color(0xFFFF9F0A), // systemOrange dark
+    error: Color(0xFFFF453A), // systemRed dark
+    separator: Color(0xFF38383A), // separator dark
+    placeholder: Color(0xFF48484A), // systemGrey4 dark
+    systemGray6: Color(0xFF1C1C1E),
     secondaryButton: Color(0x33FFFFFF),
-    bannerBackground: Color(0xFF0F0D00),
+    bannerBackground: Color(0xFF2C2C2E), // elevated gray
     bannerForeground: Color(0xFFFFE082),
-    homeWarmBackground: Color(0xFF01060F),
-    homeSacredAccent: Color(0xFFF7F5EC),
+    homeWarmBackground: Color(0xFF121212),
+    homeSacredAccent: Color(0xFF0A84FF),
     homeHeroTop: Color(0x4D000000), // 0.3 opacity black
     homeHeroBottom: Color(0xDB000000), // 0.86 opacity black
-    homeHeroText: Color(0xFFF6F6F8),
-    homeHeroSubtext: Color(0x99F6F6F8),
+    homeHeroText: Color(0xFFFFFFFF),
+    homeHeroSubtext: Color(0x99FFFFFF),
     homeHeroLabel: Color(0x47FFFFFF),
-    homeHeroFallback: Color(0xFF1A1610),
+    homeHeroFallback: Color(0xFF1C1C1E),
   );
 
   static const light = IaculaColorScheme._(
@@ -110,19 +110,19 @@ class IaculaColorScheme {
 final class IaculaColors {
   IaculaColors._();
 
-  static const background = Color(0xFF01060F);
-  static const card = Color(0xFF050D1C);
+  static const background = Color(0xFF121212);
+  static const card = Color(0xFF1C1C1E);
   static const textPrimary = Color(0xFFFFFFFF);
-  static const textSecondary = Color(0xFF9AA9CD);
-  static const primaryButton = Color(0xFFF7F5EC);
-  static const success = Color(0xFF34C759);
-  static const warning = Color(0xFFFF9500);
-  static const error = Color(0xFFFF3B30);
-  static const separator = Color(0x33000000);
-  static const homeWarmBackground = Color(0xFF01060F);
-  static const homeSacredAccent = Color(0xFFF7F5EC);
-  static const homeHeroTop = Color(0xFF01060F);
-  static const homeHeroBottom = Color(0xFF020A14);
+  static const textSecondary = Color(0xFF8E8E93);
+  static const primaryButton = Color(0xFF0A84FF);
+  static const success = Color(0xFF30D158);
+  static const warning = Color(0xFFFF9F0A);
+  static const error = Color(0xFFFF453A);
+  static const separator = Color(0xFF38383A);
+  static const homeWarmBackground = Color(0xFF121212);
+  static const homeSacredAccent = Color(0xFF0A84FF);
+  static const homeHeroTop = Color(0xFF000000);
+  static const homeHeroBottom = Color(0xFF1C1C1E);
 }
 
 class IaculaTextScheme {
