@@ -90,7 +90,7 @@ class HomeHeroCard extends ConsumerWidget {
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.48),
+                      color: Colors.black.withOpacity(0.34),
                     ),
                   ),
                 ),

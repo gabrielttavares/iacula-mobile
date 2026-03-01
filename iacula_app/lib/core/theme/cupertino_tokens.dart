@@ -70,8 +70,8 @@ class IaculaColorScheme {
     bannerForeground: Color(0xFFFFE082),
     homeWarmBackground: Color(0xFF121212),
     homeSacredAccent: Color(0xFF0A84FF),
-    homeHeroTop: Color(0x4D000000), // 0.3 opacity black
-    homeHeroBottom: Color(0xDB000000), // 0.86 opacity black
+    homeHeroTop: Color(0x40000000), // 0.25 opacity black
+    homeHeroBottom: Color(0x99000000), // 0.6 opacity black
     homeHeroText: Color(0xFFFFFFFF),
     homeHeroSubtext: Color(0x99FFFFFF),
     homeHeroLabel: Color(0x47FFFFFF),

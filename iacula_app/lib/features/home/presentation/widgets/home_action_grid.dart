@@ -34,7 +34,7 @@ class HomeActionGrid extends StatelessWidget {
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Liturgia',
+                label: 'Liturgia Diária',
                 onTap: onOpenLiturgy,
               ),
             ),
@@ -45,14 +45,14 @@ class HomeActionGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Intenções',
+                label: 'Intenções de Oração',
                 onTap: onOpenIntentions,
               ),
             ),
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Exame',
+                label: 'Exame Pessoal',
                 onTap: onOpenExamination,
               ),
             ),
@@ -64,10 +64,7 @@ class HomeActionGrid extends StatelessWidget {
 }
 
 class _HorizontalFeatureCard extends StatelessWidget {
-  const _HorizontalFeatureCard({
-    required this.label,
-    required this.onTap,
-  });
+  const _HorizontalFeatureCard({required this.label, required this.onTap});
 
   final String label;
   final VoidCallback onTap;
