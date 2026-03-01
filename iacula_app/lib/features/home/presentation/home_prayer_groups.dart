@@ -26,6 +26,24 @@ const kCuratedThemeOrder = <String>[
   'eucaristica',
 ];
 
+const kHomeThematicOrder = <String>[
+  'familia',
+  'trabalho',
+  'estudos',
+  'virgem-maria',
+  'anjos',
+  'penitencia',
+];
+
+const _homeThematicLabels = <String, String>{
+  'familia': 'Família',
+  'trabalho': 'Trabalho',
+  'estudos': 'Estudos',
+  'virgem-maria': 'Virgem Maria',
+  'anjos': 'Anjos',
+  'penitencia': 'Penitência',
+};
+
 const _curatedSaintOrder = <String>[
   'virgem-maria',
   'anjos',
@@ -86,6 +104,29 @@ List<HomePrayerGroup> buildSaintPrayerGroups(List<PrayerCatalogEntry> entries) {
     labels: _saintLabels,
     curatedOrder: _curatedSaintOrder,
   );
+}
+
+List<HomePrayerGroup> buildHomeThematicGroups(List<PrayerCatalogEntry> entries) {
+  final counts = <String, int>{};
+
+  for (final entry in entries) {
+    for (final key in [...entry.themes, ...entry.saints]) {
+      if (key.trim().isEmpty) continue;
+      counts.update(key, (v) => v + 1, ifAbsent: () => 1);
+    }
+  }
+
+  return kHomeThematicOrder
+      .where((key) => (counts[key] ?? 0) > 0)
+      .map((key) => HomePrayerGroup(
+            key: key,
+            label: _homeThematicLabels[key] ?? _humanizeKey(key),
+            itemCount: counts[key]!,
+            type: _saintLabels.containsKey(key)
+                ? HomePrayerGroupType.saint
+                : HomePrayerGroupType.theme,
+          ))
+      .toList();
 }
 
 String prayerCountLabel(int count) {

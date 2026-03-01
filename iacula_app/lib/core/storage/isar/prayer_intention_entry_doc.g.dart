@@ -48,18 +48,23 @@ const PrayerIntentionEntryDocSchema = CollectionSchema(
       name: r'lastSyncedAt',
       type: IsarType.dateTime,
     ),
-    r'title': PropertySchema(
+    r'respondedAt': PropertySchema(
       id: 6,
+      name: r'respondedAt',
+      type: IsarType.dateTime,
+    ),
+    r'title': PropertySchema(
+      id: 7,
       name: r'title',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'userId': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'userId',
       type: IsarType.string,
     )
@@ -140,9 +145,10 @@ void _prayerIntentionEntryDocSerialize(
   writer.writeString(offsets[3], object.entryId);
   writer.writeBool(offsets[4], object.isDirty);
   writer.writeDateTime(offsets[5], object.lastSyncedAt);
-  writer.writeString(offsets[6], object.title);
-  writer.writeDateTime(offsets[7], object.updatedAt);
-  writer.writeString(offsets[8], object.userId);
+  writer.writeDateTime(offsets[6], object.respondedAt);
+  writer.writeString(offsets[7], object.title);
+  writer.writeDateTime(offsets[8], object.updatedAt);
+  writer.writeString(offsets[9], object.userId);
 }
 
 PrayerIntentionEntryDoc _prayerIntentionEntryDocDeserialize(
@@ -159,9 +165,10 @@ PrayerIntentionEntryDoc _prayerIntentionEntryDocDeserialize(
   object.id = id;
   object.isDirty = reader.readBool(offsets[4]);
   object.lastSyncedAt = reader.readDateTimeOrNull(offsets[5]);
-  object.title = reader.readStringOrNull(offsets[6]);
-  object.updatedAt = reader.readDateTime(offsets[7]);
-  object.userId = reader.readStringOrNull(offsets[8]);
+  object.respondedAt = reader.readDateTimeOrNull(offsets[6]);
+  object.title = reader.readStringOrNull(offsets[7]);
+  object.updatedAt = reader.readDateTime(offsets[8]);
+  object.userId = reader.readStringOrNull(offsets[9]);
   return object;
 }
 
@@ -185,10 +192,12 @@ P _prayerIntentionEntryDocDeserializeProp<P>(
     case 5:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 6:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 7:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 8:
+      return (reader.readDateTime(offset)) as P;
+    case 9:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1009,6 +1018,80 @@ extension PrayerIntentionEntryDocQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> respondedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'respondedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> respondedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'respondedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> respondedAtEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'respondedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> respondedAtGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'respondedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> respondedAtLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'respondedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> respondedAtBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'respondedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
       QAfterFilterCondition> titleIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1470,6 +1553,20 @@ extension PrayerIntentionEntryDocQuerySortBy
   }
 
   QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
+      sortByRespondedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'respondedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
+      sortByRespondedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'respondedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
       sortByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -1613,6 +1710,20 @@ extension PrayerIntentionEntryDocQuerySortThenBy on QueryBuilder<
   }
 
   QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
+      thenByRespondedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'respondedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
+      thenByRespondedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'respondedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
       thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -1700,6 +1811,13 @@ extension PrayerIntentionEntryDocQueryWhereDistinct on QueryBuilder<
   }
 
   QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QDistinct>
+      distinctByRespondedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'respondedAt');
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QDistinct>
       distinctByTitle({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
@@ -1768,6 +1886,13 @@ extension PrayerIntentionEntryDocQueryProperty on QueryBuilder<
       lastSyncedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastSyncedAt');
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, DateTime?, QQueryOperations>
+      respondedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'respondedAt');
     });
   }
 

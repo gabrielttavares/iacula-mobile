@@ -212,7 +212,7 @@ void main() {
 
     expect(find.text('Bem vindo!'), findsOneWidget);
     expect(find.text('Destaques'), findsNothing);
-    await reveal('Sugestão do Dia');
+    await reveal('Ênfase do Dia');
     await reveal('Orações temáticas');
     await reveal('Orações de Santos');
   });

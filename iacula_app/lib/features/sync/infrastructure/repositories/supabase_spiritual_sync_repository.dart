@@ -165,6 +165,10 @@ final class SupabaseSpiritualSyncRepository implements SyncRepository {
         ? row['schedule_json'] as String?
         : null;
 
+    final respondedAt = module == SpiritualModule.prayerIntention && row['responded_at'] != null
+        ? DateTime.parse(row['responded_at'] as String).toUtc()
+        : null;
+
     return SpiritualEntry(
       id: row['id'] as String,
       module: module,
@@ -177,6 +181,7 @@ final class SupabaseSpiritualSyncRepository implements SyncRepository {
       deletedAt: row['deleted_at'] == null
           ? null
           : DateTime.parse(row['deleted_at'] as String).toUtc(),
+      respondedAt: respondedAt,
       isDirty: false,
     );
   }
@@ -195,6 +200,9 @@ final class SupabaseSpiritualSyncRepository implements SyncRepository {
       'title': entry.title,
       'body': entry.body,
       'schedule_json': schedule,
+      'responded_at': entry.module == SpiritualModule.prayerIntention
+          ? entry.respondedAt?.toUtc().toIso8601String()
+          : null,
       'created_at': entry.createdAt.toUtc().toIso8601String(),
       'updated_at': entry.updatedAt.toUtc().toIso8601String(),
       'deleted_at': entry.deletedAt?.toUtc().toIso8601String(),

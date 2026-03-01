@@ -9,14 +9,14 @@ class HomeActionGrid extends StatelessWidget {
     super.key,
     required this.onOpenPrayers,
     required this.onOpenLiturgy,
-    required this.onOpenRosary,
-    required this.onOpenNovenas,
+    required this.onOpenIntentions,
+    required this.onOpenExamination,
   });
 
   final VoidCallback onOpenPrayers;
   final VoidCallback onOpenLiturgy;
-  final VoidCallback onOpenRosary;
-  final VoidCallback onOpenNovenas;
+  final VoidCallback onOpenIntentions;
+  final VoidCallback onOpenExamination;
 
   @override
   Widget build(BuildContext context) {
@@ -45,15 +45,15 @@ class HomeActionGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Rosário',
-                onTap: onOpenRosary,
+                label: 'Intenções',
+                onTap: onOpenIntentions,
               ),
             ),
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Novenas',
-                onTap: onOpenNovenas,
+                label: 'Exame',
+                onTap: onOpenExamination,
               ),
             ),
           ],

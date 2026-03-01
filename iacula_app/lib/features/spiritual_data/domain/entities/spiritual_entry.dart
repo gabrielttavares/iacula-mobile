@@ -15,6 +15,7 @@ final class SpiritualEntry {
     this.title,
     this.scheduleJson,
     this.deletedAt,
+    this.respondedAt,
     this.isDirty = true,
     this.lastSyncedAt,
   });
@@ -28,6 +29,7 @@ final class SpiritualEntry {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? deletedAt;
+  final DateTime? respondedAt;
   final bool isDirty;
   final DateTime? lastSyncedAt;
 
@@ -41,6 +43,7 @@ final class SpiritualEntry {
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
+    DateTime? respondedAt,
     bool? isDirty,
     DateTime? lastSyncedAt,
   }) {
@@ -54,6 +57,7 @@ final class SpiritualEntry {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
+      respondedAt: respondedAt ?? this.respondedAt,
       isDirty: isDirty ?? this.isDirty,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
     );

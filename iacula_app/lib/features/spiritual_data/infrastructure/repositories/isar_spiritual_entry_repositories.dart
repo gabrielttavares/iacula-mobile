@@ -292,6 +292,7 @@ final class IsarPrayerIntentionSpiritualEntryRepository implements SpiritualEntr
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
       deletedAt: doc.deletedAt,
+      respondedAt: doc.respondedAt,
       isDirty: doc.isDirty,
       lastSyncedAt: doc.lastSyncedAt,
     );
@@ -304,6 +305,7 @@ final class IsarPrayerIntentionSpiritualEntryRepository implements SpiritualEntr
     doc.createdAt = entry.createdAt;
     doc.updatedAt = entry.updatedAt;
     doc.deletedAt = entry.deletedAt;
+    doc.respondedAt = entry.respondedAt;
     doc.isDirty = entry.isDirty;
     doc.lastSyncedAt = entry.lastSyncedAt;
   }

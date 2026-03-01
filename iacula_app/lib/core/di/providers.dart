@@ -62,6 +62,13 @@ import '../../features/plan_of_life/application/use_cases/update_plan_item_use_c
 import '../../features/plan_of_life/application/use_cases/delete_plan_item_use_case.dart';
 import '../../features/plan_of_life/application/plan_of_life_notifier.dart';
 
+import '../../features/prayer_intentions/application/use_cases/list_intentions_use_case.dart';
+import '../../features/prayer_intentions/application/use_cases/add_intention_use_case.dart';
+import '../../features/prayer_intentions/application/use_cases/update_intention_use_case.dart';
+import '../../features/prayer_intentions/application/use_cases/delete_intention_use_case.dart';
+import '../../features/prayer_intentions/application/use_cases/respond_intention_use_case.dart';
+import '../../features/prayer_intentions/application/prayer_intentions_notifier.dart';
+
 import '../../features/doctrina/application/use_cases/get_doctrine_catalog_use_case.dart';
 import '../../features/doctrina/domain/entities/doctrine_entry.dart';
 import '../../features/doctrina/domain/repositories/doctrine_repository.dart';
@@ -420,5 +427,38 @@ final planOfLifeNotifierProvider =
         addItem: ref.watch(addPlanItemUseCaseProvider),
         updateItem: ref.watch(updatePlanItemUseCaseProvider),
         deleteItem: ref.watch(deletePlanItemUseCaseProvider),
+      );
+    });
+
+// -- Prayer Intentions Providers --
+
+final listIntentionsUseCaseProvider = Provider<ListIntentionsUseCase>((ref) {
+  return ListIntentionsUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+});
+
+final addIntentionUseCaseProvider = Provider<AddIntentionUseCase>((ref) {
+  return AddIntentionUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+});
+
+final updateIntentionUseCaseProvider = Provider<UpdateIntentionUseCase>((ref) {
+  return UpdateIntentionUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+});
+
+final deleteIntentionUseCaseProvider = Provider<DeleteIntentionUseCase>((ref) {
+  return DeleteIntentionUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+});
+
+final respondIntentionUseCaseProvider = Provider<RespondIntentionUseCase>((ref) {
+  return RespondIntentionUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+});
+
+final prayerIntentionsNotifierProvider =
+    StateNotifierProvider<PrayerIntentionsNotifier, PrayerIntentionsState>((ref) {
+      return PrayerIntentionsNotifier(
+        listIntentions: ref.watch(listIntentionsUseCaseProvider),
+        addIntention: ref.watch(addIntentionUseCaseProvider),
+        updateIntention: ref.watch(updateIntentionUseCaseProvider),
+        deleteIntention: ref.watch(deleteIntentionUseCaseProvider),
+        respondIntention: ref.watch(respondIntentionUseCaseProvider),
       );
     });

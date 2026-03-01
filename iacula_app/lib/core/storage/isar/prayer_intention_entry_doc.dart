@@ -17,6 +17,7 @@ class PrayerIntentionEntryDoc {
   late DateTime createdAt;
   late DateTime updatedAt;
   DateTime? deletedAt;
+  DateTime? respondedAt;
   late bool isDirty;
   DateTime? lastSyncedAt;
 }

@@ -7,7 +7,9 @@ import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 
 import '../../../core/presentation/widgets/iacula_section_header.dart';
+import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/image_background_card.dart';
+import '../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../auth/domain/entities/auth_user.dart';
 import '../../liturgia_diaria/presentation/liturgia_screen.dart';
@@ -18,6 +20,8 @@ import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../../prayers/presentation/prayer_catalog_group_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
+import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
+import '../../examination/presentation/examination_flow_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import 'hero_reflection_sheet.dart';
 import 'home_prayer_groups.dart';
@@ -42,15 +46,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         setState(() => _animateIn = true);
       }
     });
-  }
-
-  Future<void> _showEmBreveDialog(BuildContext context, String title) {
-    return IaculaModal.showAlert(
-      context: context,
-      title: title,
-      message: 'Em breve',
-      actionLabel: 'Fechar',
-    );
   }
 
   @override
@@ -111,7 +106,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         HapticFeedback.lightImpact();
                         Navigator.of(context).push(
                           CupertinoPageRoute(
-                              builder: (_) => const SearchScreen()),
+                            builder: (_) => const SearchScreen(),
+                          ),
                         );
                       },
                       child: Icon(
@@ -161,32 +157,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           );
                         },
-                        onOpenRosary: () {
-                          HapticFeedback.lightImpact();
-                          _showEmBreveDialog(context, 'Rosário');
-                        },
-                        onOpenNovenas: () {
+                        onOpenIntentions: () {
                           HapticFeedback.lightImpact();
                           Navigator.of(context).push(
                             CupertinoPageRoute(
-                              builder: (_) => const PrayerCollectionsScreen(),
+                              builder: (_) => const PrayerIntentionsScreen(),
+                            ),
+                          );
+                        },
+                        onOpenExamination: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (_) => const ExaminationFlowScreen(),
                             ),
                           );
                         },
                       ),
                     ),
                     const SizedBox(height: IaculaSpacing.xl),
-                    const IaculaSectionHeader(title: 'Sugestão do Dia'),
+                    const IaculaSectionHeader(title: 'Ênfase do Dia'),
                     const SizedBox(height: IaculaSpacing.sm),
                     const _DailyPrayerList(),
                     const SizedBox(height: IaculaSpacing.xl),
-                    const IaculaSectionHeader(title: 'Orações temáticas'),
-                    const SizedBox(height: IaculaSpacing.sm),
-                    const _ThematicPrayerRail(),
+                    const _FeatureRail(),
                     const SizedBox(height: IaculaSpacing.xl),
-                    const IaculaSectionHeader(title: 'Orações de Santos'),
+                    const IaculaSectionHeader(title: 'Orações Temáticas'),
                     const SizedBox(height: IaculaSpacing.sm),
-                    const _SaintPrayerList(),
+                    const _ThematicPrayerList(),
                   ]),
                 ),
               ),
@@ -226,10 +224,7 @@ class _AnimatedHomeBlock extends StatelessWidget {
 }
 
 class _HomeHeroSection extends ConsumerWidget {
-  const _HomeHeroSection({
-    required this.isFallback,
-    required this.onHeroTap,
-  });
+  const _HomeHeroSection({required this.isFallback, required this.onHeroTap});
 
   final bool isFallback;
   final ValueChanged<Quote> onHeroTap;
@@ -238,11 +233,8 @@ class _HomeHeroSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final quoteAsync = ref.watch(_homeQuoteProvider);
     return quoteAsync.when(
-      data: (quote) => HomeHeroCard(
-        quote: quote,
-        isFallback: isFallback,
-        onTap: onHeroTap,
-      ),
+      data: (quote) =>
+          HomeHeroCard(quote: quote, isFallback: isFallback, onTap: onHeroTap),
       loading: () => const SizedBox(
         height: 240,
         child: Center(child: CupertinoActivityIndicator()),
@@ -285,51 +277,108 @@ class _DailyPrayerList extends ConsumerWidget {
   }
 }
 
-class _ThematicPrayerRail extends ConsumerWidget {
-  const _ThematicPrayerRail();
+class _FeatureRail extends StatelessWidget {
+  const _FeatureRail();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final groupsAsync = ref.watch(_thematicGroupsProvider);
-    final width = MediaQuery.of(context).size.width * 0.7;
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width * 0.42;
 
-    return groupsAsync.when(
-      data: (groups) {
-        if (groups.isEmpty) return const SizedBox.shrink();
-        return SizedBox(
-          height: 132,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: groups.length,
-            separatorBuilder: (context, index) =>
-                const SizedBox(width: IaculaSpacing.sm),
-            itemBuilder: (context, index) {
-              final group = groups[index];
-              return SizedBox(
-                width: width,
-                child: ImageBackgroundCard(
-                  title: group.label,
-                  subtitle: prayerCountLabel(group.itemCount),
-                  onTap: () => _openPrayerGroup(context, group),
-                  height: 132,
-                ),
-              );
-            },
-          ),
-        );
-      },
-      loading: () => const SizedBox.shrink(),
-      error: (error, stackTrace) => const SizedBox.shrink(),
+    final cards = [
+      _RailCard(label: 'Rosário', isComingSoon: true),
+      _RailCard(
+        label: 'Confissão',
+        isComingSoon: false,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (_) => const ExaminationFlowScreen(),
+            ),
+          );
+        },
+      ),
+      _RailCard(label: 'Novenas', isComingSoon: true),
+    ];
+
+    return SizedBox(
+      height: 100,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: cards.length,
+        separatorBuilder: (_, __) => const SizedBox(width: IaculaSpacing.sm),
+        itemBuilder: (context, index) => SizedBox(
+          width: width,
+          child: cards[index],
+        ),
+      ),
     );
   }
 }
 
-class _SaintPrayerList extends ConsumerWidget {
-  const _SaintPrayerList();
+class _RailCard extends StatelessWidget {
+  const _RailCard({
+    required this.label,
+    this.isComingSoon = false,
+    this.onTap,
+  });
+
+  final String label;
+  final bool isComingSoon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return PremiumTouchableCard(
+      onTap: isComingSoon
+          ? () => IaculaModal.showAlert(
+                context: context,
+                title: label,
+                message: 'Em breve',
+                actionLabel: 'Fechar',
+              )
+          : onTap,
+      child: IaculaSoftCard(
+        radius: 16,
+        padding: const EdgeInsets.all(IaculaSpacing.md),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Text(
+                label,
+                style: context.textStyles.cardTitle.copyWith(fontSize: 16),
+              ),
+            ),
+            if (isComingSoon)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: context.colors.secondaryButton,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'Em breve',
+                    style: context.textStyles.secondary.copyWith(fontSize: 10),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ThematicPrayerList extends ConsumerWidget {
+  const _ThematicPrayerList();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final groupsAsync = ref.watch(_saintGroupsProvider);
+    final groupsAsync = ref.watch(_homeThematicGroupsProvider);
 
     return groupsAsync.when(
       data: (groups) {
@@ -374,22 +423,14 @@ final _suggestionProvider = FutureProvider<PrayerCatalogEntry?>((ref) async {
       .suggestionOfDay(language: settings.language, date: DateTime.now());
 });
 
-final _thematicGroupsProvider = FutureProvider<List<HomePrayerGroup>>((
+final _homeThematicGroupsProvider = FutureProvider<List<HomePrayerGroup>>((
   ref,
 ) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
   final catalog = await ref
       .watch(getPrayerCatalogUseCaseProvider)
       .listAll(language: settings.language);
-  return buildThemePrayerGroups(catalog);
-});
-
-final _saintGroupsProvider = FutureProvider<List<HomePrayerGroup>>((ref) async {
-  final settings = await ref.watch(getSettingsUseCaseProvider).call();
-  final catalog = await ref
-      .watch(getPrayerCatalogUseCaseProvider)
-      .listAll(language: settings.language);
-  return buildSaintPrayerGroups(catalog);
+  return buildHomeThematicGroups(catalog);
 });
 
 final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
