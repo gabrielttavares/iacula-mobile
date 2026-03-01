@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -436,7 +438,19 @@ final _homeThematicGroupsProvider = FutureProvider<List<HomePrayerGroup>>((
 final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
   final service = ref.watch(liturgicalSeasonServiceProvider);
   final context = await service.getCurrentContext();
-  return context.isFallback;
+  final isFallback = context.isFallback;
+  debugPrint('[HomeScreen] Liturgical fallback provider resolved: isFallback=$isFallback');
+  developer.log(
+    'Liturgical fallback provider resolved: isFallback=$isFallback',
+    name: 'HomeScreen',
+  );
+  if (isFallback) {
+    developer.log(
+      'Liturgical context is fallback; hero will show "Tempo liturgico indisponivel".',
+      name: 'HomeScreen',
+    );
+  }
+  return isFallback;
 });
 
 final _homeQuoteProvider = FutureProvider<Quote>((ref) async {

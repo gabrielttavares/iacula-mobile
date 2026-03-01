@@ -159,35 +159,25 @@ class HomeHeroCard extends ConsumerWidget {
                               height: 1.5,
                             ),
                           ),
-                          if (isFallback)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(
-                                'Tempo litúrgico indisponível',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: context.colors.homeHeroSubtext,
-                                ),
-                              ),
-                            ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                Positioned(
-                  left: 18,
-                  bottom: 8,
-                  child: Text(
-                    labelText.toLowerCase(),
-                    key: const Key('home_hero_season_label'),
-                    style: TextStyle(
-                      fontSize: 11,
-                      letterSpacing: 0.8,
-                      color: context.colors.homeHeroLabel,
+                if (!isFallback)
+                  Positioned(
+                    left: 18,
+                    bottom: 8,
+                    child: Text(
+                      labelText.toLowerCase(),
+                      key: const Key('home_hero_season_label'),
+                      style: TextStyle(
+                        fontSize: 11,
+                        letterSpacing: 0.8,
+                        color: context.colors.homeHeroLabel,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),

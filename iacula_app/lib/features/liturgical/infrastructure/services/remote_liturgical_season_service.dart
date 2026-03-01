@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../domain/liturgical_context.dart';
@@ -107,6 +109,13 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
     try {
       final response = await _httpClient.get(uri).timeout(timeout);
       if (response.statusCode < 200 || response.statusCode > 299) {
+        debugPrint(
+          '[RemoteLiturgicalSeasonService] Liturgical API returned non-2xx; returning fallback. statusCode=${response.statusCode} uri=$uri date=$date',
+        );
+        developer.log(
+          'Liturgical API returned non-2xx; returning fallback. statusCode=${response.statusCode} uri=$uri date=$date',
+          name: 'RemoteLiturgicalSeasonService',
+        );
         return const _ContextResolution(LiturgicalContext.ordinaryFallback, false);
       }
 
@@ -127,7 +136,16 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
       );
 
       return _ContextResolution(context, true);
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint(
+        '[RemoteLiturgicalSeasonService] Liturgical API error; returning fallback. error=$e',
+      );
+      developer.log(
+        'Liturgical API error; returning fallback.',
+        name: 'RemoteLiturgicalSeasonService',
+        error: e,
+        stackTrace: st,
+      );
       return const _ContextResolution(LiturgicalContext.ordinaryFallback, false);
     }
   }
