@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../premium/domain/entities/premium_feature.dart';
+import '../../premium/presentation/premium_gate.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -30,6 +32,13 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return PremiumGate(
+      feature: PremiumFeature.meditation,
+      child: _buildContent(context),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
     final catalogAsync = ref.watch(meditationCatalogProvider);
 
     return CupertinoPageScaffold(

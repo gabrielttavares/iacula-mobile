@@ -48,7 +48,8 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
         onTap: (index) async {
           if (_premiumIndexes.contains(index)) {
             final asyncStatus = ref.read(premiumStatusProvider);
-            if (asyncStatus.hasValue && asyncStatus.value?.isPremium != true) {
+            final isPremium = asyncStatus.valueOrNull?.isPremium ?? false;
+            if (!isPremium) {
               _tabController.index = _currentIndex;
               final feature = index == 1
                   ? PremiumFeature.meditation
