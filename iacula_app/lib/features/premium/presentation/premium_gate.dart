@@ -77,19 +77,19 @@ class _LockedFallback extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Recurso Premium',
+                'Acesso Premium',
                 textAlign: TextAlign.center,
                 style: context.textStyles.sectionTitle,
               ),
               const SizedBox(height: 12),
               Text(
-                '${_label(feature)} está disponível no acesso Premium vitalício por R\$ 39,90.',
+                '${_label(feature)} faz parte do acesso Premium. Pague uma vez (R\$ 39,90) e use para sempre.',
                 textAlign: TextAlign.center,
                 style: context.textStyles.secondary,
               ),
               const SizedBox(height: 24),
               IaculaPrimaryPillButton(
-                label: 'Conhecer Premium',
+                label: 'Ver o que inclui',
                 onPressed: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(builder: (_) => const PaywallScreen()),
@@ -106,7 +106,7 @@ class _LockedFallback extends StatelessWidget {
   static String _label(PremiumFeature value) {
     return switch (value) {
       PremiumFeature.meditation => 'A Meditação',
-      PremiumFeature.planOfLife => 'O Plano de Vida',
+      PremiumFeature.planOfLife => 'O Plano de vida',
     };
   }
 }
@@ -133,19 +133,19 @@ class _PremiumGateModal extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Recurso Premium',
+              'Acesso Premium',
               textAlign: TextAlign.center,
               style: context.textStyles.sectionTitle,
             ),
             const SizedBox(height: 12),
             Text(
-              '${_LockedFallback._label(feature)} está disponível no acesso Premium vitalício por R\$ 39,90.',
+              '${_LockedFallback._label(feature)} faz parte do acesso Premium. Pague uma vez (R\$ 39,90) e use para sempre.',
               textAlign: TextAlign.center,
               style: context.textStyles.secondary,
             ),
             const SizedBox(height: 24),
             IaculaPrimaryPillButton(
-              label: 'Conhecer Premium',
+              label: 'Ver o que inclui',
               onPressed: () {
                 Navigator.pop(context);
                 Future.delayed(Duration.zero, () {

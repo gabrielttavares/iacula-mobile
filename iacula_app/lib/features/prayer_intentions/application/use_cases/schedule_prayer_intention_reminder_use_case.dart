@@ -34,8 +34,8 @@ final class SchedulePrayerIntentionReminderUseCase {
     final notificationId = prayerIntentionNotificationId(intentionId);
     final event = ReminderEvent(
       type: ReminderEventType.prayerIntentionReminder,
-      title: entry.title ?? 'Intencao de oracao',
-      body: entry.body.isNotEmpty ? entry.body : 'Reze por esta intencao.',
+      title: entry.title ?? 'Intenção de oração',
+      body: entry.body.isNotEmpty ? entry.body : 'Reze por esta intenção.',
       scheduledAt: scheduledAt,
       withVibration: true,
       isAlarm: false,

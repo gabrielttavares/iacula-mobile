@@ -252,9 +252,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final user = authState.valueOrNull;
 
     return AuthActionSheet(
-      title: 'Sincronizacao opcional',
+      title: 'Sincronização entre dispositivos',
       subtitle:
-          'Entre para sincronizar seus dados espirituais entre dispositivos.\nSincronizacao automatica quando online.',
+          'Faça login para manter seus dados espirituais sincronizados entre dispositivos. A sincronização acontece automaticamente.',
       signedInEmail: user?.email,
       onGoogle: () => authRepo.signInWithGoogle(),
       onMicrosoft: () => authRepo.signInWithMicrosoft(),
@@ -267,7 +267,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     setState(() => _validationMessage = null);
     final interval = int.tryParse(_intervalController.text);
     if (interval == null || interval < 1 || interval > 60) {
-      setState(() => _validationMessage = 'Use 1..60 no intervalo.');
+      setState(() => _validationMessage = 'O intervalo deve ser entre 1 e 60 minutos.');
       return;
     }
 

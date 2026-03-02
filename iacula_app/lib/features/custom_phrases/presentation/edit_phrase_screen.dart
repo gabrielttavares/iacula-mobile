@@ -53,8 +53,8 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
     if (text.length < 5 || text.length > 300) {
       IaculaModal.showAlert(
         context: context,
-        title: 'Texto inválido',
-        message: 'A frase deve ter entre 5 e 300 caracteres.',
+        title: 'Ajuste o texto',
+        message: 'A frase precisa ter entre 5 e 300 caracteres.',
       );
       return;
     }
@@ -62,8 +62,8 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
     if (!_displayOnHero && !_displayAsNotification) {
       IaculaModal.showAlert(
         context: context,
-        title: 'Opção de exibição',
-        message: 'Selecione pelo menos uma forma de exibição (Hero Card ou Notificação).',
+        title: 'Forma de exibição',
+        message: 'Selecione pelo menos uma opção: Destaque do Início ou Notificação.',
       );
       return;
     }
@@ -71,7 +71,7 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
     if (_scheduleType == PhraseScheduleType.weekly && _daysOfWeek.isEmpty) {
       IaculaModal.showAlert(
         context: context,
-        title: 'Dias inválidos',
+        title: 'Escolha os dias',
         message: 'Selecione pelo menos um dia da semana.',
       );
       return;
@@ -80,7 +80,7 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
     if (_scheduleType == PhraseScheduleType.specificDates && _specificDates.isEmpty) {
       IaculaModal.showAlert(
         context: context,
-        title: 'Datas inválidas',
+        title: 'Escolha as datas',
         message: 'Selecione pelo menos uma data.',
       );
       return;
@@ -89,7 +89,7 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
     if (_times.isEmpty) {
       IaculaModal.showAlert(
         context: context,
-        title: 'Horários inválidos',
+        title: 'Escolha os horários',
         message: 'Selecione pelo menos um horário.',
       );
       return;
@@ -122,9 +122,9 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
   void _delete() async {
     final confirmed = await IaculaModal.showConfirm(
       context: context,
-      title: 'Excluir frase',
-      message: 'Tem certeza que deseja excluir esta frase?',
-      confirmLabel: 'Excluir',
+      title: 'Remover frase',
+      message: 'Tem certeza que deseja remover esta frase?',
+      confirmLabel: 'Remover',
       destructive: true,
     );
 
@@ -181,7 +181,7 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
                       child: Column(
                         children: [
                           _ToggleRow(
-                            label: 'Hero Card (Início)',
+                            label: 'Destaque do Início',
                             value: _displayOnHero,
                             onChanged: (v) => setState(() => _displayOnHero = v),
                           ),
@@ -267,7 +267,7 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
                     CupertinoButton(
                       onPressed: _delete,
                       child: const Text(
-                        'Excluir Frase',
+                        'Remover Frase',
                         style: TextStyle(color: CupertinoColors.destructiveRed),
                       ),
                     ),

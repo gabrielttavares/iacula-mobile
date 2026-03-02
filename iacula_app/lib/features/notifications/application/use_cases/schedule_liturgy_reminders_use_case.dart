@@ -16,7 +16,7 @@ final class ScheduleLiturgyRemindersUseCase {
         ReminderEvent(
           type: ReminderEventType.laudes,
           title: 'Laudes',
-          body: 'Oficio do dia.',
+          body: 'Ofício do dia.',
           scheduledAt: NextOccurrenceCalculator.forHourMinute(now: current, hhmm: settings.laudesTime),
           withVibration: true,
           isAlarm: true,
@@ -30,8 +30,8 @@ final class ScheduleLiturgyRemindersUseCase {
       await _scheduler.schedule(
         ReminderEvent(
           type: ReminderEventType.vespers,
-          title: 'Vesperas',
-          body: 'Oficio do dia.',
+          title: 'Vésperas',
+          body: 'Ofício do dia.',
           scheduledAt: NextOccurrenceCalculator.forHourMinute(now: current, hhmm: settings.vespersTime),
           withVibration: true,
           isAlarm: true,
@@ -46,7 +46,7 @@ final class ScheduleLiturgyRemindersUseCase {
         ReminderEvent(
           type: ReminderEventType.compline,
           title: 'Completas',
-          body: 'Oficio do dia.',
+          body: 'Ofício do dia.',
           scheduledAt: NextOccurrenceCalculator.forHourMinute(now: current, hhmm: settings.complineTime),
           withVibration: true,
           isAlarm: true,
@@ -60,8 +60,8 @@ final class ScheduleLiturgyRemindersUseCase {
       await _scheduler.schedule(
         ReminderEvent(
           type: ReminderEventType.oraMedia,
-          title: 'Ora Media',
-          body: 'Oficio do dia.',
+          title: 'Hora Média',
+          body: 'Ofício do dia.',
           scheduledAt: NextOccurrenceCalculator.forHourMinute(now: current, hhmm: settings.oraMediaTime),
           withVibration: true,
           isAlarm: true,

@@ -251,29 +251,29 @@ final class LocalNotificationSchedulerRepository
 
   static String _channelNameForType(ReminderEventType type) {
     return switch (type) {
-      ReminderEventType.quoteInterval => 'Jaculatorias',
+      ReminderEventType.quoteInterval => 'Jaculatórias',
       ReminderEventType.angelusNoon => 'Angelus',
       ReminderEventType.laudes ||
       ReminderEventType.vespers ||
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'Liturgia das Horas',
-      ReminderEventType.customMeditationAlarm => 'Meditacao',
+      ReminderEventType.customMeditationAlarm => 'Meditação',
       ReminderEventType.customPhrase => 'Frases Personalizadas',
-      ReminderEventType.prayerIntentionReminder => 'Intencoes de oracao',
+      ReminderEventType.prayerIntentionReminder => 'Intenções de oração',
     };
   }
 
   static String _channelDescriptionForType(ReminderEventType type) {
     return switch (type) {
-      ReminderEventType.quoteInterval => 'Lembretes de jaculatorias',
+      ReminderEventType.quoteInterval => 'Lembretes de jaculatórias',
       ReminderEventType.angelusNoon => 'Lembrete do meio-dia',
       ReminderEventType.laudes ||
       ReminderEventType.vespers ||
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'Alarmes da Liturgia das Horas',
-      ReminderEventType.customMeditationAlarm => 'Alarmes de meditacao',
-      ReminderEventType.customPhrase => 'Notificações de suas frases pessoais',
-      ReminderEventType.prayerIntentionReminder => 'Lembretes para rezar por intencoes',
+      ReminderEventType.customMeditationAlarm => 'Alarmes de meditação',
+      ReminderEventType.customPhrase => 'Notificações de frases personalizadas',
+      ReminderEventType.prayerIntentionReminder => 'Lembretes para rezar por intenções',
     };
   }
 }

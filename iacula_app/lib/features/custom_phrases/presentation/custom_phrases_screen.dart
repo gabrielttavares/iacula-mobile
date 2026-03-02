@@ -26,7 +26,7 @@ class CustomPhrasesScreen extends ConsumerWidget {
           CupertinoSliverNavigationBar(
             backgroundColor: context.colors.background,
             border: null,
-            largeTitle: const Text('Frases Pessoais'),
+            largeTitle: const Text('Frases Personalizadas'),
             trailing: CupertinoButton(
               padding: EdgeInsets.zero,
               minimumSize: const Size(32, 32),
@@ -123,7 +123,12 @@ class CustomPhrasesScreen extends ConsumerWidget {
                 child: Center(child: CupertinoActivityIndicator()),
               ),
               error: (err, stack) => SliverFillRemaining(
-                child: Center(child: Text('Erro ao carregar frases: $err')),
+                child: Center(
+                  child: Text(
+                    'Não foi possível carregar suas frases.\nTente novamente em instantes.',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
             ),
           ),
@@ -153,13 +158,13 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Você ainda não criou frases personalizadas.',
+              'Nenhuma frase personalizada ainda',
               style: context.textStyles.cardTitle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Crie frases para fortalecer sua vida espiritual ao longo do dia.',
+              'Crie frases que inspirem sua jornada espiritual. Elas aparecem na tela inicial e como notificações.',
               style: context.textStyles.secondary,
               textAlign: TextAlign.center,
             ),

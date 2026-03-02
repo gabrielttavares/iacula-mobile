@@ -33,8 +33,8 @@ class FavoritesScreen extends ConsumerWidget {
                   hasScrollBody: false,
                   child: Center(
                     child: IaculaEmptyState(
-                      title: 'Sem favoritos',
-                      message: 'Seus itens salvos aparecerão aqui.',
+                      title: 'Nenhum favorito ainda',
+                      message: 'As orações que você salvar aparecerão aqui.',
                     ),
                   ),
                 )
