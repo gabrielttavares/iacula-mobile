@@ -212,7 +212,7 @@ void main() {
 
     expect(find.textContaining('Bem vindo'), findsWidgets);
     expect(find.text('Destaques'), findsNothing);
-    await reveal('Minhas Frases');
+    await reveal('Frases Personalizadas');
     await reveal('Ênfase do Dia');
     await reveal('Orações temáticas');
     await reveal('Orações de Santos');
@@ -368,11 +368,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    for (
-      var i = 0;
-      i < 20 && find.text('Mariano').evaluate().isEmpty;
-      i++
-    ) {
+    for (var i = 0; i < 20 && find.text('Mariano').evaluate().isEmpty; i++) {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
       await tester.pump(const Duration(milliseconds: 200));
     }

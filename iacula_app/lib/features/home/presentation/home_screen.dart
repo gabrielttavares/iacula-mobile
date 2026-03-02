@@ -148,13 +148,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       offsetY: 0.05,
                       child: _CustomPhrasesHomeCard(
                         onTap: () {
-                          final isPremium = ref.read(premiumStatusProvider).valueOrNull?.isPremium ?? false;
+                          final isPremium =
+                              ref
+                                  .read(premiumStatusProvider)
+                                  .valueOrNull
+                                  ?.isPremium ??
+                              false;
                           if (!isPremium) {
-                            PremiumGate.showModal(context, feature: PremiumFeature.meditation);
+                            PremiumGate.showModal(
+                              context,
+                              feature: PremiumFeature.meditation,
+                            );
                             return;
                           }
                           Navigator.of(context).push(
-                            CupertinoPageRoute(builder: (_) => const CustomPhrasesScreen()),
+                            CupertinoPageRoute(
+                              builder: (_) => const CustomPhrasesScreen(),
+                            ),
                           );
                         },
                       ),
@@ -241,7 +251,7 @@ class _CustomPhrasesHomeCard extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Minhas Frases',
+                'Frases Personalizadas',
                 style: context.textStyles.cardTitle.copyWith(fontSize: 16),
               ),
             ),
@@ -353,9 +363,7 @@ class _FeatureRail extends StatelessWidget {
         onTap: () {
           HapticFeedback.lightImpact();
           Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (_) => const ExaminationFlowScreen(),
-            ),
+            CupertinoPageRoute(builder: (_) => const ExaminationFlowScreen()),
           );
         },
       ),
@@ -367,22 +375,17 @@ class _FeatureRail extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: cards.length,
-        separatorBuilder: (context, index) => const SizedBox(width: IaculaSpacing.sm),
-        itemBuilder: (context, index) => SizedBox(
-          width: width,
-          child: cards[index],
-        ),
+        separatorBuilder: (context, index) =>
+            const SizedBox(width: IaculaSpacing.sm),
+        itemBuilder: (context, index) =>
+            SizedBox(width: width, child: cards[index]),
       ),
     );
   }
 }
 
 class _RailCard extends StatelessWidget {
-  const _RailCard({
-    required this.label,
-    this.isComingSoon = false,
-    this.onTap,
-  });
+  const _RailCard({required this.label, this.isComingSoon = false, this.onTap});
 
   final String label;
   final bool isComingSoon;
@@ -393,11 +396,11 @@ class _RailCard extends StatelessWidget {
     return PremiumTouchableCard(
       onTap: isComingSoon
           ? () => IaculaModal.showAlert(
-                context: context,
-                title: label,
-                message: 'Em breve',
-                actionLabel: 'Fechar',
-              )
+              context: context,
+              title: label,
+              message: 'Em breve',
+              actionLabel: 'Fechar',
+            )
           : onTap,
       child: IaculaSoftCard(
         radius: 16,
@@ -416,7 +419,10 @@ class _RailCard extends StatelessWidget {
                 top: 0,
                 right: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: context.colors.secondaryButton,
                     borderRadius: BorderRadius.circular(6),
@@ -498,7 +504,9 @@ final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
   final service = ref.watch(liturgicalSeasonServiceProvider);
   final context = await service.getCurrentContext();
   final isFallback = context.isFallback;
-  debugPrint('[HomeScreen] Liturgical fallback provider resolved: isFallback=$isFallback');
+  debugPrint(
+    '[HomeScreen] Liturgical fallback provider resolved: isFallback=$isFallback',
+  );
   developer.log(
     'Liturgical fallback provider resolved: isFallback=$isFallback',
     name: 'HomeScreen',
