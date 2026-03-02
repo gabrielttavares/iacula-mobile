@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../theme/cupertino_tokens.dart';
 
-class IaculaTextInput extends StatelessWidget {
+class IaculaTextInput extends StatefulWidget {
   const IaculaTextInput({
     super.key,
     this.controller,
@@ -25,22 +25,58 @@ class IaculaTextInput extends StatelessWidget {
   final ValueChanged<String>? onChanged;
 
   @override
+  State<IaculaTextInput> createState() => _IaculaTextInputState();
+}
+
+class _IaculaTextInputState extends State<IaculaTextInput> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return CupertinoTextField(
-      controller: controller,
-      placeholder: placeholder,
-      keyboardType: keyboardType,
-      textCapitalization: textCapitalization,
-      autofocus: autofocus,
-      maxLines: maxLines,
-      readOnly: readOnly,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    final borderColor =
+        _isFocused ? context.colors.primaryButton : context.colors.separator;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
       decoration: BoxDecoration(
         color: context.colors.card,
-        border: Border.all(color: context.colors.separator),
+        border: Border.all(color: borderColor),
         borderRadius: BorderRadius.circular(IaculaRadius.small),
       ),
-      onChanged: onChanged,
+      child: CupertinoTextField(
+        controller: widget.controller,
+        placeholder: widget.placeholder,
+        keyboardType: widget.keyboardType,
+        textCapitalization: widget.textCapitalization,
+        autofocus: widget.autofocus,
+        maxLines: widget.maxLines,
+        readOnly: widget.readOnly,
+        focusNode: _focusNode,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: null,
+        onChanged: widget.onChanged,
+      ),
     );
   }
 }

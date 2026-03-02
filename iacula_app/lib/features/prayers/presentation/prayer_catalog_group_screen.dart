@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
+import '../../../core/presentation/widgets/iacula_scroll_item_entrance.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
+import '../../../core/presentation/widgets/image_background_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../../home/presentation/home_prayer_groups.dart';
@@ -72,8 +75,8 @@ class PrayerCatalogGroupScreen extends ConsumerWidget {
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
       navigationBar: CupertinoNavigationBar(
-        middle: Text(title),
         backgroundColor: context.colors.background,
+        border: null,
       ),
       child: SafeArea(
         child: entriesAsync.when(
@@ -87,22 +90,51 @@ class PrayerCatalogGroupScreen extends ConsumerWidget {
               );
             }
             return ListView.separated(
+              physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.fromLTRB(
                 IaculaSpacing.md,
-                IaculaSpacing.md,
+                0, // Removed top padding to align with nav bar
                 IaculaSpacing.md,
                 IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
               ),
-              itemCount: entries.length,
+              itemCount: entries.length + 1, // +1 for the Hero header
               separatorBuilder: (context, index) =>
                   const SizedBox(height: IaculaSpacing.sm),
               itemBuilder: (context, index) {
-                final entry = entries[index];
-                return _PrayerItemCard(entry: entry);
+                if (index == 0) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: IaculaSpacing.md),
+                    child: Hero(
+                      tag: 'group_$groupKey',
+                      child: ImageBackgroundCard(
+                        title: title,
+                        subtitle: '${entries.length} orações',
+                        height: 120,
+                      ),
+                    ),
+                  );
+                }
+                
+                final entry = entries[index - 1];
+                return IaculaScrollItemEntrance(
+                  child: _PrayerItemCard(entry: entry),
+                );
               },
             );
           },
-          loading: () => const Center(child: CupertinoActivityIndicator()),
+          loading: () => Padding(
+            padding: const EdgeInsets.all(IaculaSpacing.md),
+            child: Column(
+              children: [
+                Hero(
+                  tag: 'group_$groupKey',
+                  child: IaculaShimmerCard(height: 120),
+                ),
+                const SizedBox(height: IaculaSpacing.lg),
+                const IaculaShimmerList(itemCount: 4),
+              ],
+            ),
+          ),
           error: (error, stackTrace) => Center(
             child: Text(
               'Não foi possível carregar as orações',

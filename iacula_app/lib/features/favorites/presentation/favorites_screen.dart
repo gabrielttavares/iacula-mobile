@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
@@ -28,6 +29,14 @@ class FavoritesScreen extends ConsumerWidget {
                 backgroundColor: context.colors.background,
                 border: null,
               ),
+              CupertinoSliverRefreshControl(
+                onRefresh: () async {
+                  HapticFeedback.lightImpact();
+                  ref.invalidate(favoritesProvider);
+                  // Allow time for the animation and reload
+                  await Future.delayed(const Duration(milliseconds: 500));
+                },
+              ),
               if (favorites.isEmpty)
                 const SliverFillRemaining(
                   hasScrollBody: false,
@@ -41,40 +50,43 @@ class FavoritesScreen extends ConsumerWidget {
               else
                 SliverPadding(
                   padding: const EdgeInsets.all(IaculaSpacing.md),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final item = favorites[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: _FavoriteCard(
-                            item: item,
-                            onRemove: () {
-                              HapticFeedback.mediumImpact();
-                              ref.read(favoriteRepositoryProvider).remove(item.id);
-                            },
-                            onTap: item.prayerSlug != null
-                                ? () async {
-                                    final entry = await ref.read(
-                                      prayerEntryBySlugProvider(item.prayerSlug!)
-                                          .future,
-                                    );
-                                    if (entry != null && context.mounted) {
-                                      Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (_) =>
-                                              PrayerCatalogDetailScreen(
-                                            entry: entry,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  }
-                                : null,
-                          ),
-                        );
-                      },
-                      childCount: favorites.length,
+                  sliver: SliverToBoxAdapter(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: Column(
+                        key: ValueKey<int>(favorites.length),
+                        children: [
+                          for (int i = 0; i < favorites.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: _FavoriteCard(
+                                item: favorites[i],
+                                onRemove: () {
+                                  HapticFeedback.mediumImpact();
+                                  ref.read(favoriteRepositoryProvider).remove(favorites[i].id);
+                                },
+                                onTap: favorites[i].prayerSlug != null
+                                    ? () async {
+                                        final entry = await ref.read(
+                                          prayerEntryBySlugProvider(favorites[i].prayerSlug!)
+                                              .future,
+                                        );
+                                        if (entry != null && context.mounted) {
+                                          Navigator.of(context).push(
+                                            CupertinoPageRoute(
+                                              builder: (_) =>
+                                                  PrayerCatalogDetailScreen(
+                                                entry: entry,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    : null,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -86,7 +98,10 @@ class FavoritesScreen extends ConsumerWidget {
             ],
           );
         },
-        loading: () => const Center(child: CupertinoActivityIndicator()),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(IaculaSpacing.md),
+          child: IaculaShimmerList(itemCount: 4),
+        ),
         error: (error, stackTrace) => const Center(
           child: IaculaErrorState(
             title: 'Erro ao carregar favoritos',

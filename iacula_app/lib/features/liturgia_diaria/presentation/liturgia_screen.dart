@@ -6,6 +6,7 @@ import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_calendar_modal.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/daily_liturgy.dart';
@@ -183,9 +184,13 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                             IaculaSpacing.md,
                       ),
                       child: IaculaSoftCard(
-                        child: _SegmentedContent(
-                          day: selected,
-                          segment: _segment,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: _SegmentedContent(
+                            key: ValueKey<_LiturgySegment>(_segment),
+                            day: selected,
+                            segment: _segment,
+                          ),
                         ),
                       ),
                     ),
@@ -200,7 +205,16 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
               style: context.textStyles.secondary,
             ),
           ),
-          loading: () => const Center(child: CupertinoActivityIndicator()),
+          loading: () => Padding(
+            padding: const EdgeInsets.all(IaculaSpacing.md),
+            child: Column(
+              children: const [
+                IaculaShimmerCard(height: 44),
+                SizedBox(height: IaculaSpacing.md),
+                IaculaShimmerCard(height: 200),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -264,7 +278,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
 }
 
 class _SegmentedContent extends StatelessWidget {
-  const _SegmentedContent({required this.day, required this.segment});
+  const _SegmentedContent({super.key, required this.day, required this.segment});
 
   final LiturgyDay day;
   final _LiturgySegment segment;

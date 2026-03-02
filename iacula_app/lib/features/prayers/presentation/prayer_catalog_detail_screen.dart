@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/widgets/iacula_animated_icon.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
@@ -50,7 +53,20 @@ class _PrayerCatalogDetailScreenState
             final fontSize = settingsSnapshot.data?.prayerFontSize ?? 15.0;
 
             return detailAsync.when(
-              loading: () => const Center(child: CupertinoActivityIndicator()),
+              loading: () => Padding(
+                padding: const EdgeInsets.all(IaculaSpacing.md),
+                child: Column(
+                  children: const [
+                    IaculaShimmerText(width: 200, height: 20),
+                    SizedBox(height: IaculaSpacing.md),
+                    IaculaShimmerText(),
+                    SizedBox(height: IaculaSpacing.xs),
+                    IaculaShimmerText(),
+                    SizedBox(height: IaculaSpacing.xs),
+                    IaculaShimmerText(width: 160),
+                  ],
+                ),
+              ),
               error: (error, stackTrace) => Center(
                 child: Text('Erro ao carregar oração', style: context.textStyles.secondary),
               ),
@@ -115,8 +131,11 @@ class _PrayerCatalogDetailScreenState
                       ),
                   const SizedBox(height: IaculaSpacing.lg),
                   Expanded(
-                    child: ListView.separated(
-                      physics: const BouncingScrollPhysics(),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: ListView.separated(
+                        key: ValueKey<String>(selectedLanguage),
+                        physics: const BouncingScrollPhysics(),
                       padding: EdgeInsets.only(
                         bottom: MediaQuery.paddingOf(context).bottom +
                             IaculaSpacing.md,
@@ -134,6 +153,7 @@ class _PrayerCatalogDetailScreenState
                           ),
                         );
                       },
+                    ),
                     ),
                   ),
                 ],
@@ -167,6 +187,7 @@ class _PrayerBookmarkButton extends ConsumerWidget {
       padding: EdgeInsets.zero,
       minimumSize: const Size(32, 32),
       onPressed: () async {
+        HapticFeedback.selectionClick();
         final repo = ref.read(favoriteRepositoryProvider);
         if (savedItem != null) {
           await repo.remove(savedItem.id);
@@ -183,10 +204,11 @@ class _PrayerBookmarkButton extends ConsumerWidget {
           );
         }
       },
-      child: Icon(
-        isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
+      child: IaculaAnimatedIcon(
+        icon: isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
         color: context.colors.primaryButton,
         size: 22,
+        enableHaptics: false,
       ),
     );
   }

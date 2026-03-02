@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/presentation/widgets/iacula_spring_button.dart';
+import '../../../../core/presentation/widgets/iacula_toast.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../application/examination_flow_notifier.dart';
 
@@ -93,7 +94,7 @@ class ExaminationConfessionView extends ConsumerWidget {
                     onTap: () {
                       HapticFeedback.lightImpact();
                       Clipboard.setData(ClipboardData(text: confession));
-                      _showCopiedToast(context);
+                      IaculaToast.show(context, 'Texto copiado.');
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -143,38 +144,5 @@ class ExaminationConfessionView extends ConsumerWidget {
     );
   }
 
-  void _showCopiedToast(BuildContext context) {
-    final overlay = Navigator.of(context).overlay;
-    if (overlay == null) return;
 
-    late OverlayEntry entry;
-    entry = OverlayEntry(
-      builder: (context) => Positioned(
-        bottom: 100,
-        left: 0,
-        right: 0,
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: CupertinoColors.systemGrey.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              'Texto copiado.',
-              style: TextStyle(
-                color: CupertinoColors.white,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    overlay.insert(entry);
-    Future.delayed(const Duration(seconds: 2), () {
-      entry.remove();
-    });
-  }
 }

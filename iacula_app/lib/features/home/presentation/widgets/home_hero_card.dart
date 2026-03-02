@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Colors;
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/providers.dart';
+import '../../../../core/presentation/widgets/iacula_animated_icon.dart';
 import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../favorites/domain/entities/favorite_item.dart';
@@ -178,6 +180,7 @@ class _HeroBookmarkButton extends ConsumerWidget {
       padding: EdgeInsets.zero,
       minimumSize: const Size(32, 32),
       onPressed: () async {
+        HapticFeedback.selectionClick();
         final repo = ref.read(favoriteRepositoryProvider);
         if (savedItem != null) {
           await repo.remove(savedItem.id);
@@ -195,10 +198,11 @@ class _HeroBookmarkButton extends ConsumerWidget {
           );
         }
       },
-      child: Icon(
-        isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
+      child: IaculaAnimatedIcon(
+        icon: isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
         color: context.colors.primaryButton,
         size: 20,
+        enableHaptics: false,
       ),
     );
   }

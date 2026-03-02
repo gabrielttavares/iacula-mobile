@@ -9,7 +9,9 @@ import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 
 import '../../../core/presentation/widgets/iacula_section_header.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/presentation/widgets/iacula_stagger_entrance.dart';
 import '../../../core/presentation/widgets/image_background_card.dart';
 import '../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -42,18 +44,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  bool _animateIn = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        setState(() => _animateIn = true);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final isFallback =
@@ -124,6 +114,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
+              CupertinoSliverRefreshControl(
+                onRefresh: () async {
+                  HapticFeedback.lightImpact();
+                  ref.invalidate(_homeQuoteProvider);
+                  ref.invalidate(_suggestionProvider);
+                  ref.invalidate(_homeThematicGroupsProvider);
+                  await Future.delayed(const Duration(milliseconds: 500));
+                },
+              ),
               SliverPadding(
                 padding: EdgeInsets.fromLTRB(
                   16,
@@ -133,91 +132,83 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    _AnimatedHomeBlock(
-                      visible: _animateIn,
-                      offsetY: 0.04,
-                      child: _HomeHeroSection(
-                        isFallback: isFallback,
-                        onHeroTap: (quote) =>
-                            HeroReflectionSheet.show(context, quote: quote),
-                      ),
-                    ),
-                    const SizedBox(height: IaculaSpacing.sm),
-                    _AnimatedHomeBlock(
-                      visible: _animateIn,
-                      offsetY: 0.05,
-                      child: _CustomPhrasesHomeCard(
-                        onTap: () {
-                          final isPremium =
-                              ref
-                                  .read(premiumStatusProvider)
-                                  .valueOrNull
-                                  ?.isPremium ??
-                              false;
-                          if (!isPremium) {
-                            PremiumGate.showModal(
-                              context,
-                              feature: PremiumFeature.meditation,
+                    IaculaStaggerEntrance(
+                      children: [
+                        _HomeHeroSection(
+                          isFallback: isFallback,
+                          onHeroTap: (quote) =>
+                              HeroReflectionSheet.show(context, quote: quote),
+                        ),
+                        const SizedBox(height: IaculaSpacing.sm),
+                        _CustomPhrasesHomeCard(
+                          onTap: () {
+                            final isPremium =
+                                ref
+                                    .read(premiumStatusProvider)
+                                    .valueOrNull
+                                    ?.isPremium ??
+                                false;
+                            if (!isPremium) {
+                              PremiumGate.showModal(
+                                context,
+                                feature: PremiumFeature.meditation,
+                              );
+                              return;
+                            }
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const CustomPhrasesScreen(),
+                              ),
                             );
-                            return;
-                          }
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (_) => const CustomPhrasesScreen(),
-                            ),
-                          );
-                        },
-                      ),
+                          },
+                        ),
+                        const SizedBox(height: IaculaSpacing.lg),
+                        HomeActionGrid(
+                          onOpenPrayers: () {
+                            HapticFeedback.lightImpact();
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const PrayerCollectionsScreen(),
+                              ),
+                            );
+                          },
+                          onOpenLiturgy: () {
+                            HapticFeedback.lightImpact();
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const LiturgiaScreen(),
+                              ),
+                            );
+                          },
+                          onOpenIntentions: () {
+                            HapticFeedback.lightImpact();
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const PrayerIntentionsScreen(),
+                              ),
+                            );
+                          },
+                          onOpenExamination: () {
+                            HapticFeedback.lightImpact();
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const ExaminationFlowScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: IaculaSpacing.xl),
+                        const IaculaSectionHeader(title: 'Ênfase do Dia'),
+                        const SizedBox(height: IaculaSpacing.sm),
+                        const _DailyPrayerList(),
+                        const SizedBox(height: IaculaSpacing.xl),
+                        const _FeatureRail(),
+                        const SizedBox(height: IaculaSpacing.xl),
+                        const IaculaSectionHeader(title: 'Orações Temáticas'),
+                        const SizedBox(height: IaculaSpacing.sm),
+                        const _ThematicPrayerList(),
+                      ],
                     ),
-                    const SizedBox(height: IaculaSpacing.lg),
-                    _AnimatedHomeBlock(
-                      visible: _animateIn,
-                      offsetY: 0.06,
-                      child: HomeActionGrid(
-                        onOpenPrayers: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (_) => const PrayerCollectionsScreen(),
-                            ),
-                          );
-                        },
-                        onOpenLiturgy: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (_) => const LiturgiaScreen(),
-                            ),
-                          );
-                        },
-                        onOpenIntentions: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (_) => const PrayerIntentionsScreen(),
-                            ),
-                          );
-                        },
-                        onOpenExamination: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (_) => const ExaminationFlowScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: IaculaSpacing.xl),
-                    const IaculaSectionHeader(title: 'Ênfase do Dia'),
-                    const SizedBox(height: IaculaSpacing.sm),
-                    const _DailyPrayerList(),
-                    const SizedBox(height: IaculaSpacing.xl),
-                    const _FeatureRail(),
-                    const SizedBox(height: IaculaSpacing.xl),
-                    const IaculaSectionHeader(title: 'Orações Temáticas'),
-                    const SizedBox(height: IaculaSpacing.sm),
-                    const _ThematicPrayerList(),
                   ]),
                 ),
               ),
@@ -267,33 +258,6 @@ class _CustomPhrasesHomeCard extends StatelessWidget {
   }
 }
 
-class _AnimatedHomeBlock extends StatelessWidget {
-  const _AnimatedHomeBlock({
-    required this.visible,
-    required this.offsetY,
-    required this.child,
-  });
-
-  final bool visible;
-  final double offsetY;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSlide(
-      duration: const Duration(milliseconds: 280),
-      curve: Curves.easeOutCubic,
-      offset: visible ? Offset.zero : Offset(0, offsetY),
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 280),
-        curve: Curves.easeOut,
-        opacity: visible ? 1 : 0,
-        child: child,
-      ),
-    );
-  }
-}
-
 class _HomeHeroSection extends ConsumerWidget {
   const _HomeHeroSection({required this.isFallback, required this.onHeroTap});
 
@@ -308,7 +272,7 @@ class _HomeHeroSection extends ConsumerWidget {
           HomeHeroCard(quote: quote, isFallback: isFallback, onTap: onHeroTap),
       loading: () => const SizedBox(
         height: 240,
-        child: Center(child: CupertinoActivityIndicator()),
+        child: IaculaShimmerCard(height: 240),
       ),
       error: (error, stackTrace) => IaculaErrorState(
         title: 'Não foi possível carregar a reflexão',
@@ -455,11 +419,14 @@ class _ThematicPrayerList extends ConsumerWidget {
             for (final group in groups)
               Padding(
                 padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-                child: ImageBackgroundCard(
-                  title: group.label,
-                  subtitle: prayerCountLabel(group.itemCount),
-                  onTap: () => _openPrayerGroup(context, group),
-                  height: 120,
+                child: Hero(
+                  tag: 'group_${group.key}',
+                  child: ImageBackgroundCard(
+                    title: group.label,
+                    subtitle: prayerCountLabel(group.itemCount),
+                    onTap: () => _openPrayerGroup(context, group),
+                    height: 120,
+                  ),
                 ),
               ),
           ],

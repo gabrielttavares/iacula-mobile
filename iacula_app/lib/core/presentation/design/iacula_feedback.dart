@@ -30,7 +30,7 @@ class IaculaInlineMessage extends StatelessWidget {
   }
 }
 
-class IaculaEmptyState extends StatelessWidget {
+class IaculaEmptyState extends StatefulWidget {
   const IaculaEmptyState({
     super.key,
     required this.title,
@@ -43,28 +43,69 @@ class IaculaEmptyState extends StatelessWidget {
   final Widget? action;
 
   @override
+  State<IaculaEmptyState> createState() => _IaculaEmptyStateState();
+}
+
+class _IaculaEmptyStateState extends State<IaculaEmptyState>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scaleAnimation;
+  late final Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+
+    final curved = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(curved);
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(curved);
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
-      child: IaculaSoftCard(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: context.textStyles.cardTitle,
-              textAlign: TextAlign.center,
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: IaculaSoftCard(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.title,
+                  style: context.textStyles.cardTitle,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: IaculaSpacing.xs),
+                Text(
+                  widget.message,
+                  style: context.textStyles.secondary,
+                  textAlign: TextAlign.center,
+                ),
+                if (widget.action != null) ...[
+                  const SizedBox(height: IaculaSpacing.md),
+                  widget.action!,
+                ],
+              ],
             ),
-            const SizedBox(height: IaculaSpacing.xs),
-            Text(
-              message,
-              style: context.textStyles.secondary,
-              textAlign: TextAlign.center,
-            ),
-            if (action != null) ...[
-              const SizedBox(height: IaculaSpacing.md),
-              action!,
-            ],
-          ],
+          ),
         ),
       ),
     );

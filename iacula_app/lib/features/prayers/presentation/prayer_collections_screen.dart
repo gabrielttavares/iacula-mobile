@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/presentation/widgets/iacula_scroll_item_entrance.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -107,53 +109,56 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                         final isFirstRecurso = group.sectionId ==
                             _recursosAdicionaisSections.first;
 
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: IaculaSpacing.sm,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (isFirstRecurso) ...[
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: IaculaSpacing.md,
-                                  ),
-                                  child: Text(
-                                    'Recursos Adicionais',
-                                    style: context.textStyles.sectionTitle.copyWith(
-                                      fontSize: 20,
-                                      color: context.colors.textPrimary,
+                        return IaculaScrollItemEntrance(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: IaculaSpacing.sm,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (isFirstRecurso) ...[
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: IaculaSpacing.md,
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(height: IaculaSpacing.sm),
-                              ],
-                              _PrayerCategoryCard(
-                                title: group.sectionTitle,
-                                icon: CupertinoIcons.book,
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    CupertinoPageRoute(
-                                      builder: (_) => PrayerCatalogGroupScreen(
-                                        type: HomePrayerGroupType.section,
-                                        groupKey: group.sectionId,
-                                        title: group.sectionTitle,
+                                    child: Text(
+                                      'Recursos Adicionais',
+                                      style: context.textStyles.sectionTitle.copyWith(
+                                        fontSize: 20,
+                                        color: context.colors.textPrimary,
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
-                            ],
+                                  ),
+                                  const SizedBox(height: IaculaSpacing.sm),
+                                ],
+                                _PrayerCategoryCard(
+                                  title: group.sectionTitle,
+                                  icon: CupertinoIcons.book,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      CupertinoPageRoute(
+                                        builder: (_) => PrayerCatalogGroupScreen(
+                                          type: HomePrayerGroupType.section,
+                                          groupKey: group.sectionId,
+                                          title: group.sectionTitle,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
                     ),
                   );
                 },
-                loading: () =>
-                    const Center(child: CupertinoActivityIndicator()),
+                loading: () => const Expanded(
+                  child: IaculaShimmerList(itemCount: 6),
+                ),
                 error: (error, stackTrace) => Text(
                   'Erro ao carregar orações',
                   style: context.textStyles.secondary,

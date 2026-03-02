@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_spring_button.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
@@ -46,6 +48,13 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
+          CupertinoSliverRefreshControl(
+            onRefresh: () async {
+              HapticFeedback.lightImpact();
+              ref.invalidate(meditationCatalogProvider);
+              await Future.delayed(const Duration(milliseconds: 500));
+            },
+          ),
           SliverSafeArea(
             bottom: false,
             sliver: SliverToBoxAdapter(
@@ -83,9 +92,16 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
             ...catalogAsync.maybeWhen(
               data: (items) => _buildSliverFeed(context, _applyFilter(items)),
               loading: () => [
-                const SliverFillRemaining(
-                  child: Center(
-                    child: CupertinoActivityIndicator(),
+                SliverPadding(
+                  padding: const EdgeInsets.all(IaculaSpacing.md),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: const [
+                        IaculaShimmerCard(height: 280),
+                        SizedBox(height: IaculaSpacing.md),
+                        IaculaShimmerList(itemCount: 3),
+                      ],
+                    ),
                   ),
                 ),
               ],

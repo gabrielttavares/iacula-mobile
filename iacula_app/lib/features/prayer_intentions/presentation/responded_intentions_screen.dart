@@ -1,6 +1,7 @@
 // lib/features/prayer_intentions/presentation/responded_intentions_screen.dart
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
@@ -23,6 +24,13 @@ class RespondedIntentionsScreen extends ConsumerWidget {
             backgroundColor: context.colors.background,
             border: null,
             largeTitle: const Text('Intenções Respondidas'),
+          ),
+          CupertinoSliverRefreshControl(
+            onRefresh: () async {
+              HapticFeedback.lightImpact();
+              ref.invalidate(prayerIntentionsNotifierProvider);
+              await Future.delayed(const Duration(milliseconds: 500));
+            },
           ),
           SliverPadding(
             padding: EdgeInsets.fromLTRB(

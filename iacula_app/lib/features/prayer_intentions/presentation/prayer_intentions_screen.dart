@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
+import '../../../core/presentation/widgets/iacula_toast.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../application/prayer_intentions_notifier.dart';
 import '../domain/entities/prayer_intention.dart';
@@ -65,6 +67,13 @@ class PrayerIntentionsScreen extends ConsumerWidget {
               ],
             ),
           ),
+          CupertinoSliverRefreshControl(
+            onRefresh: () async {
+              HapticFeedback.lightImpact();
+              ref.invalidate(prayerIntentionsNotifierProvider);
+              await Future.delayed(const Duration(milliseconds: 500));
+            },
+          ),
           SliverPadding(
             padding: EdgeInsets.fromLTRB(
               16, 12, 16,
@@ -72,7 +81,10 @@ class PrayerIntentionsScreen extends ConsumerWidget {
             ),
             sliver: state.isLoading && state.openIntentions.isEmpty
                 ? const SliverFillRemaining(
-                    child: Center(child: CupertinoActivityIndicator()),
+                    child: Padding(
+                      padding: EdgeInsets.all(IaculaSpacing.md),
+                      child: IaculaShimmerList(itemCount: 4),
+                    ),
                   )
                 : state.openIntentions.isEmpty
                     ? SliverFillRemaining(
@@ -104,66 +116,76 @@ class PrayerIntentionsScreen extends ConsumerWidget {
                           ),
                         ),
                       )
-                    : SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final intention = state.openIntentions[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: IaculaSpacing.sm,
-                              ),
-                              child: Dismissible(
-                                key: Key(intention.id),
-                                direction: DismissDirection.endToStart,
-                                background: Container(
-                                  alignment: Alignment.centerRight,
-                                  padding: const EdgeInsets.only(right: 20),
-                                  decoration: BoxDecoration(
-                                    color: CupertinoColors.destructiveRed,
-                                    borderRadius: BorderRadius.circular(16),
+                    : SliverToBoxAdapter(
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: Column(
+                            key: ValueKey<int>(state.openIntentions.length),
+                            children: [
+                              for (int i = 0; i < state.openIntentions.length; i++)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: IaculaSpacing.sm,
                                   ),
-                                  child: Icon(
-                                    CupertinoIcons.delete,
-                                    color: context.colors.background,
+                                  child: Dismissible(
+                                    key: Key(state.openIntentions[i].id),
+                                    direction: DismissDirection.endToStart,
+                                    background: Container(
+                                      alignment: Alignment.centerRight,
+                                      padding: const EdgeInsets.only(right: 20),
+                                      decoration: BoxDecoration(
+                                        color: CupertinoColors.destructiveRed,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Icon(
+                                        CupertinoIcons.delete,
+                                        color: context.colors.background,
+                                      ),
+                                    ),
+                                    confirmDismiss: (_) async {
+                                      return IaculaModal.showConfirm(
+                                        context: context,
+                                        title: 'Remover intenção',
+                                        message: 'Tem certeza que deseja remover esta intenção?',
+                                        confirmLabel: 'Remover',
+                                        destructive: true,
+                                      );
+                                    },
+                                    onDismissed: (_) {
+                                      HapticFeedback.mediumImpact();
+                                      notifier.deleteIntention(state.openIntentions[i].id);
+                                    },
+                                    child: IntentionRow(
+                                      intention: state.openIntentions[i],
+                                      onTap: () => _showAddEditSheet(
+                                        context, notifier, state.openIntentions[i],
+                                      ),
+                                      onReminderTap: () => _showReminderSheet(
+                                        context, notifier, state.openIntentions[i],
+                                      ),
+                                      onRespond: () async {
+                                        final confirmed = await IaculaModal.showConfirm(
+                                          context: context,
+                                          title: 'Marcar como respondida',
+                                          message: 'Sua oração foi atendida?',
+                                          confirmLabel: 'Sim, respondida',
+                                        );
+                                        if (confirmed) {
+                                          notifier.markResponded(state.openIntentions[i].id);
+                                          if (context.mounted) {
+                                            IaculaToast.show(
+                                              context,
+                                              'Oração atendida! 🙏',
+                                              icon: CupertinoIcons.heart_fill,
+                                            );
+                                          }
+                                        }
+                                      },
+                                    ),
                                   ),
                                 ),
-                                confirmDismiss: (_) async {
-                                  return IaculaModal.showConfirm(
-                                    context: context,
-                                    title: 'Remover intenção',
-                                    message: 'Tem certeza que deseja remover esta intenção?',
-                                    confirmLabel: 'Remover',
-                                    destructive: true,
-                                  );
-                                },
-                                onDismissed: (_) {
-                                  HapticFeedback.mediumImpact();
-                                  notifier.deleteIntention(intention.id);
-                                },
-                                child: IntentionRow(
-                                  intention: intention,
-                                  onTap: () => _showAddEditSheet(
-                                    context, notifier, intention,
-                                  ),
-                                  onReminderTap: () => _showReminderSheet(
-                                    context, notifier, intention,
-                                  ),
-                                  onRespond: () async {
-                                    final confirmed = await IaculaModal.showConfirm(
-                                      context: context,
-                                      title: 'Marcar como respondida',
-                                      message: 'Sua oração foi atendida?',
-                                      confirmLabel: 'Sim, respondida',
-                                    );
-                                    if (confirmed) {
-                                      notifier.markResponded(intention.id);
-                                    }
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                          childCount: state.openIntentions.length,
+                            ],
+                          ),
                         ),
                       ),
           ),

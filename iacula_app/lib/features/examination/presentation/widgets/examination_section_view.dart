@@ -167,14 +167,24 @@ class ExaminationSectionView extends ConsumerWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
-                    child: Icon(
-                      checkedItems.contains(i)
-                          ? CupertinoIcons.checkmark_square_fill
-                          : CupertinoIcons.square,
-                      color: checkedItems.contains(i)
-                          ? context.colors.primaryButton
-                          : context.colors.textSecondary,
-                      size: 22,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      transitionBuilder: (child, animation) {
+                        return ScaleTransition(
+                          scale: animation,
+                          child: child,
+                        );
+                      },
+                      child: Icon(
+                        checkedItems.contains(i)
+                            ? CupertinoIcons.checkmark_square_fill
+                            : CupertinoIcons.square,
+                        key: ValueKey<bool>(checkedItems.contains(i)),
+                        color: checkedItems.contains(i)
+                            ? context.colors.primaryButton
+                            : context.colors.textSecondary,
+                        size: 22,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -269,6 +279,7 @@ class LinearProgressIndicator extends StatelessWidget {
               ),
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
                 width: constraints.maxWidth * value.clamp(0, 1),
                 height: minHeight,
                 decoration: BoxDecoration(

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -44,6 +45,13 @@ class CustomPhrasesScreen extends ConsumerWidget {
               ),
             ),
           ),
+          CupertinoSliverRefreshControl(
+            onRefresh: () async {
+              HapticFeedback.lightImpact();
+              ref.invalidate(customPhrasesNotifierProvider);
+              await Future.delayed(const Duration(milliseconds: 500));
+            },
+          ),
           SliverPadding(
             padding: EdgeInsets.fromLTRB(
               16,
@@ -66,61 +74,67 @@ class CustomPhrasesScreen extends ConsumerWidget {
                   );
                 }
 
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final phrase = phrases[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-                        child: Dismissible(
-                          key: Key(phrase.id),
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.only(right: 20),
-                            decoration: BoxDecoration(
-                              color: CupertinoColors.destructiveRed,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Icon(
-                              CupertinoIcons.delete,
-                              color: context.colors.background,
-                            ),
-                          ),
-                          confirmDismiss: (_) async {
-                            return IaculaModal.showConfirm(
-                              context: context,
-                              title: 'Remover frase',
-                              message: 'Tem certeza que deseja remover esta frase?',
-                              confirmLabel: 'Remover',
-                              destructive: true,
-                            );
-                          },
-                          onDismissed: (_) {
-                            HapticFeedback.mediumImpact();
-                            notifier.delete(phrase.id);
-                          },
-                          child: _PhraseRow(
-                            phrase: phrase,
-                            onToggle: (val) {
-                              HapticFeedback.selectionClick();
-                              notifier.toggleActive(phrase.id);
-                            },
-                            onTap: () => Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) => EditPhraseScreen(existing: phrase),
+                return SliverToBoxAdapter(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: Column(
+                      key: ValueKey<int>(phrases.length),
+                      children: [
+                        for (int i = 0; i < phrases.length; i++)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+                            child: Dismissible(
+                              key: Key(phrases[i].id),
+                              direction: DismissDirection.endToStart,
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(right: 20),
+                                decoration: BoxDecoration(
+                                  color: CupertinoColors.destructiveRed,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Icon(
+                                  CupertinoIcons.delete,
+                                  color: context.colors.background,
+                                ),
+                              ),
+                              confirmDismiss: (_) async {
+                                return IaculaModal.showConfirm(
+                                  context: context,
+                                  title: 'Remover frase',
+                                  message: 'Tem certeza que deseja remover esta frase?',
+                                  confirmLabel: 'Remover',
+                                  destructive: true,
+                                );
+                              },
+                              onDismissed: (_) {
+                                HapticFeedback.mediumImpact();
+                                notifier.delete(phrases[i].id);
+                              },
+                              child: _PhraseRow(
+                                phrase: phrases[i],
+                                onToggle: (val) {
+                                  HapticFeedback.selectionClick();
+                                  notifier.toggleActive(phrases[i].id);
+                                },
+                                onTap: () => Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (_) => EditPhraseScreen(existing: phrases[i]),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                    childCount: phrases.length,
+                      ],
+                    ),
                   ),
                 );
               },
               loading: () => const SliverFillRemaining(
-                child: Center(child: CupertinoActivityIndicator()),
+                child: Padding(
+                  padding: EdgeInsets.all(IaculaSpacing.md),
+                  child: IaculaShimmerList(itemCount: 3),
+                ),
               ),
               error: (err, stack) => SliverFillRemaining(
                 child: Center(

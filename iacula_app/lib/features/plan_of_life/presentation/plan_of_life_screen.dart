@@ -7,6 +7,7 @@ import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_calendar_modal.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../premium/domain/entities/premium_feature.dart';
@@ -124,7 +125,10 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
             _buildDateStrip(state.selectedDate, notifier),
             Expanded(
               child: state.isLoading && state.items.isEmpty
-                  ? const Center(child: CupertinoActivityIndicator())
+                  ? const Padding(
+                      padding: EdgeInsets.all(IaculaSpacing.md),
+                      child: IaculaShimmerList(itemCount: 5),
+                    )
                   : state.items.isEmpty
                       ? Center(
                           child: Text(

@@ -214,13 +214,21 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        if (_scheduleType == PhraseScheduleType.weekly) _DaySelector(
-                          selected: _daysOfWeek,
-                          onChanged: (days) => setState(() => _daysOfWeek = days),
-                        ),
-                        if (_scheduleType == PhraseScheduleType.specificDates) _DateSelector(
-                          dates: _specificDates,
-                          onChanged: (dates) => setState(() => _specificDates = dates),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: _scheduleType == PhraseScheduleType.weekly
+                              ? _DaySelector(
+                                  key: const ValueKey<String>('weekly'),
+                                  selected: _daysOfWeek,
+                                  onChanged: (days) => setState(() => _daysOfWeek = days),
+                                )
+                              : _scheduleType == PhraseScheduleType.specificDates
+                                  ? _DateSelector(
+                                      key: const ValueKey<String>('specificDates'),
+                                      dates: _specificDates,
+                                      onChanged: (dates) => setState(() => _specificDates = dates),
+                                    )
+                                  : const SizedBox.shrink(key: ValueKey<String>('daily')),
                         ),
                       ],
                     ),
@@ -355,7 +363,7 @@ class _Divider extends StatelessWidget {
 }
 
 class _DaySelector extends StatelessWidget {
-  const _DaySelector({required this.selected, required this.onChanged});
+  const _DaySelector({super.key, required this.selected, required this.onChanged});
   final List<int> selected;
   final ValueChanged<List<int>> onChanged;
 
@@ -400,7 +408,7 @@ class _DaySelector extends StatelessWidget {
 }
 
 class _DateSelector extends StatelessWidget {
-  const _DateSelector({required this.dates, required this.onChanged});
+  const _DateSelector({super.key, required this.dates, required this.onChanged});
   final List<String> dates;
   final ValueChanged<List<String>> onChanged;
 
