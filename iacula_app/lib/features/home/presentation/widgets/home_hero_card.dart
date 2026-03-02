@@ -43,8 +43,9 @@ class HomeHeroCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final imagePath = _resolveAssetPath(quote.imagePath);
-    final labelText =
-        quote.feastName ?? _seasonLabels[quote.season] ?? '';
+    final labelText = quote.feastName ??
+        (quote.theme == 'personal' ? 'frase pessoal' : _seasonLabels[quote.season]) ??
+        '';
 
     return PremiumTouchableCard(
       onTap: () => onTap(quote),
@@ -90,7 +91,7 @@ class HomeHeroCard extends ConsumerWidget {
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.34),
+                      color: Colors.black.withValues(alpha: 0.34),
                     ),
                   ),
                 ),
@@ -146,20 +147,24 @@ class HomeHeroCard extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(18),
                     child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            quote.text,
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              color: context.colors.homeHeroText,
-                              height: 1.5,
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              quote.text,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                color: context.colors.homeHeroText,
+                                height: 1.5,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

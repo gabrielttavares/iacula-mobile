@@ -39,7 +39,7 @@ void main() {
     Future<void> expectVisible(String text) async {
       final finder = find.text(text);
       for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
-        await tester.drag(find.byType(ListView), const Offset(0, -180));
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
         await tester.pumpAndSettle();
       }
       expect(finder, findsOneWidget);
@@ -80,7 +80,7 @@ void main() {
     await tester.enterText(find.byType(IaculaTextInput).first, '0');
     final saveFinder = find.text('Salvar');
     for (var i = 0; i < 20 && saveFinder.evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(ListView), const Offset(0, -180));
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
       await tester.pumpAndSettle();
     }
     await tester.tap(find.text('Salvar'));

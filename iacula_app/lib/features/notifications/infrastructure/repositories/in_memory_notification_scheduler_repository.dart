@@ -5,27 +5,51 @@ import '../../domain/entities/reminder_event.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
 final class InMemoryNotificationSchedulerRepository implements NotificationSchedulerRepository {
-  final List<ReminderEvent> _events = [];
+  final Map<int, ReminderEvent> _events = {};
   final _controller = StreamController<NotificationActionEvent>.broadcast();
 
-  List<ReminderEvent> get events => List.unmodifiable(_events);
+  List<ReminderEvent> get events => List.unmodifiable(_events.values);
 
   @override
   Stream<NotificationActionEvent> get actions => _controller.stream;
 
   @override
   Future<void> schedule(ReminderEvent event) async {
-    _events.removeWhere((e) => e.type == event.type);
-    _events.add(event);
+    final id = _idForType(event.type);
+    _events[id] = event;
+  }
+
+  @override
+  Future<void> scheduleWithId(int id, ReminderEvent event) async {
+    _events[id] = event;
   }
 
   @override
   Future<void> cancelByType(ReminderEventType type) async {
-    _events.removeWhere((e) => e.type == type);
+    final id = _idForType(type);
+    _events.remove(id);
+  }
+
+  @override
+  Future<void> cancelById(int id) async {
+    _events.remove(id);
   }
 
   @override
   Future<void> cancelAll() async {
     _events.clear();
+  }
+
+  int _idForType(ReminderEventType type) {
+    return switch (type) {
+      ReminderEventType.quoteInterval => 100,
+      ReminderEventType.angelusNoon => 200,
+      ReminderEventType.laudes => 301,
+      ReminderEventType.vespers => 302,
+      ReminderEventType.compline => 303,
+      ReminderEventType.oraMedia => 304,
+      ReminderEventType.customMeditationAlarm => 400,
+      ReminderEventType.customPhrase => 1000,
+    };
   }
 }

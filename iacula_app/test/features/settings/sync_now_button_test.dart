@@ -38,7 +38,7 @@ void main() {
       'Entre para sincronizar seus dados espirituais entre dispositivos.\nSincronizacao automatica quando online.',
     );
     for (var i = 0; i < 24 && finder.evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(ListView), const Offset(0, -180));
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
       await tester.pumpAndSettle();
     }
 

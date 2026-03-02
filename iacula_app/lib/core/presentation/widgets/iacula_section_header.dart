@@ -13,7 +13,7 @@ class IaculaSectionHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: context.textStyles.sectionTitle),
+        Expanded(child: Text(title, style: context.textStyles.sectionTitle)),
         if (trailing != null) trailing!,
       ],
     );

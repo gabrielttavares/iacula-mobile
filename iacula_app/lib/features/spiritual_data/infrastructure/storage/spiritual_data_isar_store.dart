@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
+import '../../../../core/storage/isar/custom_phrase_doc.dart';
 import '../../../../core/storage/isar/examination_entry_doc.dart';
 import '../../../../core/storage/isar/plan_completion_doc.dart';
 import '../../../../core/storage/isar/plan_of_life_entry_doc.dart';
@@ -47,6 +48,7 @@ final class SpiritualDataIsarStore {
         ExaminationEntryDocSchema,
         PrayerIntentionEntryDocSchema,
         SyncStateDocSchema,
+        CustomPhraseDocSchema,
       ],
       directory: directory,
       name: 'iacula_spiritual_isar',

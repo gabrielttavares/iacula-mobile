@@ -9,6 +9,8 @@ import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/favorites/infrastructure/repositories/isar_favorite_repository.dart';
 import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
 import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
+import '../../features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
+import '../../features/custom_phrases/infrastructure/repositories/isar_custom_phrase_repository.dart';
 import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/remote_liturgical_season_service.dart';
 import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
@@ -57,6 +59,9 @@ final class AppBootstrap {
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
     final favoriteRepo = IsarFavoriteRepository(store: isarStore);
     final localPremiumRepo = IsarPremiumRepository(store: isarStore);
+    final localCustomPhraseRepo = IsarCustomPhraseRepository(
+      SpiritualDataIsarStore(keyProvider: SpiritualDataEncryptionKeyProvider(store: FlutterSecureKvStore())),
+    );
     const devPremiumOverride =
         String.fromEnvironment('DEV_PREMIUM_OVERRIDE') == 'true';
     if (devPremiumOverride) {
@@ -97,6 +102,10 @@ final class AppBootstrap {
         lastDeliveredCardRepository: lastDeliveredCardRepo,
       ).call(currentSettings);
       await ScheduleLiturgyRemindersUseCase(scheduler).call(currentSettings);
+      await SchedulePhraseNotificationsUseCase(
+        scheduler,
+        localCustomPhraseRepo,
+      ).call();
     } on PlatformException catch (e, st) {
       developer.log(
         'Notification scheduling skipped: ${e.code} ${e.message}',
@@ -220,6 +229,7 @@ final class AppBootstrap {
       mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
       favoriteRepositoryProvider.overrideWithValue(favoriteRepo),
       premiumRepositoryProvider.overrideWithValue(premiumRepository),
+      customPhraseRepositoryProvider.overrideWithValue(localCustomPhraseRepo),
       liturgicalSeasonCacheRepositoryProvider.overrideWithValue(
         liturgicalCacheRepo,
       ),

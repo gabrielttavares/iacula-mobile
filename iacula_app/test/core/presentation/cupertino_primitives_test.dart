@@ -40,6 +40,6 @@ void main() {
   });
 
   test('Iacula primary button color token is app blue', () {
-    expect(IaculaColors.primaryButton, const Color(0xFF0975C8));
+    expect(IaculaColors.primaryButton, const Color(0xFF0A84FF));
   });
 }

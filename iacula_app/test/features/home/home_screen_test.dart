@@ -184,7 +184,7 @@ void main() {
     final quoteText = tester.widget<Text>(quoteFinder);
     expect(quoteText.maxLines, isNull);
     expect(quoteText.overflow, isNull);
-    expect(find.byType(SingleChildScrollView), findsNothing);
+    expect(find.byType(SingleChildScrollView), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('home_hero_card')));
     await tester.pumpAndSettle();
@@ -210,8 +210,9 @@ void main() {
       expect(finder, findsOneWidget);
     }
 
-    expect(find.text('Bem vindo!'), findsOneWidget);
+    expect(find.textContaining('Bem vindo'), findsWidgets);
     expect(find.text('Destaques'), findsNothing);
+    await reveal('Minhas Frases');
     await reveal('Ênfase do Dia');
     await reveal('Orações temáticas');
     await reveal('Orações de Santos');
@@ -282,9 +283,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Orações'), findsOneWidget);
-    expect(find.text('Liturgia'), findsOneWidget);
-    expect(find.text('Rosário'), findsOneWidget);
-    expect(find.text('Novenas'), findsOneWidget);
+    expect(find.text('Liturgia Diária'), findsOneWidget);
+    expect(find.text('Intenções de Oração'), findsOneWidget);
+    expect(find.text('Exame Pessoal'), findsOneWidget);
     expect(find.text('Premium'), findsNothing);
   });
 
@@ -313,52 +314,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Liturgia'));
+    final liturgiaFinder = find.text('Liturgia Diária');
+    await tester.dragUntilVisible(
+      liturgiaFinder,
+      find.byType(CustomScrollView),
+      const Offset(0, -100),
+    );
+    await tester.tap(liturgiaFinder);
     await tester.pumpAndSettle();
 
     expect(find.byType(LiturgiaScreen), findsOneWidget);
     expect(find.text('Domingo'), findsOneWidget);
     expect(find.text('Coleta: Coleta'), findsOneWidget);
-  });
-
-  testWidgets('rosario quick action shows em breve dialog', (tester) async {
-    await tester.pumpWidget(
-      _buildApp(
-        settingsRepo: _defaultSettingsRepo(),
-        lastCardRepo: _defaultLastCardRepo(),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -260));
-    await tester.pump(const Duration(milliseconds: 200));
-    await tester.tap(find.text('Rosário').first);
-    await tester.pump(const Duration(milliseconds: 200));
-
-    expect(find.byType(CupertinoAlertDialog), findsOneWidget);
-    expect(find.text('Em breve'), findsOneWidget);
-
-    await tester.tap(find.text('Fechar'));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(CupertinoAlertDialog), findsNothing);
-  });
-
-  testWidgets('novenas quick action navigates away from home', (tester) async {
-    await tester.pumpWidget(
-      _buildApp(
-        settingsRepo: _defaultSettingsRepo(),
-        lastCardRepo: _defaultLastCardRepo(),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -260));
-    await tester.pump(const Duration(milliseconds: 200));
-    await tester.tap(find.text('Novenas').first);
-    await tester.pump();
-
-    expect(find.byType(CupertinoAlertDialog), findsNothing);
   });
 
   testWidgets('home thematic and saint sections show grouped cards', (
@@ -382,17 +349,14 @@ void main() {
       expect(finder, findsOneWidget);
     }
 
-    await reveal('Orações temáticas');
-    await reveal('Orações de Santos');
+    await reveal('Orações Temáticas');
     await reveal('Trabalho');
-    await reveal('Virgem Maria');
 
     expect(find.text('Trabalho'), findsOneWidget);
-    expect(find.text('Virgem Maria'), findsOneWidget);
     expect(find.text('1 oração'), findsWidgets);
   });
 
-  testWidgets('tapping saint group opens grouped prayer list screen', (
+  testWidgets('tapping thematic group opens grouped prayer list screen', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -406,17 +370,17 @@ void main() {
 
     for (
       var i = 0;
-      i < 20 && find.text('Virgem Maria').evaluate().isEmpty;
+      i < 20 && find.text('Mariano').evaluate().isEmpty;
       i++
     ) {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
       await tester.pump(const Duration(milliseconds: 200));
     }
 
-    final saintGroupFinder = find.text('Virgem Maria').first;
-    await tester.ensureVisible(saintGroupFinder);
+    final groupFinder = find.text('Mariano').first;
+    await tester.ensureVisible(groupFinder);
     await tester.pumpAndSettle();
-    await tester.tap(saintGroupFinder);
+    await tester.tap(groupFinder);
     await tester.pumpAndSettle();
 
     expect(find.byType(PrayerCatalogGroupScreen), findsOneWidget);

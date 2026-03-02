@@ -60,6 +60,14 @@ final class _FakeNotificationSchedulerRepository
     scheduled.removeWhere((e) => e.type == event.type);
     scheduled.add(event);
   }
+
+  @override
+  Future<void> scheduleWithId(int id, ReminderEvent event) async {
+    scheduled.add(event);
+  }
+
+  @override
+  Future<void> cancelById(int id) async {}
 }
 
 final class _FakeQuoteContentRepository implements QuoteContentRepository {
@@ -166,7 +174,7 @@ void main() {
     final saveButton = find.text('Salvar');
     await tester.dragUntilVisible(
       saveButton,
-      find.byType(ListView),
+      find.byType(CustomScrollView),
       const Offset(0, -180),
     );
 

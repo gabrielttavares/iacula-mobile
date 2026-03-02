@@ -13,7 +13,13 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Liturgia das Horas'), findsOneWidget);
+    final finder = find.text('Liturgia das Horas');
+    for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+      await tester.pumpAndSettle();
+    }
+
+    expect(finder, findsOneWidget);
     expect(find.text('Segurança'), findsNothing);
   });
 }

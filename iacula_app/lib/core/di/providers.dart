@@ -69,6 +69,11 @@ import '../../features/prayer_intentions/application/use_cases/delete_intention_
 import '../../features/prayer_intentions/application/use_cases/respond_intention_use_case.dart';
 import '../../features/prayer_intentions/application/prayer_intentions_notifier.dart';
 
+import '../../features/custom_phrases/application/custom_phrases_notifier.dart';
+import '../../features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
+import '../../features/custom_phrases/domain/entities/custom_phrase.dart';
+import '../../features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
+import '../../features/custom_phrases/infrastructure/repositories/isar_custom_phrase_repository.dart';
 import '../../features/doctrina/application/use_cases/get_doctrine_catalog_use_case.dart';
 import '../../features/doctrina/domain/entities/doctrine_entry.dart';
 import '../../features/doctrina/domain/repositories/doctrine_repository.dart';
@@ -461,4 +466,23 @@ final prayerIntentionsNotifierProvider =
         deleteIntention: ref.watch(deleteIntentionUseCaseProvider),
         respondIntention: ref.watch(respondIntentionUseCaseProvider),
       );
+    });
+
+// -- Custom Phrases Providers --
+
+final customPhraseRepositoryProvider = Provider<CustomPhraseRepository>((ref) {
+  return IsarCustomPhraseRepository(ref.watch(spiritualDataIsarStoreProvider));
+});
+
+final schedulePhraseNotificationsUseCaseProvider =
+    Provider<SchedulePhraseNotificationsUseCase>((ref) {
+      return SchedulePhraseNotificationsUseCase(
+        ref.watch(notificationSchedulerRepositoryProvider),
+        ref.watch(customPhraseRepositoryProvider),
+      );
+    });
+
+final customPhrasesNotifierProvider =
+    AsyncNotifierProvider<CustomPhrasesNotifier, List<CustomPhrase>>(() {
+      return CustomPhrasesNotifier();
     });

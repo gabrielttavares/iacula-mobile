@@ -159,8 +159,61 @@ final class LocalNotificationSchedulerRepository
   }
 
   @override
+  Future<void> scheduleWithId(int id, ReminderEvent event) async {
+    final androidDetails = buildAndroidNotificationDetails(event);
+
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentSound: true,
+      presentBadge: true,
+    );
+
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+    final scheduled = tz.TZDateTime.from(event.scheduledAt, tz.local);
+    final payload =
+        NotificationActionEvent(actionId: null, event: event).toPayload();
+    final repeat = event.repeatDaily ? DateTimeComponents.time : null;
+
+    try {
+      await _plugin.zonedSchedule(
+        id,
+        event.title,
+        event.body,
+        scheduled,
+        details,
+        payload: payload,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: repeat,
+      );
+    } on PlatformException catch (e) {
+      if (e.code != 'exact_alarms_not_permitted') {
+        rethrow;
+      }
+
+      await _plugin.zonedSchedule(
+        id,
+        event.title,
+        event.body,
+        scheduled,
+        details,
+        payload: payload,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        matchDateTimeComponents: repeat,
+      );
+    }
+  }
+
+  @override
   Future<void> cancelByType(ReminderEventType type) {
     return _plugin.cancel(_idForType(type));
+  }
+
+  @override
+  Future<void> cancelById(int id) {
+    return _plugin.cancel(id);
   }
 
   @override
@@ -177,6 +230,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.compline => 303,
       ReminderEventType.oraMedia => 304,
       ReminderEventType.customMeditationAlarm => 400,
+      ReminderEventType.customPhrase => 1000,
     };
   }
 
@@ -189,6 +243,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'liturgy_hours_alarm',
       ReminderEventType.customMeditationAlarm => 'custom_meditation_alarm',
+      ReminderEventType.customPhrase => 'custom_phrases',
     };
   }
 
@@ -201,6 +256,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'Liturgia das Horas',
       ReminderEventType.customMeditationAlarm => 'Meditacao',
+      ReminderEventType.customPhrase => 'Frases Personalizadas',
     };
   }
 
@@ -213,6 +269,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'Alarmes da Liturgia das Horas',
       ReminderEventType.customMeditationAlarm => 'Alarmes de meditacao',
+      ReminderEventType.customPhrase => 'Notificações de suas frases pessoais',
     };
   }
 }

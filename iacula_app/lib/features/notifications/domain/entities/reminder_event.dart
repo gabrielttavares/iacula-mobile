@@ -6,6 +6,7 @@ enum ReminderEventType {
   compline,
   oraMedia,
   customMeditationAlarm,
+  customPhrase,
 }
 
 enum NotificationRouteTarget {
@@ -103,7 +104,8 @@ final class ReminderEvent {
       ReminderEventType.vespers ||
       ReminderEventType.compline ||
       ReminderEventType.oraMedia ||
-      ReminderEventType.customMeditationAlarm => NotificationRouteTarget.alarm,
+      ReminderEventType.customMeditationAlarm ||
+      ReminderEventType.customPhrase => NotificationRouteTarget.home,
     };
   }
 }

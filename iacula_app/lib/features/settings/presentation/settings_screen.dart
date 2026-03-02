@@ -5,14 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_input.dart';
-import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../auth/presentation/auth_action_sheet.dart';
+import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
+import '../../premium/domain/entities/premium_feature.dart';
+import '../../premium/presentation/premium_gate.dart';
 import '../domain/entities/settings.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -152,6 +154,54 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           },
                         ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: IaculaSpacing.lg),
+                  const IaculaSectionHeader(title: 'Personalização'),
+                  const SizedBox(height: IaculaSpacing.sm),
+                  IaculaSoftCard(
+                    padding: EdgeInsets.zero,
+                    child: CupertinoButton(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      onPressed: () {
+                        final isPremium =
+                            ref
+                                .read(premiumStatusProvider)
+                                .valueOrNull
+                                ?.isPremium ??
+                            false;
+                        if (!isPremium) {
+                          PremiumGate.showModal(
+                            context,
+                            feature: PremiumFeature.meditation,
+                          );
+                          return;
+                        }
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const CustomPhrasesScreen(),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            'Frases Personalizadas',
+                            style: context.textStyles.cardTitle.copyWith(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            CupertinoIcons.chevron_right,
+                            color: context.colors.textSecondary,
+                            size: 18,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: IaculaSpacing.lg),

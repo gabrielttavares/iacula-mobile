@@ -38,7 +38,7 @@ void main() {
     Future<void> expectVisible(String text) async {
       final finder = find.text(text);
       for (var i = 0; i < 24 && finder.evaluate().isEmpty; i++) {
-        await tester.drag(find.byType(ListView), const Offset(0, -180));
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
         await tester.pumpAndSettle();
       }
       expect(finder, findsOneWidget);

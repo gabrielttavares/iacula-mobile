@@ -15,7 +15,11 @@ import '../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../auth/domain/entities/auth_user.dart';
 import '../../liturgia_diaria/presentation/liturgia_screen.dart';
+import '../../custom_phrases/presentation/custom_phrases_screen.dart';
+import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
+import '../../premium/domain/entities/premium_feature.dart';
+import '../../premium/presentation/premium_gate.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
@@ -138,6 +142,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             HeroReflectionSheet.show(context, quote: quote),
                       ),
                     ),
+                    const SizedBox(height: IaculaSpacing.sm),
+                    _AnimatedHomeBlock(
+                      visible: _animateIn,
+                      offsetY: 0.05,
+                      child: _CustomPhrasesHomeCard(
+                        onTap: () {
+                          final isPremium = ref.read(premiumStatusProvider).valueOrNull?.isPremium ?? false;
+                          if (!isPremium) {
+                            PremiumGate.showModal(context, feature: PremiumFeature.meditation);
+                            return;
+                          }
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(builder: (_) => const CustomPhrasesScreen()),
+                          );
+                        },
+                      ),
+                    ),
                     const SizedBox(height: IaculaSpacing.lg),
                     _AnimatedHomeBlock(
                       visible: _animateIn,
@@ -192,6 +213,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CustomPhrasesHomeCard extends StatelessWidget {
+  const _CustomPhrasesHomeCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return IaculaSoftCard(
+      padding: EdgeInsets.zero,
+      child: CupertinoButton(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        onPressed: onTap,
+        child: Row(
+          children: [
+            Icon(
+              CupertinoIcons.quote_bubble,
+              color: context.colors.primaryButton,
+              size: 22,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Minhas Frases',
+                style: context.textStyles.cardTitle.copyWith(fontSize: 16),
+              ),
+            ),
+            Icon(
+              CupertinoIcons.chevron_right,
+              color: context.colors.textSecondary,
+              size: 18,
+            ),
+          ],
         ),
       ),
     );
@@ -308,7 +367,7 @@ class _FeatureRail extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: cards.length,
-        separatorBuilder: (_, __) => const SizedBox(width: IaculaSpacing.sm),
+        separatorBuilder: (context, index) => const SizedBox(width: IaculaSpacing.sm),
         itemBuilder: (context, index) => SizedBox(
           width: width,
           child: cards[index],
@@ -460,6 +519,27 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
 
   if (lastDeliveredCard != null) {
     return lastDeliveredCard.toQuote();
+  }
+
+  // Check custom phrases first
+  final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
+  final phrases = phrasesAsync.valueOrNull ?? [];
+  final now = DateTime.now();
+  final matching = phrases
+      .where((p) => p.isActive && p.displayOnHero && p.schedule.matchesNow(now))
+      .toList();
+
+  if (matching.isNotEmpty) {
+    // Cycle daily: use day-of-year to rotate
+    final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+    final selected = matching[dayOfYear % matching.length];
+    return Quote(
+      text: selected.text,
+      dayOfWeek: now.weekday,
+      theme: 'personal',
+      season: LiturgicalSeason.ordinary,
+      imagePath: null, // uses fallback color
+    );
   }
 
   final quote = await ref

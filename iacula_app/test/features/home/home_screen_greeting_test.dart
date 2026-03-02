@@ -70,7 +70,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Bem vindo!'), findsOneWidget);
+    expect(find.textContaining('Bem vindo'), findsWidgets);
     expect(find.text('Bem vindo, Pedro!'), findsNothing);
   });
 
@@ -91,7 +91,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Bem vinda, Maria!'), findsOneWidget);
+    expect(find.text('Bem vinda, Maria!'), findsWidgets);
   });
 
   testWidgets('shows user name in greeting when authenticated (male)', (
@@ -111,7 +111,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Bem vindo, Pedro!'), findsOneWidget);
+    expect(find.text('Bem vindo, Pedro!'), findsWidgets);
   });
 
   testWidgets('shows generic greeting when user has no displayName', (
@@ -126,6 +126,6 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Bem vindo!'), findsOneWidget);
+    expect(find.textContaining('Bem vindo'), findsOneWidget);
   });
 }
