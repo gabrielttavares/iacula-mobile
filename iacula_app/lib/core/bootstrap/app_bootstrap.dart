@@ -53,15 +53,21 @@ final class AppBootstrap {
     final db = AppDatabase.instance;
     final isarStore = IsarStore.instance;
 
+    // Single spiritual Isar store (same path/name) — must not be instantiated twice
+    final localKeyProvider = SpiritualDataEncryptionKeyProvider(
+      store: FlutterSecureKvStore(),
+    );
+    final spiritualStore = SpiritualDataIsarStore(
+      keyProvider: localKeyProvider,
+    );
+
     final settingsRepo = SqliteSettingsRepository(db);
     final indicesRepo = SqliteQuoteIndicesRepository(db);
     final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
     final favoriteRepo = IsarFavoriteRepository(store: isarStore);
     final localPremiumRepo = IsarPremiumRepository(store: isarStore);
-    final localCustomPhraseRepo = IsarCustomPhraseRepository(
-      SpiritualDataIsarStore(keyProvider: SpiritualDataEncryptionKeyProvider(store: FlutterSecureKvStore())),
-    );
+    final localCustomPhraseRepo = IsarCustomPhraseRepository(spiritualStore);
     const devPremiumOverride =
         String.fromEnvironment('DEV_PREMIUM_OVERRIDE') == 'true';
     if (devPremiumOverride) {
@@ -127,14 +133,6 @@ final class AppBootstrap {
     SyncOrchestrator syncOrchestrator = const NoopSyncOrchestrator();
     var bootstrapStatus = const BootstrapStatus();
     SupabaseClient? supabaseClient;
-
-    // Always create local spiritual store
-    final localKeyProvider = SpiritualDataEncryptionKeyProvider(
-      store: FlutterSecureKvStore(),
-    );
-    final spiritualStore = SpiritualDataIsarStore(
-      keyProvider: localKeyProvider,
-    );
 
     // Seed default plan of life items
     await SeedDefaultItemsUseCase(
