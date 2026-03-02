@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../favorites/domain/entities/favorite_item.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
 import '../domain/entities/prayer_detail.dart';
 import 'widgets/font_size_controls.dart';
@@ -40,6 +41,7 @@ class _PrayerCatalogDetailScreenState
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.entry.title),
         backgroundColor: context.colors.background,
+        trailing: _PrayerBookmarkButton(entry: widget.entry),
       ),
       child: SafeArea(
         child: FutureBuilder(
@@ -147,5 +149,45 @@ class _PrayerCatalogDetailScreenState
 
   bool _isLanguageAvailable(String language, List<String> available) {
     return available.contains(language);
+  }
+}
+
+class _PrayerBookmarkButton extends ConsumerWidget {
+  const _PrayerBookmarkButton({required this.entry});
+
+  final PrayerCatalogEntry entry;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteAsync = ref.watch(favoriteItemByPrayerSlugProvider(entry.slug));
+    final isSaved = favoriteAsync.valueOrNull != null;
+    final savedItem = favoriteAsync.valueOrNull;
+
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: const Size(32, 32),
+      onPressed: () async {
+        final repo = ref.read(favoriteRepositoryProvider);
+        if (savedItem != null) {
+          await repo.remove(savedItem.id);
+        } else {
+          await repo.save(
+            FavoriteItem(
+              id: 'prayer:${entry.slug}',
+              quoteText: entry.title,
+              theme: 'Oração',
+              season: '',
+              savedAt: DateTime.now(),
+              prayerSlug: entry.slug,
+            ),
+          );
+        }
+      },
+      child: Icon(
+        isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
+        color: context.colors.primaryButton,
+        size: 22,
+      ),
+    );
   }
 }

@@ -7,6 +7,7 @@ final class FavoriteItem {
     required this.savedAt,
     this.imagePath,
     this.feastName,
+    this.prayerSlug,
   });
 
   final String id;
@@ -16,6 +17,7 @@ final class FavoriteItem {
   final DateTime savedAt;
   final String? imagePath;
   final String? feastName;
+  final String? prayerSlug;
 
   /// Deduplication key based on content.
   String get contentKey => quoteText.hashCode.toRadixString(36);

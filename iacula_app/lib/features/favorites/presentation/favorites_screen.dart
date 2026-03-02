@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
-import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../domain/entities/favorite_item.dart';
 
 class FavoritesScreen extends ConsumerWidget {
@@ -53,6 +53,24 @@ class FavoritesScreen extends ConsumerWidget {
                               HapticFeedback.mediumImpact();
                               ref.read(favoriteRepositoryProvider).remove(item.id);
                             },
+                            onTap: item.prayerSlug != null
+                                ? () async {
+                                    final entry = await ref.read(
+                                      prayerEntryBySlugProvider(item.prayerSlug!)
+                                          .future,
+                                    );
+                                    if (entry != null && context.mounted) {
+                                      Navigator.of(context).push(
+                                        CupertinoPageRoute(
+                                          builder: (_) =>
+                                              PrayerCatalogDetailScreen(
+                                            entry: entry,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                : null,
                           ),
                         );
                       },
@@ -81,18 +99,25 @@ class FavoritesScreen extends ConsumerWidget {
 }
 
 class _FavoriteCard extends StatelessWidget {
-  const _FavoriteCard({required this.item, required this.onRemove});
+  const _FavoriteCard({
+    required this.item,
+    required this.onRemove,
+    this.onTap,
+  });
 
   final FavoriteItem item;
   final VoidCallback onRemove;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return IaculaSoftCard(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
+    final row = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: onTap,
+            behavior: HitTestBehavior.opaque,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -106,18 +131,20 @@ class _FavoriteCard extends StatelessWidget {
               ],
             ),
           ),
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            minimumSize: const Size(32, 32),
-            onPressed: onRemove,
-            child: const Icon(
-              CupertinoIcons.delete,
-              size: 18,
-              color: CupertinoColors.destructiveRed,
-            ),
+        ),
+        CupertinoButton(
+          padding: EdgeInsets.zero,
+          minimumSize: const Size(32, 32),
+          onPressed: onRemove,
+          child: const Icon(
+            CupertinoIcons.delete,
+            size: 18,
+            color: CupertinoColors.destructiveRed,
           ),
-        ],
-      ),
+        ),
+      ],
     );
+
+    return IaculaSoftCard(child: row);
   }
 }

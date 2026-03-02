@@ -45,6 +45,7 @@ final class IsarFavoriteRepository implements FavoriteRepository {
         ..savedAt = item.savedAt.toUtc()
         ..imagePath = item.imagePath
         ..feastName = item.feastName
+        ..prayerSlug = item.prayerSlug
         ..isDirty = true
         ..deletedAt = null;
       await isar.favoriteItemDocs.put(doc);
@@ -89,6 +90,7 @@ final class IsarFavoriteRepository implements FavoriteRepository {
       savedAt: doc.savedAt,
       imagePath: doc.imagePath,
       feastName: doc.feastName,
+      prayerSlug: doc.prayerSlug,
     );
   }
 }

@@ -112,36 +112,7 @@ class HomeHeroCard extends ConsumerWidget {
                 Positioned(
                   top: 18,
                   right: 18,
-                  child: CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(32, 32),
-                    onPressed: () async {
-                      final repo = ref.read(favoriteRepositoryProvider);
-                      final alreadySaved = await repo.isFavorite(
-                        quote.text,
-                      );
-                      if (!alreadySaved) {
-                        await repo.save(
-                          FavoriteItem(
-                            id: DateTime.now()
-                                .millisecondsSinceEpoch
-                                .toString(),
-                            quoteText: quote.text,
-                            theme: quote.theme,
-                            season: quote.season.name,
-                            savedAt: DateTime.now(),
-                            imagePath: quote.imagePath,
-                            feastName: quote.feastName,
-                          ),
-                        );
-                      }
-                    },
-                    child: Icon(
-                      CupertinoIcons.bookmark,
-                      color: context.colors.primaryButton,
-                      size: 20,
-                    ),
-                  ),
+                  child: _HeroBookmarkButton(quote: quote),
                 ),
                 Positioned.fill(
                   child: Padding(
@@ -187,6 +158,47 @@ class HomeHeroCard extends ConsumerWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _HeroBookmarkButton extends ConsumerWidget {
+  const _HeroBookmarkButton({required this.quote});
+
+  final Quote quote;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteAsync = ref.watch(favoriteItemByQuoteTextProvider(quote.text));
+    final isSaved = favoriteAsync.valueOrNull != null;
+    final savedItem = favoriteAsync.valueOrNull;
+
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: const Size(32, 32),
+      onPressed: () async {
+        final repo = ref.read(favoriteRepositoryProvider);
+        if (savedItem != null) {
+          await repo.remove(savedItem.id);
+        } else {
+          await repo.save(
+            FavoriteItem(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              quoteText: quote.text,
+              theme: quote.theme,
+              season: quote.season.name,
+              savedAt: DateTime.now(),
+              imagePath: quote.imagePath,
+              feastName: quote.feastName,
+            ),
+          );
+        }
+      },
+      child: Icon(
+        isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
+        color: context.colors.primaryButton,
+        size: 20,
       ),
     );
   }

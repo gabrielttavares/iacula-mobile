@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../favorites/domain/entities/favorite_item.dart';
 import '../../home/presentation/home_prayer_groups.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
 import 'prayer_catalog_detail_screen.dart';
@@ -114,13 +115,17 @@ class PrayerCatalogGroupScreen extends ConsumerWidget {
   }
 }
 
-class _PrayerItemCard extends StatelessWidget {
+class _PrayerItemCard extends ConsumerWidget {
   const _PrayerItemCard({required this.entry});
 
   final PrayerCatalogEntry entry;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteAsync = ref.watch(favoriteItemByPrayerSlugProvider(entry.slug));
+    final isSaved = favoriteAsync.valueOrNull != null;
+    final savedItem = favoriteAsync.valueOrNull;
+
     return IaculaTouchableCard(
       onTap: () {
         Navigator.of(context).push(
@@ -140,6 +145,32 @@ class _PrayerItemCard extends StatelessWidget {
           children: [
             Expanded(
               child: Text(entry.title, style: context.textStyles.cardTitle),
+            ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(32, 32),
+              onPressed: () async {
+                final repo = ref.read(favoriteRepositoryProvider);
+                if (savedItem != null) {
+                  await repo.remove(savedItem.id);
+                } else {
+                  await repo.save(
+                    FavoriteItem(
+                      id: 'prayer:${entry.slug}',
+                      quoteText: entry.title,
+                      theme: 'Oração',
+                      season: '',
+                      savedAt: DateTime.now(),
+                      prayerSlug: entry.slug,
+                    ),
+                  );
+                }
+              },
+              child: Icon(
+                isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
+                color: context.colors.primaryButton,
+                size: 20,
+              ),
             ),
             Icon(
               CupertinoIcons.chevron_right,

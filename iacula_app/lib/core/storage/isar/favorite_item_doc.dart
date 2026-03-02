@@ -18,6 +18,7 @@ class FavoriteItemDoc {
   late DateTime savedAt;
   String? imagePath;
   String? feastName;
+  String? prayerSlug;
 
   // Sync-ready fields
   late bool isDirty;

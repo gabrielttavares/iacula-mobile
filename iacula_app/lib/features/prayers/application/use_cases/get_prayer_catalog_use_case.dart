@@ -55,4 +55,16 @@ final class GetPrayerCatalogUseCase {
         Duration.millisecondsPerDay;
     return catalog[dayStamp % catalog.length];
   }
+
+  Future<PrayerCatalogEntry?> getBySlug({
+    required String language,
+    required String slug,
+  }) async {
+    final catalog = await listAll(language: language);
+    try {
+      return catalog.firstWhere((e) => e.slug == slug);
+    } on StateError {
+      return null;
+    }
+  }
 }

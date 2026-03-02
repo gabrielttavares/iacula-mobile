@@ -47,28 +47,33 @@ const FavoriteItemDocSchema = CollectionSchema(
       name: r'lastSyncedAt',
       type: IsarType.dateTime,
     ),
-    r'quoteText': PropertySchema(
+    r'prayerSlug': PropertySchema(
       id: 6,
+      name: r'prayerSlug',
+      type: IsarType.string,
+    ),
+    r'quoteText': PropertySchema(
+      id: 7,
       name: r'quoteText',
       type: IsarType.string,
     ),
     r'savedAt': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'savedAt',
       type: IsarType.dateTime,
     ),
     r'season': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'season',
       type: IsarType.string,
     ),
     r'theme': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'theme',
       type: IsarType.string,
     ),
     r'userId': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'userId',
       type: IsarType.string,
     )
@@ -133,6 +138,12 @@ int _favoriteItemDocEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.prayerSlug;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.quoteText.length * 3;
   bytesCount += 3 + object.season.length * 3;
   bytesCount += 3 + object.theme.length * 3;
@@ -157,11 +168,12 @@ void _favoriteItemDocSerialize(
   writer.writeString(offsets[3], object.imagePath);
   writer.writeBool(offsets[4], object.isDirty);
   writer.writeDateTime(offsets[5], object.lastSyncedAt);
-  writer.writeString(offsets[6], object.quoteText);
-  writer.writeDateTime(offsets[7], object.savedAt);
-  writer.writeString(offsets[8], object.season);
-  writer.writeString(offsets[9], object.theme);
-  writer.writeString(offsets[10], object.userId);
+  writer.writeString(offsets[6], object.prayerSlug);
+  writer.writeString(offsets[7], object.quoteText);
+  writer.writeDateTime(offsets[8], object.savedAt);
+  writer.writeString(offsets[9], object.season);
+  writer.writeString(offsets[10], object.theme);
+  writer.writeString(offsets[11], object.userId);
 }
 
 FavoriteItemDoc _favoriteItemDocDeserialize(
@@ -178,11 +190,12 @@ FavoriteItemDoc _favoriteItemDocDeserialize(
   object.imagePath = reader.readStringOrNull(offsets[3]);
   object.isDirty = reader.readBool(offsets[4]);
   object.lastSyncedAt = reader.readDateTimeOrNull(offsets[5]);
-  object.quoteText = reader.readString(offsets[6]);
-  object.savedAt = reader.readDateTime(offsets[7]);
-  object.season = reader.readString(offsets[8]);
-  object.theme = reader.readString(offsets[9]);
-  object.userId = reader.readStringOrNull(offsets[10]);
+  object.prayerSlug = reader.readStringOrNull(offsets[6]);
+  object.quoteText = reader.readString(offsets[7]);
+  object.savedAt = reader.readDateTime(offsets[8]);
+  object.season = reader.readString(offsets[9]);
+  object.theme = reader.readString(offsets[10]);
+  object.userId = reader.readStringOrNull(offsets[11]);
   return object;
 }
 
@@ -206,14 +219,16 @@ P _favoriteItemDocDeserializeProp<P>(
     case 5:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 6:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 7:
-      return (reader.readDateTime(offset)) as P;
-    case 8:
       return (reader.readString(offset)) as P;
+    case 8:
+      return (reader.readDateTime(offset)) as P;
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
+      return (reader.readString(offset)) as P;
+    case 11:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1142,6 +1157,160 @@ extension FavoriteItemDocQueryFilter
   }
 
   QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'prayerSlug',
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'prayerSlug',
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'prayerSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'prayerSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'prayerSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'prayerSlug',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'prayerSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'prayerSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'prayerSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'prayerSlug',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'prayerSlug',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
+      prayerSlugIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'prayerSlug',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterFilterCondition>
       quoteTextEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1852,6 +2021,20 @@ extension FavoriteItemDocQuerySortBy
   }
 
   QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterSortBy>
+      sortByPrayerSlug() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'prayerSlug', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterSortBy>
+      sortByPrayerSlugDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'prayerSlug', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterSortBy>
       sortByQuoteText() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quoteText', Sort.asc);
@@ -2016,6 +2199,20 @@ extension FavoriteItemDocQuerySortThenBy
   }
 
   QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterSortBy>
+      thenByPrayerSlug() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'prayerSlug', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterSortBy>
+      thenByPrayerSlugDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'prayerSlug', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QAfterSortBy>
       thenByQuoteText() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quoteText', Sort.asc);
@@ -2126,6 +2323,13 @@ extension FavoriteItemDocQueryWhereDistinct
     });
   }
 
+  QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QDistinct>
+      distinctByPrayerSlug({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'prayerSlug', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<FavoriteItemDoc, FavoriteItemDoc, QDistinct> distinctByQuoteText(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2205,6 +2409,13 @@ extension FavoriteItemDocQueryProperty
       lastSyncedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastSyncedAt');
+    });
+  }
+
+  QueryBuilder<FavoriteItemDoc, String?, QQueryOperations>
+      prayerSlugProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'prayerSlug');
     });
   }
 

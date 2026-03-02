@@ -17,7 +17,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.textContaining('Seus itens salvos'), findsOneWidget);
+    expect(find.textContaining('Nenhum favorito ainda'), findsOneWidget);
   });
 
   testWidgets('shows saved favorites', (tester) async {

@@ -35,6 +35,7 @@ import '../../features/prayers/application/use_cases/get_prayer_use_case.dart';
 import '../../features/prayers/application/use_cases/get_prayer_catalog_use_case.dart';
 import '../../features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import '../../features/prayers/domain/repositories/prayer_content_repository.dart';
+import '../../features/prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_catalog_repository.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_content_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
@@ -204,6 +205,18 @@ final favoritesProvider = StreamProvider<List<FavoriteItem>>((ref) {
   return ref.watch(favoriteRepositoryProvider).watchAll();
 });
 
+/// Returns the favorite item whose [quoteText] matches, or null.
+final favoriteItemByQuoteTextProvider = Provider.family<AsyncValue<FavoriteItem?>, String>((ref, quoteText) {
+  final async = ref.watch(favoritesProvider);
+  return async.whenData((list) => list.where((e) => e.quoteText == quoteText).firstOrNull);
+});
+
+/// Returns the favorite item whose [prayerSlug] matches, or null.
+final favoriteItemByPrayerSlugProvider = Provider.family<AsyncValue<FavoriteItem?>, String>((ref, slug) {
+  final async = ref.watch(favoritesProvider);
+  return async.whenData((list) => list.where((e) => e.prayerSlug == slug).firstOrNull);
+});
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return InMemoryAuthRepository();
 });
@@ -342,6 +355,13 @@ final getPrayerCatalogUseCaseProvider = Provider<GetPrayerCatalogUseCase>((
   return GetPrayerCatalogUseCase(
     repository: ref.watch(prayerCatalogRepositoryProvider),
   );
+});
+
+final prayerEntryBySlugProvider =
+    FutureProvider.family<PrayerCatalogEntry?, String>((ref, slug) async {
+  final settings = await ref.watch(getSettingsUseCaseProvider).call();
+  final useCase = ref.watch(getPrayerCatalogUseCaseProvider);
+  return useCase.getBySlug(language: settings.language, slug: slug);
 });
 
 final getLiturgyPeriodUseCaseProvider = Provider<GetLiturgyPeriodUseCase>((
