@@ -1,10 +1,28 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import '../../domain/entities/notification_action_event.dart';
 import '../../domain/entities/reminder_event.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
 final class InMemoryNotificationSchedulerRepository implements NotificationSchedulerRepository {
+  static int _idForEvent(ReminderEvent event) {
+    return event.scheduledId ?? _idForType(event.type);
+  }
+
+  static int _idForType(ReminderEventType type) {
+    return switch (type) {
+      ReminderEventType.quoteInterval => 100,
+      ReminderEventType.angelusNoon => 200,
+      ReminderEventType.laudes => 301,
+      ReminderEventType.vespers => 302,
+      ReminderEventType.compline => 303,
+      ReminderEventType.oraMedia => 304,
+      ReminderEventType.customMeditationAlarm => 400,
+      ReminderEventType.customPhrase => 1000,
+      ReminderEventType.prayerIntentionReminder => 500,
+    };
+  }
+
   final Map<int, ReminderEvent> _events = {};
   final _controller = StreamController<NotificationActionEvent>.broadcast();
 
@@ -15,7 +33,7 @@ final class InMemoryNotificationSchedulerRepository implements NotificationSched
 
   @override
   Future<void> schedule(ReminderEvent event) async {
-    final id = _idForType(event.type);
+    final id = _idForEvent(event);
     _events[id] = event;
   }
 
@@ -38,18 +56,5 @@ final class InMemoryNotificationSchedulerRepository implements NotificationSched
   @override
   Future<void> cancelAll() async {
     _events.clear();
-  }
-
-  int _idForType(ReminderEventType type) {
-    return switch (type) {
-      ReminderEventType.quoteInterval => 100,
-      ReminderEventType.angelusNoon => 200,
-      ReminderEventType.laudes => 301,
-      ReminderEventType.vespers => 302,
-      ReminderEventType.compline => 303,
-      ReminderEventType.oraMedia => 304,
-      ReminderEventType.customMeditationAlarm => 400,
-      ReminderEventType.customPhrase => 1000,
-    };
   }
 }

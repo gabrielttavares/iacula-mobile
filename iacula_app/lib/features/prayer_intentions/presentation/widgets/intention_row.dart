@@ -14,12 +14,14 @@ class IntentionRow extends StatelessWidget {
     required this.intention,
     this.onTap,
     this.onRespond,
+    this.onReminderTap,
     this.showRespondedDate = false,
   });
 
   final PrayerIntention intention;
   final VoidCallback? onTap;
   final VoidCallback? onRespond;
+  final VoidCallback? onReminderTap;
   final bool showRespondedDate;
 
   @override
@@ -61,9 +63,36 @@ class IntentionRow extends StatelessWidget {
                       ),
                     ),
                   ],
+                  if (intention.reminderTime != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Lembrete ${intention.reminderTime}',
+                      style: context.textStyles.secondary.copyWith(
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
+            if (onReminderTap != null) ...[
+              const SizedBox(width: IaculaSpacing.xs),
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(44, 44),
+                onPressed: () {
+                  HapticFeedback.mediumImpact();
+                  onReminderTap?.call();
+                },
+                child: Icon(
+                  intention.reminderTime != null
+                      ? CupertinoIcons.bell_fill
+                      : CupertinoIcons.bell,
+                  color: context.colors.textSecondary,
+                  size: 24,
+                ),
+              ),
+            ],
             if (onRespond != null) ...[
               const SizedBox(width: IaculaSpacing.sm),
               CupertinoButton(

@@ -67,6 +67,8 @@ import '../../features/prayer_intentions/application/use_cases/add_intention_use
 import '../../features/prayer_intentions/application/use_cases/update_intention_use_case.dart';
 import '../../features/prayer_intentions/application/use_cases/delete_intention_use_case.dart';
 import '../../features/prayer_intentions/application/use_cases/respond_intention_use_case.dart';
+import '../../features/prayer_intentions/application/use_cases/schedule_prayer_intention_reminder_use_case.dart';
+import '../../features/prayer_intentions/application/use_cases/cancel_prayer_intention_reminder_use_case.dart';
 import '../../features/prayer_intentions/application/prayer_intentions_notifier.dart';
 
 import '../../features/custom_phrases/application/custom_phrases_notifier.dart';
@@ -450,11 +452,30 @@ final updateIntentionUseCaseProvider = Provider<UpdateIntentionUseCase>((ref) {
 });
 
 final deleteIntentionUseCaseProvider = Provider<DeleteIntentionUseCase>((ref) {
-  return DeleteIntentionUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+  return DeleteIntentionUseCase(
+    ref.watch(prayerIntentionEntryRepositoryProvider),
+    ref.watch(cancelPrayerIntentionReminderUseCaseProvider),
+  );
 });
 
 final respondIntentionUseCaseProvider = Provider<RespondIntentionUseCase>((ref) {
   return RespondIntentionUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+});
+
+final schedulePrayerIntentionReminderUseCaseProvider =
+    Provider<SchedulePrayerIntentionReminderUseCase>((ref) {
+  return SchedulePrayerIntentionReminderUseCase(
+    ref.watch(prayerIntentionEntryRepositoryProvider),
+    ref.watch(notificationSchedulerRepositoryProvider),
+  );
+});
+
+final cancelPrayerIntentionReminderUseCaseProvider =
+    Provider<CancelPrayerIntentionReminderUseCase>((ref) {
+  return CancelPrayerIntentionReminderUseCase(
+    ref.watch(prayerIntentionEntryRepositoryProvider),
+    ref.watch(notificationSchedulerRepositoryProvider),
+  );
 });
 
 final prayerIntentionsNotifierProvider =
@@ -465,6 +486,8 @@ final prayerIntentionsNotifierProvider =
         updateIntention: ref.watch(updateIntentionUseCaseProvider),
         deleteIntention: ref.watch(deleteIntentionUseCaseProvider),
         respondIntention: ref.watch(respondIntentionUseCaseProvider),
+        scheduleReminder: ref.watch(schedulePrayerIntentionReminderUseCaseProvider),
+        cancelReminder: ref.watch(cancelPrayerIntentionReminderUseCaseProvider),
       );
     });
 

@@ -109,7 +109,7 @@ final class LocalNotificationSchedulerRepository
 
   @override
   Future<void> schedule(ReminderEvent event) async {
-    final id = _idForType(event.type);
+    final id = event.scheduledId ?? _idForType(event.type);
     final androidDetails = buildAndroidNotificationDetails(event);
 
     const iosDetails = DarwinNotificationDetails(
@@ -231,6 +231,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.oraMedia => 304,
       ReminderEventType.customMeditationAlarm => 400,
       ReminderEventType.customPhrase => 1000,
+      ReminderEventType.prayerIntentionReminder => 500,
     };
   }
 
@@ -244,6 +245,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.oraMedia => 'liturgy_hours_alarm',
       ReminderEventType.customMeditationAlarm => 'custom_meditation_alarm',
       ReminderEventType.customPhrase => 'custom_phrases',
+      ReminderEventType.prayerIntentionReminder => 'prayer_intention_reminder',
     };
   }
 
@@ -257,6 +259,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.oraMedia => 'Liturgia das Horas',
       ReminderEventType.customMeditationAlarm => 'Meditacao',
       ReminderEventType.customPhrase => 'Frases Personalizadas',
+      ReminderEventType.prayerIntentionReminder => 'Intencoes de oracao',
     };
   }
 
@@ -270,6 +273,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.oraMedia => 'Alarmes da Liturgia das Horas',
       ReminderEventType.customMeditationAlarm => 'Alarmes de meditacao',
       ReminderEventType.customPhrase => 'Notificações de suas frases pessoais',
+      ReminderEventType.prayerIntentionReminder => 'Lembretes para rezar por intencoes',
     };
   }
 }

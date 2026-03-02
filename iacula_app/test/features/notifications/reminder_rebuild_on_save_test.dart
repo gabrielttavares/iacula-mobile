@@ -67,7 +67,9 @@ final class _FakeNotificationSchedulerRepository
   }
 
   @override
-  Future<void> cancelById(int id) async {}
+  Future<void> cancelById(int id) async {
+    scheduled.removeWhere((e) => e.scheduledId == id);
+  }
 }
 
 final class _FakeQuoteContentRepository implements QuoteContentRepository {

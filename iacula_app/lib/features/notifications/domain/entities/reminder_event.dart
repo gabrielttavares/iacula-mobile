@@ -7,12 +7,14 @@ enum ReminderEventType {
   oraMedia,
   customMeditationAlarm,
   customPhrase,
+  prayerIntentionReminder,
 }
 
 enum NotificationRouteTarget {
   home,
   prayer,
   alarm,
+  prayerIntention,
 }
 
 final class ReminderEvent {
@@ -25,6 +27,8 @@ final class ReminderEvent {
     required this.isAlarm,
     this.repeatDaily = false,
     this.routeTarget = NotificationRouteTarget.alarm,
+    this.scheduledId,
+    this.intentionId,
   });
 
   final ReminderEventType type;
@@ -35,6 +39,10 @@ final class ReminderEvent {
   final bool isAlarm;
   final bool repeatDaily;
   final NotificationRouteTarget routeTarget;
+  /// When set, used as the notification id (e.g. for per-intention reminders).
+  final int? scheduledId;
+  /// Optional intention id for prayer intention reminders (snooze, routing).
+  final String? intentionId;
 
   ReminderEvent copyWith({
     ReminderEventType? type,
@@ -45,6 +53,8 @@ final class ReminderEvent {
     bool? isAlarm,
     bool? repeatDaily,
     NotificationRouteTarget? routeTarget,
+    int? scheduledId,
+    String? intentionId,
   }) {
     return ReminderEvent(
       type: type ?? this.type,
@@ -55,6 +65,8 @@ final class ReminderEvent {
       isAlarm: isAlarm ?? this.isAlarm,
       repeatDaily: repeatDaily ?? this.repeatDaily,
       routeTarget: routeTarget ?? this.routeTarget,
+      scheduledId: scheduledId ?? this.scheduledId,
+      intentionId: intentionId ?? this.intentionId,
     );
   }
 
@@ -68,6 +80,8 @@ final class ReminderEvent {
       'isAlarm': isAlarm,
       'repeatDaily': repeatDaily,
       'routeTarget': routeTarget.name,
+      if (scheduledId != null) 'scheduledId': scheduledId,
+      if (intentionId != null) 'intentionId': intentionId,
     };
   }
 
@@ -84,6 +98,15 @@ final class ReminderEvent {
       orElse: () => _defaultRouteForType(type),
     );
 
+    final scheduledId = map['scheduledId'];
+    final intentionId = map['intentionId']?.toString();
+    int? sid;
+    if (scheduledId is int) {
+      sid = scheduledId;
+    } else if (scheduledId is num) {
+      sid = (scheduledId as num).toInt();
+    }
+
     return ReminderEvent(
       type: type,
       title: map['title']?.toString() ?? 'Iacula',
@@ -93,6 +116,8 @@ final class ReminderEvent {
       isAlarm: map['isAlarm'] == true,
       repeatDaily: map['repeatDaily'] == true,
       routeTarget: routeTarget,
+      scheduledId: sid,
+      intentionId: intentionId,
     );
   }
 
@@ -106,6 +131,7 @@ final class ReminderEvent {
       ReminderEventType.oraMedia ||
       ReminderEventType.customMeditationAlarm ||
       ReminderEventType.customPhrase => NotificationRouteTarget.home,
+      ReminderEventType.prayerIntentionReminder => NotificationRouteTarget.prayerIntention,
     };
   }
 }

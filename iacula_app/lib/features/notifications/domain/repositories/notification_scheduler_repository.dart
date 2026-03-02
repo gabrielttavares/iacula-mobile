@@ -1,4 +1,4 @@
-﻿import '../entities/notification_action_event.dart';
+import '../entities/notification_action_event.dart';
 import '../entities/reminder_event.dart';
 
 abstract interface class NotificationSchedulerRepository {

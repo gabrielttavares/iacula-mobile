@@ -53,18 +53,23 @@ const PrayerIntentionEntryDocSchema = CollectionSchema(
       name: r'respondedAt',
       type: IsarType.dateTime,
     ),
-    r'title': PropertySchema(
+    r'scheduleJson': PropertySchema(
       id: 7,
+      name: r'scheduleJson',
+      type: IsarType.string,
+    ),
+    r'title': PropertySchema(
+      id: 8,
       name: r'title',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'userId': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'userId',
       type: IsarType.string,
     )
@@ -119,6 +124,12 @@ int _prayerIntentionEntryDocEstimateSize(
   bytesCount += 3 + object.body.length * 3;
   bytesCount += 3 + object.entryId.length * 3;
   {
+    final value = object.scheduleJson;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.title;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -146,9 +157,10 @@ void _prayerIntentionEntryDocSerialize(
   writer.writeBool(offsets[4], object.isDirty);
   writer.writeDateTime(offsets[5], object.lastSyncedAt);
   writer.writeDateTime(offsets[6], object.respondedAt);
-  writer.writeString(offsets[7], object.title);
-  writer.writeDateTime(offsets[8], object.updatedAt);
-  writer.writeString(offsets[9], object.userId);
+  writer.writeString(offsets[7], object.scheduleJson);
+  writer.writeString(offsets[8], object.title);
+  writer.writeDateTime(offsets[9], object.updatedAt);
+  writer.writeString(offsets[10], object.userId);
 }
 
 PrayerIntentionEntryDoc _prayerIntentionEntryDocDeserialize(
@@ -166,9 +178,10 @@ PrayerIntentionEntryDoc _prayerIntentionEntryDocDeserialize(
   object.isDirty = reader.readBool(offsets[4]);
   object.lastSyncedAt = reader.readDateTimeOrNull(offsets[5]);
   object.respondedAt = reader.readDateTimeOrNull(offsets[6]);
-  object.title = reader.readStringOrNull(offsets[7]);
-  object.updatedAt = reader.readDateTime(offsets[8]);
-  object.userId = reader.readStringOrNull(offsets[9]);
+  object.scheduleJson = reader.readStringOrNull(offsets[7]);
+  object.title = reader.readStringOrNull(offsets[8]);
+  object.updatedAt = reader.readDateTime(offsets[9]);
+  object.userId = reader.readStringOrNull(offsets[10]);
   return object;
 }
 
@@ -196,8 +209,10 @@ P _prayerIntentionEntryDocDeserializeProp<P>(
     case 7:
       return (reader.readStringOrNull(offset)) as P;
     case 8:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
+      return (reader.readDateTime(offset)) as P;
+    case 10:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1092,6 +1107,162 @@ extension PrayerIntentionEntryDocQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'scheduleJson',
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'scheduleJson',
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'scheduleJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'scheduleJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'scheduleJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'scheduleJson',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'scheduleJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'scheduleJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+          QAfterFilterCondition>
+      scheduleJsonContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'scheduleJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+          QAfterFilterCondition>
+      scheduleJsonMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'scheduleJson',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'scheduleJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
+      QAfterFilterCondition> scheduleJsonIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'scheduleJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc,
       QAfterFilterCondition> titleIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1567,6 +1738,20 @@ extension PrayerIntentionEntryDocQuerySortBy
   }
 
   QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
+      sortByScheduleJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scheduleJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
+      sortByScheduleJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scheduleJson', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
       sortByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -1724,6 +1909,20 @@ extension PrayerIntentionEntryDocQuerySortThenBy on QueryBuilder<
   }
 
   QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
+      thenByScheduleJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scheduleJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
+      thenByScheduleJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scheduleJson', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QAfterSortBy>
       thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -1818,6 +2017,13 @@ extension PrayerIntentionEntryDocQueryWhereDistinct on QueryBuilder<
   }
 
   QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QDistinct>
+      distinctByScheduleJson({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'scheduleJson', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, PrayerIntentionEntryDoc, QDistinct>
       distinctByTitle({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
@@ -1893,6 +2099,13 @@ extension PrayerIntentionEntryDocQueryProperty on QueryBuilder<
       respondedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'respondedAt');
+    });
+  }
+
+  QueryBuilder<PrayerIntentionEntryDoc, String?, QQueryOperations>
+      scheduleJsonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'scheduleJson');
     });
   }
 

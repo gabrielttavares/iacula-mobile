@@ -145,6 +145,9 @@ class PrayerIntentionsScreen extends ConsumerWidget {
                                   onTap: () => _showAddEditSheet(
                                     context, notifier, intention,
                                   ),
+                                  onReminderTap: () => _showReminderSheet(
+                                    context, notifier, intention,
+                                  ),
                                   onRespond: () async {
                                     final confirmed = await IaculaModal.showConfirm(
                                       context: context,
@@ -180,6 +183,21 @@ class PrayerIntentionsScreen extends ConsumerWidget {
       builder: (ctx) => _IntentionForm(
         notifier: notifier,
         existing: existing,
+      ),
+    );
+  }
+
+  void _showReminderSheet(
+    BuildContext context,
+    PrayerIntentionsNotifier notifier,
+    PrayerIntention intention,
+  ) {
+    IaculaModal.showSheet<void>(
+      context: context,
+      maxHeightFraction: 0.5,
+      builder: (ctx) => _ReminderSheet(
+        notifier: notifier,
+        intention: intention,
       ),
     );
   }
@@ -264,6 +282,98 @@ class _IntentionFormState extends State<_IntentionForm> {
               Navigator.pop(context);
             },
             child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+DateTime _parseReminderTime(String hhmm) {
+  final parts = hhmm.split(':');
+  if (parts.length != 2) {
+    return DateTime(2000, 1, 1, 9, 0);
+  }
+  final hour = int.tryParse(parts[0]) ?? 9;
+  final minute = int.tryParse(parts[1]) ?? 0;
+  return DateTime(2000, 1, 1, hour.clamp(0, 23), minute.clamp(0, 59));
+}
+
+class _ReminderSheet extends StatefulWidget {
+  const _ReminderSheet({
+    required this.notifier,
+    required this.intention,
+  });
+
+  final PrayerIntentionsNotifier notifier;
+  final PrayerIntention intention;
+
+  @override
+  State<_ReminderSheet> createState() => _ReminderSheetState();
+}
+
+class _ReminderSheetState extends State<_ReminderSheet> {
+  late DateTime _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.intention.reminderTime != null
+        ? _parseReminderTime(widget.intention.reminderTime!)
+        : DateTime(2000, 1, 1, 9, 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasReminder = widget.intention.reminderTime != null;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Lembrete para esta intenção',
+            style: context.textStyles.sectionTitle,
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 180,
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.time,
+              initialDateTime: _selected,
+              onDateTimeChanged: (v) => setState(() => _selected = v),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              if (hasReminder) ...[
+                CupertinoButton(
+                  onPressed: () async {
+                    HapticFeedback.lightImpact();
+                    await widget.notifier.clearReminder(widget.intention.id);
+                    if (context.mounted) Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Remover lembrete',
+                    style: TextStyle(color: CupertinoColors.destructiveRed),
+                  ),
+                ),
+                const SizedBox(width: 16),
+              ],
+              const Spacer(),
+              CupertinoButton.filled(
+                onPressed: () async {
+                  HapticFeedback.lightImpact();
+                  final hhmm =
+                      '${_selected.hour.toString().padLeft(2, '0')}:${_selected.minute.toString().padLeft(2, '0')}';
+                  await widget.notifier.setReminder(widget.intention.id, hhmm);
+                  if (context.mounted) Navigator.pop(context);
+                },
+                child: const Text('Salvar'),
+              ),
+            ],
           ),
         ],
       ),

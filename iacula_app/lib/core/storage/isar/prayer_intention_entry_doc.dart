@@ -20,4 +20,5 @@ class PrayerIntentionEntryDoc {
   DateTime? respondedAt;
   late bool isDirty;
   DateTime? lastSyncedAt;
+  String? scheduleJson;
 }

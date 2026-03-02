@@ -7,6 +7,7 @@ final class PrayerIntention {
     required this.createdAt,
     this.description,
     this.respondedAt,
+    this.reminderTime,
   });
 
   final String id;
@@ -14,6 +15,8 @@ final class PrayerIntention {
   final String? description;
   final DateTime createdAt;
   final DateTime? respondedAt;
+  /// Daily reminder time in "HH:mm" format, e.g. "09:00".
+  final String? reminderTime;
 
   bool get isResponded => respondedAt != null;
 
@@ -21,6 +24,7 @@ final class PrayerIntention {
     String? title,
     String? description,
     DateTime? respondedAt,
+    String? reminderTime,
     bool clearRespondedAt = false,
   }) {
     return PrayerIntention(
@@ -29,6 +33,7 @@ final class PrayerIntention {
       description: description ?? this.description,
       createdAt: createdAt,
       respondedAt: clearRespondedAt ? null : (respondedAt ?? this.respondedAt),
+      reminderTime: reminderTime ?? this.reminderTime,
     );
   }
 }

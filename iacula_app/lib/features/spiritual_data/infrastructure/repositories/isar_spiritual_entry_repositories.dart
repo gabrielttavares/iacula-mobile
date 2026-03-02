@@ -289,6 +289,7 @@ final class IsarPrayerIntentionSpiritualEntryRepository implements SpiritualEntr
       userId: doc.userId,
       title: doc.title,
       body: doc.body,
+      scheduleJson: doc.scheduleJson,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
       deletedAt: doc.deletedAt,
@@ -302,6 +303,7 @@ final class IsarPrayerIntentionSpiritualEntryRepository implements SpiritualEntr
     doc.userId = entry.userId;
     doc.title = entry.title;
     doc.body = entry.body;
+    doc.scheduleJson = entry.scheduleJson;
     doc.createdAt = entry.createdAt;
     doc.updatedAt = entry.updatedAt;
     doc.deletedAt = entry.deletedAt;
