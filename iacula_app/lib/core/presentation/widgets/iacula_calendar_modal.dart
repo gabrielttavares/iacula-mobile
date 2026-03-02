@@ -41,9 +41,10 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
       0,
     ).day;
     final totalCells = ((leadingBlanks + daysInMonth + 6) ~/ 7) * 7;
+    final rowCount = totalCells ~/ 7;
 
     return SizedBox(
-      height: 460,
+      height: rowCount > 5 ? 510 : 460,
       child: Padding(
         padding: const EdgeInsets.all(IaculaSpacing.md),
         child: Column(
