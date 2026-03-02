@@ -45,7 +45,7 @@ void main() {
       expect(finder, findsOneWidget);
     }
 
-    expect(find.text('Intervalo (minutos)'), findsOneWidget);
+    expect(find.text('Intervalo das jaculatórias (minutos)'), findsOneWidget);
     expect(find.text('Duracao (desktop apenas)'), findsNothing);
     expect(
       find.text(
@@ -54,13 +54,17 @@ void main() {
       findsNothing,
     );
     expect(find.text('Duracao (segundos)'), findsNothing);
-    expect(find.text('Idioma'), findsOneWidget);
     expect(find.text('Autostart (mobile limitado)'), findsNothing);
-    expect(find.text('Som no lembrete liturgico'), findsOneWidget);
-    await expectVisible('Laudes');
-    await expectVisible('Vesperas');
-    await expectVisible('Completas');
-    await expectVisible('Ora Media');
+    // Liturgy controls removed from settings
+    expect(find.text('Som no lembrete liturgico'), findsNothing);
+    expect(find.text('Laudes'), findsNothing);
+    expect(find.text('Vesperas'), findsNothing);
+    expect(find.text('Completas'), findsNothing);
+    expect(find.text('Ora Media'), findsNothing);
+    // New sections present
+    await expectVisible('Aparência');
+    await expectVisible('Notificações');
+    await expectVisible('Personalização');
     await expectVisible('Salvar');
   });
 

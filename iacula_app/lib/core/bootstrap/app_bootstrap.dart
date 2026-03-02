@@ -14,7 +14,6 @@ import '../../features/custom_phrases/infrastructure/repositories/isar_custom_ph
 import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/remote_liturgical_season_service.dart';
 import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
-import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/plan_of_life/application/use_cases/seed_default_items_use_case.dart';
@@ -107,7 +106,6 @@ final class AppBootstrap {
         },
         lastDeliveredCardRepository: lastDeliveredCardRepo,
       ).call(currentSettings);
-      await ScheduleLiturgyRemindersUseCase(scheduler).call(currentSettings);
       await SchedulePhraseNotificationsUseCase(
         scheduler,
         localCustomPhraseRepo,
