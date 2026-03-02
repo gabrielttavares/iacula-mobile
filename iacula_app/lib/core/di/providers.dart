@@ -77,6 +77,23 @@ import '../../features/custom_phrases/application/use_cases/schedule_phrase_noti
 import '../../features/custom_phrases/domain/entities/custom_phrase.dart';
 import '../../features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
 import '../../features/custom_phrases/infrastructure/repositories/isar_custom_phrase_repository.dart';
+import '../../features/prayer_activity/application/prayer_activity_logger.dart';
+import '../../features/prayer_activity/application/streak_calculator.dart';
+import '../../features/prayer_activity/domain/entities/streak_info.dart';
+import '../../features/prayer_activity/domain/entities/dashboard_stats.dart';
+import '../../features/prayer_activity/domain/repositories/prayer_activity_repository.dart';
+import '../../features/prayer_activity/infrastructure/repositories/isar_prayer_activity_repository.dart';
+import '../../features/rosary/domain/entities/rosary_mystery_set.dart';
+import '../../features/rosary/infrastructure/repositories/asset_rosary_repository.dart';
+import '../../features/rosary/domain/repositories/rosary_repository.dart';
+import '../../features/challenges/domain/entities/challenge.dart';
+import '../../features/challenges/domain/repositories/challenge_repository.dart';
+import '../../features/challenges/domain/repositories/challenge_progress_repository.dart';
+import '../../features/challenges/infrastructure/repositories/asset_challenge_repository.dart';
+import '../../features/challenges/infrastructure/repositories/isar_challenge_progress_repository.dart';
+import '../../features/journal/domain/entities/journal_entry.dart';
+import '../../features/journal/domain/repositories/journal_repository.dart';
+import '../../features/journal/infrastructure/repositories/isar_journal_repository.dart';
 import '../../features/doctrina/application/use_cases/get_doctrine_catalog_use_case.dart';
 import '../../features/doctrina/domain/entities/doctrine_entry.dart';
 import '../../features/doctrina/domain/repositories/doctrine_repository.dart';
@@ -529,3 +546,63 @@ final customPhrasesNotifierProvider =
     AsyncNotifierProvider<CustomPhrasesNotifier, List<CustomPhrase>>(() {
       return CustomPhrasesNotifier();
     });
+
+// -- Prayer Activity / Streak Providers --
+
+final prayerActivityRepositoryProvider = Provider<PrayerActivityRepository>((ref) {
+  return IsarPrayerActivityRepository(store: IsarStore.instance);
+});
+
+final prayerActivityLoggerProvider = Provider<PrayerActivityLogger>((ref) {
+  return PrayerActivityLogger(repository: ref.watch(prayerActivityRepositoryProvider));
+});
+
+final streakInfoProvider = FutureProvider<StreakInfo>((ref) async {
+  final repo = ref.watch(prayerActivityRepositoryProvider);
+  final entries = await repo.listAll();
+  return const StreakCalculator().computeStreak(entries);
+});
+
+final dashboardStatsProvider = FutureProvider<DashboardStats>((ref) async {
+  final repo = ref.watch(prayerActivityRepositoryProvider);
+  final entries = await repo.listAll();
+  return const StreakCalculator().computeDashboard(entries);
+});
+
+// -- Rosary Providers --
+
+final rosaryRepositoryProvider = Provider<RosaryRepository>((ref) {
+  return AssetRosaryRepository();
+});
+
+final rosaryMysterySetProvider = FutureProvider.family<RosaryMysterySet?, RosaryMysteryType>((ref, type) async {
+  return ref.watch(rosaryRepositoryProvider).getMysterySet(type);
+});
+
+final allRosaryMysterySetProvider = FutureProvider<List<RosaryMysterySet>>((ref) async {
+  return ref.watch(rosaryRepositoryProvider).listAll();
+});
+
+// -- Challenge Providers --
+
+final challengeRepositoryProvider = Provider<ChallengeRepository>((ref) {
+  return AssetChallengeRepository();
+});
+
+final challengeProgressRepositoryProvider = Provider<ChallengeProgressRepository>((ref) {
+  return IsarChallengeProgressRepository(store: IsarStore.instance);
+});
+
+final challengeCatalogProvider = FutureProvider<List<Challenge>>((ref) async {
+  return ref.watch(challengeRepositoryProvider).listAll();
+});
+
+// -- Journal Providers --
+
+final journalRepositoryProvider = Provider<JournalRepository>((ref) {
+  return IsarJournalRepository(store: IsarStore.instance);
+});
+
+final journalEntriesProvider = FutureProvider<List<JournalEntry>>((ref) async {
+  return ref.watch(journalRepositoryProvider).listAll();
+});

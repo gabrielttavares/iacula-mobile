@@ -2,6 +2,7 @@ enum SpiritualModule {
   planOfLife,
   examination,
   prayerIntention,
+  journal,
 }
 
 final class SpiritualEntry {

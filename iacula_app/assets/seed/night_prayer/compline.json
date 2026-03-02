@@ -1,0 +1,71 @@
+[
+  {
+    "dayOfWeek": 7,
+    "psalms": [
+      {
+        "reference": "Salmo 4",
+        "antiphon": "Tende piedade de mim, Senhor, e ouvi a minha oração.",
+        "text": "Quando eu clamo, respondei-me, ó Deus da minha justiça!\nNa angústia me tendes aliviado;\ntende piedade de mim e ouvi a minha oração.\n\nFilhos dos homens, até quando sereis duros de coração?\nPor que amais a vaidade e buscais a mentira?\n\nSabei que o Senhor fez maravilhas em favor do seu fiel;\no Senhor me ouve quando eu o invoco.\n\nTremei e não pequeis;\nmeditai em vossos corações, sobre o vosso leito, e calai-vos.\n\nOferecei sacrifícios de justiça\ne confiai no Senhor.\n\nMuitos dizem: \"Quem nos fará ver a felicidade?\"\nSenhor, fazei brilhar sobre nós a luz da vossa face!\n\nVós me dais mais alegria no coração\ndo que a que eles têm quando lhes sobra trigo e vinho.\n\nEm paz me deito e logo adormeço,\nporque só vós, Senhor, me fazeis repousar em segurança."
+      },
+      {
+        "reference": "Salmo 134 (133)",
+        "antiphon": "Nas horas da noite, bendizei o Senhor.",
+        "text": "Bendizei o Senhor, vós todos, servos do Senhor,\nvós que estais na casa do Senhor\ndurante as vigílias da noite.\n\nErguei vossas mãos para o santuário\ne bendizei o Senhor.\n\nDe Sião vos abençoe o Senhor,\nEle que fez o céu e a terra."
+      }
+    ],
+    "shortReading": {
+      "title": "Leitura Breve",
+      "reference": "Jr 14,9",
+      "text": "Tu estás no meio de nós, Senhor, e o teu nome foi invocado sobre nós. Não nos abandones, Senhor nosso Deus."
+    },
+    "responsory": {
+      "title": "Responsório Breve",
+      "text": "Nas vossas mãos, Senhor, entrego o meu espírito.\n— Nas vossas mãos, Senhor, entrego o meu espírito.\nVós me redimistes, Senhor, Deus da verdade.\n— Entrego o meu espírito.\nGlória ao Pai e ao Filho e ao Espírito Santo.\n— Nas vossas mãos, Senhor, entrego o meu espírito."
+    },
+    "canticle": {
+      "title": "Cântico de Simeão — Nunc Dimittis",
+      "reference": "Lc 2,29-32",
+      "text": "Agora, Senhor, podeis deixar o vosso servo ir em paz,\nsegundo a vossa palavra.\n\nPorque os meus olhos viram a vossa salvação,\nque preparastes diante de todos os povos:\n\nluz para iluminar as nações\ne glória de Israel, vosso povo."
+    },
+    "collect": {
+      "title": "Oração",
+      "text": "Visitai, Senhor, esta casa e afastai dela todas as ciladas do inimigo. Que os vossos santos anjos aqui habitem para nos guardar na paz, e a vossa bênção esteja sempre sobre nós. Por Nosso Senhor Jesus Cristo, vosso Filho, que convosco vive e reina na unidade do Espírito Santo, Deus, por todos os séculos dos séculos. Amém."
+    },
+    "marianAntiphon": {
+      "title": "Antífona Mariana — Salve Rainha",
+      "text": "Salve, Rainha, Mãe de Misericórdia,\nvida, doçura, esperança nossa, salve!\n\nA vós bradamos, os degredados filhos de Eva.\nA vós suspiramos, gemendo e chorando\nneste vale de lágrimas.\n\nEia, pois, Advogada nossa,\nesses vossos olhos misericordiosos a nós volvei.\n\nE depois deste desterro,\nmostrai-nos Jesus, bendito fruto do vosso ventre.\n\nÓ clemente, ó piedosa, ó doce sempre Virgem Maria.\n\nRogai por nós, Santa Mãe de Deus,\npara que sejamos dignos das promessas de Cristo. Amém."
+    }
+  },
+  {
+    "dayOfWeek": 1,
+    "psalms": [
+      {
+        "reference": "Salmo 86 (85)",
+        "antiphon": "Tende piedade de mim, Senhor, pois a vós clamo o dia inteiro.",
+        "text": "Inclinai, Senhor, o vosso ouvido e respondei-me,\nporque sou pobre e infeliz.\n\nGuardai a minha alma, porque sou piedoso;\nsalvai o vosso servo que em vós confia.\n\nVós sois o meu Deus; tende piedade de mim, Senhor,\nporque a vós clamo o dia inteiro.\n\nAlegrai a alma do vosso servo,\nporque a vós, Senhor, elevo a minha alma.\n\nPois vós, Senhor, sois bom e indulgente,\nrico em misericórdia para com todos os que vos invocam.\n\nPresta ouvido, Senhor, à minha oração,\natendei à voz das minhas súplicas.\n\nNo dia da minha angústia, a vós clamo,\nporque vós me atendereis."
+      }
+    ],
+    "shortReading": {
+      "title": "Leitura Breve",
+      "reference": "1Ts 5,9-10",
+      "text": "Deus nos destinou não para a ira, mas para a salvação por Nosso Senhor Jesus Cristo, que morreu por nós, a fim de que, quer vigiemos, quer durmamos, vivamos junto com ele."
+    },
+    "responsory": {
+      "title": "Responsório Breve",
+      "text": "Nas vossas mãos, Senhor, entrego o meu espírito.\n— Nas vossas mãos, Senhor, entrego o meu espírito.\nVós me redimistes, Senhor, Deus da verdade.\n— Entrego o meu espírito.\nGlória ao Pai e ao Filho e ao Espírito Santo.\n— Nas vossas mãos, Senhor, entrego o meu espírito."
+    },
+    "canticle": {
+      "title": "Cântico de Simeão — Nunc Dimittis",
+      "reference": "Lc 2,29-32",
+      "text": "Agora, Senhor, podeis deixar o vosso servo ir em paz,\nsegundo a vossa palavra.\n\nPorque os meus olhos viram a vossa salvação,\nque preparastes diante de todos os povos:\n\nluz para iluminar as nações\ne glória de Israel, vosso povo."
+    },
+    "collect": {
+      "title": "Oração",
+      "text": "Senhor nosso Deus, concedei-nos um sono tranquilo para restaurar nossas forças cansadas. Que ao despertar amanhã, no Vosso nome, possamos contemplar com alegria o novo dia. Por Nosso Senhor Jesus Cristo. Amém."
+    },
+    "marianAntiphon": {
+      "title": "Antífona Mariana — Salve Rainha",
+      "text": "Salve, Rainha, Mãe de Misericórdia,\nvida, doçura, esperança nossa, salve!\n\nA vós bradamos, os degredados filhos de Eva.\nA vós suspiramos, gemendo e chorando\nneste vale de lágrimas.\n\nEia, pois, Advogada nossa,\nesses vossos olhos misericordiosos a nós volvei.\n\nE depois deste desterro,\nmostrai-nos Jesus, bendito fruto do vosso ventre.\n\nÓ clemente, ó piedosa, ó doce sempre Virgem Maria.\n\nRogai por nós, Santa Mãe de Deus,\npara que sejamos dignos das promessas de Cristo. Amém."
+    }
+  }
+]

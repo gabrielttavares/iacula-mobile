@@ -13,8 +13,13 @@ import '../features/notifications/application/use_cases/handle_notification_acti
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
+import '../features/challenges/presentation/challenge_library_screen.dart';
+import '../features/journal/presentation/journal_list_screen.dart';
+import '../features/liturgy_hours/presentation/liturgy_hours_landing_screen.dart';
+import '../features/night_prayer/presentation/night_prayer_screen.dart';
 import '../features/prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../features/prayers/presentation/prayer_screen.dart';
+import '../features/rosary/presentation/rosary_landing_screen.dart';
 import '../features/settings/domain/entities/settings.dart';
 import '../features/sync/infrastructure/services/background_sync_scheduler.dart';
 
@@ -94,6 +99,44 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
             );
             nav.push(
               CupertinoPageRoute(builder: (_) => const PrayerIntentionsScreen()),
+            );
+            return;
+
+          case NotificationRouteTarget.nightPrayer:
+            nav.push(
+              CupertinoPageRoute(builder: (_) => const NightPrayerScreen()),
+            );
+            return;
+
+          case NotificationRouteTarget.liturgyHours:
+            nav.push(
+              CupertinoPageRoute(
+                builder: (_) => const LiturgyHoursLandingScreen(),
+              ),
+            );
+            return;
+
+          case NotificationRouteTarget.challenges:
+            nav.push(
+              CupertinoPageRoute(
+                builder: (_) => const ChallengeLibraryScreen(),
+              ),
+            );
+            return;
+
+          case NotificationRouteTarget.rosary:
+            nav.push(
+              CupertinoPageRoute(
+                builder: (_) => const RosaryLandingScreen(),
+              ),
+            );
+            return;
+
+          case NotificationRouteTarget.journal:
+            nav.push(
+              CupertinoPageRoute(
+                builder: (_) => const JournalListScreen(),
+              ),
             );
             return;
         }

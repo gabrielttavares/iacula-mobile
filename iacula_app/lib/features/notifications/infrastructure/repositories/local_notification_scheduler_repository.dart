@@ -232,6 +232,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.customMeditationAlarm => 400,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
+      ReminderEventType.challengeDaily => 600,
     };
   }
 
@@ -246,6 +247,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.customMeditationAlarm => 'custom_meditation_alarm',
       ReminderEventType.customPhrase => 'custom_phrases',
       ReminderEventType.prayerIntentionReminder => 'prayer_intention_reminder',
+      ReminderEventType.challengeDaily => 'challenge_reminder',
     };
   }
 
@@ -260,6 +262,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.customMeditationAlarm => 'Meditação',
       ReminderEventType.customPhrase => 'Frases Personalizadas',
       ReminderEventType.prayerIntentionReminder => 'Intenções de oração',
+      ReminderEventType.challengeDaily => 'Desafios',
     };
   }
 
@@ -274,6 +277,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.customMeditationAlarm => 'Alarmes de meditação',
       ReminderEventType.customPhrase => 'Notificações de frases personalizadas',
       ReminderEventType.prayerIntentionReminder => 'Lembretes para rezar por intenções',
+      ReminderEventType.challengeDaily => 'Lembretes de desafios e novenas',
     };
   }
 }

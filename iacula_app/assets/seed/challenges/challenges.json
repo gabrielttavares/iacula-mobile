@@ -1,0 +1,449 @@
+[
+  {
+    "id": "novena_espirito_santo",
+    "title": "Novena ao Espírito Santo",
+    "description": "Nove dias de oração preparando-se para a efusão do Espírito Santo em sua vida. Baseada na tradição da Igreja desde Pentecostes.",
+    "durationDays": 9,
+    "category": "novena",
+    "content": [
+      {
+        "dayNumber": 1,
+        "title": "O Espírito da Verdade",
+        "readingText": "Quando vier o Paráclito, que eu vos enviarei da parte do Pai, o Espírito da Verdade que procede do Pai, ele dará testemunho de mim. (Jo 15,26)\n\nO Espírito Santo é o Espírito da Verdade. Ele nos guia para longe da mentira e da ilusão, iluminando nosso entendimento para conhecermos a Deus tal como Ele é. Neste primeiro dia, peçamos ao Espírito que ilumine nossa mente e nos conduza à verdade plena.",
+        "reflectionPrompt": "Em que áreas da minha vida preciso da luz do Espírito para ver a verdade?"
+      },
+      {
+        "dayNumber": 2,
+        "title": "O Espírito Consolador",
+        "readingText": "Eu rogarei ao Pai, e ele vos dará outro Paráclito, para que fique eternamente convosco. (Jo 14,16)\n\nJesus promete que não nos deixará órfãos. O Espírito Santo é nosso Consolador, aquele que está ao nosso lado em todos os momentos. Peçamos hoje a graça de sentir Sua presença consoladora em nossas tribulações.",
+        "reflectionPrompt": "Quando foi a última vez que experimentei a consolação do Espírito Santo?"
+      },
+      {
+        "dayNumber": 3,
+        "title": "O Espírito de Sabedoria",
+        "readingText": "O Espírito do Senhor repousará sobre ele: espírito de sabedoria e de entendimento, espírito de conselho e de fortaleza, espírito de ciência e de temor do Senhor. (Is 11,2)\n\nA sabedoria do Espírito não é a sabedoria do mundo. É a capacidade de ver as coisas como Deus as vê, de discernir o que realmente importa. Peçamos hoje o dom da sabedoria.",
+        "reflectionPrompt": "Que decisão na minha vida precisa da sabedoria do Espírito?"
+      },
+      {
+        "dayNumber": 4,
+        "title": "O Espírito de Fortaleza",
+        "readingText": "Recebereis a força do Espírito Santo que descerá sobre vós, e sereis minhas testemunhas. (At 1,8)\n\nOs apóstolos, que se escondiam com medo, tornaram-se corajosos pregadores após receber o Espírito Santo. Peçamos hoje a fortaleza para sermos testemunhas de Cristo em nosso dia a dia.",
+        "reflectionPrompt": "Em que situações preciso de mais coragem para viver minha fé?"
+      },
+      {
+        "dayNumber": 5,
+        "title": "Os Frutos do Espírito",
+        "readingText": "O fruto do Espírito é: amor, alegria, paz, paciência, benignidade, bondade, fidelidade, mansidão, domínio próprio. (Gl 5,22-23)\n\nO Espírito Santo produz em nós frutos que transformam nossa vida e a vida dos que nos cercam. Peçamos hoje que esses frutos amadureçam em nosso coração.",
+        "reflectionPrompt": "Qual desses frutos preciso cultivar mais em minha vida?"
+      },
+      {
+        "dayNumber": 6,
+        "title": "O Espírito que Ora em Nós",
+        "readingText": "O Espírito vem em auxílio à nossa fraqueza, pois não sabemos o que pedir como convém. Mas o próprio Espírito intercede por nós com gemidos inefáveis. (Rm 8,26)\n\nQuando não sabemos orar, o Espírito ora em nós. Ele conhece nossas necessidades mais profundas. Hoje, abramos nosso coração para que o Espírito ore em nós.",
+        "reflectionPrompt": "Como posso me abrir mais à ação do Espírito na minha oração?"
+      },
+      {
+        "dayNumber": 7,
+        "title": "O Espírito da Unidade",
+        "readingText": "Há um só Corpo e um só Espírito, assim como é uma só a esperança da vocação a que fostes chamados. (Ef 4,4)\n\nO Espírito Santo é o vínculo de unidade na Igreja. Ele nos une em um só corpo, apesar de nossas diferenças. Peçamos hoje a graça de sermos instrumentos de unidade.",
+        "reflectionPrompt": "Com quem preciso buscar reconciliação ou maior unidade?"
+      },
+      {
+        "dayNumber": 8,
+        "title": "O Espírito de Santificação",
+        "readingText": "Não sabeis que sois templo de Deus e que o Espírito de Deus habita em vós? (1Cor 3,16)\n\nSomos templos do Espírito Santo. Ele habita em nós para nos santificar, transformando-nos progressivamente à imagem de Cristo. Peçamos hoje a graça de viver como dignos templos do Espírito.",
+        "reflectionPrompt": "O que preciso purificar em minha vida para ser um digno templo do Espírito?"
+      },
+      {
+        "dayNumber": 9,
+        "title": "Vinde, Espírito Santo",
+        "readingText": "Quando chegou o dia de Pentecostes, estavam todos reunidos no mesmo lugar. De repente, veio do céu um ruído como de um vento impetuoso, e encheu toda a casa. Ficaram todos cheios do Espírito Santo. (At 2,1-4)\n\nNeste último dia, como os apóstolos no Cenáculo, perseveremos em oração com Maria. Peçamos uma nova efusão do Espírito Santo sobre nossas vidas. Vinde, Espírito Santo, enchei os corações dos Vossos fiéis e acendei neles o fogo do Vosso amor.",
+        "reflectionPrompt": "Que graça específica desejo pedir ao Espírito Santo ao concluir esta novena?"
+      }
+    ]
+  },
+  {
+    "id": "novena_nossa_senhora",
+    "title": "Novena a Nossa Senhora",
+    "description": "Nove dias de meditação sobre os mistérios da vida de Maria, pedindo sua poderosa intercessão.",
+    "durationDays": 9,
+    "category": "novena",
+    "content": [
+      {
+        "dayNumber": 1,
+        "title": "Maria, Imaculada Conceição",
+        "readingText": "Ave, cheia de graça, o Senhor é contigo! (Lc 1,28)\n\nMaria foi preservada de todo pecado desde o primeiro instante de sua concepção. Nela contemplamos a pureza que Deus deseja para cada um de nós. Peçamos a Maria que interceda por nós para que vivamos em estado de graça.",
+        "reflectionPrompt": "O que significa para mim ser 'cheio de graça' como Maria?"
+      },
+      {
+        "dayNumber": 2,
+        "title": "Maria, Serva Fiel",
+        "readingText": "Eis aqui a serva do Senhor. Faça-se em mim segundo a tua palavra. (Lc 1,38)\n\nO 'sim' de Maria mudou a história da humanidade. Ela se entregou totalmente à vontade de Deus, sem reservas. Peçamos a graça de dizer nosso 'sim' diário a Deus.",
+        "reflectionPrompt": "O que Deus está me pedindo agora que eu preciso aceitar com fé?"
+      },
+      {
+        "dayNumber": 3,
+        "title": "Maria, Mãe de Misericórdia",
+        "readingText": "A minha alma engrandece o Senhor, e o meu espírito exulta em Deus, meu Salvador. (Lc 1,46-47)\n\nO Magnificat de Maria é um canto de louvor e gratidão. Ela reconhece as maravilhas que Deus fez por ela e por toda a humanidade. Cantemos com Maria as misericórdias do Senhor.",
+        "reflectionPrompt": "Pelo que sou especialmente grato a Deus hoje?"
+      },
+      {
+        "dayNumber": 4,
+        "title": "Maria, Mãe de Deus",
+        "readingText": "Maria guardava todas estas coisas, meditando-as em seu coração. (Lc 2,19)\n\nMaria meditava os mistérios de Deus em seu coração. Ela nos ensina a contemplar, a guardar silêncio e a deixar que a Palavra de Deus transforme nosso interior.",
+        "reflectionPrompt": "Dedico tempo suficiente para meditar a Palavra de Deus em silêncio?"
+      },
+      {
+        "dayNumber": 5,
+        "title": "Maria aos Pés da Cruz",
+        "readingText": "Junto à cruz de Jesus estavam sua mãe e a irmã de sua mãe. Jesus, ao ver sua mãe e, ao lado dela, o discípulo a quem amava, disse à mãe: Mulher, eis aí o teu filho. (Jo 19,25-26)\n\nMaria permaneceu fiel ao pé da cruz, unindo seus sofrimentos aos de seu Filho. Ela é nossa mãe nas dores e nas alegrias.",
+        "reflectionPrompt": "Consigo oferecer meus sofrimentos unidos à cruz de Cristo, como Maria?"
+      },
+      {
+        "dayNumber": 6,
+        "title": "Maria, Estrela da Evangelização",
+        "readingText": "Fazei tudo o que ele vos disser. (Jo 2,5)\n\nNas bodas de Caná, Maria aponta para Jesus. Toda a missão de Maria é conduzir-nos a seu Filho. Ela é a primeira e mais perfeita discípula.",
+        "reflectionPrompt": "Minha vida aponta para Cristo como a de Maria?"
+      },
+      {
+        "dayNumber": 7,
+        "title": "Maria, Rainha do Rosário",
+        "readingText": "Apareceu no céu um grande sinal: uma mulher vestida de sol, com a lua debaixo dos pés e uma coroa de doze estrelas na cabeça. (Ap 12,1)\n\nO Rosário é a oração que Maria nos ensinou para contemplarmos com ela os mistérios de Cristo. Rezemos o Rosário com devoção renovada.",
+        "reflectionPrompt": "Tenho rezado o Rosário com atenção e amor?"
+      },
+      {
+        "dayNumber": 8,
+        "title": "Maria, Refúgio dos Pecadores",
+        "readingText": "Salve Rainha, Mãe de Misericórdia, vida, doçura, esperança nossa, salve!\n\nMaria é o refúgio seguro para todos os que se arrependem. Sua misericórdia maternal nos acolhe em todas as nossas fraquezas.",
+        "reflectionPrompt": "Confio verdadeiramente na misericórdia de Deus, buscando Maria como intercessora?"
+      },
+      {
+        "dayNumber": 9,
+        "title": "Maria, Assunta ao Céu",
+        "readingText": "Todas as gerações me chamarão bem-aventurada, porque o Todo-Poderoso fez grandes coisas em meu favor. (Lc 1,48-49)\n\nMaria, elevada ao céu em corpo e alma, é a garantia do nosso destino eterno. Ela nos espera no céu, intercedendo por nós. Consagremo-nos a ela com total confiança.",
+        "reflectionPrompt": "Que graça especial desejo pedir a Nossa Senhora ao concluir esta novena?"
+      }
+    ]
+  },
+  {
+    "id": "7_dias_acao_gracas",
+    "title": "7 Dias de Ação de Graças",
+    "description": "Uma semana dedicada a cultivar a gratidão, reconhecendo as bênçãos de Deus em cada aspecto da vida.",
+    "durationDays": 7,
+    "category": "general",
+    "content": [
+      {
+        "dayNumber": 1,
+        "title": "Gratidão pela Vida",
+        "readingText": "Eu te louvo porque me fizeste de modo tão admirável. Maravilhosas são as tuas obras! (Sl 139,14)\n\nHoje agradecemos pelo dom da vida. Cada respiração, cada batimento do coração é um presente de Deus. Dedique tempo para agradecer simplesmente por existir.",
+        "reflectionPrompt": "Pelo que sou grato em relação ao dom da minha própria vida?"
+      },
+      {
+        "dayNumber": 2,
+        "title": "Gratidão pelas Pessoas",
+        "readingText": "Dou graças ao meu Deus cada vez que me lembro de vós. (Fl 1,3)\n\nAs pessoas que Deus colocou em nosso caminho são bênçãos. Família, amigos, colegas — cada pessoa é uma oportunidade de amar e ser amado.",
+        "reflectionPrompt": "Quem são as pessoas pelas quais devo agradecer hoje? Já expressei minha gratidão a elas?"
+      },
+      {
+        "dayNumber": 3,
+        "title": "Gratidão pela Fé",
+        "readingText": "Pela graça de Deus sou o que sou, e a graça que ele me deu não foi inútil. (1Cor 15,10)\n\nO dom da fé é uma graça imerecida. Nem todos têm a bênção de conhecer e amar a Deus. Agradeçamos por este tesouro incomparável.",
+        "reflectionPrompt": "Como minha fé tem transformado minha vida? Cuido deste dom?"
+      },
+      {
+        "dayNumber": 4,
+        "title": "Gratidão nas Dificuldades",
+        "readingText": "Em tudo dai graças, porque esta é a vontade de Deus em Cristo Jesus para convosco. (1Ts 5,18)\n\nAgradecer nas dificuldades é um ato heroico de fé. Deus age também através das provações, moldando-nos e fortalecendo-nos.",
+        "reflectionPrompt": "Consigo ver a ação de Deus mesmo nos momentos difíceis da minha vida?"
+      },
+      {
+        "dayNumber": 5,
+        "title": "Gratidão pela Eucaristia",
+        "readingText": "Aquele que come a minha carne e bebe o meu sangue permanece em mim e eu nele. (Jo 6,56)\n\nA Eucaristia — palavra que significa 'ação de graças' — é o maior dom que Jesus nos deixou. Seu corpo e sangue nos alimentam para a vida eterna.",
+        "reflectionPrompt": "Como posso participar da Eucaristia com maior fervor e gratidão?"
+      },
+      {
+        "dayNumber": 6,
+        "title": "Gratidão pela Criação",
+        "readingText": "Louvado sejais, meu Senhor, com todas as Vossas criaturas. (São Francisco de Assis)\n\nA natureza é um reflexo da beleza e da bondade de Deus. Cada nascer do sol, cada flor, cada estrela fala do amor do Criador.",
+        "reflectionPrompt": "Quando foi a última vez que parei para contemplar a beleza da criação com gratidão?"
+      },
+      {
+        "dayNumber": 7,
+        "title": "Gratidão pela Misericórdia",
+        "readingText": "Misericórdia eu quero e não sacrifício. (Mt 9,13)\n\nA misericórdia de Deus é infinita. Ele nos perdoa sempre que nos arrependemos sinceramente. Agradeçamos pelo Sacramento da Confissão e pela inesgotável paciência de Deus.",
+        "reflectionPrompt": "Como posso viver a gratidão pela misericórdia de Deus, sendo também misericordioso com os outros?"
+      }
+    ]
+  },
+  {
+    "id": "consagracao_maria_33",
+    "title": "Consagração a Nossa Senhora",
+    "description": "33 dias de preparação para a consagração total a Jesus pelas mãos de Maria, segundo o método de São Luís de Montfort.",
+    "durationDays": 33,
+    "category": "marian",
+    "content": [
+      {
+        "dayNumber": 1,
+        "title": "Conhecimento de Si Mesmo — Dia 1",
+        "readingText": "Senhor, Tu me sondas e me conheces. (Sl 139,1)\n\nA primeira etapa da consagração é o conhecimento de si mesmo. Precisamos reconhecer nossa miséria e nossa necessidade de Deus para nos entregarmos totalmente a Maria.\n\nOração: Ó Espírito Santo, dai-me a graça de me conhecer como sou, sem máscaras nem ilusões, para que possa me entregar com sinceridade a Jesus pelas mãos de Maria.",
+        "reflectionPrompt": "Quais são as áreas da minha vida que ainda não entreguei completamente a Deus?"
+      },
+      {
+        "dayNumber": 2,
+        "title": "Conhecimento de Si Mesmo — Dia 2",
+        "readingText": "Sem mim nada podeis fazer. (Jo 15,5)\n\nReconheçamos nossa total dependência de Deus. Sozinhos, nada podemos. Mas unidos a Cristo pela intercessão de Maria, tudo podemos nAquele que nos fortalece.",
+        "reflectionPrompt": "Em que momentos tendo a confiar mais em minhas forças do que na graça de Deus?"
+      },
+      {
+        "dayNumber": 3,
+        "title": "Conhecimento de Si Mesmo — Dia 3",
+        "readingText": "Tende em vós os mesmos sentimentos que havia em Cristo Jesus. (Fl 2,5)\n\nSão Luís de Montfort ensina que Maria é o molde perfeito de Cristo. Quando nos consagramos a ela, deixamo-nos moldar para sermos cada vez mais semelhantes a Jesus.",
+        "reflectionPrompt": "Que sentimentos de Cristo preciso cultivar mais em minha vida?"
+      },
+      {
+        "dayNumber": 4,
+        "title": "Conhecimento de Si Mesmo — Dia 4",
+        "readingText": "Criai em mim, ó Deus, um coração puro, e renovai dentro de mim um espírito firme. (Sl 51,12)\n\nPeçamos a purificação interior necessária para nos consagrarmos de todo coração. Sem pureza de intenção, nossa entrega não será completa.",
+        "reflectionPrompt": "Que pecados habituais preciso combater para me preparar para esta consagração?"
+      },
+      {
+        "dayNumber": 5,
+        "title": "Conhecimento do Mundo — Dia 1",
+        "readingText": "Não ameis o mundo, nem o que há no mundo. Se alguém ama o mundo, o amor do Pai não está nele. (1Jo 2,15)\n\nNa segunda etapa, precisamos nos desprender das seduções do mundo que nos afastam de Deus. Não se trata de odiar a criação, mas de não nos apegarmos às coisas passageiras.",
+        "reflectionPrompt": "A que coisas mundanas estou apegado que podem me impedir de me consagrar plenamente?"
+      },
+      {
+        "dayNumber": 6,
+        "title": "Conhecimento do Mundo — Dia 2",
+        "readingText": "Que aproveita ao homem ganhar o mundo inteiro, se perde a sua alma? (Mc 8,36)\n\nO mundo oferece prazeres passageiros, mas a verdadeira felicidade está em Deus. Maria viveu desprendida de tudo, apegada apenas ao seu Filho.",
+        "reflectionPrompt": "Minhas prioridades refletem os valores do Evangelho ou do mundo?"
+      },
+      {
+        "dayNumber": 7,
+        "title": "Conhecimento do Mundo — Dia 3",
+        "readingText": "Vós sois a luz do mundo. Não se pode esconder uma cidade situada sobre um monte. (Mt 5,14)\n\nEmbora vivamos no mundo, somos chamados a ser luz. Consagrar-se a Maria nos ajuda a viver no mundo sem ser do mundo.",
+        "reflectionPrompt": "Como posso ser luz para as pessoas ao meu redor?"
+      },
+      {
+        "dayNumber": 8,
+        "title": "Conhecimento de Maria — Dia 1",
+        "readingText": "O anjo lhe disse: Não temas, Maria, pois encontraste graça diante de Deus. (Lc 1,30)\n\nNa terceira etapa, conhecemos Maria para melhor nos consagrar a ela. Maria é a criatura mais perfeita, cheia de graça, modelo de todas as virtudes.",
+        "reflectionPrompt": "Qual virtude de Maria mais me inspira e por quê?"
+      },
+      {
+        "dayNumber": 9,
+        "title": "Conhecimento de Maria — Dia 2",
+        "readingText": "Eis aqui a serva do Senhor. Faça-se em mim segundo a tua palavra. (Lc 1,38)\n\nA humildade de Maria é a base de todas as suas virtudes. Ela se reconhece como serva e se submete totalmente à vontade divina.",
+        "reflectionPrompt": "Sou humilde o suficiente para me deixar guiar por Maria?"
+      },
+      {
+        "dayNumber": 10,
+        "title": "Conhecimento de Maria — Dia 3",
+        "readingText": "Todos eles perseveravam unanimemente em oração, com as mulheres, entre as quais Maria, mãe de Jesus. (At 1,14)\n\nMaria estava no Cenáculo com os apóstolos, perseverando em oração. Ela é a Mãe da Igreja, presente onde seus filhos se reúnem para orar.",
+        "reflectionPrompt": "Minha vida de oração inclui a presença e intercessão de Maria?"
+      },
+      {
+        "dayNumber": 11,
+        "title": "Conhecimento de Maria — Dia 4",
+        "readingText": "Assim como todos morrem em Adão, assim também todos serão vivificados em Cristo. (1Cor 15,22)\n\nMaria é a Nova Eva. Se por Eva veio a ruína, por Maria veio a Salvação. São Luís de Montfort nos ensina que Maria é o caminho mais seguro para chegarmos a Jesus.",
+        "reflectionPrompt": "Confio verdadeiramente em Maria como caminho para Jesus?"
+      },
+      {
+        "dayNumber": 12,
+        "title": "Conhecimento de Jesus — Dia 1",
+        "readingText": "Eu sou o Caminho, a Verdade e a Vida. Ninguém vai ao Pai senão por mim. (Jo 14,6)\n\nNa última etapa, contemplamos Jesus, a quem nos consagramos pelas mãos de Maria. Toda consagração mariana é, na verdade, uma consagração a Cristo.",
+        "reflectionPrompt": "Jesus é verdadeiramente o centro da minha vida espiritual?"
+      },
+      {
+        "dayNumber": 13,
+        "title": "Conhecimento de Jesus — Dia 2",
+        "readingText": "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei. (Mt 11,28)\n\nJesus nos chama com ternura. Ele não quer que carreguemos sozinhos nossos fardos. Maria nos conduz a Ele para que encontremos descanso.",
+        "reflectionPrompt": "Levo meus fardos a Jesus ou insisto em carregá-los sozinho?"
+      },
+      {
+        "dayNumber": 14,
+        "title": "Conhecimento de Jesus — Dia 3",
+        "readingText": "Assim como o Pai me amou, também eu vos amei. Permanecei no meu amor. (Jo 15,9)\n\nO amor de Jesus por nós é incondicional e eterno. Consagrar-se a Maria é mergulhar mais profundamente neste amor, deixando-se amar por Cristo.",
+        "reflectionPrompt": "Permito que o amor de Cristo transforme verdadeiramente minha vida?"
+      },
+      {
+        "dayNumber": 15,
+        "title": "Conhecimento de Jesus — Dia 4",
+        "readingText": "Ninguém tem maior amor do que aquele que dá a vida pelos amigos. (Jo 15,13)\n\nJesus deu Sua vida na cruz por amor a nós. Contemplemos a magnitude deste sacrifício e deixemos que ele nos transforme interiormente.",
+        "reflectionPrompt": "Estou disposto a dar minha vida — meu tempo, meus talentos, minha vontade — por amor a Cristo?"
+      },
+      {
+        "dayNumber": 16,
+        "title": "Semana de Preparação Final — Dia 1",
+        "readingText": "Nas últimas semanas, preparamos nosso coração para o ato de consagração. Renovemos nosso desejo de pertencer totalmente a Jesus por Maria.\n\nOração: Ó Maria, prepara meu coração para o ato de entrega total. Ensina-me a humildade, a confiança e o amor que preciso para me consagrar de todo coração.",
+        "reflectionPrompt": "Meu coração está verdadeiramente preparado para esta entrega?"
+      },
+      {
+        "dayNumber": 17,
+        "title": "Semana de Preparação Final — Dia 2",
+        "readingText": "Dou-te graças, Pai, Senhor do céu e da terra, porque escondeste estas coisas aos sábios e entendidos e as revelaste aos pequeninos. (Mt 11,25)\n\nA consagração requer coração de criança: simples, confiante, aberto. Maria nos ensina esta disposição interior.",
+        "reflectionPrompt": "Tenho coração de criança diante de Deus?"
+      },
+      {
+        "dayNumber": 18,
+        "title": "Semana de Preparação Final — Dia 3",
+        "readingText": "Já não sou eu que vivo, mas é Cristo que vive em mim. (Gl 2,20)\n\nA consagração é um ato de morte ao ego e de vida em Cristo. Por Maria, entregamos tudo: nossos méritos, nossas orações, nossas obras.",
+        "reflectionPrompt": "Estou disposto a entregar até mesmo meus méritos espirituais a Maria para que ela os distribua como quiser?"
+      },
+      {
+        "dayNumber": 19,
+        "title": "Semana de Preparação Final — Dia 4",
+        "readingText": "Tudo posso naquele que me fortalece. (Fl 4,13)\n\nCom Deus, tudo é possível. A consagração não é fruto de nosso esforço, mas da graça divina que age em nós pela intercessão de Maria.",
+        "reflectionPrompt": "Confio na graça de Deus mais do que em minhas próprias forças?"
+      },
+      {
+        "dayNumber": 20,
+        "title": "Semana de Preparação Final — Dia 5",
+        "readingText": "Eis aqui a serva do Senhor. Faça-se em mim segundo a tua palavra. (Lc 1,38)\n\nRepetimos o 'sim' de Maria. Que nosso 'sim' seja total, sem reservas, sem condições. Que possamos dizer com sinceridade: 'Tudo é Teu, Maria.'",
+        "reflectionPrompt": "Há alguma reserva em meu coração que preciso abandonar antes da consagração?"
+      },
+      {
+        "dayNumber": 21,
+        "title": "Semana de Preparação Final — Dia 6",
+        "readingText": "O Senhor é o meu pastor, nada me faltará. (Sl 23,1)\n\nCom Jesus como nosso pastor e Maria como nossa mãe, nada nos faltará. A consagração é um ato de confiança radical na providência divina.",
+        "reflectionPrompt": "Em que áreas da minha vida preciso confiar mais na providência de Deus?"
+      },
+      {
+        "dayNumber": 22,
+        "title": "Véspera da Consagração — Dia 1",
+        "readingText": "Hoje entramos na reta final de nossa preparação. Releiamos a fórmula de consagração e preparemos nosso coração com uma boa confissão, se possível.\n\nSão Luís de Montfort recomenda que a consagração seja feita em uma festa mariana. Mas o mais importante é a disposição do coração.",
+        "reflectionPrompt": "Fiz uma boa confissão recentemente? Meu coração está limpo para este ato de entrega?"
+      },
+      {
+        "dayNumber": 23,
+        "title": "Véspera da Consagração — Dia 2",
+        "readingText": "Permanecei em mim e eu permanecerei em vós. Como o ramo não pode dar fruto por si mesmo, se não permanecer na videira, assim também vós, se não permanecerdes em mim. (Jo 15,4)\n\nA consagração não é um ato isolado, mas o início de uma vida de entrega diária. Renovaremos esta consagração todos os dias.",
+        "reflectionPrompt": "Estou preparado para viver esta consagração como compromisso diário?"
+      },
+      {
+        "dayNumber": 24,
+        "title": "Véspera da Consagração — Dia 3",
+        "readingText": "Amanhã faremos o ato de consagração. Hoje, passemos o dia em recolhimento e oração.\n\nPeçamos a Maria que nos ajude a viver plenamente este momento. Que nossa entrega seja sincera, total e definitiva, sabendo que Maria nos conduzirá sempre mais perto de seu Filho.",
+        "reflectionPrompt": "Que sentimentos preenchem meu coração nesta véspera da consagração?"
+      },
+      {
+        "dayNumber": 25,
+        "title": "Dia da Consagração",
+        "readingText": "FÓRMULA DE CONSAGRAÇÃO (São Luís de Montfort):\n\nÓ Sabedoria eterna e encarnada! Ó dulcíssimo e adorável Jesus! Verdadeiro Deus e verdadeiro homem, Filho único do Pai Eterno e de Maria sempre Virgem.\n\nEu Vos adoro profundamente no seio e nos esplendores de Vosso Pai, durante a eternidade; e no seio virginal de Maria, Vossa digníssima Mãe, no tempo de Vossa encarnação.\n\nDou-Vos graças por Vos haverdes aniquilado, tomando a forma de escravo para me arrancar da servidão cruel do demônio. Eu Vos louvo e glorifico por Vos haverdes querido submeter em tudo a Maria, Vossa Santa Mãe, a fim de me tornardes por ela, Vosso fiel escravo.\n\nRenuncio para sempre, com o auxílio de Vossa graça, ao demônio, ao mundo e ao pecado. Entrego-me inteiramente a Jesus Cristo, para carregar a minha cruz todos os dias.\n\nDou-Vos, ó Maria, todo o valor de todas as minhas boas obras. Sou todo vosso e tudo o que tenho Vos dou. Amém.",
+        "reflectionPrompt": "Pronuncie a consagração com todo o coração. Como se sente após este ato de entrega?"
+      },
+      {
+        "dayNumber": 26,
+        "title": "Pós-Consagração — Dia 1",
+        "readingText": "Parabéns! Você fez sua consagração a Jesus pelas mãos de Maria. Agora começa a jornada de viver esta consagração no dia a dia.\n\nSão Luís de Montfort recomenda renovar a consagração mentalmente todos os dias, especialmente ao acordar: 'Sou todo teu, Maria, e tudo o que tenho é teu.'",
+        "reflectionPrompt": "Como vou integrar esta consagração na minha rotina diária?"
+      },
+      {
+        "dayNumber": 27,
+        "title": "Pós-Consagração — Dia 2",
+        "readingText": "Viver a consagração significa fazer tudo por Maria, com Maria, em Maria e para Maria.\n\nPOR Maria: oferecendo cada ação a ela.\nCOM Maria: imitando suas virtudes.\nEM Maria: vivendo em sua presença.\nPARA Maria: para a glória de Deus.",
+        "reflectionPrompt": "Qual destes quatro aspectos preciso desenvolver mais?"
+      },
+      {
+        "dayNumber": 28,
+        "title": "Pós-Consagração — Dia 3",
+        "readingText": "A verdadeira devoção a Maria é interior, terna, santa e constante. Não é uma devoção sentimental nem superficial, mas profunda e transformadora.\n\nMaria nos leva a Jesus. Se nos aproximamos mais de Maria, inevitavelmente nos aproximamos mais de Cristo.",
+        "reflectionPrompt": "Minha devoção a Maria me aproxima de Jesus?"
+      },
+      {
+        "dayNumber": 29,
+        "title": "Pós-Consagração — Dia 4",
+        "readingText": "Uma das práticas recomendadas por São Luís é rezar o Rosário diariamente. O Rosário é a oração que nos mantém unidos a Maria enquanto contemplamos os mistérios da vida de Cristo.",
+        "reflectionPrompt": "Tenho o compromisso de rezar o Rosário diariamente como expressão da minha consagração?"
+      },
+      {
+        "dayNumber": 30,
+        "title": "Pós-Consagração — Dia 5",
+        "readingText": "Outra prática é o Santo Escapulário de Nossa Senhora do Carmo. O escapulário é um sinal exterior da consagração interior, um compromisso de pertencer a Maria e ser protegido por ela.",
+        "reflectionPrompt": "Uso o escapulário ou algum sinal exterior da minha consagração?"
+      },
+      {
+        "dayNumber": 31,
+        "title": "Pós-Consagração — Dia 6",
+        "readingText": "Os sacramentos são essenciais na vida do consagrado. A Confissão frequente purifica nossa alma, e a Eucaristia nos alimenta. Maria nos conduz aos sacramentos como fontes de graça.",
+        "reflectionPrompt": "Frequento regularmente os sacramentos da Confissão e da Eucaristia?"
+      },
+      {
+        "dayNumber": 32,
+        "title": "Pós-Consagração — Dia 7",
+        "readingText": "A consagração é também apostólica. Maria deseja que levemos outros a Cristo. Compartilhemos nossa fé e nossa experiência da consagração com aqueles ao nosso redor.",
+        "reflectionPrompt": "Como posso ajudar outros a conhecerem e amarem Maria?"
+      },
+      {
+        "dayNumber": 33,
+        "title": "Conclusão — Totus Tuus",
+        "readingText": "TOTUS TUUS — Sou todo teu, Maria!\n\nEste lema de São João Paulo II resume toda a consagração. Ao longo destes 33 dias, preparamos nosso coração, conhecemos a nós mesmos, ao mundo, a Maria e a Jesus.\n\nAgora, renovemos diariamente esta entrega. Maria é nossa Mãe, nossa Rainha, nosso caminho seguro para Jesus. Que ela nos conduza sempre mais perto de seu Filho.\n\nOração final: Ó Maria, Mãe minha e minha Senhora, sou todo vosso e tudo o que tenho é vosso. Guardai-me e protegei-me como coisa e propriedade vossa. Amém.",
+        "reflectionPrompt": "Ao concluir estes 33 dias, que compromisso concreto faço para viver minha consagração?"
+      }
+    ]
+  },
+  {
+    "id": "primeiras_sextas",
+    "title": "Primeiras Sextas-Feiras",
+    "description": "Devoção ao Sagrado Coração de Jesus nas nove primeiras sextas-feiras do mês, conforme as promessas feitas a Santa Margarida Maria Alacoque.",
+    "durationDays": 9,
+    "category": "general",
+    "content": [
+      {
+        "dayNumber": 1,
+        "title": "Primeira Sexta-Feira — O Amor do Coração de Jesus",
+        "readingText": "Eis aqui este Coração que tanto amou os homens, que nada poupou até se esgotar e consumir para lhes testemunhar o seu amor.\n\nNa primeira sexta-feira, contemplamos o amor infinito do Sagrado Coração de Jesus. Ele nos ama com amor eterno e incondicional. Comungue hoje em reparação pelos pecados contra o Coração de Jesus.",
+        "reflectionPrompt": "Correspondo ao amor do Coração de Jesus com minha própria entrega?"
+      },
+      {
+        "dayNumber": 2,
+        "title": "Segunda Sexta-Feira — O Coração Misericordioso",
+        "readingText": "Tende compaixão de mim, ó Deus, segundo a Vossa grande misericórdia. (Sl 51,3)\n\nO Coração de Jesus é fonte inesgotável de misericórdia. Ele nunca se cansa de perdoar. Aproxime-se hoje do Sacramento da Confissão e comungue com fervor.",
+        "reflectionPrompt": "Aceito a misericórdia de Jesus sem reservas?"
+      },
+      {
+        "dayNumber": 3,
+        "title": "Terceira Sexta-Feira — O Coração Reparador",
+        "readingText": "Eu darei a graça de tocar os corações mais endurecidos.\n\nJesus promete que a devoção ao Seu Sagrado Coração tem o poder de converter até os corações mais endurecidos. Ofereça hoje sua comunhão pela conversão dos pecadores.",
+        "reflectionPrompt": "Por quem devo rezar hoje, pedindo a conversão?"
+      },
+      {
+        "dayNumber": 4,
+        "title": "Quarta Sexta-Feira — A Paz do Coração de Jesus",
+        "readingText": "Eu lhes darei a paz em suas famílias.\n\nO Coração de Jesus é fonte de paz. Ele promete paz especial às famílias que praticam esta devoção. Entronize o Sagrado Coração em seu lar.",
+        "reflectionPrompt": "Minha família está consagrada ao Sagrado Coração de Jesus?"
+      },
+      {
+        "dayNumber": 5,
+        "title": "Quinta Sexta-Feira — A Consolação do Coração de Jesus",
+        "readingText": "Eu os consolarei em todas as suas aflições.\n\nJesus promete consolação em todas as tribulações. Em tempos de sofrimento, refugiemo-nos no Coração de Jesus. Ele enxuga toda lágrima.",
+        "reflectionPrompt": "Busco consolação no Coração de Jesus ou em coisas passageiras?"
+      },
+      {
+        "dayNumber": 6,
+        "title": "Sexta Sexta-Feira — O Coração como Refúgio",
+        "readingText": "Os pecadores encontrarão no meu Coração a fonte e o oceano infinito da misericórdia.\n\nO Coração de Jesus é nosso refúgio seguro. Ali encontramos abrigo contra as tempestades da vida, força contra as tentações, esperança contra o desespero.",
+        "reflectionPrompt": "Refugio-me frequentemente no Coração de Jesus?"
+      },
+      {
+        "dayNumber": 7,
+        "title": "Sétima Sexta-Feira — O Fervor Renovado",
+        "readingText": "As almas tíbias tornar-se-ão fervorosas.\n\nJesus promete renovar nosso fervor espiritual. Se nossa vida de oração está morna, a devoção ao Sagrado Coração pode reacender a chama.",
+        "reflectionPrompt": "Minha vida espiritual está fervorosa ou tíbia? O que preciso mudar?"
+      },
+      {
+        "dayNumber": 8,
+        "title": "Oitava Sexta-Feira — A Santificação",
+        "readingText": "As almas fervorosas elevar-se-ão rapidamente a uma grande perfeição.\n\nO Coração de Jesus é escola de santidade. Ali aprendemos o amor verdadeiro, a humildade, a mansidão e todas as virtudes.",
+        "reflectionPrompt": "Desejo verdadeiramente a santidade? Que passos concretos estou dando?"
+      },
+      {
+        "dayNumber": 9,
+        "title": "Nona Sexta-Feira — A Grande Promessa",
+        "readingText": "A Grande Promessa: Eu te prometo, na superabundância da misericórdia do meu Coração, que o meu amor todo-poderoso concederá a todos aqueles que comungarem nas nove primeiras sextas-feiras do mês, consecutivamente, a graça da perseverança final. Eles não morrerão em minha desgraça, nem sem receber os sacramentos. O meu divino Coração será o seu seguro refúgio naquela hora suprema.\n\nParabéns! Você completou as nove primeiras sextas-feiras. Que o Sagrado Coração de Jesus seja sempre seu refúgio e sua força.",
+        "reflectionPrompt": "Como vou continuar vivendo a devoção ao Sagrado Coração de Jesus após completar esta prática?"
+      }
+    ]
+  }
+]

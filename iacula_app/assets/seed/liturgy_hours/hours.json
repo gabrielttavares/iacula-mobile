@@ -1,0 +1,128 @@
+[
+  {
+    "type": "laudes",
+    "psalterWeek": 1,
+    "dayOfWeek": 7,
+    "sections": [
+      {
+        "type": "invitatory",
+        "title": "Invitatório",
+        "content": "Senhor, abri os meus lábios.\n— E a minha boca anunciará o vosso louvor.\n\nAntífona: O Senhor é o grande Rei: vinde, adoremo-lo.",
+        "antiphon": "O Senhor é o grande Rei: vinde, adoremo-lo."
+      },
+      {
+        "type": "hymn",
+        "title": "Hino",
+        "content": "Aurora, sol nascente,\nLuz que nos vem do Pai,\nJesus Cristo, esplendor do mundo,\nIluminai nossos corações.\n\nA manhã desponta clara,\nO dia nasce em fulgor,\nDai-nos, Senhor, a graça\nDe viver em vosso amor.\n\nQue nossas vozes se elevem\nEm louvor e adoração,\nE que nossas obras mostrem\nA beleza da criação. Amém."
+      },
+      {
+        "type": "psalm",
+        "title": "Salmo 63 (62)",
+        "antiphon": "Na sombra das vossas asas exulto de alegria.",
+        "reference": "Sl 63,2-9",
+        "content": "Ó Deus, vós sois o meu Deus, eu vos procuro.\nA minha alma tem sede de vós,\na vós aspira a minha carne,\ncomo terra seca, esgotada, sem água.\n\nAssim eu vos contemplava no santuário,\npara ver a vossa glória e o vosso poder.\n\nPois a vossa graça vale mais do que a vida;\nos meus lábios proclamam o vosso louvor.\n\nAssim eu vos bendirei enquanto viver,\nem vosso nome erguerei as minhas mãos.\n\nA minha alma será saciada como de gordura e manjar,\ne com lábios de alegria a minha boca vos louvará.\n\nQuando, em meu leito, me lembro de vós,\na vós penso nas vigílias da noite.\n\nPorque vós sois o meu auxílio,\nna sombra das vossas asas exulto de alegria.\n\nA vós se apega a minha alma,\na vossa mão direita me sustém."
+      },
+      {
+        "type": "canticle",
+        "title": "Cântico — Daniel 3,57-88",
+        "antiphon": "Louvai e exaltai o Senhor pelos séculos.",
+        "content": "Bendizei, obras todas do Senhor, o Senhor,\nlouvai-o e exaltai-o para sempre.\n\nBendizei, anjos do Senhor, o Senhor.\nBendizei, céus, o Senhor.\nBendizei, águas todas que estais sobre os céus, o Senhor.\nBendizei, potências todas do Senhor, o Senhor.\n\nBendizei, sol e lua, o Senhor.\nBendizei, estrelas do céu, o Senhor.\nBendizei, chuvas e orvalhos, o Senhor.\nBendizei, ventos todos, o Senhor.\n\nBendizei, filhos dos homens, o Senhor,\nlouvai-o e exaltai-o para sempre."
+      },
+      {
+        "type": "psalm",
+        "title": "Salmo 149",
+        "antiphon": "Cantai ao Senhor um cântico novo.",
+        "reference": "Sl 149",
+        "content": "Cantai ao Senhor um cântico novo;\no seu louvor na assembleia dos fiéis.\n\nAlegre-se Israel no seu Criador,\nexultem os filhos de Sião no seu Rei.\n\nLouvem o seu nome com danças,\ncantem-lhe ao som do pandeiro e da cítara.\n\nPorque o Senhor ama o seu povo\ne coroa os humildes com a vitória."
+      },
+      {
+        "type": "reading",
+        "title": "Leitura Breve",
+        "reference": "Ap 7,10.12",
+        "content": "A salvação pertence ao nosso Deus, que está sentado no trono, e ao Cordeiro. Amém. Louvor e glória, sabedoria e ação de graças, honra, poder e força ao nosso Deus, pelos séculos dos séculos. Amém."
+      },
+      {
+        "type": "responsory",
+        "title": "Responsório",
+        "content": "Cristo, Filho do Deus vivo, tende piedade de nós.\n— Cristo, Filho do Deus vivo, tende piedade de nós.\nVós que estais sentado à direita do Pai,\n— Tende piedade de nós.\nGlória ao Pai e ao Filho e ao Espírito Santo.\n— Cristo, Filho do Deus vivo, tende piedade de nós."
+      },
+      {
+        "type": "canticle",
+        "title": "Cântico de Zacarias — Benedictus",
+        "reference": "Lc 1,68-79",
+        "antiphon": "Bendito seja o Senhor Deus de Israel.",
+        "content": "Bendito seja o Senhor, Deus de Israel,\nporque visitou e redimiu o seu povo.\n\nE nos suscitou um poderoso Salvador\nna casa de Davi, seu servo.\n\nComo havia prometido\npela boca dos seus santos profetas desde os tempos antigos,\n\npara nos salvar dos nossos inimigos\ne da mão de todos os que nos odeiam.\n\nPara usar de misericórdia com os nossos pais\ne lembrar-se da sua santa aliança.\n\nDo juramento que fez a Abraão, nosso pai,\nde nos conceder que,\nlibertos da mão dos inimigos,\no sirvamos sem temor,\n\nem santidade e justiça perante ele,\ntodos os dias da nossa vida.\n\nE tu, menino, serás chamado profeta do Altíssimo,\npois irás adiante do Senhor para preparar os seus caminhos,\n\npara dar ao seu povo o conhecimento da salvação\npelo perdão dos pecados,\n\ngraças ao misericordioso coração do nosso Deus,\npelo qual nos visitará o Sol nascente das alturas,\n\npara iluminar os que estão nas trevas e na sombra da morte,\ne dirigir os nossos passos no caminho da paz."
+      },
+      {
+        "type": "intercessions",
+        "title": "Preces",
+        "content": "Cristo é o sol que não conhece ocaso. Invoquemo-lo com fé:\n\nSenhor, sede a nossa luz e a nossa salvação.\n\n— Criador da luz e autor do dia, iluminai este dia que começa com a vossa bênção.\n— Vós que ressuscitastes gloriosamente dos mortos, ressuscitai-nos hoje para a vida nova.\n— Dai-nos o vosso Espírito Santo, para que caminhemos dignamente perante vós.\n— Concedei-nos trabalhar hoje com alegria e espírito de serviço.\n\nPai Nosso..."
+      },
+      {
+        "type": "collect",
+        "title": "Oração Conclusiva",
+        "content": "Deus todo-poderoso e eterno, que nos concedestes chegar ao início deste novo dia, salvai-nos hoje com o vosso poder, para que neste dia não caiamos em nenhum pecado, mas que todas as nossas palavras, pensamentos e obras se orientem para o cumprimento da vossa justiça. Por Nosso Senhor Jesus Cristo, vosso Filho, que convosco vive e reina na unidade do Espírito Santo, Deus, por todos os séculos dos séculos. Amém."
+      }
+    ]
+  },
+  {
+    "type": "vesperas",
+    "psalterWeek": 1,
+    "dayOfWeek": 7,
+    "sections": [
+      {
+        "type": "hymn",
+        "title": "Hino",
+        "content": "Ó luz serena da eterna glória,\nJesus Cristo, nosso Senhor!\nChegando ao pôr do sol,\nvendo a luz da tarde,\ncantamos ao Pai, ao Filho\ne ao Espírito Santo de Deus.\n\nDigno sois em todo tempo\nde ser louvado com vozes santas,\nÓ Filho de Deus que dais a vida.\nPor isso o mundo vos glorifica. Amém."
+      },
+      {
+        "type": "psalm",
+        "title": "Salmo 110 (109),1-5.7",
+        "antiphon": "O Senhor disse ao meu Senhor: sentai-vos à minha direita.",
+        "reference": "Sl 110",
+        "content": "O Senhor disse ao meu Senhor:\n\"Sentai-vos à minha direita,\naté que eu ponha os vossos inimigos\ncomo escabelo dos vossos pés.\"\n\nO Senhor estenderá de Sião\no cetro do vosso poder:\n\"Dominai no meio dos vossos inimigos!\"\n\nConvosco está a realeza\nno dia do vosso poder,\nnos esplendores da santidade:\n\"Eu vos gerei antes da aurora.\"\n\nO Senhor jurou e não se arrependerá:\n\"Vós sois sacerdote eternamente,\nsegundo a ordem de Melquisedec.\"\n\nÀ beira do caminho beberá do ribeiro,\npor isso erguerá a cabeça."
+      },
+      {
+        "type": "psalm",
+        "title": "Salmo 114 (113A)",
+        "antiphon": "Aleluia, aleluia, aleluia.",
+        "reference": "Sl 114",
+        "content": "Quando Israel saiu do Egito,\na casa de Jacó de um povo bárbaro,\nJudá tornou-se o seu santuário,\nIsrael o seu domínio.\n\nO mar viu e fugiu,\no Jordão retrocedeu.\nOs montes saltaram como carneiros,\ne as colinas como cordeiros.\n\nQue tens tu, ó mar, que foges?\nE tu, Jordão, por que retrocedes?\nMontanhas, por que saltais como carneiros,\ne vós, colinas, como cordeiros?\n\nTremei, terra, diante do Senhor,\ndiante do Deus de Jacó,\nque transforma a rocha em lago de água,\ne o seixo em fonte perene."
+      },
+      {
+        "type": "canticle",
+        "title": "Cântico — Apocalipse 19,1-7",
+        "antiphon": "Aleluia! O Senhor nosso Deus todo-poderoso reina.",
+        "content": "Aleluia!\nA salvação, a glória e o poder são do nosso Deus,\nporque verdadeiros e justos são os seus julgamentos.\n\nAleluia!\nLouvai o nosso Deus, vós todos, seus servos,\ne vós que o temeis, pequenos e grandes!\n\nAleluia!\nPorque o Senhor, nosso Deus todo-poderoso, reina!\nAlegremo-nos e exultemos e demos-lhe glória!\n\nAleluia!\nPorque chegou as núpcias do Cordeiro\ne a sua esposa se preparou."
+      },
+      {
+        "type": "reading",
+        "title": "Leitura Breve",
+        "reference": "2Cor 1,3-4",
+        "content": "Bendito seja o Deus e Pai de Nosso Senhor Jesus Cristo, o Pai das misericórdias e o Deus de toda consolação. É ele que nos conforta em toda a nossa tribulação, para que possamos consolar os que estão em qualquer tribulação, com o conforto que nós mesmos recebemos de Deus."
+      },
+      {
+        "type": "responsory",
+        "title": "Responsório",
+        "content": "Como o incenso suba a vós a minha oração, Senhor.\n— Como o incenso suba a vós a minha oração, Senhor.\nAs minhas mãos erguidas como oferenda da tarde.\n— A minha oração, Senhor.\nGlória ao Pai e ao Filho e ao Espírito Santo.\n— Como o incenso suba a vós a minha oração, Senhor."
+      },
+      {
+        "type": "canticle",
+        "title": "Cântico de Maria — Magnificat",
+        "reference": "Lc 1,46-55",
+        "antiphon": "A minha alma engrandece o Senhor.",
+        "content": "A minha alma engrandece o Senhor,\ne o meu espírito exulta em Deus, meu Salvador.\n\nPorque olhou para a humildade da sua serva.\nDoravante, todas as gerações me chamarão bem-aventurada.\n\nPorque o Todo-Poderoso fez grandes coisas em meu favor.\nSanto é o seu nome.\n\nA sua misericórdia se estende de geração em geração\nsobre os que o temem.\n\nManifestou o poder do seu braço\ne dispersou os soberbos de coração.\n\nDerrubou os poderosos de seus tronos\ne exaltou os humildes.\n\nEncheu de bens os famintos\ne despediu os ricos de mãos vazias.\n\nAcolheu Israel, seu servo,\nlembrando-se da sua misericórdia,\n\nconforme havia prometido a nossos pais,\nem favor de Abraão e sua descendência para sempre."
+      },
+      {
+        "type": "intercessions",
+        "title": "Preces",
+        "content": "Cristo é a alegria e a luz de todos os que nele confiam. Com fervor, supliquemos-lhe:\n\nSenhor, sede a nossa luz.\n\n— Senhor Jesus, sol de justiça, sede para os moribundos a luz sem ocaso.\n— Guardai a vossa aliança selada com o sangue precioso.\n— Concedei aos viajantes chegarem felizes ao destino.\n— Abri os olhos dos cegos do corpo e do espírito.\n— Acolhei os defuntos na luz perpétua do vosso rosto.\n\nPai Nosso..."
+      },
+      {
+        "type": "collect",
+        "title": "Oração Conclusiva",
+        "content": "Senhor nosso Deus, ao chegar o final deste dia, nós vos pedimos que a nossa oração vespertina suba até vós como incenso agradável. Iluminai a nossa noite e fazei que, após o repouso noturno, possamos levantar-nos renovados para cantar os vossos louvores. Por Nosso Senhor Jesus Cristo. Amém."
+      }
+    ]
+  }
+]

@@ -80,6 +80,11 @@ flutter:
     - assets/seed/audio/
     - assets/seed/meditations/
     - assets/seed/doctrina/pt-br/
+    - assets/seed/rosary/
+    - assets/seed/challenges/
+    - assets/seed/journal_prompts/
+    - assets/seed/night_prayer/
+    - assets/seed/liturgy_hours/
 
 
 dependency_overrides:

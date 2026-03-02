@@ -8,6 +8,7 @@ enum ReminderEventType {
   customMeditationAlarm,
   customPhrase,
   prayerIntentionReminder,
+  challengeDaily,
 }
 
 enum NotificationRouteTarget {
@@ -15,6 +16,11 @@ enum NotificationRouteTarget {
   prayer,
   alarm,
   prayerIntention,
+  nightPrayer,
+  liturgyHours,
+  challenges,
+  rosary,
+  journal,
 }
 
 final class ReminderEvent {
@@ -126,12 +132,13 @@ final class ReminderEvent {
       ReminderEventType.quoteInterval => NotificationRouteTarget.home,
       ReminderEventType.angelusNoon => NotificationRouteTarget.prayer,
       ReminderEventType.laudes ||
-      ReminderEventType.vespers ||
-      ReminderEventType.compline ||
+      ReminderEventType.vespers => NotificationRouteTarget.liturgyHours,
+      ReminderEventType.compline => NotificationRouteTarget.nightPrayer,
       ReminderEventType.oraMedia ||
       ReminderEventType.customMeditationAlarm ||
       ReminderEventType.customPhrase => NotificationRouteTarget.home,
       ReminderEventType.prayerIntentionReminder => NotificationRouteTarget.prayerIntention,
+      ReminderEventType.challengeDaily => NotificationRouteTarget.challenges,
     };
   }
 }

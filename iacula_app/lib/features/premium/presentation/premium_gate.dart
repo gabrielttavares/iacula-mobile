@@ -41,7 +41,16 @@ class PremiumGate extends ConsumerWidget {
 
   static bool _isPremiumFeature(PremiumFeature value) {
     return switch (value) {
-      PremiumFeature.meditation || PremiumFeature.planOfLife => true,
+      PremiumFeature.meditation ||
+      PremiumFeature.planOfLife ||
+      PremiumFeature.streakDashboard ||
+      PremiumFeature.rosary ||
+      PremiumFeature.challenges ||
+      PremiumFeature.journal ||
+      PremiumFeature.nightPrayer ||
+      PremiumFeature.liturgyOfHours ||
+      PremiumFeature.widgets =>
+        true,
     };
   }
 
@@ -107,6 +116,13 @@ class _LockedFallback extends StatelessWidget {
     return switch (value) {
       PremiumFeature.meditation => 'A Meditação',
       PremiumFeature.planOfLife => 'O Plano de vida',
+      PremiumFeature.streakDashboard => 'O Painel Espiritual',
+      PremiumFeature.rosary => 'O Rosário Guiado',
+      PremiumFeature.challenges => 'Os Desafios e Novenas',
+      PremiumFeature.journal => 'O Diário Espiritual',
+      PremiumFeature.nightPrayer => 'A Oração da Noite',
+      PremiumFeature.liturgyOfHours => 'A Liturgia das Horas',
+      PremiumFeature.widgets => 'Os Widgets',
     };
   }
 }
