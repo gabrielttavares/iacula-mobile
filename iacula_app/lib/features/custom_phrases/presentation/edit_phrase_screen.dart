@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
+import '../../../core/presentation/widgets/iacula_calendar_modal.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -436,23 +437,21 @@ class _DateSelector extends StatelessWidget {
     );
   }
 
-  void _showPicker(BuildContext context) {
-    IaculaModal.showSheet<void>(
+  void _showPicker(BuildContext context) async {
+    final dt = await IaculaModal.showSheet<DateTime>(
       context: context,
-      builder: (ctx) => SizedBox(
-        height: 250,
-        child: CupertinoDatePicker(
-          mode: CupertinoDatePickerMode.date,
-          initialDateTime: DateTime.now(),
-          onDateTimeChanged: (dt) {
-            final str = '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
-            if (!dates.contains(str)) {
-              onChanged(List.from(dates)..add(str));
-            }
-          },
-        ),
+      builder: (ctx) => IaculaCalendarModal(
+        initialDate: DateTime.now(),
       ),
     );
+
+    if (dt != null && context.mounted) {
+      final str =
+          '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+      if (!dates.contains(str)) {
+        onChanged(List.from(dates)..add(str));
+      }
+    }
   }
 
   String _formatDate(String iso) {
