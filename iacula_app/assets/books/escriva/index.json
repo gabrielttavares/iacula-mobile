@@ -1,0 +1,884 @@
+{
+  "books": [
+    {
+      "id": "caminho",
+      "title": "Caminho",
+      "author": "São Josemaría Escrivá",
+      "description": "Leituras de São Josemaría Escrivá",
+      "type": "points",
+      "assetPath": "assets/books/escriva/caminho.json",
+      "chapters": [
+        {
+          "slug": "prologo-do-autor",
+          "title": "escriva.org",
+          "kind": "intro"
+        },
+        {
+          "slug": "carater",
+          "title": "Caráter",
+          "kind": "points"
+        },
+        {
+          "slug": "direcao-espiritual",
+          "title": "Direção espiritual",
+          "kind": "points"
+        },
+        {
+          "slug": "oracao",
+          "title": "Oração",
+          "kind": "points"
+        },
+        {
+          "slug": "santa-pureza",
+          "title": "Santa Pureza",
+          "kind": "points"
+        },
+        {
+          "slug": "coracao",
+          "title": "Coração",
+          "kind": "points"
+        },
+        {
+          "slug": "mortificacao",
+          "title": "Mortificação",
+          "kind": "points"
+        },
+        {
+          "slug": "penitencia",
+          "title": "Penitência",
+          "kind": "points"
+        },
+        {
+          "slug": "exame-de-consciencia",
+          "title": "Exame de consciência",
+          "kind": "points"
+        },
+        {
+          "slug": "propositos",
+          "title": "Propósitos",
+          "kind": "points"
+        },
+        {
+          "slug": "escrupulos",
+          "title": "Escrúpulos",
+          "kind": "points"
+        },
+        {
+          "slug": "presenca-de-deus",
+          "title": "Presença de Deus",
+          "kind": "points"
+        },
+        {
+          "slug": "vida-sobrenatural",
+          "title": "Vida sobrenatural",
+          "kind": "points"
+        },
+        {
+          "slug": "mais-sobre-vida-interior",
+          "title": "Mais sobre vida interior",
+          "kind": "points"
+        },
+        {
+          "slug": "tibieza",
+          "title": "Tibieza",
+          "kind": "points"
+        },
+        {
+          "slug": "estudo",
+          "title": "Estudo",
+          "kind": "points"
+        },
+        {
+          "slug": "formacao",
+          "title": "Formação",
+          "kind": "points"
+        },
+        {
+          "slug": "o-plano-da-tua-santidade",
+          "title": "O plano da tua santidade",
+          "kind": "points"
+        },
+        {
+          "slug": "amor-de-deus",
+          "title": "Amor de Deus",
+          "kind": "points"
+        },
+        {
+          "slug": "caridade",
+          "title": "Caridade",
+          "kind": "points"
+        },
+        {
+          "slug": "os-meios",
+          "title": "Os meios",
+          "kind": "points"
+        },
+        {
+          "slug": "a-virgem-maria",
+          "title": "A Virgem Maria",
+          "kind": "points"
+        },
+        {
+          "slug": "a-igreja",
+          "title": "A Igreja",
+          "kind": "points"
+        },
+        {
+          "slug": "santa-missa",
+          "title": "Santa Missa",
+          "kind": "points"
+        },
+        {
+          "slug": "comunhao-dos-santos",
+          "title": "Comunhão dos Santos",
+          "kind": "points"
+        },
+        {
+          "slug": "devocoes",
+          "title": "Devoções",
+          "kind": "points"
+        },
+        {
+          "slug": "fe",
+          "title": "Fé",
+          "kind": "points"
+        },
+        {
+          "slug": "humildade",
+          "title": "Humildade",
+          "kind": "points"
+        },
+        {
+          "slug": "obediencia",
+          "title": "Obediência",
+          "kind": "points"
+        },
+        {
+          "slug": "pobreza",
+          "title": "Pobreza",
+          "kind": "points"
+        },
+        {
+          "slug": "discricao",
+          "title": "Discrição",
+          "kind": "points"
+        },
+        {
+          "slug": "alegria",
+          "title": "Alegria",
+          "kind": "points"
+        },
+        {
+          "slug": "outras-virtudes",
+          "title": "Outras virtudes",
+          "kind": "points"
+        },
+        {
+          "slug": "tribulacoes",
+          "title": "Tribulações",
+          "kind": "points"
+        },
+        {
+          "slug": "luta-interior",
+          "title": "Luta interior",
+          "kind": "points"
+        },
+        {
+          "slug": "novissimos",
+          "title": "Novíssimos",
+          "kind": "points"
+        },
+        {
+          "slug": "a-vontade-de-deus",
+          "title": "A Vontade de Deus",
+          "kind": "points"
+        },
+        {
+          "slug": "a-gloria-de-deus",
+          "title": "A Glória de Deus",
+          "kind": "points"
+        },
+        {
+          "slug": "proselitismo",
+          "title": "Proselitismo",
+          "kind": "points"
+        },
+        {
+          "slug": "pequenas-coisas",
+          "title": "Pequenas coisas",
+          "kind": "points"
+        },
+        {
+          "slug": "tatica",
+          "title": "Tática",
+          "kind": "points"
+        },
+        {
+          "slug": "infancia-espiritual",
+          "title": "Infância espiritual",
+          "kind": "points"
+        },
+        {
+          "slug": "vida-de-infancia",
+          "title": "Vida de infância",
+          "kind": "points"
+        },
+        {
+          "slug": "chamamento",
+          "title": "Chamamento",
+          "kind": "points"
+        },
+        {
+          "slug": "o-apostolo",
+          "title": "O Apóstolo",
+          "kind": "points"
+        },
+        {
+          "slug": "o-apostolado",
+          "title": "O Apostolado",
+          "kind": "points"
+        },
+        {
+          "slug": "perseveranca",
+          "title": "Perseverança",
+          "kind": "points"
+        }
+      ]
+    },
+    {
+      "id": "sulco",
+      "title": "Sulco",
+      "author": "São Josemaría Escrivá",
+      "description": "Leituras de São Josemaría Escrivá",
+      "type": "points",
+      "assetPath": "assets/books/escriva/sulco.json",
+      "chapters": [
+        {
+          "slug": "prologo-do-autor",
+          "title": "escriva.org",
+          "kind": "intro"
+        },
+        {
+          "slug": "generosidade",
+          "title": "Generosidade",
+          "kind": "points"
+        },
+        {
+          "slug": "respeitos-humanos",
+          "title": "Respeitos humanos",
+          "kind": "points"
+        },
+        {
+          "slug": "alegria",
+          "title": "Alegria",
+          "kind": "points"
+        },
+        {
+          "slug": "audacia",
+          "title": "Audácia",
+          "kind": "points"
+        },
+        {
+          "slug": "lutas",
+          "title": "Lutas",
+          "kind": "points"
+        },
+        {
+          "slug": "pescadores-de-homens",
+          "title": "Pescadores de homens",
+          "kind": "points"
+        },
+        {
+          "slug": "sofrimento",
+          "title": "Sofrimento",
+          "kind": "points"
+        },
+        {
+          "slug": "humildade",
+          "title": "Humildade",
+          "kind": "points"
+        },
+        {
+          "slug": "cidadania",
+          "title": "Cidadania",
+          "kind": "points"
+        },
+        {
+          "slug": "sinceridade",
+          "title": "Sinceridade",
+          "kind": "points"
+        },
+        {
+          "slug": "lealdade",
+          "title": "Lealdade",
+          "kind": "points"
+        },
+        {
+          "slug": "disciplina",
+          "title": "Disciplina",
+          "kind": "points"
+        },
+        {
+          "slug": "personalidade",
+          "title": "Personalidade",
+          "kind": "points"
+        },
+        {
+          "slug": "oracao",
+          "title": "Oração",
+          "kind": "points"
+        },
+        {
+          "slug": "trabalho",
+          "title": "Trabalho",
+          "kind": "points"
+        },
+        {
+          "slug": "frivolidade",
+          "title": "Frivolidade",
+          "kind": "points"
+        },
+        {
+          "slug": "naturalidade",
+          "title": "Naturalidade",
+          "kind": "points"
+        },
+        {
+          "slug": "veracidade",
+          "title": "Veracidade",
+          "kind": "points"
+        },
+        {
+          "slug": "ambicao",
+          "title": "Ambição",
+          "kind": "points"
+        },
+        {
+          "slug": "hipocrisia",
+          "title": "Hipocrisia",
+          "kind": "points"
+        },
+        {
+          "slug": "vida-interior",
+          "title": "Vida interior",
+          "kind": "points"
+        },
+        {
+          "slug": "soberba",
+          "title": "Soberba",
+          "kind": "points"
+        },
+        {
+          "slug": "amizade",
+          "title": "Amizade",
+          "kind": "points"
+        },
+        {
+          "slug": "vontade",
+          "title": "Vontade",
+          "kind": "points"
+        },
+        {
+          "slug": "coracao",
+          "title": "Coração",
+          "kind": "points"
+        },
+        {
+          "slug": "pureza",
+          "title": "Pureza",
+          "kind": "points"
+        },
+        {
+          "slug": "paz",
+          "title": "Paz",
+          "kind": "points"
+        },
+        {
+          "slug": "o-alem",
+          "title": "O Além",
+          "kind": "points"
+        },
+        {
+          "slug": "a-lingua",
+          "title": "A Língua",
+          "kind": "points"
+        },
+        {
+          "slug": "propaganda",
+          "title": "Propaganda",
+          "kind": "points"
+        },
+        {
+          "slug": "responsabilidade",
+          "title": "Responsabilidade",
+          "kind": "points"
+        },
+        {
+          "slug": "penitencia",
+          "title": "Penitência",
+          "kind": "points"
+        }
+      ]
+    },
+    {
+      "id": "forja",
+      "title": "Forja",
+      "author": "São Josemaría Escrivá",
+      "description": "Leituras de São Josemaría Escrivá",
+      "type": "points",
+      "assetPath": "assets/books/escriva/forja.json",
+      "chapters": [
+        {
+          "slug": "deslumbramento",
+          "title": "Deslumbramento",
+          "kind": "points"
+        },
+        {
+          "slug": "luta",
+          "title": "Luta",
+          "kind": "points"
+        },
+        {
+          "slug": "derrota",
+          "title": "Derrota",
+          "kind": "points"
+        },
+        {
+          "slug": "pessimismo",
+          "title": "Pessimismo",
+          "kind": "points"
+        },
+        {
+          "slug": "podes",
+          "title": "Podes!",
+          "kind": "points"
+        },
+        {
+          "slug": "tornar-a-lutar",
+          "title": "Tornar a lutar",
+          "kind": "points"
+        },
+        {
+          "slug": "ressurgir",
+          "title": "Ressurgir",
+          "kind": "points"
+        },
+        {
+          "slug": "vitoria",
+          "title": "Vitória",
+          "kind": "points"
+        },
+        {
+          "slug": "labor",
+          "title": "Labor",
+          "kind": "points"
+        },
+        {
+          "slug": "crisol",
+          "title": "Crisol",
+          "kind": "points"
+        },
+        {
+          "slug": "selecao",
+          "title": "Seleção",
+          "kind": "points"
+        },
+        {
+          "slug": "fecundidade",
+          "title": "Fecundidade",
+          "kind": "points"
+        },
+        {
+          "slug": "eternidade",
+          "title": "Eternidade",
+          "kind": "points"
+        }
+      ]
+    },
+    {
+      "id": "e-cristo-que-passa",
+      "title": "É Cristo que passa",
+      "author": "São Josemaría Escrivá",
+      "description": "Leituras de São Josemaría Escrivá",
+      "type": "homilies",
+      "assetPath": "assets/books/escriva/e-cristo-que-passa.json",
+      "chapters": [
+        {
+          "slug": "a-vocacao-crista",
+          "title": "A vocação cristã",
+          "kind": "homily"
+        },
+        {
+          "slug": "o-triunfo-de-cristo-na-humildade",
+          "title": "O triunfo de Cristo na humildade",
+          "kind": "homily"
+        },
+        {
+          "slug": "o-matrimonio-vocacao-crista",
+          "title": "O matrimônio, vocação cristã",
+          "kind": "homily"
+        },
+        {
+          "slug": "na-epifania-do-senhor",
+          "title": "Na Epifania do Senhor",
+          "kind": "homily"
+        },
+        {
+          "slug": "na-oficina-de-jose",
+          "title": "Na oficina de José",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-conversao-dos-filhos-de-deus",
+          "title": "A conversão dos filhos de Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "o-respeito-cristao-pela-pessoa-e-pela-sua-liberdade",
+          "title": "O respeito cristão pela pessoa e pela sua liberdade",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-luta-interior",
+          "title": "A luta interior",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-eucaristia-misterio-de-fe-e-de-amor",
+          "title": "A Eucaristia, mistério de fé e de amor",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-morte-de-cristo-vida-do-cristao",
+          "title": "A morte de Cristo, vida do cristão",
+          "kind": "homily"
+        },
+        {
+          "slug": "cristo-presente-nos-cristaos",
+          "title": "Cristo presente nos cristãos",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-ascensao-do-senhor-aos-ceus",
+          "title": "A Ascensão do Senhor aos céus",
+          "kind": "homily"
+        },
+        {
+          "slug": "o-grande-desconhecido",
+          "title": "O Grande Desconhecido",
+          "kind": "homily"
+        },
+        {
+          "slug": "por-maria-a-jesus",
+          "title": "Por Maria, a Jesus",
+          "kind": "homily"
+        },
+        {
+          "slug": "na-festa-do-corpus-christi",
+          "title": "Na festa do Corpus Christi",
+          "kind": "homily"
+        },
+        {
+          "slug": "o-coracao-de-cristo-paz-dos-cristaos",
+          "title": "O Coração de Cristo, paz dos cristãos",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-virgem-santa-causa-da-nossa-alegria",
+          "title": "A Virgem Santa, causa da nossa alegria",
+          "kind": "homily"
+        },
+        {
+          "slug": "cristo-rei",
+          "title": "Cristo-Rei",
+          "kind": "homily"
+        }
+      ]
+    },
+    {
+      "id": "amigos-de-deus",
+      "title": "Amigos de Deus",
+      "author": "São Josemaría Escrivá",
+      "description": "Leituras de São Josemaría Escrivá",
+      "type": "homilies",
+      "assetPath": "assets/books/escriva/amigos-de-deus.json",
+      "chapters": [
+        {
+          "slug": "a-grandeza-da-vida-corrente",
+          "title": "A grandeza da vida corrente",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-liberdade-dom-de-deus",
+          "title": "A liberdade, dom de Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "o-tesouro-do-tempo",
+          "title": "O tesouro do tempo",
+          "kind": "homily"
+        },
+        {
+          "slug": "trabalho-de-deus",
+          "title": "Trabalho de Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "virtudes-humanas",
+          "title": "Virtudes humanas",
+          "kind": "homily"
+        },
+        {
+          "slug": "humildade",
+          "title": "Humildade",
+          "kind": "homily"
+        },
+        {
+          "slug": "desprendimento",
+          "title": "Desprendimento",
+          "kind": "homily"
+        },
+        {
+          "slug": "seguindo-os-passos-do-senhor",
+          "title": "Seguindo os passos do Senhor",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-relacao-com-deus",
+          "title": "A relação com Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "viver-diante-de-deus-e-diante-dos-homens",
+          "title": "Viver diante de Deus e diante dos homens",
+          "kind": "homily"
+        },
+        {
+          "slug": "porque-verao-a-deus",
+          "title": "Porque verão a Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "vida-de-fe",
+          "title": "Vida de fé",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-esperanca-crista",
+          "title": "A esperança cristã",
+          "kind": "homily"
+        },
+        {
+          "slug": "com-a-forca-do-amor",
+          "title": "Com a força do amor",
+          "kind": "homily"
+        },
+        {
+          "slug": "vida-de-oracao",
+          "title": "Vida de oração",
+          "kind": "homily"
+        },
+        {
+          "slug": "para-que-todos-se-salvem",
+          "title": "Para que todos se salvem",
+          "kind": "homily"
+        },
+        {
+          "slug": "mae-de-deus-mae-nossa",
+          "title": "Mãe de Deus, Mãe nossa",
+          "kind": "homily"
+        },
+        {
+          "slug": "rumo-a-santidade",
+          "title": "Rumo à santidade",
+          "kind": "homily"
+        }
+      ]
+    },
+    {
+      "id": "santo-rosario",
+      "title": "Santo Rosário",
+      "author": "São Josemaría Escrivá",
+      "description": "Leituras de São Josemaría Escrivá",
+      "type": "points",
+      "assetPath": "assets/books/escriva/santo-rosario.json",
+      "chapters": [
+        {
+          "slug": "misterios-gozosos",
+          "title": "Mistérios gozosos",
+          "kind": "mysteries"
+        },
+        {
+          "slug": "misterios-dolorosos",
+          "title": "Mistérios Dolorosos",
+          "kind": "mysteries"
+        },
+        {
+          "slug": "misterios-gloriosos",
+          "title": "Mistérios Gloriosos",
+          "kind": "mysteries"
+        },
+        {
+          "slug": "misterios-luminosos",
+          "title": "Mistérios Luminosos",
+          "kind": "mysteries"
+        },
+        {
+          "slug": "ladainha",
+          "title": "Ladainha",
+          "kind": "mysteries"
+        }
+      ]
+    },
+    {
+      "id": "via-sacra",
+      "title": "Via Sacra",
+      "author": "São Josemaría Escrivá",
+      "description": "Leituras de São Josemaría Escrivá",
+      "type": "points",
+      "assetPath": "assets/books/escriva/via-sacra.json",
+      "chapters": [
+        {
+          "slug": "estacoes",
+          "title": "Estações",
+          "kind": "stations"
+        }
+      ]
+    },
+    {
+      "id": "em-dialogo-com-o-senhor",
+      "title": "Em Diálogo com o Senhor",
+      "author": "São Josemaría Escrivá",
+      "description": "Leituras de São Josemaría Escrivá",
+      "type": "homilies",
+      "assetPath": "assets/books/escriva/em-dialogo-com-o-senhor.json",
+      "chapters": [
+        {
+          "slug": "viver-para-a-gloria-de-deus",
+          "title": "Viver para a glória de Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-oracao-dos-filhos-de-deus",
+          "title": "A oração dos filhos de Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "com-a-docilidade-do-barro",
+          "title": "Com a docilidade do barro",
+          "kind": "homily"
+        },
+        {
+          "slug": "um-dia-para-recomecar",
+          "title": "Um dia para recomeçar",
+          "kind": "homily"
+        },
+        {
+          "slug": "que-se-veja-que-es-tu",
+          "title": "Que se veja que és Tu!",
+          "kind": "homily"
+        },
+        {
+          "slug": "num-dia-2-de-outubro",
+          "title": "Num dia 2 de outubro",
+          "kind": "homily"
+        },
+        {
+          "slug": "sinal-de-vida-interior",
+          "title": "Sinal de Vida Interior",
+          "kind": "homily"
+        },
+        {
+          "slug": "os-passos-de-deus",
+          "title": "Os passos de Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "o-nosso-caminho-na-terra",
+          "title": "O nosso caminho na terra",
+          "kind": "homily"
+        },
+        {
+          "slug": "rezar-sem-interrupcao",
+          "title": "Rezar sem interrupção",
+          "kind": "homily"
+        },
+        {
+          "slug": "os-sonhos-realizaram-se",
+          "title": "Os sonhos realizaram-se",
+          "kind": "homily"
+        },
+        {
+          "slug": "sao-jose-nosso-pai-e-senhor",
+          "title": "São José, nosso pai e senhor",
+          "kind": "homily"
+        },
+        {
+          "slug": "rezar-com-mais-premencia",
+          "title": "Rezar com mais premência",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-logica-de-deus",
+          "title": "A lógica de Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "agora-que-comeca-o-ano",
+          "title": "Agora que começa o ano",
+          "kind": "homily"
+        },
+        {
+          "slug": "da-familia-de-jose",
+          "title": "Da família de José",
+          "kind": "homily"
+        },
+        {
+          "slug": "nas-maos-de-deus",
+          "title": "Nas mãos de Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "tempo-de-reparar",
+          "title": "Tempo de reparar",
+          "kind": "homily"
+        },
+        {
+          "slug": "o-talento-de-falar",
+          "title": "O talento de falar",
+          "kind": "homily"
+        },
+        {
+          "slug": "o-licor-da-sabedoria",
+          "title": "O licor da sabedoria",
+          "kind": "homily"
+        },
+        {
+          "slug": "tempo-de-acao-de-gracas",
+          "title": "Tempo de ação de graças",
+          "kind": "homily"
+        },
+        {
+          "slug": "a-alegria-de-servir-deus",
+          "title": "A alegria de servir Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "ut-videam-ut-videamus-ut-videant",
+          "title": "Ut videam!, ut videamus!, ut videant!",
+          "kind": "homily"
+        },
+        {
+          "slug": "os-caminhos-de-deus",
+          "title": "Os caminhos de Deus",
+          "kind": "homily"
+        },
+        {
+          "slug": "consumados-na-unidade",
+          "title": "Consumados na unidade",
+          "kind": "homily"
+        }
+      ]
+    }
+  ]
+}

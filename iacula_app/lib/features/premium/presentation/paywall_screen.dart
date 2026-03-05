@@ -84,10 +84,10 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               children: [
                 Text('Iacula Premium', style: context.textStyles.sectionTitle),
                 const SizedBox(height: 10),
-              Text(
-                'Acesso vitalício por R\$ 39,90.',
-                style: context.textStyles.secondary,
-              ),
+                Text(
+                  'Acesso vitalício por R\$ 39,90.',
+                  style: context.textStyles.secondary,
+                ),
                 const SizedBox(height: 20),
                 _featureTile(context, CupertinoIcons.play_circle, 'Meditações'),
                 _featureTile(
@@ -95,6 +95,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   CupertinoIcons.check_mark_circled,
                   'Plano de vida',
                 ),
+                _featureTile(context, CupertinoIcons.book, 'Leituras'),
                 const SizedBox(height: 20),
                 if (authUser == null) ...[
                   IaculaPrimaryPillButton(

@@ -10,6 +10,7 @@ void main() {
         PremiumFeature.meditation,
         PremiumFeature.planOfLife,
         PremiumFeature.rosary,
+        PremiumFeature.leituras,
       ]),
     );
   });

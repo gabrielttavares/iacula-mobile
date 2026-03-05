@@ -103,6 +103,8 @@ import '../../features/doctrina/application/use_cases/get_doctrine_catalog_use_c
 import '../../features/doctrina/domain/entities/doctrine_entry.dart';
 import '../../features/doctrina/domain/repositories/doctrine_repository.dart';
 import '../../features/doctrina/infrastructure/repositories/asset_doctrine_repository.dart';
+import '../../features/leituras/data/repositories/leitura_repository.dart';
+import '../../features/leituras/data/sources/leitura_local_source.dart';
 import '../../features/spiritual_data/domain/entities/spiritual_entry.dart';
 import '../../features/sync/domain/repositories/sync_orchestrator.dart';
 import '../../features/sync/domain/repositories/sync_state_repository.dart';
@@ -201,6 +203,14 @@ final meditationCatalogProvider = FutureProvider<List<MeditationItem>>((ref) {
 
 final doctrineRepositoryProvider = Provider<DoctrineRepository>((ref) {
   return AssetDoctrineRepository();
+});
+
+final leituraLocalSourceProvider = Provider<LeituraLocalSource>((ref) {
+  return LeituraLocalSource();
+});
+
+final leituraRepositoryProvider = Provider<LeituraRepository>((ref) {
+  return LeituraRepository(localSource: ref.watch(leituraLocalSourceProvider));
 });
 
 final doctrineCatalogProvider = FutureProvider<List<DoctrineEntry>>((ref) {

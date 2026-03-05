@@ -67,5 +67,6 @@ void main() {
     // Should mention features that DO exist
     expect(find.textContaining('Meditações'), findsOneWidget);
     expect(find.textContaining('Plano de vida'), findsOneWidget);
+    expect(find.textContaining('Leituras'), findsOneWidget);
   });
 }

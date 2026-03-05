@@ -45,12 +45,12 @@ class PremiumGate extends ConsumerWidget {
       PremiumFeature.planOfLife ||
       PremiumFeature.streakDashboard ||
       PremiumFeature.rosary ||
+      PremiumFeature.leituras ||
       PremiumFeature.challenges ||
       PremiumFeature.journal ||
       PremiumFeature.nightPrayer ||
       PremiumFeature.liturgyOfHours ||
-      PremiumFeature.widgets =>
-        true,
+      PremiumFeature.widgets => true,
     };
   }
 
@@ -118,6 +118,7 @@ class _LockedFallback extends StatelessWidget {
       PremiumFeature.planOfLife => 'O Plano de vida',
       PremiumFeature.streakDashboard => 'O Painel Espiritual',
       PremiumFeature.rosary => 'O Rosário Guiado',
+      PremiumFeature.leituras => 'As Leituras',
       PremiumFeature.challenges => 'Os Desafios e Novenas',
       PremiumFeature.journal => 'O Diário Espiritual',
       PremiumFeature.nightPrayer => 'A Oração da Noite',

@@ -6,6 +6,7 @@ import 'package:iacula_app/features/home/presentation/home_screen.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/entities/daily_liturgy.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
+import 'package:iacula_app/features/leituras/presentation/pages/leituras_home_page.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
@@ -291,6 +292,7 @@ void main() {
     expect(find.text('Liturgia Diária'), findsOneWidget);
     expect(find.text('Intenções'), findsOneWidget);
     expect(find.text('Exame'), findsOneWidget);
+    expect(find.text('📖 Leituras'), findsOneWidget);
     expect(find.text('Premium'), findsNothing);
   });
 
@@ -457,5 +459,22 @@ void main() {
 
     expect(find.byType(BibleBooksScreen), findsOneWidget);
     expect(find.text('Em breve'), findsNothing);
+  });
+
+  testWidgets('home quick action Leituras opens Leituras home', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final leiturasFinder = find.text('📖 Leituras');
+    await tester.ensureVisible(leiturasFinder);
+    await tester.tap(leiturasFinder);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LeiturasHomePage), findsOneWidget);
   });
 }

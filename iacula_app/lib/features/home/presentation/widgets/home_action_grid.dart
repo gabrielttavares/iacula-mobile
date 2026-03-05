@@ -11,12 +11,14 @@ class HomeActionGrid extends StatelessWidget {
     required this.onOpenLiturgy,
     required this.onOpenIntentions,
     required this.onOpenExamination,
+    required this.onOpenLeituras,
   });
 
   final VoidCallback onOpenPrayers;
   final VoidCallback onOpenLiturgy;
   final VoidCallback onOpenIntentions;
   final VoidCallback onOpenExamination;
+  final VoidCallback onOpenLeituras;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,19 @@ class HomeActionGrid extends StatelessWidget {
                 onTap: onOpenExamination,
               ),
             ),
+          ],
+        ),
+        const SizedBox(height: IaculaSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: _HorizontalFeatureCard(
+                label: '📖 Leituras',
+                onTap: onOpenLeituras,
+              ),
+            ),
+            const SizedBox(width: IaculaSpacing.sm),
+            const Expanded(child: SizedBox.shrink()),
           ],
         ),
       ],

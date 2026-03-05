@@ -3,6 +3,7 @@ enum PremiumFeature {
   planOfLife,
   streakDashboard,
   rosary,
+  leituras,
   challenges,
   journal,
   nightPrayer,
