@@ -935,7 +935,21 @@
   {
     "id": "cântico-dos-três-jovens",
     "title": "Cântico dos Três Jovens",
-    "content": "Bendizei, obras do Senhor, ao Senhor, louvai-O e exaltai-O para sempre. Anjos do Senhor, bendizei ao Senhor. Céus, bendizei ao Senhor. Águas todas que estais sobre os céus, bendizei ao Senhor. Sol e lua, bendizei ao Senhor. Estrelas do céu, bendizei ao Senhor.",
+    "content": "Bendizei, todas as obras do Senhor, ao Senhor, louvai-O e exaltai-O para sempre. Anjos do Senhor, bendizei ao Senhor. Céus, bendizei ao Senhor. Águas todas que estais sobre os céus, bendizei ao Senhor. Sol e lua, bendizei ao Senhor. Estrelas do céu, bendizei ao Senhor. Chuva e orvalho, bendizei ao Senhor. Todos os ventos, bendizei ao Senhor.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "salmo-2",
+    "title": "Salmo 2",
+    "content": "Por que se amotinam as nações, e os povos tramam em vão? Levantam-se os reis da terra e os príncipes conspiram unidos contra o Senhor e contra o seu Ungido. Rompamos as suas cadeias e lancemos de nós os seus grilhões. Aquele que habita nos céus os escarnecerá, e o Senhor zombará deles. Então lhes falará em sua ira e em seu furor os confundirá.",
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [

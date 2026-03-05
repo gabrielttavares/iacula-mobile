@@ -46,14 +46,34 @@ final class GetPrayerCatalogUseCase {
     required DateTime date,
   }) async {
     final catalog = await listAll(language: language);
-    if (catalog.isEmpty) {
+    if (catalog.isEmpty) return null;
+
+    final slug = _suggestionSlugForDate(date);
+    try {
+      return catalog.firstWhere((e) => e.slug == slug);
+    } on StateError {
       return null;
     }
+  }
 
-    final dayStamp =
-        DateTime.utc(date.year, date.month, date.day).millisecondsSinceEpoch ~/
-        Duration.millisecondsPerDay;
-    return catalog[dayStamp % catalog.length];
+  static String _suggestionSlugForDate(DateTime date) {
+    // 3rd Sunday of the month takes priority
+    if (date.weekday == DateTime.sunday) {
+      final firstDayOfMonth = DateTime(date.year, date.month, 1);
+      final firstSunday = firstDayOfMonth.add(
+        Duration(days: (DateTime.sunday - firstDayOfMonth.weekday + 7) % 7),
+      );
+      final sundayIndex = ((date.day - firstSunday.day) ~/ 7) + 1;
+      if (sundayIndex == 3) {
+        return 'simbolo-atanasiano';
+      }
+    }
+
+    return switch (date.weekday) {
+      DateTime.tuesday => 'salmo-2',
+      DateTime.thursday => 'adoro-te-devote',
+      _ => 'cântico-dos-três-jovens',
+    };
   }
 
   Future<PrayerCatalogEntry?> getBySlug({

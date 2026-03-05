@@ -198,7 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           },
                         ),
                         const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Ênfase do Dia'),
+                        const IaculaSectionHeader(title: 'Sugestão de oração'),
                         const SizedBox(height: IaculaSpacing.sm),
                         const _DailyPrayerList(),
                         const SizedBox(height: IaculaSpacing.xl),

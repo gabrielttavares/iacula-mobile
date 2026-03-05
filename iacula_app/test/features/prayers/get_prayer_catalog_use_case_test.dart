@@ -49,6 +49,45 @@ void main() {
     ),
   ];
 
+  const suggestionEntries = <PrayerCatalogEntry>[
+    PrayerCatalogEntry(
+      slug: 'cântico-dos-três-jovens',
+      title: 'Cântico dos Três Jovens',
+      content: 'Bendizei...',
+      themes: ['missa-acao-de-gracas'],
+      saints: [],
+      sectionId: 'acao-de-gracas-santa-missa',
+      sectionTitle: 'Ação de Graças depois da Santa Missa',
+    ),
+    PrayerCatalogEntry(
+      slug: 'salmo-2',
+      title: 'Salmo 2',
+      content: 'Por que se amotinam...',
+      themes: ['missa-acao-de-gracas'],
+      saints: [],
+      sectionId: 'acao-de-gracas-santa-missa',
+      sectionTitle: 'Ação de Graças depois da Santa Missa',
+    ),
+    PrayerCatalogEntry(
+      slug: 'adoro-te-devote',
+      title: 'Adoro Te Devote',
+      content: 'Adoro-Vos...',
+      themes: ['missa-acao-de-gracas'],
+      saints: [],
+      sectionId: 'acao-de-gracas-santa-missa',
+      sectionTitle: 'Ação de Graças depois da Santa Missa',
+    ),
+    PrayerCatalogEntry(
+      slug: 'simbolo-atanasiano',
+      title: 'Símbolo Atanasiano',
+      content: 'Quicumque...',
+      themes: ['missa-acao-de-gracas'],
+      saints: [],
+      sectionId: 'acao-de-gracas-santa-missa',
+      sectionTitle: 'Ação de Graças depois da Santa Missa',
+    ),
+  ];
+
   test('listAll returns all entries', () async {
     final repository = _FakePrayerCatalogRepository(entries);
     final useCase = GetPrayerCatalogUseCase(repository: repository);
@@ -114,17 +153,69 @@ void main() {
     expect(result, isEmpty);
   });
 
-  test('suggestionOfDay returns same entry for same date', () async {
-    final repository = _FakePrayerCatalogRepository(entries);
+  test('suggestionOfDay returns salmo-2 on Tuesday', () async {
+    final repository = _FakePrayerCatalogRepository(suggestionEntries);
     final useCase = GetPrayerCatalogUseCase(repository: repository);
-    final date = DateTime(2026, 2, 26);
+    // 2026-03-03 is a Tuesday
+    final result = await useCase.suggestionOfDay(
+      language: 'pt-br',
+      date: DateTime(2026, 3, 3),
+    );
 
-    final first = await useCase.suggestionOfDay(language: 'pt-br', date: date);
-    final second = await useCase.suggestionOfDay(language: 'pt-br', date: date);
+    expect(result, isNotNull);
+    expect(result!.slug, 'salmo-2');
+  });
 
-    expect(first, isNotNull);
-    expect(second, isNotNull);
-    expect(first, second);
+  test('suggestionOfDay returns adoro-te-devote on Thursday', () async {
+    final repository = _FakePrayerCatalogRepository(suggestionEntries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+    // 2026-03-05 is a Thursday
+    final result = await useCase.suggestionOfDay(
+      language: 'pt-br',
+      date: DateTime(2026, 3, 5),
+    );
+
+    expect(result, isNotNull);
+    expect(result!.slug, 'adoro-te-devote');
+  });
+
+  test('suggestionOfDay returns simbolo-atanasiano on 3rd Sunday', () async {
+    final repository = _FakePrayerCatalogRepository(suggestionEntries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+    // 2026-03-15 is the 3rd Sunday of March 2026
+    final result = await useCase.suggestionOfDay(
+      language: 'pt-br',
+      date: DateTime(2026, 3, 15),
+    );
+
+    expect(result, isNotNull);
+    expect(result!.slug, 'simbolo-atanasiano');
+  });
+
+  test('suggestionOfDay returns cântico on non-3rd Sunday', () async {
+    final repository = _FakePrayerCatalogRepository(suggestionEntries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+    // 2026-03-08 is the 2nd Sunday of March 2026
+    final result = await useCase.suggestionOfDay(
+      language: 'pt-br',
+      date: DateTime(2026, 3, 8),
+    );
+
+    expect(result, isNotNull);
+    expect(result!.slug, 'cântico-dos-três-jovens');
+  });
+
+  test('suggestionOfDay returns cântico on other weekdays', () async {
+    final repository = _FakePrayerCatalogRepository(suggestionEntries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+    // 2026-03-04 is a Wednesday
+    final result = await useCase.suggestionOfDay(
+      language: 'pt-br',
+      date: DateTime(2026, 3, 4),
+    );
+
+    expect(result, isNotNull);
+    expect(result!.slug, 'cântico-dos-três-jovens');
   });
 
   test('suggestionOfDay returns null when catalog has no entries', () async {
@@ -134,6 +225,19 @@ void main() {
     final result = await useCase.suggestionOfDay(
       language: 'pt-br',
       date: DateTime(2026, 2, 26),
+    );
+
+    expect(result, isNull);
+  });
+
+  test('suggestionOfDay returns null when slug not found in catalog', () async {
+    // Catalog without the suggestion entries
+    final repository = _FakePrayerCatalogRepository(entries);
+    final useCase = GetPrayerCatalogUseCase(repository: repository);
+
+    final result = await useCase.suggestionOfDay(
+      language: 'pt-br',
+      date: DateTime(2026, 3, 3),
     );
 
     expect(result, isNull);
