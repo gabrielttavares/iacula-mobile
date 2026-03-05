@@ -6,6 +6,7 @@ import 'package:iacula_app/features/leituras/data/repositories/leitura_repositor
 import 'package:iacula_app/features/leituras/data/sources/leitura_local_source.dart';
 import 'package:iacula_app/features/leituras/presentation/pages/book_list_page.dart';
 import 'package:iacula_app/features/leituras/presentation/pages/book_reader_page.dart';
+import 'package:iacula_app/features/leituras/presentation/pages/author_list_page.dart';
 import 'package:iacula_app/features/leituras/presentation/pages/leituras_home_page.dart';
 import 'package:iacula_app/features/premium/domain/entities/premium_status.dart';
 
@@ -35,6 +36,61 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(BookListPage), findsOneWidget);
+  });
+
+  testWidgets('author list screen renders available authors', (tester) async {
+    final repository = LeituraRepository(
+      localSource: LeituraLocalSource(
+        loadAsset: (path) async {
+          if (path == 'assets/books/library/index.json') {
+            return '''
+{
+  "authors": [
+    {
+      "id": "sao-josemaria-escriva",
+      "name": "São Josemaría Escrivá",
+      "description": "Espiritualidade no cotidiano.",
+      "worksCount": 8,
+      "assetPath": "assets/books/library/authors/sao-josemaria-escriva.json"
+    }
+  ]
+}
+''';
+          }
+
+          if (path ==
+              'assets/books/library/authors/sao-josemaria-escriva.json') {
+            return '''
+{
+  "id": "sao-josemaria-escriva",
+  "name": "São Josemaría Escrivá",
+  "books": []
+}
+''';
+          }
+
+          throw StateError('unexpected path: $path');
+        },
+      ),
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          premiumStatusProvider.overrideWith((ref) {
+            return Stream<PremiumStatus>.value(
+              const PremiumStatus(isPremium: true),
+            );
+          }),
+          leituraRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: const CupertinoApp(home: AuthorListPage()),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('São Josemaría Escrivá'), findsOneWidget);
   });
 
   testWidgets('Book reader nav bar uses the book title in chapter mode', (
