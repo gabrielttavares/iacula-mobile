@@ -39,6 +39,8 @@ final class SqliteSettingsRepository implements SettingsRepository {
       displayName: row['display_name'] as String?,
       prayerFontSize: (row['prayer_font_size'] as num? ?? 15.0).toDouble(),
       themeMode: row['theme_mode'] as String? ?? 'dark',
+      escrivaPointsFeedEnabled:
+          (row['escriva_points_feed_enabled'] as int? ?? 0) == 1,
     );
   }
 
@@ -65,6 +67,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       'display_name': settings.displayName,
       'prayer_font_size': settings.prayerFontSize,
       'theme_mode': settings.themeMode,
+      'escriva_points_feed_enabled': settings.escrivaPointsFeedEnabled ? 1 : 0,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }

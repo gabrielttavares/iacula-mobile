@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'dart:convert';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/home/presentation/home_screen.dart';
+import 'package:iacula_app/features/leituras/data/repositories/leitura_repository.dart';
+import 'package:iacula_app/features/leituras/data/sources/leitura_local_source.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/entities/daily_liturgy.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
@@ -193,6 +196,67 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Os cards e o tempo litúrgico'), findsOneWidget);
     expect(find.text('O que torna o Iacula único'), findsOneWidget);
+  });
+
+  testWidgets('home hero uses Escriva points when feed toggle is enabled', (
+    tester,
+  ) async {
+    final settingsRepo = _FakeSettingsRepository(
+      Settings.defaults.copyWith(escrivaPointsFeedEnabled: true),
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          settingsRepositoryProvider.overrideWithValue(settingsRepo),
+          lastDeliveredCardRepositoryProvider.overrideWithValue(
+            _FakeLastDeliveredCardRepository(null),
+          ),
+          leituraRepositoryProvider.overrideWithValue(
+            LeituraRepository(
+              localSource: LeituraLocalSource(
+                loadAsset: (path) async {
+                  if (path.endsWith('index.json')) {
+                    return jsonEncode({
+                      'books': [
+                        {
+                          'id': 'caminho',
+                          'title': 'Caminho',
+                          'author': 'Autor',
+                          'description': 'x',
+                          'type': 'points',
+                          'assetPath': 'assets/books/escriva/caminho.json',
+                        },
+                      ],
+                    });
+                  }
+
+                  return jsonEncode({
+                    'chapters': [
+                      {
+                        'slug': 'carater',
+                        'title': 'Caráter',
+                        'kind': 'points',
+                        'sections': [
+                          {
+                            'number': 1,
+                            'paragraphs': ['ESCRIVA_HERO_MARKER'],
+                          },
+                        ],
+                      },
+                    ],
+                  });
+                },
+              ),
+            ),
+          ),
+        ],
+        child: const CupertinoApp(home: HomeScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('ESCRIVA_HERO_MARKER'), findsOneWidget);
   });
 
   testWidgets('home follows required section order', (tester) async {

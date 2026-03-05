@@ -524,6 +524,12 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     return lastDeliveredCard.toQuote();
   }
 
+  if (settings.escrivaPointsFeedEnabled) {
+    return ref
+        .watch(getNextEscrivaPointsQuoteUseCaseProvider)
+        .call(language: settings.language);
+  }
+
   // Check custom phrases first
   final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
   final phrases = phrasesAsync.valueOrNull ?? [];

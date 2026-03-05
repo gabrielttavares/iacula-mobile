@@ -18,6 +18,7 @@ final class Settings {
     this.displayName,
     this.prayerFontSize = 15.0,
     this.themeMode = 'dark',
+    this.escrivaPointsFeedEnabled = false,
   });
 
   final int intervalMinutes;
@@ -38,6 +39,7 @@ final class Settings {
   final String? displayName;
   final double prayerFontSize;
   final String themeMode;
+  final bool escrivaPointsFeedEnabled;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -56,6 +58,7 @@ final class Settings {
     oraMediaTime: '12:30',
     onboardingCompleted: false,
     prayerFontSize: 15.0,
+    escrivaPointsFeedEnabled: false,
   );
 
   Settings copyWith({
@@ -77,6 +80,7 @@ final class Settings {
     String? displayName,
     double? prayerFontSize,
     String? themeMode,
+    bool? escrivaPointsFeedEnabled,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
@@ -99,6 +103,8 @@ final class Settings {
       displayName: displayName ?? this.displayName,
       prayerFontSize: prayerFontSize ?? this.prayerFontSize,
       themeMode: themeMode ?? this.themeMode,
+      escrivaPointsFeedEnabled:
+          escrivaPointsFeedEnabled ?? this.escrivaPointsFeedEnabled,
     );
   }
 }

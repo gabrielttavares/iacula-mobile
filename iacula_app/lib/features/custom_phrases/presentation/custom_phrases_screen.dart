@@ -8,14 +8,81 @@ import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../domain/entities/custom_phrase.dart';
 import 'edit_phrase_screen.dart';
 
-class CustomPhrasesScreen extends ConsumerWidget {
+class CustomPhrasesScreen extends ConsumerStatefulWidget {
   const CustomPhrasesScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CustomPhrasesScreen> createState() =>
+      _CustomPhrasesScreenState();
+}
+
+class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
+  bool _escrivaPointsFeedEnabled = false;
+  bool _settingsLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final settings = await ref.read(getSettingsUseCaseProvider).call();
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _escrivaPointsFeedEnabled = settings.escrivaPointsFeedEnabled;
+      _settingsLoaded = true;
+    });
+  }
+
+  Future<void> _toggleEscrivaFeed(bool value) async {
+    final previous = _escrivaPointsFeedEnabled;
+    setState(() {
+      _escrivaPointsFeedEnabled = value;
+    });
+
+    try {
+      final current = await ref.read(getSettingsUseCaseProvider).call();
+      final updated = current.copyWith(escrivaPointsFeedEnabled: value);
+      await ref.read(updateSettingsUseCaseProvider).call(updated);
+
+      final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
+      await schedulerRepo.cancelAll();
+      await ScheduleCoreRemindersUseCase(
+        schedulerRepo,
+        quoteFetcher: ({required String language, required DateTime now}) {
+          if (value) {
+            return ref
+                .read(getNextEscrivaPointsQuoteUseCaseProvider)
+                .call(language: language, now: now);
+          }
+
+          return ref
+              .read(getNextQuoteUseCaseProvider)
+              .call(language: language, now: now);
+        },
+        lastDeliveredCardRepository: ref.read(lastDeliveredCardRepositoryProvider),
+      ).call(updated);
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _escrivaPointsFeedEnabled = previous;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
     final notifier = ref.read(customPhrasesNotifierProvider.notifier);
 
@@ -51,6 +118,48 @@ class CustomPhrasesScreen extends ConsumerWidget {
               ref.invalidate(customPhrasesNotifierProvider);
               await Future.delayed(const Duration(milliseconds: 500));
             },
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: IaculaSoftCard(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Pontos de Caminho/Sulco/Forja',
+                            style: context.textStyles.cardTitle.copyWith(
+                              fontSize: 15,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Usa este conteúdo no Hero e nas jaculatórias.',
+                            style: context.textStyles.secondary.copyWith(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    CupertinoSwitch(
+                      value: _escrivaPointsFeedEnabled,
+                      onChanged: _settingsLoaded
+                          ? (value) {
+                              HapticFeedback.selectionClick();
+                              _toggleEscrivaFeed(value);
+                            }
+                          : null,
+                      activeTrackColor: context.colors.primaryButton,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           SliverPadding(
             padding: EdgeInsets.fromLTRB(

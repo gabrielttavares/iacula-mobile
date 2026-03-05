@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 6,
+      version: 7,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -42,7 +42,8 @@ final class AppDatabase {
             onboarding_completed INTEGER NOT NULL DEFAULT 0,
             display_name TEXT,
             prayer_font_size REAL NOT NULL DEFAULT 15.0,
-            theme_mode TEXT NOT NULL DEFAULT 'dark'
+            theme_mode TEXT NOT NULL DEFAULT 'dark',
+            escriva_points_feed_enabled INTEGER NOT NULL DEFAULT 0
           )
         ''');
 
@@ -108,6 +109,11 @@ final class AppDatabase {
         if (oldVersion < 6) {
           await db.execute(
             "ALTER TABLE settings ADD COLUMN theme_mode TEXT NOT NULL DEFAULT 'dark'",
+          );
+        }
+        if (oldVersion < 7) {
+          await db.execute(
+            'ALTER TABLE settings ADD COLUMN escriva_points_feed_enabled INTEGER NOT NULL DEFAULT 0',
           );
         }
       },

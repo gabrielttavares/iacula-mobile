@@ -288,6 +288,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await ScheduleCoreRemindersUseCase(
       schedulerRepo,
       quoteFetcher: ({required String language, required DateTime now}) {
+        if (settings.escrivaPointsFeedEnabled) {
+          return ref
+              .read(getNextEscrivaPointsQuoteUseCaseProvider)
+              .call(language: language, now: now);
+        }
+
         return ref
             .read(getNextQuoteUseCaseProvider)
             .call(language: language, now: now);

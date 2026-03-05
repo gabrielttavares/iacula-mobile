@@ -39,6 +39,7 @@ import '../../features/prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_catalog_repository.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_content_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
+import '../../features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
 import '../../features/quotes/domain/repositories/quote_content_repository.dart';
 import '../../features/quotes/domain/repositories/quote_indices_repository.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
@@ -379,6 +380,13 @@ final getNextQuoteUseCaseProvider = Provider<GetNextQuoteUseCase>((ref) {
     liturgicalSeasonService: ref.watch(liturgicalSeasonServiceProvider),
   );
 });
+
+final getNextEscrivaPointsQuoteUseCaseProvider =
+    Provider<GetNextEscrivaPointsQuoteUseCase>((ref) {
+      return GetNextEscrivaPointsQuoteUseCase(
+        ref.watch(leituraRepositoryProvider),
+      );
+    });
 
 final getPrayerUseCaseProvider = Provider<GetPrayerUseCase>((ref) {
   return GetPrayerUseCase(
