@@ -1,0 +1,183 @@
+{
+  "id": "santo-agostinho",
+  "name": "Santo Agostinho",
+  "books": [
+    {
+      "id": "confissoes",
+      "title": "Confissões de Santo Agostinho",
+      "author": "Santo Agostinho",
+      "author_id": "santo-agostinho",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/confissoes.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "i-livro-do-nascimento-aos-quinze-anos",
+          "title": "I Livro - Do Nascimento Aos Quinze Anos",
+          "kind": "chapter"
+        },
+        {
+          "slug": "ii-livro-os-dezesseis-anos",
+          "title": "Ii Livro - Os Dezesseis Anos",
+          "kind": "chapter"
+        },
+        {
+          "slug": "iii-livro-jovem-estudante",
+          "title": "Iii Livro - Jovem Estudante",
+          "kind": "chapter"
+        },
+        {
+          "slug": "iv-livro-o-professor",
+          "title": "Iv Livro - O Professor",
+          "kind": "chapter"
+        },
+        {
+          "slug": "v-livro-da-frica-it-lia",
+          "title": "V Livro - Da África À Itália",
+          "kind": "chapter"
+        },
+        {
+          "slug": "vi-livro-agostinho-aos-trinta-anos",
+          "title": "Vi Livro - Agostinho Aos Trinta Anos",
+          "kind": "chapter"
+        },
+        {
+          "slug": "vii-livro-a-busca-da-verdade",
+          "title": "Vii Livro - A Busca Da Verdade",
+          "kind": "chapter"
+        },
+        {
+          "slug": "viii-livro-a-convers-o",
+          "title": "Viii Livro - A Conversão",
+          "kind": "chapter"
+        },
+        {
+          "slug": "ix-livro-o-batismo-e-a-volta-para-a-frica",
+          "title": "Ix Livro - O Batismo E A Volta Para A África",
+          "kind": "chapter"
+        },
+        {
+          "slug": "x-livro-agostinho-reflete-n-o-mais-sobre-o-passado",
+          "title": "X Livro - Agostinho Reflete Não Mais Sobre O Passado,",
+          "kind": "chapter"
+        },
+        {
+          "slug": "xi-livro-medita-o-sobre-o-primeiro-vers-culo-do",
+          "title": "Xi Livro - Meditação Sobre O Primeiro Versículo Do",
+          "kind": "chapter"
+        },
+        {
+          "slug": "xii-livro-medita-o-sobre-o-primeiro-vers-culo-do",
+          "title": "Xii Livro - Meditação Sobre O Primeiro Versículo Do",
+          "kind": "chapter"
+        },
+        {
+          "slug": "xiii-livro-medita-o-sobre-os-significados-aleg-ricos",
+          "title": "Xiii Livro - Meditação Sobre Os Significados Alegóricos",
+          "kind": "chapter"
+        },
+        {
+          "slug": "i-livro-do-nascimento-aos-quinze-anos",
+          "title": "I Livro - Do Nascimento Aos Quinze Anos",
+          "kind": "chapter"
+        },
+        {
+          "slug": "ii-livro-os-dezesseis-anos",
+          "title": "Ii Livro - Os Dezesseis Anos",
+          "kind": "chapter"
+        },
+        {
+          "slug": "iii-livro-jovem-estudante",
+          "title": "Iii Livro - Jovem Estudante",
+          "kind": "chapter"
+        },
+        {
+          "slug": "iv-livro-o-professor",
+          "title": "Iv Livro - O Professor",
+          "kind": "chapter"
+        },
+        {
+          "slug": "v-livro-da-frica-it-lia",
+          "title": "V Livro - Da África À Itália",
+          "kind": "chapter"
+        },
+        {
+          "slug": "vi-livro-agostinho-aos-trinta-anos",
+          "title": "Vi Livro - Agostinho Aos Trinta Anos",
+          "kind": "chapter"
+        },
+        {
+          "slug": "vii-livro-a-busca-da-verdade",
+          "title": "Vii Livro - A Busca Da Verdade",
+          "kind": "chapter"
+        },
+        {
+          "slug": "viii-livro-a-convers-o",
+          "title": "Viii Livro - A Conversão",
+          "kind": "chapter"
+        },
+        {
+          "slug": "ix-livro-o-batismo-e-a-volta-para-a-frica",
+          "title": "Ix Livro - O Batismo E A Volta Para A África",
+          "kind": "chapter"
+        },
+        {
+          "slug": "x-livro-agostinho-reflete-n-o-mais-sobre-o",
+          "title": "X Livro - Agostinho Reflete Não Mais Sobre O",
+          "kind": "chapter"
+        },
+        {
+          "slug": "xi-livro-medita-o-sobre-o-primeiro",
+          "title": "Xi Livro - Meditação Sobre O Primeiro",
+          "kind": "chapter"
+        },
+        {
+          "slug": "xii-livro-medita-o-sobre-o-primeiro",
+          "title": "Xii Livro - Meditação Sobre O Primeiro",
+          "kind": "chapter"
+        },
+        {
+          "slug": "xiii-livro-medita-o-sobre-os-significados",
+          "title": "Xiii Livro - Meditação Sobre Os Significados",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_item_id": "confissoes-santo-agostinho",
+      "source_expected_title": "confissões",
+      "source_expected_author": "agostinho",
+      "source_pdf_url": "https://archive.org/download/confissoes-santo-agostinho/Confiss%C3%B5es%20%E2%80%94%20Santo%20Agostinho.pdf"
+    },
+    {
+      "id": "manual-a-laurencio",
+      "title": "Manual a Laurêncio",
+      "author": "Santo Agostinho",
+      "author_id": "santo-agostinho",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "",
+      "description": "",
+      "available": false,
+      "chapters": [],
+      "source_rank": "B",
+      "public_domain_verified": true
+    },
+    {
+      "id": "soliloquios",
+      "title": "Solilóquios",
+      "author": "Santo Agostinho",
+      "author_id": "santo-agostinho",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "",
+      "description": "",
+      "available": false,
+      "chapters": [],
+      "source_rank": "B",
+      "public_domain_verified": true
+    }
+  ]
+}

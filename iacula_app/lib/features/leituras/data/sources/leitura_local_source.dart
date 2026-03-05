@@ -19,6 +19,24 @@ class LeituraLocalSource {
     return const <String, dynamic>{};
   }
 
+  Future<Map<String, dynamic>> loadLibraryIndex() async {
+    final raw = await loadAsset('assets/books/library/index.json');
+    final decoded = jsonDecode(raw);
+    if (decoded is Map<String, dynamic>) {
+      return decoded;
+    }
+    return const <String, dynamic>{};
+  }
+
+  Future<Map<String, dynamic>> loadAuthor(String assetPath) async {
+    final raw = await loadAsset(assetPath);
+    final decoded = jsonDecode(raw);
+    if (decoded is Map<String, dynamic>) {
+      return decoded;
+    }
+    return const <String, dynamic>{};
+  }
+
   Future<Map<String, dynamic>> loadBook(String assetPath) async {
     final raw = await loadAsset(assetPath);
     final decoded = jsonDecode(raw);

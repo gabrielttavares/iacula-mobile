@@ -89,6 +89,7 @@ flutter:
     - assets/seed/bible/antigotestamento/
     - assets/seed/bible/novotestamento/
     - assets/books/escriva/
+    - assets/books/library/
     - assets/fonts/google_fonts/
 
 

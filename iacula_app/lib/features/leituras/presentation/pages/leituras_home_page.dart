@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../premium/domain/entities/premium_feature.dart';
 import '../../../premium/presentation/premium_gate.dart';
+import 'author_list_page.dart';
 import 'book_list_page.dart';
 
 class LeiturasHomePage extends StatelessWidget {
@@ -33,6 +34,7 @@ class LeiturasHomePage extends StatelessWidget {
                     Navigator.of(context).push(
                       CupertinoPageRoute(
                         builder: (_) => const BookListPage(
+                          authorId: 'sao-josemaria-escriva',
                           authorName: 'São Josemaría Escrivá',
                           title: 'São Josemaría Escrivá',
                         ),
@@ -40,6 +42,17 @@ class LeiturasHomePage extends StatelessWidget {
                     );
                   },
                   child: const Text('São Josemaría Escrivá'),
+                ),
+                const SizedBox(height: IaculaSpacing.sm),
+                CupertinoButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (_) => const AuthorListPage(),
+                      ),
+                    );
+                  },
+                  child: const Text('Ver autores e santos'),
                 ),
               ],
             ),

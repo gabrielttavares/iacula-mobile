@@ -1,0 +1,628 @@
+{
+  "id": "tomas-de-kempis",
+  "name": "Tomás de Kempis",
+  "books": [
+    {
+      "id": "imitacao-de-cristo",
+      "title": "Imitação de Cristo",
+      "author": "Tomás de Kempis",
+      "author_id": "tomas-de-kempis",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/imitacao-de-cristo.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "livro-i",
+          "title": "Livro I",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-01",
+          "title": "Capítulo 01",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-02",
+          "title": "Capítulo 02",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-03",
+          "title": "Capítulo 03",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-04",
+          "title": "Capítulo 04",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-05",
+          "title": "Capítulo 05",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-06",
+          "title": "Capítulo 06",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-07",
+          "title": "Capítulo 07",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-08",
+          "title": "Capítulo 08",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-09",
+          "title": "Capítulo 09",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-10",
+          "title": "Capítulo 10",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-11",
+          "title": "Capítulo 11",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-12",
+          "title": "Capítulo 12",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-13",
+          "title": "Capítulo 13",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-14",
+          "title": "Capítulo 14",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-15",
+          "title": "Capítulo 15",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-16",
+          "title": "Capítulo 16",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-17",
+          "title": "Capítulo 17",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-18",
+          "title": "Capítulo 18",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-19",
+          "title": "Capítulo 19",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-20",
+          "title": "Capítulo 20",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-21",
+          "title": "Capítulo 21",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-22",
+          "title": "Capítulo 22",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-23",
+          "title": "Capítulo 23",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-24",
+          "title": "Capítulo 24",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-25",
+          "title": "Capítulo 25",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-01",
+          "title": "Capítulo 01",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-02",
+          "title": "Capítulo 02",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-03",
+          "title": "Capítulo 03",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-04",
+          "title": "Capítulo 04",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-05",
+          "title": "Capítulo 05",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-06",
+          "title": "Capítulo 06",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-07",
+          "title": "Capítulo 07",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-08",
+          "title": "Capítulo 08",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-09",
+          "title": "Capítulo 09",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-10",
+          "title": "Capítulo 10",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-11",
+          "title": "Capítulo 11",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-12",
+          "title": "Capítulo 12",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-01",
+          "title": "Capítulo 01",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-02",
+          "title": "Capítulo 02",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-03",
+          "title": "Capítulo 03",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-04",
+          "title": "Capítulo 04",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-05",
+          "title": "Capítulo 05",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-06",
+          "title": "Capítulo 06",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-07",
+          "title": "Capítulo 07",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-08",
+          "title": "Capítulo 08",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-09",
+          "title": "Capítulo 09",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-10",
+          "title": "Capítulo 10",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-11",
+          "title": "Capítulo 11",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-12",
+          "title": "Capítulo 12",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-13",
+          "title": "Capítulo 13",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-14",
+          "title": "Capítulo 14",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-15",
+          "title": "Capítulo 15",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-16",
+          "title": "Capítulo 16",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-17",
+          "title": "Capítulo 17",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-18",
+          "title": "Capítulo 18",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-19",
+          "title": "Capítulo 19",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-20",
+          "title": "Capítulo 20",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-21",
+          "title": "Capítulo 21",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-22",
+          "title": "Capítulo 22",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-23",
+          "title": "Capítulo 23",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-24",
+          "title": "Capítulo 24",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-25",
+          "title": "Capítulo 25",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-26",
+          "title": "Capítulo 26",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-27",
+          "title": "Capítulo 27",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-28",
+          "title": "Capítulo 28",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-29",
+          "title": "Capítulo 29",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-30",
+          "title": "Capítulo 30",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-31",
+          "title": "Capítulo 31",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-32",
+          "title": "Capítulo 32",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-33",
+          "title": "Capítulo 33",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-34",
+          "title": "Capítulo 34",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-35",
+          "title": "Capítulo 35",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-36",
+          "title": "Capítulo 36",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-37",
+          "title": "Capítulo 37",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-38",
+          "title": "Capítulo 38",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-39",
+          "title": "Capítulo 39",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-40",
+          "title": "Capítulo 40",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-41",
+          "title": "Capítulo 41",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-42",
+          "title": "Capítulo 42",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-43",
+          "title": "Capítulo 43",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-44",
+          "title": "Capítulo 44",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-45",
+          "title": "Capítulo 45",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-46",
+          "title": "Capítulo 46",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-47",
+          "title": "Capítulo 47",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-48",
+          "title": "Capítulo 48",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-49",
+          "title": "Capítulo 49",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-50",
+          "title": "Capítulo 50",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-51",
+          "title": "Capítulo 51",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-52",
+          "title": "Capítulo 52",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-53",
+          "title": "Capítulo 53",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-54",
+          "title": "Capítulo 54",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-55",
+          "title": "Capítulo 55",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-56",
+          "title": "Capítulo 56",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-57",
+          "title": "Capítulo 57",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-58",
+          "title": "Capítulo 58",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-59",
+          "title": "Capítulo 59",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-01",
+          "title": "Capítulo 01",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-02",
+          "title": "Capítulo 02",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-03",
+          "title": "Capítulo 03",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-04",
+          "title": "Capítulo 04",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-05",
+          "title": "Capítulo 05",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-06",
+          "title": "Capítulo 06",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-07",
+          "title": "Capítulo 07",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-08",
+          "title": "Capítulo 08",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-09",
+          "title": "Capítulo 09",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-10",
+          "title": "Capítulo 10",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-11",
+          "title": "Capítulo 11",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-12",
+          "title": "Capítulo 12",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-13",
+          "title": "Capítulo 13",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-14",
+          "title": "Capítulo 14",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-15",
+          "title": "Capítulo 15",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-16",
+          "title": "Capítulo 16",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-17",
+          "title": "Capítulo 17",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-18",
+          "title": "Capítulo 18",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_item_id": "tomas-de-kempis-imitacao-de-cristo",
+      "source_expected_title": "imitação de cristo",
+      "source_expected_author": "kempis",
+      "source_pdf_url": "https://archive.org/download/tomas-de-kempis-imitacao-de-cristo/Tom%C3%A1s%20de%20Kempis%20-%20Imita%C3%A7%C3%A3o%20de%20Cristo.pdf"
+    },
+    {
+      "id": "meditacoes-da-paixao",
+      "title": "Meditações da Paixão de Cristo",
+      "author": "Tomás de Kempis",
+      "author_id": "tomas-de-kempis",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "",
+      "description": "",
+      "available": false,
+      "chapters": [],
+      "source_rank": "B",
+      "public_domain_verified": true
+    },
+    {
+      "id": "oracoes-e-exercicios",
+      "title": "Orações e Exercícios de Devoção",
+      "author": "Tomás de Kempis",
+      "author_id": "tomas-de-kempis",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "",
+      "description": "",
+      "available": false,
+      "chapters": [],
+      "source_rank": "B",
+      "public_domain_verified": true
+    }
+  ]
+}

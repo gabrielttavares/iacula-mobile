@@ -1,0 +1,27 @@
+{
+  "id": "irmao-lourenco-ressurreicao",
+  "name": "Irmão Lourenço da Ressurreição",
+  "books": [
+    {
+      "id": "a-pratica-da-presenca-de-deus",
+      "title": "A Prática da Presença de Deus",
+      "author": "Irmão Lourenço da Ressurreição",
+      "author_id": "irmao-lourenco-ressurreicao",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/a-pratica-da-presenca-de-deus.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "texto-integral",
+          "title": "Texto integral",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "C",
+      "public_domain_verified": true,
+      "source_pdf_url": "https://www.centroculturalcampogrande.pt/pdfs/a.pratica.da.presenca.de.deus.pdf"
+    }
+  ]
+}

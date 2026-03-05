@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "authors": [
+    {
+      "id": "sao-josemaria-escriva",
+      "name": "São Josemaría Escrivá",
+      "description": "Espiritualidade no cotidiano.",
+      "language": "pt-br",
+      "worksCount": 8,
+      "assetPath": "assets/books/library/authors/sao-josemaria-escriva.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "tomas-de-kempis",
+      "name": "Tomás de Kempis",
+      "description": "Vida interior e seguimento de Cristo.",
+      "language": "pt-br",
+      "worksCount": 3,
+      "assetPath": "assets/books/library/authors/tomas-de-kempis.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "dom-chautard",
+      "name": "Dom Jean-Baptiste Chautard",
+      "description": "Vida interior e apostolado.",
+      "language": "pt-br",
+      "worksCount": 2,
+      "assetPath": "assets/books/library/authors/dom-chautard.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "santo-agostinho",
+      "name": "Santo Agostinho",
+      "description": "Patrística e conversão.",
+      "language": "pt-br",
+      "worksCount": 3,
+      "assetPath": "assets/books/library/authors/santo-agostinho.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "santa-teresa-avila",
+      "name": "Santa Teresa de Ávila",
+      "description": "Mística carmelita.",
+      "language": "pt-br",
+      "worksCount": 3,
+      "assetPath": "assets/books/library/authors/santa-teresa-avila.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "santa-teresinha-lisieux",
+      "name": "Santa Teresinha do Menino Jesus",
+      "description": "Pequena via.",
+      "language": "pt-br",
+      "worksCount": 2,
+      "assetPath": "assets/books/library/authors/santa-teresinha-lisieux.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "sao-bento-nursia",
+      "name": "São Bento de Núrsia",
+      "description": "Regra monástica.",
+      "language": "pt-br",
+      "worksCount": 2,
+      "assetPath": "assets/books/library/authors/sao-bento-nursia.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "john-henry-newman",
+      "name": "São John Henry Newman",
+      "description": "Sermões e meditações.",
+      "language": "pt-br",
+      "worksCount": 4,
+      "assetPath": "assets/books/library/authors/john-henry-newman.json",
+      "sourceRank": "B"
+    },
+    {
+      "id": "sao-francisco-sales",
+      "name": "São Francisco de Sales",
+      "description": "Vida devota.",
+      "language": "pt-br",
+      "worksCount": 3,
+      "assetPath": "assets/books/library/authors/sao-francisco-sales.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "alfonso-rodriguez",
+      "name": "Alfonso Rodríguez",
+      "description": "Virtudes cristãs.",
+      "language": "pt-br",
+      "worksCount": 2,
+      "assetPath": "assets/books/library/authors/alfonso-rodriguez.json",
+      "sourceRank": "B"
+    },
+    {
+      "id": "irmao-lourenco-ressurreicao",
+      "name": "Irmão Lourenço da Ressurreição",
+      "description": "Vida espiritual e presença de Deus.",
+      "language": "pt-br",
+      "worksCount": 1,
+      "assetPath": "assets/books/library/authors/irmao-lourenco-ressurreicao.json",
+      "sourceRank": "C"
+    }
+  ],
+  "generatedWorks": [
+    "a-pratica-da-presenca-de-deus",
+    "caminho-de-perfeicao",
+    "castelo-interior",
+    "confissoes",
+    "historia-de-uma-alma",
+    "imitacao-de-cristo",
+    "introducao-a-vida-devota",
+    "regra-de-sao-bento"
+  ]
+}
