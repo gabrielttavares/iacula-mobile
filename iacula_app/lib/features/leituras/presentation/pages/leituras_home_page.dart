@@ -24,7 +24,7 @@ class LeiturasHomePage extends StatelessWidget {
                 Text('Leituras', style: context.textStyles.largeTitle),
                 const SizedBox(height: IaculaSpacing.sm),
                 Text(
-                  'Livros de São Josemaría Escrivá disponíveis offline.',
+                  'A biblioteca reúne os melhores livros de autores e Santos renomados da espiritualidade meditativa e prática.',
                   style: context.textStyles.secondary,
                 ),
                 const SizedBox(height: IaculaSpacing.lg),

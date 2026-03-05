@@ -95,7 +95,7 @@ class PrayerIntentionsScreen extends ConsumerWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  CupertinoIcons.heart,
+                                  CupertinoIcons.pin,
                                   size: 48,
                                   color: context.colors.textSecondary,
                                 ),
