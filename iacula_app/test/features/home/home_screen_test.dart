@@ -1,11 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'dart:convert';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/home/presentation/home_screen.dart';
-import 'package:iacula_app/features/leituras/data/repositories/leitura_repository.dart';
-import 'package:iacula_app/features/leituras/data/sources/leitura_local_source.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/entities/daily_liturgy.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
@@ -198,67 +195,6 @@ void main() {
     expect(find.text('O que torna o Iacula único'), findsOneWidget);
   });
 
-  testWidgets('home hero uses Escriva points when feed toggle is enabled', (
-    tester,
-  ) async {
-    final settingsRepo = _FakeSettingsRepository(
-      Settings.defaults.copyWith(escrivaPointsFeedEnabled: true),
-    );
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-          lastDeliveredCardRepositoryProvider.overrideWithValue(
-            _FakeLastDeliveredCardRepository(null),
-          ),
-          leituraRepositoryProvider.overrideWithValue(
-            LeituraRepository(
-              localSource: LeituraLocalSource(
-                loadAsset: (path) async {
-                  if (path.endsWith('index.json')) {
-                    return jsonEncode({
-                      'books': [
-                        {
-                          'id': 'caminho',
-                          'title': 'Caminho',
-                          'author': 'Autor',
-                          'description': 'x',
-                          'type': 'points',
-                          'assetPath': 'assets/books/escriva/caminho.json',
-                        },
-                      ],
-                    });
-                  }
-
-                  return jsonEncode({
-                    'chapters': [
-                      {
-                        'slug': 'carater',
-                        'title': 'Caráter',
-                        'kind': 'points',
-                        'sections': [
-                          {
-                            'number': 1,
-                            'paragraphs': ['ESCRIVA_HERO_MARKER'],
-                          },
-                        ],
-                      },
-                    ],
-                  });
-                },
-              ),
-            ),
-          ),
-        ],
-        child: const CupertinoApp(home: HomeScreen()),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.textContaining('ESCRIVA_HERO_MARKER'), findsOneWidget);
-  });
-
   testWidgets('home follows required section order', (tester) async {
     await tester.pumpWidget(
       _buildApp(
@@ -283,7 +219,7 @@ void main() {
     final greeting = (nav.largeTitle! as Text).data ?? '';
     expect(greeting, contains('Bem vindo'));
     expect(find.text('Destaques'), findsNothing);
-    await reveal('Frases Personalizadas');
+    await reveal('Minhas frases');
     await reveal('Sugestão de oração');
     await reveal('Orações Temáticas');
   });
@@ -356,7 +292,7 @@ void main() {
     expect(find.text('Liturgia Diária'), findsOneWidget);
     expect(find.text('Intenções'), findsOneWidget);
     expect(find.text('Exame'), findsOneWidget);
-    expect(find.text('📖 Leituras'), findsOneWidget);
+    expect(find.text('Leituras'), findsOneWidget);
     expect(find.text('Premium'), findsNothing);
   });
 
@@ -534,11 +470,33 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final leiturasFinder = find.text('📖 Leituras');
+    final leiturasFinder = find.byKey(const Key('home_leituras_chip'));
     await tester.ensureVisible(leiturasFinder);
     await tester.tap(leiturasFinder);
     await tester.pumpAndSettle();
 
     expect(find.byType(LeiturasHomePage), findsOneWidget);
+  });
+
+  testWidgets('Frases and Leituras share equal top row', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final frasesCard = find.byKey(const Key('home_custom_phrases_card'));
+    final leiturasChip = find.byKey(const Key('home_leituras_chip'));
+
+    expect(frasesCard, findsOneWidget);
+    expect(leiturasChip, findsOneWidget);
+
+    final frasesRect = tester.getRect(frasesCard);
+    final leiturasRect = tester.getRect(leiturasChip);
+
+    expect((frasesRect.top - leiturasRect.top).abs(), lessThan(1));
+    expect((frasesRect.width - leiturasRect.width).abs(), lessThan(1));
   });
 }

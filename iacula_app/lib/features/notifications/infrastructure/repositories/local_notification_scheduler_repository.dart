@@ -260,7 +260,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'Liturgia das Horas',
       ReminderEventType.customMeditationAlarm => 'Meditação',
-      ReminderEventType.customPhrase => 'Frases Personalizadas',
+      ReminderEventType.customPhrase => 'Minhas frases',
       ReminderEventType.prayerIntentionReminder => 'Intenções',
       ReminderEventType.challengeDaily => 'Desafios',
     };

@@ -65,7 +65,7 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(390, 844));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(_buildGoldenApp());
-    await tester.pump(const Duration(milliseconds: 450));
+    await tester.pumpAndSettle();
 
     await expectLater(
       find.byType(HomeScreen),
@@ -77,7 +77,7 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(320, 700));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(_buildGoldenApp());
-    await tester.pump(const Duration(milliseconds: 450));
+    await tester.pumpAndSettle();
 
     await expectLater(
       find.byType(HomeScreen),

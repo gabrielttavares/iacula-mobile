@@ -8,6 +8,5 @@ void main() {
     expect(Settings.defaults.language, 'pt-br');
     expect(Settings.defaults.laudesTime, '06:00');
     expect(Settings.defaults.onboardingCompleted, isFalse);
-    expect(Settings.defaults.escrivaPointsFeedEnabled, isFalse);
   });
 }

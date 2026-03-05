@@ -143,8 +143,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               HeroReflectionSheet.show(context, quote: quote),
                         ),
                         const SizedBox(height: IaculaSpacing.sm),
-                        _CustomPhrasesHomeCard(
-                          onTap: () {
+                        _HomeTopShortcutsRow(
+                          onOpenCustomPhrases: () {
                             final isPremium =
                                 ref
                                     .read(premiumStatusProvider)
@@ -161,6 +161,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             Navigator.of(context).push(
                               CupertinoPageRoute(
                                 builder: (_) => const CustomPhrasesScreen(),
+                              ),
+                            );
+                          },
+                          onOpenLeituras: () {
+                            HapticFeedback.lightImpact();
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const LeiturasHomePage(),
                               ),
                             );
                           },
@@ -199,14 +207,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                             );
                           },
-                          onOpenLeituras: () {
-                            HapticFeedback.lightImpact();
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) => const LeiturasHomePage(),
-                              ),
-                            );
-                          },
                         ),
                         const SizedBox(height: IaculaSpacing.xl),
                         const IaculaSectionHeader(title: 'Sugestão de oração'),
@@ -231,9 +231,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class _CustomPhrasesHomeCard extends StatelessWidget {
-  const _CustomPhrasesHomeCard({required this.onTap});
+class _HomeTopShortcutsRow extends StatelessWidget {
+  const _HomeTopShortcutsRow({
+    required this.onOpenCustomPhrases,
+    required this.onOpenLeituras,
+  });
 
+  final VoidCallback onOpenCustomPhrases;
+  final VoidCallback onOpenLeituras;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _TopShortcutCard(
+            key: const Key('home_custom_phrases_card'),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            label: 'Minhas frases',
+            icon: CupertinoIcons.quote_bubble,
+            onTap: onOpenCustomPhrases,
+          ),
+        ),
+        const SizedBox(width: IaculaSpacing.sm),
+        Expanded(
+          child: _TopShortcutCard(
+            key: const Key('home_leituras_chip'),
+            label: 'Leituras',
+            crossAxisAlignment: CrossAxisAlignment.center,
+            icon: CupertinoIcons.book,
+            onTap: onOpenLeituras,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TopShortcutCard extends StatelessWidget {
+  const _TopShortcutCard({
+    super.key,
+    required this.label,
+    required this.crossAxisAlignment,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String label;
+  final CrossAxisAlignment crossAxisAlignment;
+  final IconData icon;
   final VoidCallback onTap;
 
   @override
@@ -241,28 +287,27 @@ class _CustomPhrasesHomeCard extends StatelessWidget {
     return IaculaSoftCard(
       padding: EdgeInsets.zero,
       child: CupertinoButton(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        minSize: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         onPressed: onTap,
-        child: Row(
-          children: [
-            Icon(
-              CupertinoIcons.quote_bubble,
-              color: context.colors.primaryButton,
-              size: 22,
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: crossAxisAlignment,
+              children: [
+                Icon(icon, color: context.colors.primaryButton, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textStyles.cardTitle.copyWith(fontSize: 16),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Frases Personalizadas',
-                style: context.textStyles.cardTitle.copyWith(fontSize: 16),
-              ),
-            ),
-            Icon(
-              CupertinoIcons.chevron_right,
-              color: context.colors.textSecondary,
-              size: 18,
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -522,12 +567,6 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
 
   if (lastDeliveredCard != null) {
     return lastDeliveredCard.toQuote();
-  }
-
-  if (settings.escrivaPointsFeedEnabled) {
-    return ref
-        .watch(getNextEscrivaPointsQuoteUseCaseProvider)
-        .call(language: settings.language);
   }
 
   // Check custom phrases first

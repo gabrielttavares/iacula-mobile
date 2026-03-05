@@ -184,7 +184,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Row(
                         children: [
                           Text(
-                            'Frases Personalizadas',
+                            'Minhas frases',
                             style: context.textStyles.cardTitle.copyWith(
                               fontSize: 16,
                             ),
@@ -288,12 +288,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await ScheduleCoreRemindersUseCase(
       schedulerRepo,
       quoteFetcher: ({required String language, required DateTime now}) {
-        if (settings.escrivaPointsFeedEnabled) {
-          return ref
-              .read(getNextEscrivaPointsQuoteUseCaseProvider)
-              .call(language: language, now: now);
-        }
-
         return ref
             .read(getNextQuoteUseCaseProvider)
             .call(language: language, now: now);
