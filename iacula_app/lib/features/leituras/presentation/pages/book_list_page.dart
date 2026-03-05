@@ -13,9 +13,22 @@ final _booksProvider = FutureProvider<List<BookModel>>((ref) async {
   return ref.watch(leituraRepositoryProvider).listBooks();
 });
 
-class BookListPage extends ConsumerWidget {
-  const BookListPage({super.key, this.authorName, this.title = 'Livros'});
+final _booksByAuthorProvider = FutureProvider.family<List<BookModel>, String>((
+  ref,
+  authorId,
+) async {
+  return ref.watch(leituraRepositoryProvider).listBooksByAuthor(authorId);
+});
 
+class BookListPage extends ConsumerWidget {
+  const BookListPage({
+    super.key,
+    this.authorId,
+    this.authorName,
+    this.title = 'Livros',
+  });
+
+  final String? authorId;
   final String? authorName;
   final String title;
 
@@ -26,20 +39,23 @@ class BookListPage extends ConsumerWidget {
       navigationBar: CupertinoNavigationBar(middle: Text(title)),
       child: PremiumGate(
         feature: PremiumFeature.leituras,
-        child: _UnlockedBookList(authorName: authorName),
+        child: _UnlockedBookList(authorId: authorId, authorName: authorName),
       ),
     );
   }
 }
 
 class _UnlockedBookList extends ConsumerWidget {
-  const _UnlockedBookList({required this.authorName});
+  const _UnlockedBookList({required this.authorId, required this.authorName});
 
+  final String? authorId;
   final String? authorName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final booksAsync = ref.watch(_booksProvider);
+    final booksAsync = authorId == null
+        ? ref.watch(_booksProvider)
+        : ref.watch(_booksByAuthorProvider(authorId!));
 
     return SafeArea(
       child: booksAsync.when(
@@ -72,6 +88,25 @@ class _UnlockedBookList extends ConsumerWidget {
                 title: book.title,
                 description: book.description,
                 onTap: () {
+                  if (!book.available) {
+                    showCupertinoDialog<void>(
+                      context: context,
+                      builder: (context) => CupertinoAlertDialog(
+                        title: const Text('Em preparação'),
+                        content: const Text(
+                          'Esta obra está em curadoria e será adicionada em breve.',
+                        ),
+                        actions: [
+                          CupertinoDialogAction(
+                            child: const Text('Fechar'),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+
                   Navigator.of(context).push(
                     CupertinoPageRoute(
                       builder: (_) => BookReaderPage(bookId: book.id),

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "author",
+    "author_id",
+    "source_rank",
+    "public_domain_verified"
+  ],
+  "properties": {
+    "id": {"type": "string"},
+    "title": {"type": "string"},
+    "author": {"type": "string"},
+    "author_id": {"type": "string"},
+    "type": {"type": "string"},
+    "assetPath": {"type": "string"},
+    "description": {"type": "string"},
+    "available": {"type": "boolean"},
+    "source_rank": {"type": "string"},
+    "public_domain_verified": {"type": "boolean"}
+  }
+}

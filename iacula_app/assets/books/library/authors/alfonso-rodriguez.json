@@ -1,0 +1,34 @@
+{
+  "id": "alfonso-rodriguez",
+  "name": "Alfonso Rodríguez",
+  "books": [
+    {
+      "id": "exercicio-da-perfeicao",
+      "title": "Exercício da Perfeição e Virtudes Cristãs",
+      "author": "Alfonso Rodríguez",
+      "author_id": "alfonso-rodriguez",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "",
+      "description": "",
+      "available": false,
+      "chapters": [],
+      "source_rank": "B",
+      "public_domain_verified": true
+    },
+    {
+      "id": "meditacoes-asceticas-rodriguez",
+      "title": "Meditações Ascéticas",
+      "author": "Alfonso Rodríguez",
+      "author_id": "alfonso-rodriguez",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "",
+      "description": "",
+      "available": false,
+      "chapters": [],
+      "source_rank": "B",
+      "public_domain_verified": true
+    }
+  ]
+}

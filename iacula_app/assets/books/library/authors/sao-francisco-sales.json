@@ -1,0 +1,58 @@
+{
+  "id": "sao-francisco-sales",
+  "name": "São Francisco de Sales",
+  "books": [
+    {
+      "id": "cartas-espirituais-sales",
+      "title": "Cartas Espirituais",
+      "author": "São Francisco de Sales",
+      "author_id": "sao-francisco-sales",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "",
+      "description": "",
+      "available": false,
+      "chapters": [],
+      "source_rank": "B",
+      "public_domain_verified": true
+    },
+    {
+      "id": "introducao-a-vida-devota",
+      "title": "Introdução à Vida Devota",
+      "author": "São Francisco de Sales",
+      "author_id": "sao-francisco-sales",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/introducao-a-vida-devota.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "texto-integral",
+          "title": "Texto integral",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_item_id": "introducaoavidadevotaa5",
+      "source_expected_title": "introdução à vida devota",
+      "source_expected_author": "francisco de sales",
+      "source_pdf_url": "https://archive.org/download/introducaoavidadevotaa5/Introdu%C3%A7%C3%A3o%20%C3%A0%20vida%20devota%20-%20A5.pdf"
+    },
+    {
+      "id": "tratado-do-amor-de-deus",
+      "title": "Tratado do Amor de Deus",
+      "author": "São Francisco de Sales",
+      "author_id": "sao-francisco-sales",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "",
+      "description": "",
+      "available": false,
+      "chapters": [],
+      "source_rank": "A",
+      "public_domain_verified": true
+    }
+  ]
+}

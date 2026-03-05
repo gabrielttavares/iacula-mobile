@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["id", "name", "books"],
+  "properties": {
+    "id": {"type": "string"},
+    "name": {"type": "string"},
+    "books": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "author", "available"],
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "author": {"type": "string"},
+          "type": {"type": "string"},
+          "assetPath": {"type": "string"},
+          "description": {"type": "string"},
+          "available": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}
