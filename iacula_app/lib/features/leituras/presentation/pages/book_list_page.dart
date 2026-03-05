@@ -14,23 +14,28 @@ final _booksProvider = FutureProvider<List<BookModel>>((ref) async {
 });
 
 class BookListPage extends ConsumerWidget {
-  const BookListPage({super.key});
+  const BookListPage({super.key, this.authorName, this.title = 'Livros'});
+
+  final String? authorName;
+  final String title;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      navigationBar: const CupertinoNavigationBar(middle: Text('Livros')),
+      navigationBar: CupertinoNavigationBar(middle: Text(title)),
       child: PremiumGate(
         feature: PremiumFeature.leituras,
-        child: const _UnlockedBookList(),
+        child: _UnlockedBookList(authorName: authorName),
       ),
     );
   }
 }
 
 class _UnlockedBookList extends ConsumerWidget {
-  const _UnlockedBookList();
+  const _UnlockedBookList({required this.authorName});
+
+  final String? authorName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,6 +51,10 @@ class _UnlockedBookList extends ConsumerWidget {
           ),
         ),
         data: (books) {
+          final filteredBooks = authorName == null
+              ? books
+              : books.where((book) => book.author == authorName).toList();
+
           return ListView.separated(
             physics: const BouncingScrollPhysics(),
             padding: EdgeInsets.fromLTRB(
@@ -54,11 +63,11 @@ class _UnlockedBookList extends ConsumerWidget {
               IaculaSpacing.md,
               IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
             ),
-            itemCount: books.length,
+            itemCount: filteredBooks.length,
             separatorBuilder: (_, _) =>
                 const SizedBox(height: IaculaSpacing.sm),
             itemBuilder: (context, index) {
-              final book = books[index];
+              final book = filteredBooks[index];
               return BookCard(
                 title: book.title,
                 description: book.description,

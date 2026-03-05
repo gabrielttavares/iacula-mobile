@@ -31,10 +31,15 @@ class LeiturasHomePage extends StatelessWidget {
                 CupertinoButton.filled(
                   onPressed: () {
                     Navigator.of(context).push(
-                      CupertinoPageRoute(builder: (_) => const BookListPage()),
+                      CupertinoPageRoute(
+                        builder: (_) => const BookListPage(
+                          authorName: 'São Josemaría Escrivá',
+                          title: 'São Josemaría Escrivá',
+                        ),
+                      ),
                     );
                   },
-                  child: const Text('Abrir biblioteca'),
+                  child: const Text('São Josemaría Escrivá'),
                 ),
               ],
             ),

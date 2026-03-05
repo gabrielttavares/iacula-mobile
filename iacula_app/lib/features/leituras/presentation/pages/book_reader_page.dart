@@ -26,25 +26,31 @@ final _chapterProvider =
       },
     );
 
-class BookReaderPage extends StatefulWidget {
+class BookReaderPage extends ConsumerStatefulWidget {
   const BookReaderPage({super.key, required this.bookId, this.chapterSlug});
 
   final String bookId;
   final String? chapterSlug;
 
   @override
-  State<BookReaderPage> createState() => _BookReaderPageState();
+  ConsumerState<BookReaderPage> createState() => _BookReaderPageState();
 }
 
-class _BookReaderPageState extends State<BookReaderPage> {
+class _BookReaderPageState extends ConsumerState<BookReaderPage> {
   double _fontSize = 17;
 
   @override
   Widget build(BuildContext context) {
+    final bookAsync = ref.watch(_bookProvider(widget.bookId));
+    final readingTitle = bookAsync.maybeWhen(
+      data: (book) => book?.title ?? 'Leitura',
+      orElse: () => 'Leitura',
+    );
+
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
       navigationBar: CupertinoNavigationBar(
-        middle: Text(widget.chapterSlug == null ? 'Capítulos' : 'Leitura'),
+        middle: Text(widget.chapterSlug == null ? 'Capítulos' : readingTitle),
         trailing: widget.chapterSlug == null
             ? null
             : Row(
