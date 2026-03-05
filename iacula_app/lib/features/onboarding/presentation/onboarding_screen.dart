@@ -37,30 +37,78 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 const _BrandBlock(),
                 const SizedBox(height: IaculaSpacing.md),
                 Text(
-                  'Jaculatórias, liturgia e plano de vida para rezar no ritmo do seu dia.',
+                  'Reze. Cresça. Persevere.',
+                  textAlign: TextAlign.center,
+                  style: context.textStyles.sectionTitle,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Tudo para sua vida de oração, no ritmo do seu dia.',
                   textAlign: TextAlign.center,
                   style: context.textStyles.secondary,
                 ),
                 const SizedBox(height: IaculaSpacing.xl),
-                const _ExclusiveFeatureCard(),
-                const SizedBox(height: IaculaSpacing.sm),
                 const Row(
                   children: [
                     Expanded(
                       child: _FeatureCard(
-                        icon: CupertinoIcons.book,
-                        title: 'Liturgia Diária',
-                        subtitle: 'Acompanhe as orações de cada dia.',
-                        minHeight: 140,
+                        icon: CupertinoIcons.bell_fill,
+                        title: 'Jaculatória Diária',
+                        subtitle: 'Orações curtas ao longo do dia.',
+                        minHeight: 120,
                       ),
                     ),
                     SizedBox(width: IaculaSpacing.sm),
                     Expanded(
                       child: _FeatureCard(
+                        icon: CupertinoIcons.book,
+                        title: 'Liturgia Diária',
+                        subtitle: 'Leituras e orações de cada dia.',
+                        minHeight: 120,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: IaculaSpacing.sm),
+                const Row(
+                  children: [
+                    Expanded(
+                      child: _FeatureCard(
+                        icon: CupertinoIcons.rosette,
+                        title: 'Rosário',
+                        subtitle: 'Todos os mistérios para meditar.',
+                        minHeight: 120,
+                      ),
+                    ),
+                    SizedBox(width: IaculaSpacing.sm),
+                    Expanded(
+                      child: _FeatureCard(
+                        icon: CupertinoIcons.sparkles,
+                        title: 'Meditação',
+                        subtitle: 'Reflexões guiadas para o silêncio.',
+                        minHeight: 120,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: IaculaSpacing.sm),
+                const Row(
+                  children: [
+                    Expanded(
+                      child: _FeatureCard(
                         icon: CupertinoIcons.check_mark_circled,
                         title: 'Plano de Vida',
-                        subtitle: 'Cultive constância com pequenos passos.',
-                        minHeight: 140,
+                        subtitle: 'Constância com pequenos passos.',
+                        minHeight: 120,
+                      ),
+                    ),
+                    SizedBox(width: IaculaSpacing.sm),
+                    Expanded(
+                      child: _FeatureCard(
+                        icon: CupertinoIcons.pencil_outline,
+                        title: 'Exame Pessoal',
+                        subtitle: 'Prepare-se para a confissão.',
+                        minHeight: 120,
                       ),
                     ),
                   ],
@@ -134,47 +182,6 @@ class _BrandBlock extends StatelessWidget {
   }
 }
 
-class _ExclusiveFeatureCard extends StatelessWidget {
-  const _ExclusiveFeatureCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return IaculaSoftCard(
-      padding: const EdgeInsets.all(IaculaSpacing.md),
-      radius: 16,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(CupertinoIcons.bell_fill, color: context.colors.primaryButton),
-              Text(
-                'EXCLUSIVO',
-                style: TextStyle(
-                  color: context.colors.primaryButton,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                  letterSpacing: 0.6,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: IaculaSpacing.sm),
-          Text(
-            'Notificações diárias com Jaculatórias',
-            style: context.textStyles.cardTitle,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Angelus / Regina Caeli às 12:00 PM',
-            style: context.textStyles.secondary,
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _FeatureCard extends StatelessWidget {
   const _FeatureCard({

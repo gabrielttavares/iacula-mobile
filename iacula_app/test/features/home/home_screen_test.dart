@@ -288,8 +288,8 @@ void main() {
 
     expect(find.text('Orações'), findsOneWidget);
     expect(find.text('Liturgia Diária'), findsOneWidget);
-    expect(find.text('Intenções de Oração'), findsOneWidget);
-    expect(find.text('Exame Pessoal'), findsOneWidget);
+    expect(find.text('Intenções'), findsOneWidget);
+    expect(find.text('Exame'), findsOneWidget);
     expect(find.text('Premium'), findsNothing);
   });
 

@@ -45,14 +45,14 @@ class HomeActionGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Intenções de Oração',
+                label: 'Intenções',
                 onTap: onOpenIntentions,
               ),
             ),
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Exame Pessoal',
+                label: 'Exame',
                 onTap: onOpenExamination,
               ),
             ),
