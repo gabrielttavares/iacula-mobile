@@ -53,8 +53,8 @@ void main() {
     expect(find.byType(OnboardingScreen), findsOneWidget);
     expect(find.text('Iacula'), findsOneWidget);
     expect(find.byIcon(CupertinoIcons.circle_grid_3x3_fill), findsNothing);
-    expect(find.text('Notificações diárias com Jaculatórias'), findsOneWidget);
-    expect(find.text('Angelus / Regina Caeli às 12:00 PM'), findsOneWidget);
+    expect(find.text('Jaculatória Diária'), findsOneWidget);
+    expect(find.text('Orações curtas ao longo do dia.'), findsOneWidget);
     await reveal('Começar com sua conta');
     expect(find.text('Iacula • presença de Deus no cotidiano'), findsNothing);
 
