@@ -2,15 +2,33 @@
   "slug": "regina-coeli",
   "default_language": "pt-br",
   "titles": {
-    "la": "Regina Caeli",
-    "pt-br": "Rainha do Céu"
+    "la": "Regína cæli",
+    "pt-br": "Regína cæli"
   },
   "blocks": {
     "la": [
-      "V/. Regina cæli, lætáre, allelúia. R/. Quia quem meruísti portáre, allelúia. V/. Resurréxit, sicut dixit, allelúia. R/. Ora pro nobis Deum, allelúia. V/. Gaude et lætáre, Virgo Maria, allelúia. R/. Quia surréxit Dóminus vere, allelúia."
+      "Pro Tempore Paschali",
+      ". Regina cæli lætáre, allelúia.",
+      ". Quia quem meruísti portáre, allelúia.",
+      ". Resurréxit, sicut dixit, allelúia.",
+      ". Ora pro nobis Deum, allelúia.",
+      ". Gaude et lætáre, Virgo Maria, allelúia.",
+      ". Quia surréxit Dóminus vere, allelúia.",
+      "Orémus",
+      "Deus, qui per resurrectiónem Fílii tui Dómini nostri Iesu Christi mundum lætificáre dignátus es, præsta, quǽsumus, ut per eius Genetrícem Vírginem Maríam perpétuæ capiámus gáudia vitæ. Per Christum Dóminum nostrum.",
+      ". Amen."
     ],
     "pt-br": [
-      "V/. Rainha do Céu, alegrai-Vos, aleluia. R/. Porque quem merecestes trazer em vosso seio, aleluia. V/. Ressuscitou como disse, aleluia. R/. Rogai a Deus por nós, aleluia. V/. Exultai e alegrai-vos, ó Virgem Maria, aleluia. R/. Porque o Senhor ressuscitou verdadeiramente, aleluia."
+      "Para o Tempo Pascal",
+      ". Rainha do Céu, alegrai-vos, aleluia.",
+      ".Porque quem merecestes trazer em vosso seio, aleluia.",
+      ". Ressuscitou como disse, aleluia.",
+      ". Rogai a Deus por nós, aleluia.",
+      ". Exultai e alegrai-vos, ó Virgem Maria, aleluia.",
+      ". Porque o Senhor ressuscitou verdadeiramente, aleluia.",
+      "Oremos",
+      "Ó Deus, que Vos dignastes alegrar o mundo com a Ressurreição do Vosso Filho Jesus Cristo, Senhor Nosso, concedei-nos, Vos suplicamos, que por sua Mãe, a Virgem Maria, alcancemos as alegrias da vida eterna. Por Cristo, Senhor Nosso.",
+      ". Amém."
     ]
   }
 }

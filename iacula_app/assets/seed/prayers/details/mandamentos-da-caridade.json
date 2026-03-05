@@ -2,17 +2,17 @@
   "slug": "mandamentos-da-caridade",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Mandamentos da Caridade",
+    "pt-br": "Os dois mandamentos da caridade",
     "la": "Duo praecepta dilectionis"
   },
   "blocks": {
     "pt-br": [
-      "1. Amarás o Senhor teu Deus, com todo o teu coração, com toda a tua alma e com toda a tua mente.",
-      "2. Amarás o próximo como a ti mesmo."
+      "1. Amarás o Senhor teu Deus, com todo o teu coração, com toda a tua alma e com toda a tua mente.",
+      "2. Amarás o próximo como a ti mesmo."
     ],
     "la": [
-      "﻿–﻿ Diliges Dominum Deum tuum ex toto corde tuo et in tota anima tua et in tota mente tua.",
-      "﻿–﻿ Diliges proximum tuum sicut teipsum."
+      "–﻿ Diliges Dominum Deum tuum ex toto corde tuo et in tota anima tua et in tota mente tua.",
+      "–﻿ Diliges proximum tuum sicut teipsum."
     ]
   }
 }

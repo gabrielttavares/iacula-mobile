@@ -1,0 +1,18 @@
+{
+  "slug": "bencao-de-viagem",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Bênção de viagem",
+    "la": "Benedíctio pro itínere"
+  },
+  "blocks": {
+    "pt-br": [
+      "Que pela intercessão da Bem-Aventurada Virgem Maria, tenhamos uma boa viagem: que o Senhor esteja no nosso caminho e os seus Anjos nos acompanhem.",
+      "Em nome do Pai e do Filho e do Espírito Santo. Amém."
+    ],
+    "la": [
+      "Beata Maria intercedénte, bene ambulémus (ámbulem, ámbules, ambulétis): et Dóminus sit in itínere nostro (meo, tuo, vestro), et Ángeli eius comiténtur nobíscum (mecum, tecum, vobíscum).",
+      "In nómine Patris, et Fílii, et Spíritus Sancti. Amen."
+    ]
+  }
+}

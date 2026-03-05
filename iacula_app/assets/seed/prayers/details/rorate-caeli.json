@@ -1,0 +1,34 @@
+{
+  "slug": "rorate-caeli",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Rorate caeli",
+    "la": "Rorate caeli"
+  },
+  "blocks": {
+    "pt-br": [
+      "Tempo do Advento",
+      "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo.Não vos ireis, Senhor, nem vos lembreis da iniquidade.",
+      "Eis que a cidade do Santuário ficou deserta:Sião tornou-se deserta; Jerusalém está desolada.A casa da vossa santificação e da vossa glória,Onde os nossos pais vos louvaram",
+      "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo.",
+      "Pecamos e nos tornamos como os imundos,E caímos, todos, como folhas.E as nossas iniquidades, como um vento, nos dispersaram.Escondestes de nós o vosso rostoE nos esmagastes pela mão das nossas iniquidades",
+      "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo.",
+      "Olhai, ó Senhor, para a aflição do vosso povo,E enviai Aquele que estais para enviar!Enviai o Cordeiro dominador da terraDa pedra do deserto ao monte da filha de SiãoPara que Ele retire o jugo do nosso cativeiro",
+      "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo.",
+      "Consola-te, consola-te, povo meu,Em breve há de vir a tua salvação!Por que te consomes na tristeza, se a dor te renovou?Eu te salvarei, não tenhas medo!Porque Eu sou o Senhor, teu Deus,o Santo de Israel, o teu Redentor",
+      "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo."
+    ],
+    "la": [
+      "Tempus Adventus",
+      "Rorate coeli desúper, Et nubes plúant justum. Ne irascáris Dómine, ne ultra memíneris iniquitátis:",
+      "Ecce cívitas Sancti facta est desérta. Sion desérta facta est: Jerúsalem desoláta est. Domus sanctificatiónis tuae et gloriae tuae, ubi laudavérunt te patres nostri.",
+      "Rorate coeli desúper, et nubes plúant justum.",
+      "Peccávimus et facti sumus quam immúndus nos, et cecídimus quasi fólium univérsi: Et iniquitátes nostrae quasi ventus abstulérunt nos; Abscondísti fáciem tuam a nobis, et allisísti nos in mánu iniquitátis nostrae.",
+      "Rorate coeli desúper, et nubes plúant justum.",
+      "Víde, Dómine, afflictiónem pópuli tui, Et mitte quem missúrus es:Emítte Agnum dominatórem terrae, De pétra desérti ad montem fíliae Sion, ut áuferat ipse jugum captivitátis nostrae.",
+      "Rorate Coeli desúper, et nubes plúant justum.",
+      "Consolámini, consolámini, pópule meus: Cito véniet salus tua. Quare moeróre consúmeris, quia innovávit te dolor? Salvábo te, noli timére, ego énim sum Dóminus Deus túus Sánctus Israël, Redémptor túus.",
+      "Rorate coeli desúper, et nubes plúant justum."
+    ]
+  }
+}

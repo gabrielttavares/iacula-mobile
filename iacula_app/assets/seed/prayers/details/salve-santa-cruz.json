@@ -1,0 +1,18 @@
+{
+  "slug": "salve-santa-cruz",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Salve Santa Cruz",
+    "la": "O Bona Crux"
+  },
+  "blocks": {
+    "pt-br": [
+      "Atribuída a Santo Andrés Apóstolo",
+      "Salve Santa Cruz, tão desejada, tão amada. Tira-me do meio dos homens e entrega-me ao meu Mestre e Senhor, para que eu de ti receba o que por ti me salvou!"
+    ],
+    "la": [
+      "Sancto Andreae Apostolo adscripta",
+      "O Bona Crux, quæ decórem ex membris Dómini suscepísti, diu desideráta, sollícite amáta, sine intermissióne quæsíta, et aliquándo cupiénti ánimo præparáta: áccipe me ab homínibus, et redde me magistro meo: ut per te me recípiat, qui per te me redémit."
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "slug": "sacris-solemniis",
+  "default_language": "la",
+  "titles": {
+    "la": "Sacris solémniis"
+  },
+  "blocks": {
+    "la": [
+      "Ultimae duae strophae sunt hymnus 'Panis Angelicus'",
+      "Sacris solémniis iuncta sint gáudia,Et ex praecórdiis sonent praecónia;Recédant vétera, nova sint ómnia,Corda, voces, et ópera.Noctis recólitur coena novíssima,Qua Christus créditur agnum et ázymaDedísse frátribus, iuxta legítimaPriscis indúlta pátribus.Post agnum týpicum, explétis épulis,Corpus Domínicum datum discípulis,Sic totum ómnibus, quod totum síngulis,Eius fatémur mánibus.Dedit fragílibus córporis férculum,Dedit et trístibus sánguinis póculum,Dicens: Accípite quod trado vásculum;Omnes ex eo bíbite.Sic sacrifícium istud instítuit,Cuius offícium commítti vóluitSolis presbýteris, quibus sic cóngruit,Ut sumant, et dent céteris.Panis angélicus fit panis hóminum;Dat panis cǽlicus figúris términum;O res mirábilis: mandúcat DóminumPauper, servus et húmilis.Te, trina Déitas únaque, póscimus;Sic nos tu vísita, sicut te cólimus:Per tuas sémitas duc nos quo téndimus,Ad lucem quam inhábitas.Amen."
+    ]
+  }
+}

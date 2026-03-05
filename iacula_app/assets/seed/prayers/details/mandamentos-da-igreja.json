@@ -2,16 +2,23 @@
   "slug": "mandamentos-da-igreja",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Mandamentos da Igreja"
+    "pt-br": "Os cinco preceitos da Igreja",
+    "la": "Praecepta Ecclesiae"
   },
   "blocks": {
     "pt-br": [
-      "1. Assistir à Missa aos domingos e festas de guarda e descansar desses dias de trabalho.",
-      "2. Confessar-se pelo menos uma vez ao ano.",
-      "3. Comungar na Páscoa (ou pelo menos uma vez por ano, na Páscoa).",
-      "4. Jejuar e abster-se de carne nos dias prescritos.",
-      "5. Contribuir para as necessidades da Igreja segundo as próprias possibilidades.",
-      "Estes mandamentos, estabelecidos pela Igreja Católica, têm por objetivo assegurar o culto a Deus, a santificação do povo cristão e o sustento do ministério sagrado."
+      "1. Participar da Missa aos domingos e festas de guarda e permanecer livres de trabalhos e de atividades que poderiam impedir a santificação desses dias.",
+      "2. Confessar os próprios pecados pelo menos uma vez ao ano.",
+      "3. Receber o sacramento da Eucaristia pelo menos na Páscoa.",
+      "4. Abster-se de comer carne e observar o jejum nos dias estabelecidos pela Igreja.",
+      "5. Suprir as necessidades materiais da própria Igreja, segundo as próprias possibilidades."
+    ],
+    "la": [
+      "1. Missam audire diebus Dominicis ceterisque festis de praecepto.",
+      "2. Peccata sua mortalia saltem semel in anno confiteri, et in mortis periculo, et si quis ad Sacram Communionem accedere debet.",
+      "3. Eucharistiae Sacramentum saltem tempore paschali recipere.",
+      "4. Ieiunium et abstinentiam servare diebus ab Ecclesia statutis.",
+      "5. Ecclesiae in suis necessitatibus subvenire."
     ]
   }
 }

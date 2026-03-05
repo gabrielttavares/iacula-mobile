@@ -2,11 +2,25 @@
   "slug": "veni-sancte-spiritus",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Veni, Sancte Spiritus"
+    "pt-br": "Vinde, ó Espírito Santo",
+    "la": "Veni, Sancte Spíritus"
   },
   "blocks": {
     "pt-br": [
-      "Vinde Santo Espírito e do céu mandai luminoso raio; vinde pai dos pobres, doador dos dons, luz dos corações. Grande defensor em nós habitais e nos confortais. Na fadiga, pouso, no ardor, brandura e na dor, ternura. Ó luz venturosa, que vossos clarões encham os corações."
+      "Vinde, Espírito Santo, enchei os corações dos vossos fiéis e acendei neles o fogo do vosso amor.",
+      ". Enviai o vosso Espírito e tudo será criado.",
+      ". E renovareis a face da terra.",
+      "Oremos",
+      "Ó Deus, que instruístes os corações dos vossos fiéis com a luz do Espírito Santo, concedei-nos amar, no mesmo Espírito, o que é reto e gozar sempre a sua consolação. Por Jesus Cristo, Nosso Senhor.",
+      ". Amém."
+    ],
+    "la": [
+      "Veni, Sancte Spíritus!, reple tuórum corda fidélium: et tui amóris in eis ignem accénde.",
+      ". Emitte Spíritum tuum, et creabúntur.",
+      ". Et renovábis faciem terræ.",
+      "Orémus",
+      "Deus, qui corda fidélium Sancti Spíritus illustratióne docuísti, da nobis in eódem Spíritu recta sápere; et de eius semper consolatióne gaudére. Per Christum Dóminum nostrum.",
+      ". Amen."
     ]
   }
 }

@@ -2,14 +2,19 @@
   "slug": "virtudes-teologais-formula",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Virtudes Teologais"
+    "pt-br": "As três virtudes teologais",
+    "la": "Tres virtutes theologales"
   },
   "blocks": {
     "pt-br": [
-      "Fé, Esperança e Caridade. A maior destas é a Caridade.",
-      "A fé é a virtude teologal pela qual cremos em Deus e em todas as verdades que Ele revelou, porque Ele mesmo as disse.",
-      "A esperança é a virtude teologal que nos faz desejar com confiança a glória eterna e as graças necessárias para alcançá-la.",
-      "A caridade é a virtude teologal pelo amamos a Deus sobre todas as coisas e ao próximo como a nós mesmos, por amor de Deus."
+      "1. Fé.",
+      "2. Esperança.",
+      "3. Caridade."
+    ],
+    "la": [
+      "1. Fides.",
+      "2. Spes.",
+      "3. Caritas."
     ]
   }
 }

@@ -1,0 +1,18 @@
+{
+  "slug": "verbum-supernum",
+  "default_language": "la",
+  "titles": {
+    "la": "Verbum supérnum"
+  },
+  "blocks": {
+    "la": [
+      "Ultimae duae strophae sunt 'O Salutáris Hóstia'",
+      "Verbum supérnum pródiens,nec Patris linquens déxteram,ad opus suum éxiens,venit ad vitae vésperam.",
+      "In mortem a discípulosuis trádendus aémulis,prius in vitae férculose trádidit discípulis.",
+      "Quibus sub bina spéciecarnem dedit et sánguinem;ut dúplicis substántiaetotum cibáret hóminem.",
+      "Se nascens dedit sócium,convéscens in edúlium,se móriens in prétium,se regnans dat in praémium.",
+      "O salutáris hóstia,quae caeli pandis óstium,bella premunt hostília;da robur, fer auxílium.",
+      "Uni trinóque Dominosit sempitérna glória:qui vitam sine términonobis donet in pátria. Amen."
+    ]
+  }
+}

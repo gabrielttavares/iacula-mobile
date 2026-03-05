@@ -1,0 +1,24 @@
+{
+  "slug": "lauda-sion",
+  "default_language": "la",
+  "titles": {
+    "la": "Lauda Sion"
+  },
+  "blocks": {
+    "la": [
+      "Hymnus eucharisticus",
+      "Lauda, Sion Salvatórem,lauda ducem et pastóremin hymnis et cánticis.Quantum potes, tantum aude:quia maior omni laude,nec laudáre súfficis.",
+      "Laudis thema speciális,panis vivus et vitálishódie propónitur.Quem in sacræ mensa cenæ,turbæ fratrum duodénædatum non ambígitur.",
+      "Sit laus plena, sit sonóra,sit iucúnda, sit decóramentis iubilátio.Dies enim solémnis ágitur,in qua mensæ prima recóliturhuius institútio.",
+      "In hac mensa novi Regis,novum Pascha novæ legisPhase vetus términat.Vetustátem nóvitas,umbram fugat véritas,noctem lux elíminat.",
+      "Quod in cena Christus gessit,faciéndum hoc expréssitin sui memóriam.Docti sacris institútis,panem, vinum, in salútisconsecrámus hóstiam.",
+      "Dogma datur Christiánis,quod in carnem transit panis,et vinum in sánguinem.Quod non capis, quod non vides,animósa firmat fides,præter rerum órdinem.",
+      "Sub divérsis speciébus,signis tantum, et non rebus,latent res exímiæ.Caro cibus, sanguis potus:manet tamen Christus totus,sub utráque spécie.",
+      "A suménte non concísus,non confráctus, non divísus:ínteger accípitur.Sumit unus, sumunt mille:quantum isti, tantum ille:nec sumptus consúmitur.",
+      "Sumunt boni, sumunt mali:sorte tamen inæquáli,vitæ vel intéritus.Mors est malis, vita bonis:vide paris sumptiónisquam sit dispar éxitus.",
+      "Fracto demum sacraménto,ne vacílles, sed memento,tantum esse sub fragménto,quantum toto tégitur.Nulla rei fit scissúra:signi tantum fit fractúra:qua nec status nec statúrasignáti minúitur.",
+      "Ecce panis Angelórum,factus cibus viatórum:vere panis fíliórum,non mitténdus cánibus.In figúris præsignátur,cum Isaac immolátur:agnus paschæ deputátur:datur manna pátribus.",
+      "Bone Pastor, panis vere,Iesu, nostri miserére:tu nos pasce, nos tuére:tu nos bona fac vidérein terra vivéntium.Tu, qui cuncta scis et vales:qui nos pascis hic mortales:tuos ibi commensáles,coherédes et sodalesfac sanctórum cívium. Amen.Allelúia."
+    ]
+  }
+}

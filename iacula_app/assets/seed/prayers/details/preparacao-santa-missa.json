@@ -2,11 +2,15 @@
   "slug": "preparacao-santa-missa",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Preparação para a Santa Missa"
+    "pt-br": "Oração a Nossa Senhora",
+    "la": "Ad B. Maríam Vírginem"
   },
   "blocks": {
     "pt-br": [
-      "À Santissima Virgem: Ó Mãe de bondade e de misericórdia, Santissima Virgem Maria, eu, miserável e indigno pecador, a Vós recorro de todo o coração e com todo o amor; e Vos suplico que, assim como estivestes de pé junto ao vosso amabilissimo Filho pendente da Cruz, me assistais também a mim, mísero pecador, e a todos os sacerdotes que hoje na Santa Igreja oferecem o Santo Sacrifício."
+      "Ó Mãe de bondade e de misericórdia, Santíssima Virgem Maria, eu, miserável e indignopecador, a Vós recorrode todo o coração e com todo o amor; e Vos suplico que, assim como estivestes de pé junto ao vosso amabilíssimo Filho pendente da Cruz, me assistais também a mim, mísero pecador, e a todos os sacerdotes que hoje na Santa Igreja oferecem o Santo Sacrifício. Auxiliados pela vossa graça, possamos nós apresentar à suprema e indivisível Trindade a Vítima verdadeiramente digna de lhe ser oferecida. Amém."
+    ],
+    "la": [
+      "O Mater pietátis et misericórdiæ, beatíssima Virgo María, ego miser et indígnus peccátor ad te confúgio toto corde et afféctu, et precor pietátem tuam, ut, sicut dulcíssimo Fílio tuo in Cruce pendénti astitísti, ita et mihi, mísero peccatóri, et sacerdótibus ómnibus, hic et in tota sancta Ecclésia hódie offeréntibus, cleménter assístere dignéris, ut, tua grátia adiúti, dignam et acceptábilem hóstiam in conspéctu summæ et indivíduæ Trinitátis offérre valeámus. Amen."
     ]
   }
 }

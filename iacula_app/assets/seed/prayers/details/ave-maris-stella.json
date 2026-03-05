@@ -2,11 +2,21 @@
   "slug": "ave-maris-stella",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Ave Maris Stella"
+    "pt-br": "Ave Maris Stella",
+    "la": "Ave maris stel la"
   },
   "blocks": {
     "pt-br": [
       "Ave Estrela do Mar, Ave Mãe de Deus, Virgem para sempre, Porta ditosa dos céus. De Gabriel, o Arcanjo aquele Ave tomando, concede ao mundo a paz de Eva o nome trocando."
+    ],
+    "la": [
+      "Ave maris stella, Dei Mater alma, atque semper Virgo, felix caeli porta.",
+      "Sumens illud Ave Gabrielis ore, funda nos in pace, mutans Hevae nomen.",
+      "Solve vincula reis, profer lumen caecis mala nostra pelle, bona cuncta posce.",
+      "Monstra te esse matrem: sumat per te preces, qui pro nobis natus, tulit esse tuus.",
+      "Virgo singularis, inter omnes mitis, nos culpis solutos, mites fac et castos.",
+      "Vitam praesta puram, iter para tutum: ut videntes Iesum semper collaetemur.",
+      "Sit laus Deo Patri, summo Christo decus, Spiritui Sancto, tribus honor unus. Amen."
     ]
   }
 }

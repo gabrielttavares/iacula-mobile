@@ -1,0 +1,2796 @@
+{
+  "Orações comuns": [
+    {
+      "ptBrTitle": "Sinal da Cruz",
+      "laTitle": "Signum Crucis",
+      "ptBrBlocks": [
+        "Em nome do Pai e do Filho e do Espírito Santo. Amém."
+      ],
+      "laBlocks": [
+        "In nómine Patris, et Fílii, et Spíritus Sancti. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Pai Nosso",
+      "laTitle": "Pater noster",
+      "ptBrBlocks": [
+        "Pai Nosso que estais nos Céus, santificado seja o vosso Nome, venha a nós o vosso Reino, seja feita a vossa vontade assim na terra como no Céu.",
+        "O pão nosso de cada dia nos dai hoje, perdoai-nos as nossas ofensas assim como nós perdoamos a quem nos tem ofendido, e não nos deixeis cair em tentação, mas livrai-nos do Mal. Amém."
+      ],
+      "laBlocks": [
+        "Pater noster, qui es in cælis: sanctificétur nomen tuum; advéniat regnum tuum; fiat volúntas tua, sicut in cælo, et in terra.",
+        "Panem nostrum cotidiánum da nobis hódie; et dimítte nobis débita nostra, sicut et nos dimíttimus debitóribus nostris; et ne nos indúcas in tentatiónem; sed líbera nos a malo. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Ave Maria",
+      "laTitle": "Ave, Maria",
+      "ptBrBlocks": [
+        "Ave Maria, cheia de graça, o Senhor é convosco, bendita sois vós entre as mulheres e bendito é o fruto do vosso ventre, Jesus.",
+        "Santa Maria, Mãe de Deus, rogai por nós pecadores, agora e na hora da nossa morte. Amém."
+      ],
+      "laBlocks": [
+        "Ave, Maria, grátia plena, Dóminus tecum. Benedícta tu in muliéribus, et benedíctus fructus ventris tui, Iesus.",
+        "Sancta Maria, Mater Dei, ora pro nobis peccatóribus, nunc et in hora mortis nostræ. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Glória ao Pai",
+      "laTitle": "Glória Patri",
+      "ptBrBlocks": [
+        "Glória ao Pai e ao Filho e ao Espírito Santo.",
+        "Como era, no princípio, agora e sempre. Amém."
+      ],
+      "laBlocks": [
+        "Glória Patri, et Fílio, et Spirítui Sancto.",
+        "Sicut erat in princípio, et nunc et semper et in sǽcula sæculórum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Ato de Contrição",
+      "laTitle": "",
+      "ptBrBlocks": [
+        "Senhor, eu me arrependo sinceramente de todo mal que pratiquei e do bem que deixei de fazer. Pecando, eu vos ofendi, meu Deus e sumo bem, digno de ser amado sobre todas as coisas. Prometo firmemente, ajudado com a vossa graça, fazer penitência e fugir às ocasiões de pecar. Amém."
+      ],
+      "laBlocks": [],
+      "languages": [
+        "pt-br"
+      ]
+    },
+    {
+      "ptBrTitle": "Confesso",
+      "laTitle": "Confíteor",
+      "ptBrBlocks": [
+        "Confesso a Deus todo-poderoso e a vós, irmãos, que pequei muitas vezes por pensamentos e palavras, atos e omissões.",
+        "Por minha culpa, minha culpa, minha tão grande culpa",
+        "E peço à Virgem Maria, aos Anjos e Santos, e a vós, irmãos, que rogueis por mim a Deus, nosso Senhor.",
+        "Outra fórmula do Confesso ou Confíteor, que insiste mais na referência à Igreja do Céu, onde os santos gozam já da glória de Deus e intercedem por nós:",
+        "Confesso a Deus todo-poderoso, à Santíssima Virgem Maria, ao Arcanjo São Miguel, a São João Batista, aos santos apóstolos Pedro e Paulo, a todos os santos e a vós, irmãos, que pequei muitas vezes por palavras e obras.",
+        "Por minha culpa, minha culpa, minha tão grande culpa.",
+        "E peço à Virgem Maria, ao Arcanjo São Miguel, a São João Batista, aos santos apóstolos Pedro e Paulo, a todos os santos, e a vós, irmãos, que rogueis por mim a Deus, nosso Senhor."
+      ],
+      "laBlocks": [
+        "Confíteor Deo omnipoténti, et vobis, fratres: quia peccávi nimis cogitatióne, verbo, ópere et omissióne.",
+        "Mea culpa, mea culpa, mea máxima culpa.",
+        "Ídeo precor beatam Maríam semper Vírginem, omnes Ángelos et Sanctos, et vos, fratres, oráre pro me ad Dóminum Deum nostrum.",
+        "Alia formula Confiteor, quae magis insistit in relatione ad Ecclesiam caelestem, ubi sancti iam gloria Dei fruuntur et pro nobis intercedunt.",
+        "Confíteor Deo omnipoténti, beatæ Mariæ semper Vírgini, beato Michaëli Archángelo, beato Ioanni Baptístæ, sanctis Apóstolis Petro et Paulo, ómnibus Sanctis, et vobis, fratres: quia peccávi nimis cogitatióne, verbo et ópere.",
+        "Mea culpa, mea culpa, mea máxima culpa.",
+        "Ídeo precor beatam Maríam semper Vírginem, beatum Michaëlem Archángelum, beatum Ioannem Baptístam, sanctos Apóstolos Petrum et Paulum, omnes Sanctos, et vos, fratres, oráre pro me ad Dóminum Deum nostrum."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Credo",
+      "laTitle": "Credo",
+      "ptBrBlocks": [
+        "Niceno-Constantinopolitano",
+        "Creio em um só Deus, Pai todo-poderoso, Criador do Céu e da Terra, de todas as coisas visíveis e invisíveis.",
+        "Creio em um só Senhor, Jesus Cristo, Filho Unigênito de Deus, nascido do Pai antes de todos os séculos: Deus de Deus, luz da luz, Deus verdadeiro de Deus verdadeiro; gerado, não criado, consubstancial ao Pai. Por Ele todas as coisas foram feitas. E por nós, homens, e para nossa salvação desceu dos Céus.E encarnou pelo Espírito Santo, no seio da Virgem Maria, e se fez homem. Também por nós foi crucificado sob Pôncio Pilatos; padeceu e foi sepultado.Ressuscitou ao terceiro dia, conforme as Escrituras; e subiu aos Céus, onde está sentado à direita do Pai.E de novo há de vir, em sua glória, para julgar os vivos e os mortos; e o seu Reino não terá fim.",
+        "Creio no Espírito Santo, Senhor que dá a vida, e procede do Pai e do Filho; e com o Pai e o Filho é adorado e glorificado: Ele que falou pelos profetas",
+        "Creio na Igreja una, santa, católica e apostólica.Professo um só Batismo para remissão dos pecados.E espero a ressurreição dos mortos, e a vida do mundo que há de vir. Amém."
+      ],
+      "laBlocks": [
+        "Nicaenum-Constantinopolitanum",
+        "Credo in unum Deum, Patrem omnipoténtem, factórem cæli et terræ, visibílium ómnium et invisibílium.",
+        "Et in unum Dóminum Iesum Christum, Fílium Dei unigénitum et ex Patre natum ante ómnia sǽcula: Deum de Deo, Lumen de Lúmine, Deum verum de Deo vero, génitum, non factum, consubstantiálem Patri: per quem ómnia facta sunt; qui propter nos hómines et propter nostram salútem, descéndit de cælis, et incarnátus est de Spíritu Sancto ex Maria Vírgine et homo factus est, crucifíxus etiam pro nobis sub Póntio Piláto, passus et sepúltus est, et resurréxit tértia die secúndum Scriptúras, et ascéndit in cælum, sedet ad déxteram Patris, et íterum ventúrus est cum glória, iudicáre vivos et mórtuos, cuius regni non erit finis.",
+        "Et in Spíritum Sanctum, Dóminum et vivificántem, qui ex Patre Filióque procédit, qui cum Patre et Fílio simul adorátur et conglorificátur, qui locútus est per Prophétas.",
+        "Et unam sanctam cathólicam et apostólicam Ecclésiam. Confíteor unum Baptísma in remissiónem peccatórum. Et exspécto resurrectiónem mortuórum, et vitam ventúri sǽculi. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Símbolo dos Apóstolos",
+      "laTitle": "Sýmbolum Apostólicum",
+      "ptBrBlocks": [
+        "Creio em Deus, Pai todo-poderoso, Criador do Céu e da Terra;",
+        "e em Jesus Cristo, seu único Filho, nosso Senhor, que foi concebido pelo poder do Espírito Santo; nasceu da Virgem Maria; padeceu sob Pôncio Pilatos, foi crucificado, morto e sepultado; desceu à mansão dos mortos; ressuscitou ao terceiro dia; subiu aos Céus; está sentado à direita de Deus Pai todo-poderoso, donde há de vir a julgar os vivos e os mortos.",
+        "Creio no Espírito Santo; na santa Igreja Católica; na comunhão dos Santos; na remissão dos pecados; na ressurreição da carne; na vida eterna. Amém."
+      ],
+      "laBlocks": [
+        "Credo in Deum, Patrem omnipoténtem, Creatórem cæli et terræ.",
+        "Et in Iesum Christum, Fílium Eius únicum, Dóminum nostrum, qui conceptus est de Spíritu Sancto, natus ex Maria Vírgine, passus sub Póntio Piláto, crucifixus, mórtuus, et sepúltus, descéndit ad ínferos, tértia die resurréxit a mórtuis, ascéndit ad cælos, sedet ad déxteram Dei Patris omnipoténtis, inde ventúrus est iudicáre vivos et mórtuos.",
+        "Et in Spíritum Sanctum, sanctam Ecclésiam cathólicam, sanctórum communiónem, remissiónem peccatórum, carnis resurrectiónem, vitam ætérnam. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Ao Anjo da Guarda",
+      "laTitle": "Ángele Dei",
+      "ptBrBlocks": [
+        "Santo Anjo do Senhor, meu zeloso guardador, se a ti me confiou a piedade divina, sempre me rege, guarda, governa e ilumina. Amém."
+      ],
+      "laBlocks": [
+        "Ángele Dei, qui custos es mei, me, tibi commíssum pietáte supérna, illúmina, custódi, rege et gubérna. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    }
+  ],
+  "Ssma. Trindade": [
+    {
+      "ptBrTitle": "Símbolo Atanasiano",
+      "laTitle": "Sýmbolum Athanasiánum",
+      "ptBrBlocks": [
+        "Antífona. Glória a Vós, Trindade igual, única Divindade, antes de todos os séculos, e agora e sempre. (T. P. Aleluia).",
+        "Símbolo Atanasiano",
+        "1. Quem quiser salvar-se deve antes de tudo professar a fé católica.",
+        "2. Porque aquele que não a professar, integral e inviolavelmente, perecerá sem dúvida por toda a eternidade.",
+        "3. A fé católica consiste em adorar um só Deus em três Pessoas e três Pessoas em um só Deus.",
+        "4. Sem confundir as Pessoas nem separar a substância.",
+        "5. Porque uma só é a Pessoa do Pai, outra a do Filho, outra a do Espírito Santo.",
+        "6. Mas uma só é a divindade do Pai, e do Filho, e do Espírito Santo, igual a glória, coeterna a majestade.",
+        "7. Tal como é o Pai, tal é o Filho, tal é o Espírito Santo.",
+        "8. O Pai é incriado, o Filho é incriado, o Espírito Santo é incriado.",
+        "9. O Pai é imenso, o Filho é imenso, o Espírito Santo é imenso.",
+        "10. O Pai é eterno, o Filho é eterno, o Espírito Santo é eterno.",
+        "11. E contudo não são três eternos, mas um só eterno.",
+        "12. Assim como não são três incriados, nem três imensos, mas um só incriado e um só imenso.",
+        "13. Da mesma maneira, o Pai é onipotente, o Filho é onipotente, o Espírito Santo é onipotente.",
+        "14. E, contudo, não são três onipotentes, mas um só onipotente.",
+        "15. Assim o Pai é Deus, o Filho é Deus, o Espírito Santo é Deus.",
+        "16. E, contudo, não são três deuses, mas um só Deus.",
+        "17. Do mesmo modo, o Pai é Senhor, o Filho é Senhor, o Espírito Santo é Senhor.",
+        "18. E, contudo, não são três senhores, mas um só Senhor.",
+        "19. Porque, assim como a verdade cristã nos manda confessar que cada uma das Pessoas é Deus e Senhor, do mesmo modo a religião católica nos proíbe dizer que são três deuses ou senhores.",
+        "20. O Pai não foi feito, nem gerado, nem criado por ninguém.",
+        "21. O Filho procede do Pai; não foi feito, nem criado, mas gerado.",
+        "22. O Espírito Santo não foi feito, nem criado, nem gerado, mas procede do Pai e do Filho.",
+        "23. Não há, pois, senão um só Pai, e não três Pais; um só Filho, e não três Filhos; um só Espírito Santo, e não três Espíritos Santos.",
+        "24. E nesta Trindade não há nem mais antigo nem menos antigo, nem maior nem menor, mas as três Pessoas são coeternas e iguais entre si.",
+        "25. De sorte que, como se disse acima, em tudo se deve adorar a unidade na Trindade e a Trindade na unidade.",
+        "26. Quem, pois, quiser salvar-se, deve pensar assim a respeito da Trindade.",
+        "27. Mas, para alcançar a salvação, é necessário ainda crer firmemente na Encarnação de Nosso Senhor Jesus Cristo.",
+        "28. A pureza da nossa fé consiste, pois, em crer ainda e confessar que Nosso Senhor Jesus Cristo, Filho de Deus, é Deus e homem.",
+        "29. É Deus, gerado na substância do Pai desde toda a eternidade; é homem porque nasceu, no tempo, da substância da sua Mãe.",
+        "30. Deus perfeito e homem perfeito, com alma racional e carne humana.",
+        "31. Igual ao Pai segundo a divindade; menor que o Pai segundo a humanidade.",
+        "32. E embora seja Deus e homem, contudo não são dois, mas um só Cristo.",
+        "33. É um, não porque a divindade se tenha convertido em humanidade, mas porque Deus assumiu a humanidade.",
+        "34. Um, finalmente, não por confusão de substâncias, mas pela unidade da Pessoa.",
+        "35. Porque, assim como a alma racional e o corpo formam um só homem, assim também a divindade e a humanidade formam um só Cristo.",
+        "36. Ele sofreu a morte por nossa salvação, desceu aos infernos e ao terceiro dia ressuscitou dos mortos.",
+        "37. Subiu aos Céus e está sentado à direita de Deus Pai todo-poderoso, donde há de vir a julgar os vivos e os mortos.",
+        "38. E quando vier, todos os homens ressuscitarão com os seus corpos, para prestar contas dos seus atos.",
+        "39. E os que tiverem praticado o bem irão para a vida eterna, e os maus para o fogo eterno.",
+        "40. Esta é a fé católica, e quem não a professar fiel e firmemente não se poderá salvar.",
+        "Glória ao Pai, ao Filho e ao Espírito Santo.",
+        "Como era no princípio, agora e sempre. Amém.",
+        "Antífona. Glória a Vós, Trindade igual, única Divindade, antes dos séculos, e agora e sempre. (T. P. Aleluia).",
+        ". Senhor, escutai a minha prece.",
+        ". E chegue até Vós o meu clamor.",
+        "Os sacerdotes acrescentam:",
+        ".O Senhor esteja convosco.",
+        ". Ele está no meio de nós.",
+        "OrEMOS",
+        "Ó Deus todo-poderoso e eterno, que com a luz da verdadeira fé destes aos vossos servos que conhecessem a glória da Trindade eterna e adorassem a Unidade no poder da vossa majestade: fazei, Vos suplicamos, que, pela firmeza dessa mesma fé, sejamos defendidos sempre de toda adversidade. Por Jesus Cristo Senhor Nosso.",
+        ". Amém."
+      ],
+      "laBlocks": [
+        "Antíphona. Glória tibi, Trínitas æquális, una Déitas, et ante ómnia sǽcula, et nunc, et in perpétuum. (T. P. Allelúia).",
+        "Sýmbolum Athanasiánum",
+        "1. Quicúmque vult salvus esse, ante ómnia opus est, ut téneat cathólicam fidem:",
+        "2. Quam nisi quisque íntegram inviolatámque serváverit, absque dúbio in ætérnum períbit.",
+        "3. Fides autem cathólica hæc est: ut unum Deum in Trinitáte, et Trinitátem in unitáte venerémur.",
+        "4. Neque confundéntes persónas, neque substántiam separántes.",
+        "5. Alia est enim persóna Patris, ália Fílii, ália Spíritus Sancti.",
+        "6. Sed Patris, et Fílii, et Spíritus Sancti una est divínitas, æquális glória, coætérna maiéstas.",
+        "7. Qualis Pater, talis Fílius, talis Spíritus Sanctus.",
+        "8. Increátus Pater, increátus Fílius, increátus Spíritus Sanctus.",
+        "9. Imménsus Pater, imménsus Fílius, imménsus Spíritus Sanctus.",
+        "10. Ætérnus Pater, ætérnus Fílius, ætérnus Spíritus Sanctus.",
+        "11. Et tamen non tres ætérni, sed unus ætérnus.",
+        "12. Sicut non tres increáti, nec tres imménsi, sed unus increátus et unus imménsus.",
+        "13. Simíliter omnípotens Pater, omnípotens Fílius, omnípotens Spíritus Sanctus.",
+        "14. Et tamen non tres omnipoténtes, sed unus omnípotens.",
+        "15. Ita Deus Pater, Deus Fílius, Deus Spíritus Sanctus.",
+        "16. Et tamen non tres Dii, sed unus est Deus.",
+        "17. Ita Dóminus Pater, Dóminus Fílius, Dóminus Spíritus Sanctus.",
+        "18. Et tamen non tres Dómini: sed unus est Dóminus.",
+        "19. Quia, sicut singillátim unamquámque persónam Deum ac Dóminum confitéri christiána veritáte compéllimur: ita tres Deos aut Dóminos dícere cathólica religióne prohibémur.",
+        "20. Pater a nullo est factus: nec creátus, nec génitus.",
+        "21. Fílius a Patre solo est: non factus, nec creátus, sed génitus.",
+        "22. Spíritus Sanctus a Patre et Fílio: non factus, nec creátus, nec génitus, sed procédens.",
+        "23. Unus ergo Pater, non tres Patres: unus Fílius, non tres Fílii: unus Spíritus Sanctus, non tres Spíritus Sancti.",
+        "24. Et in hac Trinitáte nihil prius aut postérius, nihil maius aut minus: sed totæ tres persónæ coætérnæ sibi sunt et coæquáles.",
+        "25. Ita ut per ómnia, sicut iam supra dictum est, et únitas in Trinitáte, et Trínitas in unitáte veneránda sit.",
+        "26. Qui vult ergo salvus esse, ita de Trinitáte séntiat.",
+        "27. Sed necessárium est ad ætérnam salútem, ut Incarnatiónem quoque Dómini nostri Iesu Christi fidéliter credat.",
+        "28. Est ergo fides recta, ut credámus et confiteámur quia Dóminus noster Iesus Christus, Dei Fílius, Deus et homo est.",
+        "29. Deus est ex substántia Patris ante sǽcula génitus: et homo est ex substántia matris in sǽculo natus.",
+        "30. Perféctus Deus, perféctus homo: ex ánima rationáli et humána carne subsístens.",
+        "31. Æquális Patri secúndum divinitátem: minor Patre secúndum humanitátem.",
+        "32. Qui, licet Deus sit et homo, non duo tamen, sed unus est Christus.",
+        "33. Unus autem non conversióne divinitátis in carnem: sed assumptióne humanitátis in Deum.",
+        "34. Unus omníno, non confusióne substántiæ: sed unitáte persónæ.",
+        "35. Nam sicut ánima rationális et caro unus est homo: ita Deus et homo unus est Christus.",
+        "36. Qui passus est pro salúte nostra: descéndit ad ínferos: tértia die resurréxit a mórtuis.",
+        "37. Ascéndit ad cælos, sedet ad déxteram Dei Patris omnipoténtis: inde ventúrus est iudicáre vivos et mórtuos.",
+        "38. Ad cuius advéntum omnes hómines resúrgere habent cum corpóribus suis: et redditúri sunt de factis própriis ratiónem.",
+        "39. Et qui bona egérunt, ibunt in vitam ætérnam: qui vero mala, in ignem ætérnum.",
+        "40. Hæc est fides cathólica, quam nisi quisque fidéliter firmitérque credíderit, salvus esse non póterit.",
+        "Glória Patri, et Fílio, et Spirítui Sancto.",
+        "Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.",
+        "Antíphona. Glória tibi, Trínitas æquális, una Déitas, et ante ómnia sǽcula, et nunc, et in perpétuum. (T. P. Allelúia).",
+        ". Dómine, exáudi oratiónem meam.",
+        ". Et clamor meus ad te véniat.",
+        "Sacerdotes addunt:",
+        ". Dóminus vobíscum.",
+        ". Et cum spíritu tuo.",
+        "Orémus",
+        "Omnípotens sempitérne Deus, qui dedísti fámulis tuis, in confessióne veræ fídei, ætérnæ Trinitátis glóriam agnóscere, et in poténtia maiestátis adoráre unitátem: quǽsumus; ut, eiúsdem fídei firmitáte, ab ómnibus semper muniámur advérsis. Per Dóminum nostrum Iesum Christum Fílium tuum: qui tecum vivit et regnat in unitáte Spíritus Sancti Deus, per ómnia sǽcula sæculórum.",
+        ". Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Te Deum",
+      "laTitle": "Te Deum",
+      "ptBrBlocks": [
+        "A Vós, ó Deus, louvamos; a Vós, Senhor, bendizemos.",
+        "A Vós, ó eterno Pai, adora toda a terra.",
+        "A Vós, todos os Anjos, os Céus e todas as Potestades. A Vós, os Querubins e Serafins proclamam com incessantes vozes:",
+        "Santo, Santo, Santo, sois Vós, Senhor, Deus dos exércitos!",
+        "Cheios estão os céus e a terra da majestade da vossa glória.",
+        "A Vós, o glorioso coro dos Apóstolos, a Vós, o louvável número dos Profetas, a Vós vos louva o brilhante exército dos Mártires.",
+        "A Vós confessa a Santa Igreja por toda a redondeza da terra.",
+        "Pai de imensa majestade, ao vosso adorável Filho, verdadeiro e único e também ao Espírito Santo Consolador.",
+        "Vós, ó Cristo, sois o Rei da glória. Vós sois o Filho eterno do Pai.",
+        "Vós, para libertar o homem cuja carne havíeis de tomar, não rejeitastes o seio da Virgem.",
+        "Vós, vencido o aguilhão da morte, abristes aos fiéis o Reino dos céus.",
+        "Vós estais sentado à mão direita de Deus, na glória do Pai.",
+        "Cremos que haveis de vir como Juiz.",
+        "O seguinte versículo diz-se de joelhos:",
+        "Por isso Vos rogamos: socorrei os vossos servos, que remistes com o vosso precioso Sangue.",
+        "Permiti que sejamos do número dos vossos Santos na glória eterna.",
+        "Salvai, Senhor, o vosso povo, e abençoai a vossa herança.",
+        "Governai-os e exaltai-os eternamente.",
+        "Todos os dias vos bendizemos. E louvamos sempre o vosso Nome, por todos os séculos dos séculos.",
+        "Dignai-Vos, Senhor, preservar-nos neste dia de todo o pecado.",
+        "Tende piedade de nós, Senhor; tende piedade de nós.",
+        "Faça-se, Senhor, a vossa misericórdia sobre nós, conforme esperamos em Vós.",
+        "Em Vós, Senhor, esperei; não serei confundido eternamente.",
+        ". Bendito sois, Senhor, Deus de nossos pais!",
+        ". E digno de louvor e glorioso eternamente.",
+        ". Bendigamos ao Pai, e o Filho, e o Espírito Santo",
+        ". Louvemos e por todos os séculos O exaltemos.",
+        ". Bendito sois, Senhor, Deus, no firmamento do céu.",
+        ". Louvável, glorioso e soberanamente exaltado por todos os séculos",
+        ". Senhor, ouvi a minha oração.",
+        ". E chegue até Vós o meu clamor.",
+        "Os sacerdotes acrescentam:",
+        ".O Senhor esteja convosco.",
+        ".Ele está no meio de nós.",
+        "OrEMOS",
+        "Ó Deus, cuja misericórdia é sem limite e cuja bondade é um tesouro inesgotável, prostrados ante a vossa piíssima Majestade, nós Vos rendemos graças pelos benefícios que nos haveis feito, suplicando sempre a vossa clemência, para que não desampareis nunca aqueles a quem concedestes o que vos pediram, e os disponhais para receber os prêmios eternos.",
+        "Ó Deus, que instruístes os corações dos vossos fieis com a luz do Espírito Santo, concedei-nos amar, no mesmo Espírito, o que é reto, e gozar sempre a sua consolação.",
+        "Por Nosso Senhor Jesus Cristo, Vosso Filho, na unidade do Espírito Santo.",
+        ". Amém."
+      ],
+      "laBlocks": [
+        "Te Deum laudámus: te Dóminum confitémur.",
+        "Te ætérnum Patrem, omnis terra venerátur.",
+        "Tibi omnes ángeli, tibi cæli et univérsæ potestátes: tibi chérubim et séraphim incessábili voce proclámant:",
+        "Sanctus, Sanctus, Sanctus, Dóminus Deus Sábaoth.",
+        "Pleni sunt cæli et terra maiestátis glóriæ tuæ.",
+        "Te gloriósus apostolórum chorus, te prophetárum laudábilis númerus, te mártyrum candidátus laudat exércitus.",
+        "Te per orbem terrárum sancta confitétur Ecclésia,",
+        "Patrem imménsæ maiestátis; venerándum tuum verum et únicum Fílium; Sanctum quoque Paráclitum Spíritum.",
+        "Tu rex glóriæ, Christe. Tu Patris sempitérnus es Fílius.",
+        "Tu, ad liberándum susceptúrus hóminem, non horruísti Vírginis úterum.",
+        "Tu, devícto mortis acúleo, aperuísti credéntibus regna cælórum.",
+        "Tu ad déxteram Dei sedes, in glória Patris.",
+        "Iudex créderis esse ventúrus.",
+        "Sequens versus dícitur flexis génibus:",
+        "Te ergo quǽsumus, tuis fámulis súbveni, quos pretióso sánguine redemísti.",
+        "Ætérna fac cum sanctis tuis in glória numerári.",
+        "Salvum fac pópulum tuum, Dómine, et bénedic hereditáti tuæ.",
+        "Et rege eos, et extólle illos usque in ætérnum.",
+        "Per síngulos dies benedícimus te; et laudámus nomen tuum in sǽculum, et in sǽculum sǽculi.",
+        "Dignáre, Dómine, die isto sine peccáto nos custodíre.",
+        "Miserére nostri, Dómine, miserére nostri.",
+        "Fiat misericórdia tua, Dómine, super nos, quemádmodum sperávimus in te.",
+        "In te, Dómine, sperávi: non confúndar in ætérnum.",
+        ". Benedíctus es, Dómine, Deus patrum nostrórum.",
+        ". Et laudábilis, et gloriósus in sǽcula.",
+        ". Benedicámus Patrem et Fílium cum Sancto Spíritu.",
+        ". Laudémus et superexaltémus eum in sǽcula.",
+        ". Benedíctus es, Dómine, in firmaménto cæli.",
+        ". Et laudábilis, et gloriósus, et superexaltátus in sǽcula.",
+        ". Bénedic, ánima mea, Dómino.",
+        ". Et noli oblivísci omnes retributiónes eius.",
+        ". Dómine, exáudi oratiónem meam.",
+        ". Et clamor meus ad te véniat.",
+        "Sacerdotes addunt:",
+        ". Dóminus vobíscum.",
+        ". Et cum spíritu tuo.",
+        "Orémus",
+        "Deus, cuius misericórdiæ non est númerus, et bonitátis infinítus est thesáurus: piíssimæ Maiestáti tuæ pro collátis donis grátias ágimus, tuam semper cleméntiam exorántes; ut qui peténtibus postuláta concédis, eósdem non déserens, ad prǽmia futúra dispónas.",
+        "Deus, qui corda fidélium Sancti Spíritus illustratióne docuísti, da nobis in eódem Spíritu recta sápere, et de eius semper consolatióne gaudére.",
+        "Deus, qui néminem in te sperántem nímium afflígi permíttis, sed pium précibus præstas audítum: pro postulatiónibus nostris, votísque suscéptis grátias ágimus, te piíssime deprecántes; ut a cunctis semper muniámur advérsis.",
+        "Per Dóminum nostrum Iesum Christum Fílium tuum: qui tecum vivit et regnat in unitáte Spíritus Sancti Deus, per ómnia sǽcula sæculórum.",
+        ". Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Triságio Angélico",
+      "laTitle": "Triságium angélicum",
+      "ptBrBlocks": [
+        "Em nome do Pai, do Filho, e do Espírito Santo. Amém.",
+        ". Abri, Senhor os meus lábios.",
+        ". E a minha boca anunciará o Vosso louvor.",
+        ". Deus, vinde em nosso auxílio.",
+        ". Senhor, socorrei-nos e salvai-nos.",
+        ". Glória ao Pai, e ao Filho e ao Espírito Santo.",
+        ". Como era no princípio agora e sempre. Amém.",
+        "PrimeIra deZena",
+        "Procede-se do seguinte modo: em primeiro lugar, dizem todos a deprecação Sanctus Deus; depois, como de costume, alternam a oração dominical o sacerdote (ou a pessoa que dirige a recitação das orações) e os outros; a seguir, repetem-se nove vezes os versículos seguintes, dizendo o sacerdote (ou a pessoa que dirige as orações) Tibi laus e respondendo todos: Sanctus; ao terminar acrescenta-se o Glória.",
+        "Santo Deus, Santo Forte, Santo Imortal, tende misericórdia de nós.",
+        "Pai Nosso.",
+        ". A Vós o louvor, a Vós a glória, a Vós temos de dar graças pelos séculos dos séculos, ó Trindade Beatíssima.",
+        ". Santo, Santo, Santo, Senhor Deus dos exércitos. Cheios estão os céus e a terra da Vossa glória.",
+        ". Glória ao Pai, e ao Filho e ao Espírito Santo.",
+        ". Como era no princípio, agora e sempre. Amém.",
+        "As outras duas dezenas rezam-se do mesmo modo, começando pelas palavras Sanctus Deus, etc.",
+        "Ao terminar a última dezena, todos rezam juntos:",
+        "Antífona",
+        "A Vós Deus Pai não gerado, a Vós Filho unigênito, a Vós Deus Espírito Santo Paráclito, santa e indivisa Trindade, com todas as forças do nosso coração e da nossa voz, reconhecemos, louvamos e bendizemos: glória a Vós pelos séculos dos séculos.",
+        ". Bendigamos o Pai, e o Filho, com o Espírito Santo.",
+        ". Louvemo-Lo e exaltemo-Lo por todos os séculos dos séculos.",
+        "Oremos",
+        "Ó Deus todo-poderoso e eterno, que com a luz da verdadeira fé destes aos vossos servos conhecer a glória da Trindade eterna, e adorar a Unidade no poder da vossa majestade: fazei, Vo-lo pedimos que, pela firmeza dessa mesma fé, sejamos defendidos sempre de toda a adversidade. Por Nosso Senhor Jesus Cristo, Vosso Filho, na unidade do Espírito Santo.",
+        ". Amém.",
+        "Terminada a oração, todos acrescentam:",
+        "Livrai-nos, salvai-nos, vivificai-nos, ó Trindade Beatíssima."
+      ],
+      "laBlocks": [
+        "In nómine Patris et Fílii et Spíritus Sancti. Amen.",
+        ". Dómine, lábia mea apéries.",
+        ". Et os meum annuntiábit láudem tuam.",
+        ". Deus, in adiutórium meum inténde.",
+        ". Dómine, ad adiuvándum me festína.",
+        ". Glória Patri, et Fílio, et Spirítui Sancto.",
+        ". Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.",
+        "Prima decas",
+        "Ad recitationem decadis, cum in communi fit, sic proceditur: primo, omnes simul deprecationem \"Sanctus Deus\" dicunt; postea, modo consueto, a sacerdote (vel ab eo qui preces moderatur) ceterisque utraque pars orationis dominicæ alternatur; qua finita, sequentes versus nonies alternatim repetuntur, sacerdote (vel eo qui preces moderatur) \"Tibi laus\" recitante et omnibus \"Sanctus\" respondentibus; denique, expleta decade, doxologia minor \"Gloria Patri\", ut de more, subiungitur.",
+        "Sanctus Deus, Sanctus fortis, Sanctus immortális, miserére nobis.",
+        "Pater noster.",
+        ". Tibi laus, Tibi glória, Tibi gratiárum áctio in sǽcula sempitérna, o Beáta Trínitas!",
+        ". Sanctus, Sanctus, Sanctus Dóminus Deus exercítuum. Pleni sunt cæli et terra glória tua.",
+        ". Glória Patri, et Fílio, et Spirítui Sancto.",
+        ". Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.",
+        "Aliæ duæ decades eodem modo dicuntur, incipiendo a verbis \"Sanctus Deus\", etc.",
+        "Expleta ultima decade, si in communi recitetur, ab omnibus simul dicitur sequens:",
+        "Antíphona",
+        "Te Deum Patrem ingénitum, te Fílium unigénitum, te Spíritum Sanctum Paráclitum, sanctam et indivíduam Trinitátem, toto corde et ore confitémur, laudámus atque benedícimus: tibi glória in sǽcula.",
+        ". Benedicámus Patrem, et Fílium cum Sancto Spíritu.",
+        ". Laudémus et superexaltémus eum in sǽcula.",
+        "Orémus",
+        "Omnípotens sempitérne Deus, qui dedísti fámulis tuis, in confessióne veræ fídei, ætérnæ Trinitátis glóriam agnóscere, et in poténtia maiestátis adoráre unitátem: quǽsumus; ut, eiúsdem fídei firmitáte, ab ómnibus semper muniámur adversis. Per Christum Dóminum nostrum.",
+        ". Amen.",
+        "Absoluta oratione, omnes addunt:",
+        "Líbera nos, salva nos, vivífica nos, o Beáta Trínitas!"
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Ato de Fé",
+      "laTitle": "",
+      "ptBrBlocks": [
+        "Eu creio firmemente que há um só Deus em três pessoas realmente distintas, Pai, Filho e Espírito Santo; que dá o céu aos bons e o inferno aos maus, para sempre. Creio que o Filho de Deus se fez homem, padeceu e morreu na cruz para nos salvar, e ao terceiro dia ressuscitou. Creio em tudo mais que crê e ensina a Igreja Católica, Apostólica, Romana, porque Deus, verdade infalível, lho revelou. Nesta crença quero viver e morrer."
+      ],
+      "laBlocks": [],
+      "languages": [
+        "pt-br"
+      ]
+    },
+    {
+      "ptBrTitle": "Ato de Esperança",
+      "laTitle": "",
+      "ptBrBlocks": [
+        "Eu espero, meu Deus, com firme confiança, que pelos merecimentos do nosso Senhor Jesus Cristo, me dareis a salvação eterna e as graças necessárias para consegui-la, porque vós, sumamente bom e poderoso, o havia prometido a quem observar os mandamentos e o evangelho de Jesus, como eu proponho fazer com o vosso auxílio."
+      ],
+      "laBlocks": [],
+      "languages": [
+        "pt-br"
+      ]
+    },
+    {
+      "ptBrTitle": "Ato de Caridade",
+      "laTitle": "",
+      "ptBrBlocks": [
+        "Eu vos amo, meu Deus, de todo o meu coração e sobre todas as coisas, porque sois infinitamente amável e bom, e antes quero perder tudo do que Vos ofender. Por amor de Vós, amo ao meu próximo como a mim mesmo e perdoo as ofensas recebidas. Senhor, fazei que eu vos ame sempre mais!"
+      ],
+      "laBlocks": [],
+      "languages": [
+        "pt-br"
+      ]
+    }
+  ],
+  "Adoração Eucarística": [
+    {
+      "ptBrTitle": "Visita ao Santíssimo",
+      "laTitle": "Visitátio Ssimi. Sacraménti",
+      "ptBrBlocks": [
+        ". Graças e louvores sejam dados a todo momento.",
+        ". Ao Santíssimo e diviníssimo Sacramento.",
+        "Pai Nosso, Ave Maria, Glória (três vezes).",
+        ". Graças e louvores sejam dados a todo momento.",
+        ". Ao Santíssimo e diviníssimo Sacramento.",
+        "Comunhão espiritual",
+        "Eu quisera, Senhor, receber-Vos com aquela pureza, humildade e devoção com que Vos recebeu a Vossa Santíssima Mãe, com o espírito e o fervor dos Santos."
+      ],
+      "laBlocks": [
+        ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+        ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+        "Pater noster, Ave Maria, Glória Patri (ter repetitur oratio).",
+        ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+        ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+        "Communio spiritualis",
+        "Yo quisiera, Señor, recibiros con aquella pureza, humildad y devoción con que os recibió vuestra Santísima Madre, con el espíritu y fervor de los santos."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Adoro te devote",
+      "laTitle": "Adóro te devóte",
+      "ptBrBlocks": [
+        "1. Adoro-Vos com devoção, Deus escondido, que sob estas aparências estais presente. A Vós se submete meu coração por inteiro, e ao contemplar-Vos se rende totalmente.",
+        "2. A vista, o tato, o gosto sobre Vós se enganam, mas basta o ouvido para crer com firmeza. Creio em tudo o que disse o Filho de Deus; nada mais verdadeiro que esta palavra de verdade.",
+        "3. Na Cruz estava oculta a divindade, mas aqui se esconde também a humanidade; creio, porém, e confesso uma e outra, e peço o que pediu o ladrão arrependido.",
+        "4. Não vejo as chagas, como Tomé as viu, mas confesso que sois o meu Deus. Fazei que eu creia mais e mais em Vós, que em Vós espere, que Vos ame.",
+        "5. Ó memorial da morte do Senhor! Ó Pão vivo que dais a vida ao homem! Que a minha alma sempre de Vós viva, que sempre lhe seja doce o vosso sabor.",
+        "6. Bom pelicano, Senhor Jesus! Limpai-me a mim, imundo, com o vosso Sangue, Sangue do qual uma só gota pode salvar do pecado o mundo inteiro.",
+        "7. Jesus, a quem agora contemplo escondido, rogo-Vos se cumpra o que tanto desejo: que, ao contemplar-Vos face a face, seja eu feliz vendo a vossa glória. Amém."
+      ],
+      "laBlocks": [
+        "1. Adóro te devóte, latens Déitas, quæ sub his figúris vere látitas. Tibi se cor meum totum súbiicit, quia, te contémplans, totum déficit.",
+        "2. Visus, tactus, gustus in te fállitur, sed audítu solo tuto créditur. Credo quidquid dixit Dei Fílius: nil hoc verbo veritátis vérius.",
+        "3. In Cruce latébat sola Déitas; at hic latet simul et humánitas. Ambo tamen credens atque cónfitens, peto quod petívit latro pœnitens.",
+        "4. Plagas, sicut Thomas, non intúeor; Deum tamen meum te confíteor. Fac me tibi semper magis crédere, in te spem habére, te dilígere.",
+        "5. O memoriále mortis Dómini! Panis vivus vitam præstans hómini, præsta meæ menti de te vívere, et te illi semper dulce sápere.",
+        "6. Pie pellicáne, Iesu Dómine, me immúndum munda tuo sánguine: cuius una stilla salvum fácere totum mundum quit ab omni scélere.",
+        "7. Iesu, quem velátum nunc aspício, oro, fiat illud quod tam sítio; ut te reveláta cernens fácie, visu sim beátus tuæ glóriæ. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Pange, língua",
+      "laTitle": "Pange, língua",
+      "ptBrBlocks": [
+        "Vamos todos louvar juntos o mistério do amor, pois o preço deste mundo foi o sangue redentor, recebido de Maria, que nos deu o Salvador.",
+        "Veio ao mundo por Maria, foi por nós que ele nasceu. Ensinou sua doutrina, com o povo conviveu. No final de sua vida, um presente Ele nos deu.",
+        "Observando a lei mosaica, se reuniu com os irmãos. Era noite, despedida, numa ceia: refeição. Deu-se aos doze em alimento, pelas suas próprias mãos.",
+        "A Palavra do Deus vivo transformou o vinho e o pão, no seu Sangue e no seu Corpo para a nossa salvação. O milagre nós não vemos, basta a fé no coração.",
+        "Tão sublime sacramento adoremos neste altar, pois o Antigo Testamento deu ao Novo seu lugar. Venha a fé, por suplemento os sentidos completar.",
+        "Ao Eterno Pai cantemos e a Jesus, o Salvador. Ao Espírito exaltemos, na Trindade, eterno amor. Ao Deus Uno e Trino demos a alegria do louvor. Amém",
+        ". Vós sois o Pão que desceu do Céu. (T. P. Aleluia).",
+        ". Para dar a vida ao mundo. (T. P. Aleluia).",
+        "Oremos",
+        "Senhor Jesus Cristo, que neste admirável sacramento nos deixastes o memorial da vossa paixão, concedei-nos a graça de venerar de tal modo os mistérios do vosso Corpo e Sangue que sintamos continuamente os frutos da vossa redenção. Vós que sois Deus com o Pai, na unidade do Espírito Santo.",
+        ". Amém.",
+        "Jaculatórias de desagravo",
+        "Bendito seja Deus.",
+        "Bendito seja o Seu santo Nome.",
+        "Bendito seja Jesus Cristo, verdadeiro Deus e verdadeiro Homem.",
+        "Bendito seja o Nome de Jesus.",
+        "Bendito seja o Seu Sacratíssimo Coração.",
+        "Bendita seja o Seu Preciosíssimo Sangue.",
+        "Bendito seja Jesus no Santíssimo Sacramento do Altar.",
+        "Bendito seja o Espírito Santo Paráclito.",
+        "Bendita seja a grande Mãe de Deus, Maria Santíssima.",
+        "Bendita seja a sua Santa e Imaculada Conceição.",
+        "Bendita seja a sua gloriosa Assunção.",
+        "Bendito seja o nome de Maria, Virgem e Mãe.",
+        "Bendito seja São José, seu castíssimo esposo.",
+        "Bendito seja Deus, nos seus Anjos e nos seus Santos.",
+        "Todos os povos, louvai o Senhor: louvai-O todas as gentes; porque a sua misericórdia se confirmou em nós; e a verdade do Senhor permanece para sempre.",
+        "Glória ao Pai e ao Filho e ao Espírito Santo. Como era no princípio, agora e sempre. Amém."
+      ],
+      "laBlocks": [
+        "Pange, língua, gloriósi Córporis mystérium, Sanguinísque pretiósi, quem in mundi prétium, fructus ventris generósi Rex effúdit géntium.",
+        "Nobis datus, nobis natus ex intácta Vírgine, et in mundo conversátus, sparso verbi sémine, sui moras incolátus miro cláusit órdine.",
+        "In suprémæ nocte cœnæ, recúmbens cum frátribus, observáta lege plene, cibis in legálibus, cibum turbæ duodénæ se dat suis mánibus.",
+        "Verbum caro, panem verum, Verbo carnem éfficit, fitque sanguis Christi merum, et, si sensus déficit, ad firmándum cor sincérum, sola fides súfficit.",
+        "Tantum ergo Sacraméntum venerémur cérnui; et antíquum documéntum novo cedat rítui; præstet fides suppleméntum sénsuum deféctui.",
+        "Genitóri, Genitóque laus et iubilátio, salus, honor, virtus quoque sit et benedíctio; procedénti ab utróque compar sit laudátio. Amen.",
+        ". Panem de cælo præstitísti eis. (T. P. Allelúia).",
+        ". Omne delectaméntum in se habéntem. (T. P. Allelúia).",
+        "Orémus",
+        "Deus, qui nobis sub sacramento mirábili, passionis tuæ memóriam reliquísti: tríbue, quǽsumus, ita nos córporis et sánguinis tui sacra mystéria venerári, ut redemptiónis tuæ fructum in nobis iúgiter sentiámus. Qui vivis et regnas in sǽcula sæculórum.",
+        ". Amen.",
+        "Alabanzas de desagravio",
+        "Bendito sea Dios.",
+        "Bendito sea su Santo Nombre.",
+        "Bendito sea Jesucristo, Dios y Hombre verdadero.",
+        "Bendito sea el Nombre de Jesús.",
+        "Bendito sea su Sacratísimo Corazón.",
+        "Bendita sea su Preciosísima Sangre.",
+        "Bendito sea Jesús en el Santísimo Sacramento del Altar.",
+        "Bendito sea el Espíritu Santo Paráclito.",
+        "Bendita sea la excelsa Madre de Dios, María Santísima.",
+        "Bendita sea su Santa e Inmaculada Concepción.",
+        "Bendita sea su Gloriosa Asunción.",
+        "Bendito sea el nombre de María, Virgen y Madre.",
+        "Bendito sea San José, su castísimo Esposo.",
+        "Bendito sea Dios en sus Ángeles y en sus Santos.",
+        "Amén.",
+        "Laudáte Dóminum omnes gentes, laudáte eum, omnes pópuli, quóniam confirmáta est super nos misericórdia eius, et véritas Dómini manet in ætérnum.",
+        "Glória Patri, et Fílio, et Spirítui Sancto; sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Sacris solémniis",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Ultimae duae strophae sunt hymnus 'Panis Angelicus'",
+        "Sacris solémniis iuncta sint gáudia,Et ex praecórdiis sonent praecónia;Recédant vétera, nova sint ómnia,Corda, voces, et ópera.Noctis recólitur coena novíssima,Qua Christus créditur agnum et ázymaDedísse frátribus, iuxta legítimaPriscis indúlta pátribus.Post agnum týpicum, explétis épulis,Corpus Domínicum datum discípulis,Sic totum ómnibus, quod totum síngulis,Eius fatémur mánibus.Dedit fragílibus córporis férculum,Dedit et trístibus sánguinis póculum,Dicens: Accípite quod trado vásculum;Omnes ex eo bíbite.Sic sacrifícium istud instítuit,Cuius offícium commítti vóluitSolis presbýteris, quibus sic cóngruit,Ut sumant, et dent céteris.Panis angélicus fit panis hóminum;Dat panis cǽlicus figúris términum;O res mirábilis: mandúcat DóminumPauper, servus et húmilis.Te, trina Déitas únaque, póscimus;Sic nos tu vísita, sicut te cólimus:Per tuas sémitas duc nos quo téndimus,Ad lucem quam inhábitas.Amen."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Lauda Sion",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Hymnus eucharisticus",
+        "Lauda, Sion Salvatórem,lauda ducem et pastóremin hymnis et cánticis.Quantum potes, tantum aude:quia maior omni laude,nec laudáre súfficis.",
+        "Laudis thema speciális,panis vivus et vitálishódie propónitur.Quem in sacræ mensa cenæ,turbæ fratrum duodénædatum non ambígitur.",
+        "Sit laus plena, sit sonóra,sit iucúnda, sit decóramentis iubilátio.Dies enim solémnis ágitur,in qua mensæ prima recóliturhuius institútio.",
+        "In hac mensa novi Regis,novum Pascha novæ legisPhase vetus términat.Vetustátem nóvitas,umbram fugat véritas,noctem lux elíminat.",
+        "Quod in cena Christus gessit,faciéndum hoc expréssitin sui memóriam.Docti sacris institútis,panem, vinum, in salútisconsecrámus hóstiam.",
+        "Dogma datur Christiánis,quod in carnem transit panis,et vinum in sánguinem.Quod non capis, quod non vides,animósa firmat fides,præter rerum órdinem.",
+        "Sub divérsis speciébus,signis tantum, et non rebus,latent res exímiæ.Caro cibus, sanguis potus:manet tamen Christus totus,sub utráque spécie.",
+        "A suménte non concísus,non confráctus, non divísus:ínteger accípitur.Sumit unus, sumunt mille:quantum isti, tantum ille:nec sumptus consúmitur.",
+        "Sumunt boni, sumunt mali:sorte tamen inæquáli,vitæ vel intéritus.Mors est malis, vita bonis:vide paris sumptiónisquam sit dispar éxitus.",
+        "Fracto demum sacraménto,ne vacílles, sed memento,tantum esse sub fragménto,quantum toto tégitur.Nulla rei fit scissúra:signi tantum fit fractúra:qua nec status nec statúrasignáti minúitur.",
+        "Ecce panis Angelórum,factus cibus viatórum:vere panis fíliórum,non mitténdus cánibus.In figúris præsignátur,cum Isaac immolátur:agnus paschæ deputátur:datur manna pátribus.",
+        "Bone Pastor, panis vere,Iesu, nostri miserére:tu nos pasce, nos tuére:tu nos bona fac vidérein terra vivéntium.Tu, qui cuncta scis et vales:qui nos pascis hic mortales:tuos ibi commensáles,coherédes et sodalesfac sanctórum cívium. Amen.Allelúia."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Iesu dulcis memória",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Iesu dulcis memóriaDans vera cordis gáudiaSed super mel et ómniaEius dulcis praésentia.",
+        "Nil cánitur suáviusNil audítur iucúndiusNil cogitátur dúlciusQuam Jesus Dei Fílius.",
+        "Iesu, spes paeniténtibusQuam pius es peténtibusQuam bonus Te quaeréntibusSed quid inveniéntibus?",
+        "Nec lingua valet dícereNec líttera exprímereExpértus potest crédereQuid sit Iesum dilígere.",
+        "Sis, Iesu, nostrum gáudium,Qui es futúrus praémium:Sit nostra in te glóriaPer cuncta semper saecula.",
+        "Amen."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Verbum supérnum",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Ultimae duae strophae sunt 'O Salutáris Hóstia'",
+        "Verbum supérnum pródiens,nec Patris linquens déxteram,ad opus suum éxiens,venit ad vitae vésperam.",
+        "In mortem a discípulosuis trádendus aémulis,prius in vitae férculose trádidit discípulis.",
+        "Quibus sub bina spéciecarnem dedit et sánguinem;ut dúplicis substántiaetotum cibáret hóminem.",
+        "Se nascens dedit sócium,convéscens in edúlium,se móriens in prétium,se regnans dat in praémium.",
+        "O salutáris hóstia,quae caeli pandis óstium,bella premunt hostília;da robur, fer auxílium.",
+        "Uni trinóque Dominosit sempitérna glória:qui vitam sine términonobis donet in pátria. Amen."
+      ],
+      "languages": [
+        "la"
+      ]
+    }
+  ],
+  "Espírito Santo": [
+    {
+      "ptBrTitle": "Vinde, ó Espírito Santo",
+      "laTitle": "Veni, Sancte Spíritus",
+      "ptBrBlocks": [
+        "Vinde, Espírito Santo, enchei os corações dos vossos fiéis e acendei neles o fogo do vosso amor.",
+        ". Enviai o vosso Espírito e tudo será criado.",
+        ". E renovareis a face da terra.",
+        "Oremos",
+        "Ó Deus, que instruístes os corações dos vossos fiéis com a luz do Espírito Santo, concedei-nos amar, no mesmo Espírito, o que é reto e gozar sempre a sua consolação. Por Jesus Cristo, Nosso Senhor.",
+        ". Amém."
+      ],
+      "laBlocks": [
+        "Veni, Sancte Spíritus!, reple tuórum corda fidélium: et tui amóris in eis ignem accénde.",
+        ". Emitte Spíritum tuum, et creabúntur.",
+        ". Et renovábis faciem terræ.",
+        "Orémus",
+        "Deus, qui corda fidélium Sancti Spíritus illustratióne docuísti, da nobis in eódem Spíritu recta sápere; et de eius semper consolatióne gaudére. Per Christum Dóminum nostrum.",
+        ". Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Veni, Creátor",
+      "laTitle": "Veni, Creátor",
+      "ptBrBlocks": [
+        "Vinde, Espírito Criador, visitai a alma dos vossos fiéis; enchei de graça celestial os corações que Vós criastes.",
+        "Vós, chamado o Consolador, dom do Deus altíssimo, fonte viva, fogo, caridade e unção espiritual.",
+        "Vós, com vossos sete dons, sois força da destra de Deus, Vós, o prometido pelo Pai; a vossa palavra enriquece nossos lábios.",
+        "Acendei a vossa luz em nossas almas, infundi vosso amor em nossos peitos; e a fraqueza da nossa carne, fortalecei-a com redobrada força.",
+        "O inimigo, afugentai-o bem para longe; dai-nos a paz quanto antes; abrindo-nos caminho como guia, venceremos todos os perigos.",
+        "Que por Vós conheçamos o Pai, conheçamos igualmente o Filho, e em Vós, Espírito de ambos, creiamos todo o tempo."
+      ],
+      "laBlocks": [
+        "Veni, Creátor Spíritus, mentes tuórum vísita, imple supérna grátia, quæ tu creásti péctora.",
+        "Qui díceris Paráclitus, altíssimi donum Dei, fons vivus, ignis, cáritas, et spiritális únctio.",
+        "Tu septifórmis múnere, dígitus patérnæ déxteræ, tu rite promíssum Patris, sermóne ditans gúttura.",
+        "Accénde lumen sénsibus, infúnde amórem córdibus, infírma nostri córporis virtúte firmans pérpeti.",
+        "Hostem repéllas lóngius pacémque dones prótinus; ductóre sic te prævio vitémus omne nóxium.",
+        "Per te sciámus da Patrem noscámus atque Fílium, teque utriúsque Spíritum credámus omni témpore.",
+        "Deo Patri sit glória, et Fílio, qui a mórtuis surréxit, ac Paráclito, in sæculórum sǽcula. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Vinde, ó Santo Espírito",
+      "laTitle": "Veni, Sancte Spíritus",
+      "ptBrBlocks": [
+        "Sequência de Pentecostes",
+        "Vinde Santo Espírito e do céu mandai luminoso raio.",
+        "Vinde pai dos pobres doador dos dons luz dos corações.",
+        "Grande defensor em nós habitais e nos confortais.",
+        "Na fadiga, pouso, no ardor, brandura e na dor, ternura.",
+        "Ó luz venturosa, que vossos clarões encham os corações.",
+        "Sem vosso poder em qualquer vivente nada há de inocente.",
+        "Lavai o impuro e regai o seco, curai o enfermo.",
+        "Dobrai a dureza, aquecei o frio, livrai do desvio.",
+        "Aos vossos fiéis que oram com vibrantes sons dai os sete dons.",
+        "Dai virtude e prêmio e no fim dos dias eterna alegria."
+      ],
+      "laBlocks": [
+        "Sequentia",
+        "Veni, Sancte Spíritus, et emítte cǽlitus lucis tuæ rádium.",
+        "Veni, pater páuperum, veni, dator múnerum, veni, lumen córdium.",
+        "Consolátor óptime, dulcis hospes ánimæ, dulce refrigérium.",
+        "In labóre réquies, in æstu tempéries, in fletu solácium.",
+        "O lux beatíssima, reple cordis íntima tuórum fidélium.",
+        "Sine tuo númine, nihil est in hómine, nihil est innóxium.",
+        "Lava quod est sórdidum, riga quod est áridum, sana quod est sáucium.",
+        "Flecte quod est rígidum, fove quod est frígidum, rege quod est dévium.",
+        "Da tuis fidélibus, in te confidéntibus, sacrum septenárium.",
+        "Da virtútis méritum, da salútis éxitum, da perénne gáudium."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    }
+  ],
+  "Nossa Senhora": [
+    {
+      "ptBrTitle": "Ângelus",
+      "laTitle": "Ángelus Dómini",
+      "ptBrBlocks": [
+        ". O Anjo do Senhor anunciou a Maria.",
+        ". E Ela concebeu do Espírito Santo.",
+        "Ave Maria…",
+        ". Eis aqui a escrava do Senhor.",
+        ". Faça-se em mim, segundo a Vossa palavra.",
+        "Ave Maria…",
+        ". E o Verbo Divino se fez carne.",
+        ". E habitou entre nós.",
+        "Ave Maria…",
+        ". Rogai por nós, Santa Mãe de Deus.",
+        ". Para que sejamos dignos das promessas de Cristo.",
+        "Oremos",
+        "Infundi, Senhor, nós Vos pedimos, em nossas almas a vossa graça, para que nós, que conhecemos pela Anunciação do Anjo a Encarnação de Jesus Cristo, vosso Filho, cheguemos por sua Paixão e sua Cruz à glória da Ressurreição. Pelo mesmo Jesus Cristo, Senhor nosso.",
+        ". Amém."
+      ],
+      "laBlocks": [
+        ". Ángelus Dómini nuntiávit Maríæ.",
+        ". Et concépit de Spíritu Sancto.",
+        "Ave, Maria…",
+        ". Ecce ancílla Dómini.",
+        ". Fiat mihi secúndum verbum tuum.",
+        "Ave, Maria…",
+        ". Et Verbum caro factum est.",
+        ". Et habitávit in nobis.",
+        "Ave, Maria…",
+        ". Ora pro nobis, sancta Dei génetrix.",
+        ". Ut digni efficiámur promissiónibus Christi.",
+        "Orémus",
+        "Grátiam tuam, quǽsumus, Dómine, méntibus nostris infúnde: ut qui, Ángelo nuntiánte, Christi Fílii tui Incarnatiónem cognóvimus; per Passiónem eius et Crucem, ad resurrectiónis glóriam perducámur. Per Christum Dóminum nostrum.",
+        ". Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Regína cæli",
+      "laTitle": "Regína cæli",
+      "ptBrBlocks": [
+        "Para o Tempo Pascal",
+        ". Rainha do Céu, alegrai-vos, aleluia.",
+        ".Porque quem merecestes trazer em vosso seio, aleluia.",
+        ". Ressuscitou como disse, aleluia.",
+        ". Rogai a Deus por nós, aleluia.",
+        ". Exultai e alegrai-vos, ó Virgem Maria, aleluia.",
+        ". Porque o Senhor ressuscitou verdadeiramente, aleluia.",
+        "Oremos",
+        "Ó Deus, que Vos dignastes alegrar o mundo com a Ressurreição do Vosso Filho Jesus Cristo, Senhor Nosso, concedei-nos, Vos suplicamos, que por sua Mãe, a Virgem Maria, alcancemos as alegrias da vida eterna. Por Cristo, Senhor Nosso.",
+        ". Amém."
+      ],
+      "laBlocks": [
+        "Pro Tempore Paschali",
+        ". Regina cæli lætáre, allelúia.",
+        ". Quia quem meruísti portáre, allelúia.",
+        ". Resurréxit, sicut dixit, allelúia.",
+        ". Ora pro nobis Deum, allelúia.",
+        ". Gaude et lætáre, Virgo Maria, allelúia.",
+        ". Quia surréxit Dóminus vere, allelúia.",
+        "Orémus",
+        "Deus, qui per resurrectiónem Fílii tui Dómini nostri Iesu Christi mundum lætificáre dignátus es, præsta, quǽsumus, ut per eius Genetrícem Vírginem Maríam perpétuæ capiámus gáudia vitæ. Per Christum Dóminum nostrum.",
+        ". Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Lembrai-Vos",
+      "laTitle": "Memoráre",
+      "ptBrBlocks": [
+        "Lembrai-vos ó piíssima Virgem Maria, que nunca se ouviu dizer que algum daqueles que recorreram à vossa proteção, imploraram a vossa assistência e reclamaram o vosso socorro, fosse por vós desamparado.",
+        "Animado eu, pois, com igual confiança, a vós, Virgem, entre todas singular, como à minha Mãe recorro; de vós me valho e, gemendo sob o peso de meus pecados, me prostro aos vossos pés.",
+        "Não rejeiteis as minhas súplicas, ó Mãe do Filho de Deus humanado, mas dignai-vos de as ouvir e de me alcançar o que vos rogo. Amém."
+      ],
+      "laBlocks": [
+        "Memoráre, o piíssima Virgo Maria, non esse audítum a sǽculo, quemquam ad tua curréntem præsídia, tua implorántem auxilia, tua peténtem suffrágia, esse derelíctum.",
+        "Ego tali animátus confidéntia, ad te, Virgo Vírginum, Mater, curro, ad te vénio, coram te gemens peccátor assísto.",
+        "Noli, Mater Verbi, verba mea despícere; sed áudi propítia et exáudi. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Santo Rosário",
+      "laTitle": "Sanctum Rosárium",
+      "ptBrBlocks": [
+        "Estação ao Santíssimo Sacramento",
+        ". Graças e louvores sejam dados a todo momento.",
+        ". Ao Santíssimo e diviníssimo Sacramento.",
+        "Pai Nosso, Ave Maria, Glória (três vezes).",
+        ". Graças e louvores sejam dados a todo momento,",
+        ". Ao Santíssimo e diviníssimo Sacramento.",
+        "Comunhão espiritual",
+        "Eu quisera, Senhor, receber-Vos com aquela pureza, humildade e devoção com que Vos recebeu a Vossa Santíssima Mãe, com o espírito e o fervor dos Santos.",
+        "Santo Rosário",
+        ". Pelo sinal † da Santa Cruz, livrai-nos Deus, † Nosso Senhor, dos nossos † inimigos. Em nome do Pai, e do Filho, † e do Espírito Santo. Amém.",
+        "Ato de Contrição",
+        "Glória ao Pai...",
+        "Mistérios gozosos",
+        "Segunda-feira e sábado",
+        "1°. A Anunciação (ou A Encarnação do Senhor).",
+        "2°. A visitação de Nossa Senhora à Sua prima Santa Isabel.",
+        "3°. O Nascimento do Filho de Deus em Belém.",
+        "4°. A Apresentação de Jesus no Templo e purificação de Nossa Senhora.",
+        "5°. O Menino Deus perdido e achado no Templo.",
+        "Mistérios dolorosos",
+        "Terça-feira e sexta-feira",
+        "1°. A Oração de Jesus no Horto.",
+        "2°. A Flagelação do Senhor.",
+        "3°. A Coroação de espinhos.",
+        "4°. Jesus com a Cruz às costas.",
+        "5°. Jesus morre na Cruz.",
+        "Mistérios gloriosos",
+        "Quarta-feira e domingo",
+        "1°. A Ressurreição do Senhor.",
+        "2°. A Ascensão de Jesus aos céus.",
+        "3°. A Vinda do Espírito Santo.",
+        "4°. A Assunção de Nossa Senhora.",
+        "5°. A Coroação de Maria Santíssima.",
+        "Mistérios luminosos",
+        "Quinta-feira",
+        "1º. O Batismo do Senhor no Jordão.",
+        "2º. A auto revelação de Cristo nas bodas de Caná.",
+        "3º. O anúncio do Reino de Deus, convidando à conversão.",
+        "4º. A Transfiguração do Senhor.",
+        "5º. A Instituição da Eucaristia.",
+        "Depois de cada mistério",
+        "Ó meu Jesus, perdoai-nos, livrai-nos do fogo do inferno. Levai as almas todas para o céu e socorrei principalmente as que mais precisarem..",
+        "Ao terminar os cinco mistérios",
+        "–﻿ Ave Maria, Filha de Deus Pai, cheia de graça, …",
+        "–﻿ Ave Maria, Mãe de Deus Filho, cheia de graça, …",
+        "–﻿ Ave Maria, Esposa de Deus Espírito Santo, cheia de graça, …",
+        "Ladainha a Nossa Senhora",
+        ". Senhor, tende piedade de nós.",
+        ". Senhor, tende piedade de nós.",
+        ". Jesus Cristo, tende piedade de nós.",
+        ". Jesus Cristo, tende piedade de nós.",
+        ". Senhor, tende piedade de nós.",
+        ". Senhor, tende piedade de nós.",
+        ". Jesus Cristo, ouvi-nos.",
+        ". Jesus Cristo, ouvi-nos.",
+        ". Jesus Cristo, atendei-nos.",
+        ". Jesus Cristo, atendei-nos.",
+        ". Deus Pai dos céus.",
+        ". Tende piedade de nós.",
+        ". Deus Filho Redentor do mundo,",
+        ". Tende piedade de nós.",
+        ". Deus Espírito Santo,",
+        ". Tende piedade de nós.",
+        ". Santíssima Trindade, que sois um só Deus,",
+        ". Tende piedade de nós.",
+        ". Santa Maria,",
+        ". Rogai por nós.",
+        "Santa Mãe de Deus,",
+        "Santa Virgem das Virgens,",
+        "Mãe de Jesus Cristo,",
+        "Mãe da Igreja,",
+        "Mãe da Misericórdia,",
+        "Mãe da divina graça,",
+        "Mãe da Esperança,",
+        "Mãe puríssima,",
+        "Mãe castíssima,",
+        "Mãe imaculada,",
+        "Mãe intacta,",
+        "Mãe amável,",
+        "Mãe admirável,",
+        "Mãe do bom conselho,",
+        "Mãe do Criador,",
+        "Mãe do Salvador,",
+        "Virgem prudentíssima,",
+        "Virgem venerável,",
+        "Virgem digna de louvor,",
+        "Virgem poderosa,",
+        "Virgem clemente,",
+        "Virgem fiel,",
+        "Espelho de justiça,",
+        "Sede de sabedoria,",
+        "Causa da nossa alegria,",
+        "Vaso espiritual,",
+        "Vaso honorável,",
+        "Vaso insigne de devoção,",
+        "Rosa mística,",
+        "Torre de Davi,",
+        "Torre de marfim,",
+        "Casa de ouro,",
+        "Arca da aliança,",
+        "Porta do Céu,",
+        "Estrela da manhã,",
+        "Saúde dos enfermos,",
+        "Refúgio dos pecadores,",
+        "Socorro dos migrantes,",
+        "Consoladora dos aflitos,",
+        "Auxílio dos cristãos,",
+        "Rainha dos Anjos,",
+        "Rainha dos Patriarcas,",
+        "Rainha dos Profetas,",
+        "Rainha dos Apóstolos,",
+        "Rainha dos Mártires,",
+        "Rainha dos Confessores,",
+        "Rainha das Virgens,",
+        "Rainha de todos os Santos,",
+        "Rainha concebida sem pecado original,",
+        "Rainha assunta aos céus,",
+        "Rainha do Santíssimo Rosário,",
+        "Rainha da Família,",
+        "Rainha da Paz,",
+        ". Cordeiro de Deus, que tirais o pecado do mundo,",
+        ". Perdoai-nos, Senhor.",
+        ". Cordeiro de Deus, que tirais o pecado do mundo,",
+        ". Ouvi-nos, Senhor.",
+        ". Cordeiro de Deus, que tirais o pecado do mundo,",
+        ". Tende piedade de nós.",
+        "À vossa proteção nós recorremos, Santa Mãe de Deus; não desprezeis as súplicas que em nossas necessidades vos dirigimos, mas livrai-nos sempre de todos os perigos, ó Virgem gloriosa e bendita.",
+        ". Rogai por nós Santa Mãe de Deus.",
+        ". Para que sejamos dignos das promessas de Cristo.",
+        "Oremos",
+        "Infundi, Senhor, nós vos pedimos, em nossas almas a vossa graça, para que nós, que conhecemos pela Anunciação do Anjo a Encarnação de Jesus Cristo, vosso Filho, cheguemos por sua Paixão e sua Cruz à glória da ressurreição. Pelo mesmo Jesus Cristo, Senhor Nosso.",
+        ". Amém.",
+        "–﻿ Pelas necessidades da Igreja e do Estado: Pai Nosso, Ave Maria, Glória.",
+        "–﻿ Pela pessoa e intenções do Sr. Bispo desta diocese: Pai Nosso, Ave Maria, Glória.",
+        "–﻿ Pelas benditas almas do Purgatório: Pai Nosso, Ave Maria. Descansem em paz. Amém,",
+        "________________",
+        "Na Quinta-feira Santa, em vez do Glória, pode-se rezar:",
+        ". Cristo se fez por nós.",
+        ". Obediente até a morte.",
+        "E na Sexta-feira Santa:",
+        ". Cristo se fez por nós obediente até a morte.",
+        ". E morte de Cruz.",
+        "E no Sábado Santo:",
+        ". Cristo se fez por nós obediente até a morte e morte de cruz.",
+        ". Por isso Deus o exaltou e lhe deu um Nome que está acima de todo nome."
+      ],
+      "laBlocks": [
+        "Visitátio Sanctíssimi Sacramenti",
+        ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+        ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+        "Pater noster, Ave Maria, Glória Patri (ter repetere).",
+        ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+        ". Adorémus in ætérnum Sanctíssimum Sacraméntum.",
+        "Communiones spirituales",
+        "Yo quisiera, Señor, recibiros con aquella pureza, humildad y devoción con que os recibió vuestra Santísima Madre, con el espíritu y fervor de los santos.",
+        "Sanctum Rosárium",
+        ". Per signum Crucis de inimícis nostris líbera nos, Deus Noster. In Nómine Patris, et Fílii, et Spíritus Sancti. Amen.",
+        "Dominum meum Iesum Christum...",
+        ". Dómine, labia mea apéries,",
+        ". et os meum annuntiábit laudem tuam.",
+        ". Deus, in adiutórium meum inténde,",
+        ". Dómine, ad adiuvándum me festína.",
+        "Gloria Patri...",
+        "Gaudii mysteria",
+        "In feria secunda et sabbato",
+        "1.° Annuntiatione Domini",
+        "2.° Visitatio Beatæ Mariæ Virginis ad S. Elisabeth.",
+        "3.° Nativitas Filii Dei in Bethlehem",
+        "4.° Presentatio Iesu in Templo",
+        "5.° Inventio pueri Iesu in Templo",
+        "Doloris mysteria",
+        "In feria tertia et feria sexta",
+        "1.° Oratio in Horto",
+        "2.° Flagellatio Domini",
+        "3.° Coronatio Spinis",
+        "4.° Baiulatio Crucis",
+        "5.° Crucifixio et Mors Domini Iesu",
+        "Gloriae mysteria",
+        "In feria quarta et Dominica",
+        "1.° Resurrectio Domini",
+        "2.° Ascensio Domini",
+        "3.° Descensus Spiritus Sancti",
+        "4.° Assumptio Beatæ Mariæ Virginis",
+        "5.° Coronatio Beatæ Mariæ Virginis",
+        "Lucis mysteria",
+        "In feria quinta",
+        "1.º Baptismus Domini",
+        "2.º Nuptiæ Canæ Galilææ",
+        "3.º Regni Dei proclamatio",
+        "4.º Transfiguratio Domini",
+        "5.º Institutio Eucharistiæ",
+        "Litaniarum Lauretanarum",
+        ". Kýrie, eléison.",
+        ". Kýrie, eléison.",
+        ". Christe, eléison.",
+        ". Christe, eléison.",
+        ". Kýrie, eléison.",
+        ". Kýrie, eléison.",
+        ". Christe, audi nos.",
+        ". Christe, audi nos.",
+        ". Christe, exáudi nos.",
+        ". Christe, exáudi nos.",
+        ". Pater de cælis, Deus,",
+        ". miserére nobis.",
+        ". Fili, Redémptor mundi, Deus,",
+        ". miserére nobis.",
+        ". Spíritus Sancte, Deus,",
+        ". miserére nobis.",
+        ". Sancta Trínitas, unus Deus,",
+        ". miserére nobis.",
+        ". Sancta Maria,",
+        ". ora pro nobis.",
+        "Sancta Dei Génetrix,",
+        "Sancta Virgo vírginum,",
+        "Mater Christi,",
+        "Mater Ecclésiæ,",
+        "Mater Misericordiæ,",
+        "Mater divínæ gratiæ,",
+        "Mater Spei,",
+        "Mater puríssima,",
+        "Mater castíssima,",
+        "Mater invioláta,",
+        "Mater intemeráta,",
+        "Mater immaculáta,",
+        "Mater amábilis,",
+        "Mater admirábilis,",
+        "Mater boni Consílii,",
+        "Mater Creatóris,",
+        "Mater Salvatóris,",
+        "Virgo prudentíssima,",
+        "Virgo veneránda,",
+        "Virgo prædicánda,",
+        "Virgo potens,",
+        "Virgo clemens,",
+        "Virgo fidélis,",
+        "Spéculum iustítiæ,",
+        "Sedes Sapiéntiæ,",
+        "Causa nostræ lætítiæ,",
+        "Vas spirituále,",
+        "Vas honorábile,",
+        "Vas insigne devotiónis,",
+        "Rosa mýstica,",
+        "Turris Davídica,",
+        "Turris ebúrnea,",
+        "Domus áurea,",
+        "Fœderis arca,",
+        "Iánua cæli,",
+        "Stella matutina,",
+        "Salus infirmórum,",
+        "Refugium peccatórum,",
+        "Solacium migrantium,",
+        "Consolátrix afflictórum,",
+        "Auxílium christianórum,",
+        "Regina Angelórum,",
+        "Regina Patriarchárum,",
+        "Regina Prophetárum,",
+        "Regina Apostolórum,",
+        "Regina Mártyrum,",
+        "Regina Confessórum,",
+        "Regina Vírginum,",
+        "Regina Sanctórum ómnium,",
+        "Regina sine labe originali concépta,",
+        "Regina in cælum assumpta,",
+        "Regina sacratíssimi Rosárii,",
+        "Regina famíliæ,",
+        "Regina pacis,",
+        ". Agnus Dei, qui tollis peccáta mundi,",
+        ". parce nobis, Dómine.",
+        ". Agnus Dei, qui tollis peccáta mundi,",
+        ". exáudi nos, Dómine.",
+        ". Agnus Dei, qui tollis peccáta mundi,",
+        ". miserére nobis.",
+        "Sub tuum præsídium confúgimus, Sancta Dei Génetrix, nostras deprecatiónes ne despícias in necessitátibus; sed a perículis cunctis líbera nos semper, Virgo gloriósa et benedícta.",
+        ". Ora pro nobis, Sancta Dei Génetrix.",
+        ". Ut digni efficiámur promissiónibus Christi.",
+        "Orémus",
+        "Grátiam tuam, quǽsumus, Dómine, méntibus nostris infúnde: ut qui, Ángelo nuntiánte, Christi Fílii tui Incarnatiónem cognóvimus; per Passiónem eius et Crucem, ad resurrectiónis glóriam perducámur. Per Christum Dóminum nostrum.",
+        ". Amen.",
+        "–﻿ Pro necessitatibus Ecclesiæ et Status: Pater noster. Ave Maria. Gloria Patri.",
+        "–﻿ Pro persona et intentionibus Excellentissimi ac Reverendissimi Domini Episcopi huius diœcesis: Pater noster. Ave Maria. Gloria Patri.",
+        "–﻿ Pro animabus benedictis in Purgatorio: Pater noster. Ave Maria. Requiescant in pace. Amen.",
+        "________________",
+        "Feria V in Passione Domini, loco Gloria, potest recitari:",
+        ". Christus factus est pro nobis.",
+        ". Obœdiens usque ad mortem.",
+        "Et Feria VI:",
+        ". Christus factus est pro nobis obœdiens usque ad mortem.",
+        ". Mortem autem crucis.",
+        "Et Sabbato Sancto:",
+        ". Christus factus est pro nobis obœdiens usque ad mortem, mortem autem crucis.",
+        ". Propter quod et Deus exaltávit íllum: et dedit ílli nomen, quod est super omne nomen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "À Vossa proteção nos acolhemos",
+      "laTitle": "Sub tuum præsídium",
+      "ptBrBlocks": [
+        "À vossa proteção nós recorremos, Santa Mãe de Deus; não desprezeis as súplicas que em nossas necessidades vos dirigimos, mas livrai-nos sempre de todos os perigos, ó Virgem gloriosa e bendita.",
+        ". Rogai por nós, Santa Mãe de Deus.",
+        ". Para que sejamos dignos das promessas de Cristo."
+      ],
+      "laBlocks": [
+        "Sub tuum præsídium confúgimus, Sancta Dei Génetrix, nostras deprecatiónes ne despícias in necessitátibus; sed a perículis cunctis líbera nos semper, Virgo gloriósa et benedícta.",
+        ". Ora pro nobis, Sancta Dei Génetrix.",
+        ". Ut digni efficiámur promissiónibus Christi."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Stabat Mater",
+      "laTitle": "Stabat Mater",
+      "ptBrBlocks": [
+        "De pé a Mãe dolorosa, junto da cruz, lacrimosa, via Jesus que pendia.",
+        "No coração transpassado sentia o gládio enterrado de uma cruel profecia.",
+        "Mãe entre todas bendita, do Filho único, aflita, a imensa dor assistia,",
+        "E, suspirando, chorava, e da cruz não se afastava, ao ver que o Filho morria.",
+        "Pobre mãe, tão desolada, ao vê-la assim transpassada, quem de dor não choraria?",
+        "Quem na terra há que resista, se a mãe assim se contrista ante uma tal agonia?",
+        "Para salvar sua gente, eis que seu Filho inocente suor e sangue vertia.",
+        "Na cruz por seu Pai chamando, vai a cabeça inclinando, enquanto escurece o dia.",
+        "Faze, ó Mãe, fonte de amor, que eu sinta em mim tua dor, para contigo chorar.",
+        "Faze arder meu coração, partilhar tua paixão e teu Jesus consolar..",
+        "Ó santa Mãe, por favor, faze que as chagas do amor em mim se venham gravar.",
+        "O que Jesus padeceu venha a sofrer também eu, causa de tanto penar.",
+        "Ó dá-me, enquanto viver, com Jesus Cristo sofrer, contigo sempre chorar!",
+        "Quero ficar junto à cruz, velar contigo a Jesus, e o teu pranto enxugar.",
+        "Virgem Mãe tão santa e pura, vendo eu a tua amargura, possa contigo chorar.",
+        "Que do Cristo eu traga a morte, sua paixão me conforte, sua cruz possa abraçar!",
+        "Em sangue as chagas me lavem e no meu peito se gravem, para não mais se apagar.",
+        "No julgamento consegue que às chamas não seja entregue quem soube em ti se abrigar.",
+        "Que a santa cruz me proteja, que eu vença a dura peleja, possa do mal triunfar!",
+        "Vindo, ó Jesus, minha hora, por essas dores de agora, no céu mereça um lugar."
+      ],
+      "laBlocks": [
+        "Stabat Mater dolorósa iuxta Crucem lacrimósa, dum pendébat Fílius.",
+        "Cuius ánimam geméntem, contristátam et doléntem pertransívit gládius.",
+        "O quam tristis et afflícta fuit illa benedícta, mater Unigéniti!",
+        "Quæ mærébat et dolébat, pia Mater, dum vidébat nati pœnas íncliti.",
+        "Quis est homo qui non fleret, matrem Christi si vidéret in tanto supplício?",
+        "Quis non posset contristári Christi Matrem contemplári doléntem cum Fílio?",
+        "Pro peccátis suæ gentis vidit Iesum in torméntis, et flagéllis súbditum.",
+        "Vidit suum dulcem Natum moriéndo desolátum, dum emísit spíritum.",
+        "Éia, Mater, fons amóris me sentíre vim dolóris fac, ut tecum lúgeam.",
+        "Fac, ut árdeat cor meum in amándo Christum Deum ut sibi compláceam.",
+        "Sancta Mater, istud agas, crucifíxi fige plagas cordi meo válide.",
+        "Tui Nati vulneráti, tam dignáti pro me pati, pœnas mecum dívide.",
+        "Fac me tecum píe flere, crucifíxo condolére, donec ego víxero.",
+        "Iuxta Crucem tecum stare, et me tibi sociáre in planctu desídero.",
+        "Virgo vírginum præclara, mihi iam non sis amára, fac me tecum plángere.",
+        "Fac, ut portem Christi mortem, passiónis fac consórtem, et plagas recólere.",
+        "Fac me plagis vulnerári, fac me Cruce inebriári, et cruóre Fílii.",
+        "Flammis ne urar succénsus, per te, Virgo, sim defénsus in die iudícii.",
+        "Christe, cum sit hinc exíre, da per Matrem me veníre ad palmam victóriæ.",
+        "Quando corpus moriétur, fac, ut ánimæ donétur paradísi glória. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Consagração a Nossa Senhora",
+      "laTitle": "Consecration to Mary",
+      "ptBrBlocks": [
+        "Ó Senhora minha, ó minha Mãe, eu me ofereço todo a Vós e, em prova da minha devoção para convosco, Vos consagro neste dia meus olhos, meus ouvidos, minha boca, meu coração e inteiramente todo o meu ser. E como assim sou vosso, ó incomparável Mãe, guardai-me e defendei-me como coisa e propriedade Vossa."
+      ],
+      "laBlocks": [
+        "My queen and my mother, I give myself entirely to you; and to show my devotion to you, I consecrate to you this day, my eyes, my ears, my mouth, my heart, my whole being without reserve. Wherefore, good mother, as I am your own, keep me, guard me, as your property and possession. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Bendita a vossa pureza",
+      "laTitle": "",
+      "ptBrBlocks": [
+        "Bendita seja tua pureza e eternamente o seja, pois todo um Deus se recreia em tão graciosa beleza. A ti, celestial Princesa, Virgem Maria, vos ofereço neste dia alma, vida e coração. Olhai-me com compaixão, não me deixes, Mãe minha."
+      ],
+      "laBlocks": [],
+      "languages": [
+        "pt-br"
+      ]
+    },
+    {
+      "ptBrTitle": "Alma Redemptóris Mater",
+      "laTitle": "Alma Redemptóris Mater",
+      "ptBrBlocks": [
+        "Para o Tempo do Advento e do Natal",
+        "Santa Mãe do Redentor, Porta do céu sempre aberta, Estrela do mar. Ajuda teu povo caído, que quer levantar- se.",
+        "Vós que destes à luz, ante a natureza maravilhada, Aquele que vos criou. E permanecestes sempre Virgem, antes e depois daquela saudação da boca de Gabriel. Tende piedade de nós, pecadores."
+      ],
+      "laBlocks": [
+        "A Sabbato quod ante primam Dominicam Adventus cadit usque ad diem 1 Februarii",
+        "Alma Redemptóris Mater, quæ pérvia cæli porta manes, et stella maris, succúrre cadénti, súrgere qui curat, pópulo.",
+        "Tu quæ genuísti, natúra miránte, tuum sanctum Genitórem, Virgo prius ac postérius, Gabriélis ab ore sumens illud Ave, peccatórum miserére."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Ave, Regína cælórum",
+      "laTitle": "Ave, Regína cælórum",
+      "ptBrBlocks": [
+        "Para o Tempo da Quaresma",
+        "Ave, Rainha do céu! Ave, dos Anjos Senhora! Ave, raiz! Ave, porta! Da Luz do mundo és aurora!",
+        "Exulta, ó Virgem bela; as outras seguem-te após! Nós te saudamos! Salve! E pede a Cristo por nós."
+      ],
+      "laBlocks": [
+        "A die 2 Februarii usque ad Feriam IV in Hebdomada sancta",
+        "Ave, Regína cælórum, ave, Dómina Angelórum, salve, radix, salve, porta, ex qua mundo lux est orta.",
+        "Gaude, Virgo gloriósa, super omnes speciósa; vale, o valde decóra, et pro nobis Christum exóra."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Magníficat",
+      "laTitle": "Magníficat",
+      "ptBrBlocks": [
+        "A minh’alma engrandece o Senhor, exulta meu espírito em Deus, meu Salvador! Porque olhou para a humildade de sua serva.",
+        "Doravante as gerações hão de chamar-me de bendita! O Poderoso fez em mim maravilhas, e Santo é seu nome! Seu amor para sempre se estende, sobre aqueles que O temem!",
+        "Manifesta o poder de seu braço, dispersa os soberbos; derruba os poderosos de seus tronos e eleva os humildes; sacia de bens os famintos, despede os ricos sem nada..",
+        "Acolhe Israel, seu servidor, fiel ao seu amor, como havia prometido a nossos pais, em favor de Abraão e de seus filhos para sempre!.",
+        "Glória ao Pai e ao Filho e ao Espírito Santo. Como era no princípio, agora e sempre. Amém!"
+      ],
+      "laBlocks": [
+        "Magníficat ánima mea Dóminum, et exsultávit spíritus meus in Deo salvatóre meo, quia respéxit humilitátem ancíllæ suæ.",
+        "Ecce enim ex hoc beátam me dicent omnes generatiónes, quia fecit mihi magna, qui potens est, et sanctum nomen eius, et misericórdia eius in progénies et progénies timéntibus eum.",
+        "Fecit poténtiam in bráchio suo, dispérsit supérbos mente cordis sui; depósuit poténtes de sede et exaltávit húmiles, esuriéntes implévit bonis et dívites dimísit inánes.",
+        "Suscépit Ísraël púerum suum, recordátus misericórdiæ, sicut locútus est ad patres nostros, Ábraham et sémini eius in sǽcula.",
+        "Glória Patri, et Fílio, et Spirítui Sancto. Sicut erat in princípio, et nunc et semper, et in sǽcula sæculórum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Salve Rainha",
+      "laTitle": "Salve, Regína",
+      "ptBrBlocks": [
+        "Salve, Rainha, mãe de misericórdia, vida, doçura, esperança nossa, salve!",
+        "A Vós bradamos, os degredados filhos de Eva. A Vós suspiramos, gemendo e chorando neste vale de lágrimas.",
+        "Eia, pois, advogada nossa, esses Vossos olhos misericordiosos a nós volvei,",
+        "e, depois deste desterro, mostrai-nos Jesus, bendito fruto do Vosso ventre.",
+        "Ó clemente, ó piedosa, ó doce sempre Virgem Maria.",
+        "Rogai por nós, Santa Mãe de Deus, para que sejamos dignos das promessas de Cristo."
+      ],
+      "laBlocks": [
+        "Salve, Regina, Mater misericórdiæ, vita, dulcédo et spes nostra, salve.",
+        "Ad te clamámus, éxsules fílii Hevæ. Ad te suspirámus geméntes et flentes in hac lacrimárum valle.",
+        "Éia ergo, advocáta nostra, illos tuos misericórdes óculos ad nos convérte.",
+        "Et Iesum benedíctum fructum ventris tui, nobis, post hoc exsílium, osténde.",
+        "O clemens, o pia, o dulcis Virgo Maria!"
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    }
+  ],
+  "Antes da Missa": [
+    {
+      "ptBrTitle": "Oração a Nossa Senhora",
+      "laTitle": "Ad B. Maríam Vírginem",
+      "ptBrBlocks": [
+        "Ó Mãe de bondade e de misericórdia, Santíssima Virgem Maria, eu, miserável e indignopecador, a Vós recorrode todo o coração e com todo o amor; e Vos suplico que, assim como estivestes de pé junto ao vosso amabilíssimo Filho pendente da Cruz, me assistais também a mim, mísero pecador, e a todos os sacerdotes que hoje na Santa Igreja oferecem o Santo Sacrifício. Auxiliados pela vossa graça, possamos nós apresentar à suprema e indivisível Trindade a Vítima verdadeiramente digna de lhe ser oferecida. Amém."
+      ],
+      "laBlocks": [
+        "O Mater pietátis et misericórdiæ, beatíssima Virgo María, ego miser et indígnus peccátor ad te confúgio toto corde et afféctu, et precor pietátem tuam, ut, sicut dulcíssimo Fílio tuo in Cruce pendénti astitísti, ita et mihi, mísero peccatóri, et sacerdótibus ómnibus, hic et in tota sancta Ecclésia hódie offeréntibus, cleménter assístere dignéris, ut, tua grátia adiúti, dignam et acceptábilem hóstiam in conspéctu summæ et indivíduæ Trinitátis offérre valeámus. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração a São José",
+      "laTitle": "Preces ad S. Ioseph",
+      "ptBrBlocks": [
+        "São José, varão feliz, que tivestes a dita de ver e ouvir o próprio Deus, a quem muitos reis quiseram ver e não viram, ouvir e não ouviram; e não só ver e ouvir, mas ainda trazê-lo em vossos bra- ços, beijá-lo, vesti-lo e guardá-lo!",
+        ". Rogai por nós, bem-aventurado São José.",
+        ". Para que sejamos dignos das promessas de Cristo.",
+        "Oremos",
+        "Ó Deus, que nos concedestes o sacerdócio real, nós Vos pedimos que, assim como São José mereceu cuidar e trazer em seus braços com carinho o vosso Filho unigênito, nascido da Virgem Maria, façais que nós Vos sirvamos com coração limpo e boas obras, de modo que hoje recebamos dignamente o sacros- santo Corpo e Sangue do vosso Filho, e na vida futura mereça- mos alcançar o prêmio eterno. Amém."
+      ],
+      "laBlocks": [
+        "O felícem virum, beátum Ioseph, cui datum est Deum, quem multi reges voluérunt vidére et non vidérunt, audíre et non audiérunt, non solum vidére et audíre, sed portáre, deosculári, vestíre et custodíre!",
+        ". Ora pro nobis, beáte Ioseph.",
+        ". Ut digni efficiámur promissiónibus Christi.",
+        "Orémus",
+        "Deus, qui dedísti nobis regále sacerdótium, præsta, quǽsumus, ut, sicut beátus Ioseph unigénitum Fílium tuum, natum ex Maria Vírgine, suis mánibus reverénter tractáre méruit et portáre, ita nos facias cum cordis mundítia et óperis innocéntia tuis sanctis altáribus deservíre, ut sacrosánctum Fílii tui Corpus et Sánguinem hódie digne sumámus, et in futúro sǽculo prǽmium habére mereámur ætérnum. Per Christum Dóminum nostrum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração de São Tomás de Aquino",
+      "laTitle": "Orátio S. Thomæ Aquinátis",
+      "ptBrBlocks": [
+        "Ó Deus eterno e todo-poderoso, eis que me aproximo do sacramento do vosso Filho único, Nosso Senhor Jesus Cristo. Impuro, venho à fonte da misericórdia; cego, à luz da eterna claridade; pobre e indigente, ao Senhor do céu e da terra.",
+        "Imploro, pois, a abundância da vossa liberalidade, para que Vos digneis curar a minha fraqueza, lavar as minhas manchas, iluminar a minha cegueira, enriquecer a minha pobreza, vestir a minha nudez. Que eu receba o Pão dos Anjos, o Rei dos reis e o Senhor dos senhores, com o respeito e a humildade, a contrição e a devoção, a pureza e a fé, o propósito e a intenção que convém à salvação da minha alma.",
+        "Dai-me que receba não só o sacramento do Corpo e do Sangue do Senhor, mas também o seu efeito e a sua força.",
+        "Ó Deus de mansidão, fazei-me acolher com tais disposições o Corpo que o vosso Filho único, Nosso Senhor Jesus Cristo, recebeu da Virgem Maria, que seja incorporado ao seu Corpo Místico e contado entre os seus membros.",
+        "Ó Pai cheio de amor, fazei que, recebendo agora o vosso Filho sob o véu do sacramento, possa na eternidade contemplá-lo face a face.",
+        "Amém."
+      ],
+      "laBlocks": [
+        "Omnípotens sempiterne Deus, ecce, accédo ad sacraméntum unigéniti Fílii tui, Dómini nostri Iesu Christi; accédo tamquam infírmus ad médicum vitæ, immúndus ad fontem misericórdiæ, cæcus ad lumen claritátis ætérnæ, pauper et egénus ad Dóminum cæli et terræ.",
+        "Rogo ergo imménsæ largitátis tuæ abundántiam, quátenus meam curáre dignéris infirmitátem, laváre fœditátem, illumináre cæcitátem, ditáre paupertátem, vestíre nuditátem: ut panem Angelórum, Regem regum et Dóminum dominántium, tanta suscípiam reveréntia et humilítate, tanta contritióne et devotióne, tanta puritáte et fíde, tali propósito et intentióne, sicut éxpedit salúti ánimæ meæ.",
+        "Da mihi, quǽso, Domínici Córporis et Sánguinis non solum suscípere sacraméntum, sed étiam rem et virtútem sacraménti.",
+        "O mitíssime Deus, da mihi corpus unigéniti Fílii tui, Dómini nostri Iesu Christi, quod traxit de Vírgine Maria, sic suscípere, ut córpori suo mýstico mérear incorporári, et ínter eius membra connumerári.",
+        "O amantíssime Pater, concede mihi diléctum Fílium tuum, quem nunc velátum in via suscípere propóno, reveláta tandem fácie perpétuo contemplári.",
+        "Qui tecum vivit et regnat in unitáte Spíritus Sancti Deus, per ómnia sǽcula sæculórum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração de Santo Ambrosio",
+      "laTitle": "Orátio S. Ambrósii",
+      "ptBrBlocks": [
+        "Senhor Jesus Cristo, eu, pecador não presumindo dos meus próprios méritos, mas confiando na vossa bondade e misericórdia, temo entretanto e hesito em aproximar-me da mesa do vosso doce convite. Pois meu corpo e minha alma estão manchados por muitas faltas, e não guardei com cuidado o meu espírito e a minha língua..",
+        "Por isso, ó bondade divina e temível majestade, na minha miséria recorro a Vós, fonte de misericórdia; corro para junto de Vós a fim de ser curado, refugio-me na vossa proteção, e anseio ter como Salvador Aquele que não posso suportar como Juiz.",
+        "Senhor, eu Vos mostro as minhas chagas e Vos revelo a minha vergonha. Sei que os meus pecados são muitos e grandes, e temo por causa deles, mas espero na vossa infinita misericórdia.",
+        "Olhai-me, pois, com os vossos olhos misericordiosos, Senhor Jesus Cristo, Rei eterno, Deus e homem, crucificado por causa do homem. Escutai-me pois espero em Vós; tende piedade de mim, cheio de misérias e pecados, Vós que jamais deixareis de ser para nós a fonte da compaixão.",
+        "Salve, Vítima Salvadora, oferecida no patíbulo da Cruz por mim e por todos os homens.",
+        "Salve, nobre e precioso Sangue, que brotas das chagas do meu Senhor Jesus Cristo crucificado e lavas os pecados do mundo inteiro.",
+        "Lembrai-Vos, Senhor, da vossa criatura resgatada por vosso Sangue. Arrependo-me de ter pecado, desejo reparar o que fiz.",
+        "Livrai-me, ó Pai Clementíssimo, todas as minhas iniquidades e pecados, para que, inteiramente purificado, mereça saborear dignamente o Santo dos santos.",
+        "E concedei que o vosso Corpo e o vosso Sangue, que eu, embora indigno, me preparo para receber, sejam perdão para os meus pecados, a completa purificação das minhas faltas. Que eles afastem de mim os meus maus pensamentos e despertem os bons sentimentos; tornem eficazes as obras que Vos agradam, e protejam meu corpo e minha alma contra as ciladas dos meus inimigos. Amém."
+      ],
+      "laBlocks": [
+        "Ad mensam dulcíssimi convívii tui, pie Dómine Iesu Christe, ego peccátor de própriis meis méritis nihil præsúmens, sed de tua confídens misericórdia et bonitáte, accédere véreor et contremísco. Nam cor et corpus hábeo multis crimínibus maculátum, mentem et línguam non caute custodítam.",
+        "Ergo, o pia Déitas, o treménda Maiéstas, ego miser, inter angústias deprehénsus, ad te fontem misericórdiæ recúrro, ad te festíno sanándus, sub tuam protectiónem fúgio: et, quem Iúdicem sustinére néqueo, Salvatórem habére suspíro.",
+        "Tibi, Dómine, plagas meas osténdo, tibi verecúndiam meam détego. Scío peccáta mea multa et magna, pro quibus tímeo. Spero in misericórdias tuas, quarum non est númerus.",
+        "Réspice ergo in me óculis misericórdiæ tuæ, Dómine Iesu Christe, Rex ætérne, Deus et homo, crucifíxus propter hóminem. Exáudi me sperántem in te: miserére mei pleni misériis et peccátis, tu qui fontem miseratiónis numquam manáre cessábis.",
+        "Salve, salutáris víctima, pro me et omni humáno génere in patíbulo Crucis obláta.",
+        "Salve, nóbilis et pretióse Sanguis, de vulnéribus crucifíxi Dómini mei Iesu Christi prófluens, et peccáta totíus mundi ábluens.",
+        "Recordáre, Dómine, creatúræ tuæ, quam tuo Sánguine redemísti. Pœnitet me peccásse, cúpio emmendáre quod feci.",
+        "Aufer ergo a me, clementíssime Pater, omnes iniquitátes et peccáta mea, ut, purificátus mente et córpore, digne degustáre mérear Sancta sanctórum.",
+        "Et concéde, ut hæc sancta prælibátio Córporis et Sánguinis tui, quam ego indígnus súmere inténdo, sit peccatórum meórum remíssio, sit delictórum perfécta purgátio, sit túrpium cogitatiónum effugátio, ac bonórum sénsuum regenerátio, operúmque tibi placéntium salúbris efficácia, ánimæ quoque et córporis contra inimicórum meórum insídias firmíssima tuítio. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    }
+  ],
+  "Depois da Missa": [
+    {
+      "ptBrTitle": "Oração a São Miguel Arcanjo",
+      "laTitle": "Orátio ad S. Míchaël",
+      "ptBrBlocks": [
+        "São Miguel Arcanjo, defendei-nos no combate, sede o nosso refúgio contra as maldades e ciladas do demônio. Ordene-lhe Deus, instantemente o pedimos, e vós, príncipe da milícia celeste, pela virtude divina, precipitai no inferno a satanás e a todos os espíritos malignos, que andam pelo mundo para perder as almas. Amém"
+      ],
+      "laBlocks": [
+        "Sancte Míchaël Archángele, defénde nos in prœlio: contra nequítiam et insídias diáboli esto præsídium. Impéret illi Deus, súpplices deprecámur; tuque, Princeps milítiæ cæléstis, sátanam aliósque spíritus malígnos, qui ad perditiónem animárum pervagántur in mundo, divína virtúte in inférnum detrúde. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração de São Tomás de Aquino",
+      "laTitle": "Orátio S. Thomæ Aquinátis",
+      "ptBrBlocks": [
+        "Dou-Vos graças, Senhor santo, Pai onipotente, Deus, a Vós que, sem merecimento algum de minha parte, mas por efeito da vossa misericórdia, Vos dignastes saciar-me, sendo eu pecador e vosso indigno servo, com o Corpo adorável e com o Sangue precioso do vosso Filho, Nosso Senhor Jesus Cristo.",
+        "Eu Vos peço que esta comunhão não me seja imputada como uma falta digna de castigo, mas interceda eficazmente para alcançar o meu perdão; seja a armadura da minha fé e o escudo da minha boa vontade; livre-me dos meus vícios; apague os meus maus desejos; mortifique a minha concupiscência; aumente em mim a caridade e a paciência, a humildade, a obediência e todas as virtudes; sirva-me de firme defesa contra os embustes de todos os meus inimigos, tanto visíveis como invisíveis; serene e regule perfeitamente os movimentos, tanto da minha carne como do meu espírito; una-me firmemente a Vós, que sois o único e verdadeiro Deus; e seja enfim a feliz consumação do meu destino.",
+        "Dignai-Vos, Senhor, eu Vos suplico, conduzir-me, a mim, pecador, a esse inefável banquete onde, com o vosso Filho e o Espírito Santo, sois para os vossos santos luz verdadeira, gozo pleno e alegria eterna, cúmulo de delícias e felicidade perfeita. Pelo mesmo Jesus Cristo, Senhor Nosso. Amém."
+      ],
+      "laBlocks": [
+        "Grátias tibi ago, Dómine, sancte Pater, omnípotens ætérne Deus, qui me peccatórem, indígnum fámulum tuum, nullis meis méritis, sed sola dignatióne misericórdiæ tuæ satiáre dignátus es pretióso Córpore et Sánguine Fílii tui Dómini nostri Iesu Christi.",
+        "Et precor, ut hæc sancta commúnio non sit mihi reátus ad pœnam, sed intercéssio salutáris ad véniam. Sit mihi armatúra fídei et scutum bonæ voluntátis. Sit vitiórum meórum evacuátio, concupiscéntiæ et libídinis exterminátio, caritátis et patiéntiæ, humilitátis et obœdiéntiæ, omniúmque virtútum augmentátio; contra insídias inimicórum ómnium, tam visibílium, quam invisibílium, firma defénsio; mótuum meórum, tam carnálium quam spirituálium, perfécta quietátio: in te uno ac vero Deo firma adhǽsio; atque finis mei felix consummátio.",
+        "Et precor te, ut ad illud ineffábile convívium me peccatórem perdúcere dignéris, ubi tu cum Fílio tuo et Spíritu Sancto, Sanctis tuis es lux vera, satíetas plena, gáudium sempitérnum, iucúnditas consummáta et felícitas perfécta. Per Christum Dóminum nostrum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração de São Boaventura",
+      "laTitle": "Orátio S. Bonaventúræ",
+      "ptBrBlocks": [
+        "Trespassai, dulcíssimo Senhor Jesus, a medula de minha alma com o suave e salutar dardo do vosso amor, com a verdadeira, pura e santíssima caridade apostólica, a fim de que a minha alma desfaleça e se desfaça sempre só com o amor e o desejo de Vos possuir; que por Vós suspire, e desfaleça por achar-se nos átrios da vossa casa; deseje separar-se do corpo para se unir a Vós.",
+        "Fazei que a minha alma tenha fome de Vós, Pão dos anjos, Alimento das almas santas, Pão nosso de cada dia, cheio de força, de toda a doçura e sabor, e de todo o suave deleite.",
+        "Ó Jesus, a quem os anjos desejam contemplar, tenha sempre o meu coração fome de Vós, e o interior da minha alma transborde com a doçura do vosso sabor; tenha sempre sede de Vós, fonte de vida, manancial de sabedoria e de ciência, rio de luz eterna, torrente de delícias, abundância da Casa de Deus.",
+        "Que Vos deseje, Vos procure, Vos encontre; que para Vós caminhe e para Vós chegue; que em Vós pense, de Vós fale, e todas as minhas ações encaminhe para a honra e glória do vosso nome, com humildade e discrição, com amor e deleite, com facilidade e afeto, com perseverança até o fim; para que Vós sejais sempre a minha esperança, meu gozo, meu descanso e minha tranquilidade, minha paz, minha suavidade, meu perfume, minha doçura, minha comida, meu alimento, meu refúgio, meu auxílio, minha sabedoria, minha herança, minha posse, meu tesouro, no qual estejam sempre fixos e firme e inabalavelmente arraigados a minha alma e o meu coração. Amém."
+      ],
+      "laBlocks": [
+        "Transfíge, dulcíssime Dómine Iesu, medúllas et víscera ánimæ meæ suavíssimo ac salubérrimo amóris tui vúlnere, vera serenáque et apostólica sanctíssima caritáte, ut lángueat et liquefíat ánima mea solo semper amóre et desidério tui; te concupíscat et defíciat in átria tua, cúpiat dissólvi et esse tecum.",
+        "Da ut ánima mea te esúriat, panem Angelórum, refectiónem animárum sanctárum; panem nostrum cotidiánum, supersubstantiálem, habéntem omnem dulcédinem et sapórem et omne delectaméntum suavitátis.",
+        "Te, in quem desíderant Ángeli prospícere, semper esúriat et cómedat cor meum, et dulcédine sapóris tui repleántur víscera ánimæ meæ; te semper sítiat fontem vitæ, fontem sapiéntiæ et sciéntiæ, fontem ætérni lúminis, torréntem voluptátis, ubertátem domus Dei.",
+        "Te semper ámbiat, te quærat, te invéniat, ad te tendat, ad te pervéniat, te meditétur, te loquátur, et ómnia operétur in laudem et glóriam nóminis tui, cum humilitáte et discretióne, cum dilectióne, et delectatióne, cum facilitáte et afféctu, cum perseverántia usque in finem; ut tu sis solus semper spes mea, tota fidúcia mea, divítiæ meæ, delectátio mea, iucúnditas mea, gáudium meum, quies et tranquíllitas mea, pax mea, suávitas mea, odor meus, dulcédo mea, cibus meus, reféctio mea, refúgium meum, auxílium meum, sapiéntia mea, pórtio mea, posséssio mea, thesáurus meus, in quo fixa et firma et immobíliter semper sit radicáta mens mea et cor meum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração universal",
+      "laTitle": "Orátio universális",
+      "ptBrBlocks": [
+        "Atribuída ao Papa Clemente XI",
+        "Senhor, creio em Vós, fazei que creia com mais firmeza; espero em Vós, fazei que espere com mais confiança; amo-Vos, aumentai o meu amor;arrependo-me, avivai a minha dor.",
+        "Adoro-Vos como primeiro princípio; desejo-Vos como último fim; exalto-Vos como benfeitor perpétuo; invoco-Vos como defensor propício.",
+        "Dirigi-me com a vossa sabedoria; atai-me com a vossa justiça; consolai-me com a vossa clemência; protegei-me com o vosso poder.",
+        "Ofereço-Vos os meus pensamentos, para que se dirijam a Vós; minhas palavras, para que falem de Vós; minhas obras, para que sejam vossas; minhas contrariedades, para que as aceite por Vós.",
+        "Quero o que quereis, quero porque o quereis, quero como o quereis, quero enquanto o queirais.",
+        "Senhor, peço-Vos que ilumineis a minha mente, inflameis a minha vontade,limpeis o meu coração, santifiqueis a minha alma.",
+        "Que me afaste das faltas passadas, rejeite as tentações futuras, corrija as más inclinações, pratique as virtudes necessárias.",
+        "Concedei-me, Deus de bondade, amor por Vós, ódio por mim, zelo pelo próximo, desprezo pelo mundano.",
+        "Que saiba obedecer aos superiores, ajudar os inferiores, acolher os amigos, perdoar os inimigos.",
+        "Que vença a sensualidade com a mortificação, a avareza com a generosidade,a ira com a bondade, a tibieza com a piedade.",
+        "Fazei-me prudente nos conselhos, constante nos perigos, paciente nas contrariedades, humilde na prosperidade.",
+        "Senhor, fazei-me atento na oração, sóbrio na comida, perseverante no trabalho, firme nos propósitos.",
+        "Que procure ter inocência interior, modéstia exterior, conversa exemplar, vida ordenada.",
+        "Que lute por dominar a minha natureza, fomentar a graça, servir a vossa lei e obter a salvação.",
+        "Que aprenda de Vós como é pouco o terreno, como é grande o divino, como é breve o tempo, como é duradouro o eterno.",
+        "Fazei-me preparar a morte, temer o juízo, evitar o inferno e alcançar o Paraíso. Por Cristo Nosso Senhor. Amém."
+      ],
+      "laBlocks": [
+        "Sub nómine Cleméntis PP. XI vulgáta",
+        "Credo, Dómine, sed credam fírmius; spero, sed sperem secúrius; amo, sed amem ardéntius; dóleo, sed dóleam veheméntius.",
+        "Adoro te ut primum princípium; desídero ut finem últimum; laudo ut benefactórem perpétuum; ínvoco ut defensórem propítium.",
+        "Tua me sapiéntia dírige, iustítia cóntine, cleméntia soláre, poténtia prótege.",
+        "Óffero tibi, Dómine, cogitánda, ut sint ad te; dicénda, ut sint de te; faciénda, ut sint secúndum te; ferénda, ut sint propter te.",
+        "Volo quidquid vis, volo quia vis, volo quómodo vis, volo quámdiu vis.",
+        "Oro, Dómine: intelléctum illúmines, voluntátem inflámmes, cor emúndes, ánimam sanctífices.",
+        "Défleam prætéritas iniquitátes, repéllam futúras tentatiónes, córrigam vitiósas propensiónes, éxcolam idóneas virtútes.",
+        "Tríbue mihi, bone Deus, amórem tui, ódium mei, zelum próximi, contémptum mundi.",
+        "Stúdeam superióribus obœdíre, inferióribus subveníre, amícis consúlere, inimícis párcere.",
+        "Vincam voluptátem austeritáte, avarítiam largitáte, iracúndiam lenitáte, tepiditátem fervóre.",
+        "Redde me prudéntem in consíliis, constántem in perículis, patiéntem in advérsis, húmilem in prósperis.",
+        "Fac, Dómine, ut sim in oratióne atténtus, in épulis sóbrius, in múnere sédulus, in propósito fírmus.",
+        "Curem habére innocéntiam interiórem, modéstiam exteriórem, conversatiónem exemplárem, vitam regulárem.",
+        "Assídue invígilem natúræ domándæ, grátiæ fovéndæ, legi servándæ, salúti promeréndæ.",
+        "Discam a te quam ténue quod terrénum, quam grande quod divínum, quam breve quod temporáneum, quam durábile quod ætérnum.",
+        "Da, ut mortem prævéniam, iudícium pertímeam, inférnum effúgiam, paradísum obtíneam. Per Christum Dóminum nostrum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração a Jesus Crucificado",
+      "laTitle": "Orátio ad D. N. I. C. Crucifíxum",
+      "ptBrBlocks": [
+        "Eis-me aqui, ó bom e dulcíssimo Jesus! De joelhos ante a vossa divina presença, eu Vos peço e suplico, com o mais ardente fervor de minha alma, que Vos digneis gravar em meu coração profundos sentimentos de fé, de esperança e de caridade, de verdadeiro arrependimento de meus pecados e vontade firmíssima de me emendar, enquanto com sincero afeto e íntima dor de coração considero e medito em vossas cinco chagas, tendo bem presentes aquelas palavras que o Profeta Davi já dizia de Vós, ó bom Jesus: Trespassaram as minhas mãos e os meus pés, e contaram todos os meus ossos (Sl 21, 17-18)."
+      ],
+      "laBlocks": [
+        "En ego, o bone et dulcíssime Iesu, ante conspéctum tuum génibus me provólvo, ac máximo ánimi ardóre te oro atque obtéstor, ut meum in cor vívidos fídei, spei et caritátis sensus, atque veram peccatórum meórum pœniténtiam, eáque emmendándi firmíssimam voluntátem velis imprímere; dum magno ánimi afféctu et dolóre tua quinque vúlnera mecum ipse consídero ac mente contémplor, illud præ óculis habens, quod iam in ore ponébat tuo David prophéta de te, o bone Iesu: Fodérunt manus meas et pedes meos: dinumeravérunt ómnia ossa mea (Ps. 21,17-18)."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Aspirações ao Santíssimo Redentor",
+      "laTitle": "Aspiratiónes ad Ssmum. Redemptórem",
+      "ptBrBlocks": [
+        "Alma de Cristo, santificai-me.",
+        "Corpo de Cristo, salvai-me.",
+        "Sangue de Cristo, inebriai-me.",
+        "Água do lado de Cristo, lavai-me.",
+        "Paixão de Cristo, confortai-me.",
+        "Ó bom Jesus, ouvi-me.",
+        "Dentro das vossas chagas, escondei-me.",
+        "Não permitais que me separe de Vós.",
+        "Do espírito maligno, defendei-me.",
+        "Na hora da minha morte, chamai-me.",
+        "E mandai-me ir para Vós,",
+        "para que vos louve com os vossos Santos, por todos os séculos dos séculos. Amém."
+      ],
+      "laBlocks": [
+        "Ánima Christi, sanctífica me.",
+        "Corpus Christi, salva me.",
+        "Sanguis Christi, inébria me.",
+        "Aqua láteris Christi, lava me.",
+        "Pássio Christi, confórta me.",
+        "O bone Iesu, exáudi me.",
+        "Intra tua vúlnera abscónde me.",
+        "Ne permíttas me separári a te.",
+        "Ab hoste malígno defénde me.",
+        "In hora mortis meæ voca me.",
+        "Et iube me veníre ad te.",
+        "Ut cum Sanctis tuis laudem te in sǽcula sæculórum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração a Nossa Senhora",
+      "laTitle": "Orátio ad B. Maríam Vírginem",
+      "ptBrBlocks": [
+        "Ó Maria, Virgem e Mãe Santíssima, eis que recebi o vosso amadíssimo Filho, a quem concebestes no vosso seio imaculado, criastes e alimentastes em vosso peito, e abraçastes amorosamente.",
+        "Eis que Vos apresento e ofereço com amor e humildade Aquele que vos alegrava contemplar e que Vos enchia de delícias, para que o aperteis em vossos braços, o ameis em vosso coração e o ofereçais em supremo culto de adoração à Santíssima Trindade, para vossa honra e glória e pelas minhas necessidades e pelas de todo o mundo.",
+        "Suplico-Vos, piedosíssima Mãe, que me alcanceis o perdão de todos os meus pecados e graça abundante para servir o Senhor desde agora com maior fidelidade; e por último a graça da perseverança final, para que possa louvá-lo convosco pelos séculos dos séculos. Amém."
+      ],
+      "laBlocks": [
+        "O Maria, Virgo et Mater sanctíssima, ecce suscépi dilectíssimum Fílium tuum, quem immaculáto útero tuo concepísti, genuísti, lactásti, atque suavíssimis ampléxibus strinxísti.",
+        "Ecce, cuius aspéctu lætabáris et ómnibus delíciis replebáris, illum ipsum tibi humíliter et amánter repræsénto et óffero tuis bráchiis constringéndum, tuo corde amándum, sanctissimǽque Trinitáti in suprémum latríæ cultum, pro tui ipsíus honóre et glória et pro meis totiúsque mundi necessitátibus, offeréndum.",
+        "Rogo ergo te, piíssima Mater, ímpetra mihi véniam ómnium peccatórum meórum, uberémque grátiam ipsi deínceps fidélius serviéndi, ac dénique grátiam finálem, ut eum tecum laudáre possim per omnia sǽcula sæculórum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração a São José",
+      "laTitle": "Orátio ad S. Ioseph",
+      "ptBrBlocks": [
+        "Ó glorioso São José, Pai e protetor das virgens, guarda fiel a quem Deus confiou Jesus, a própria inocência, e Maria, Virgem das virgens! Em nome de Jesus e de Maria, este duplo tesouro que vos foi tão caro, vos suplico que me conserveis livre de toda a impureza, para que, com alma pura e corpo casto, sirva sempre, fielmente, a Jesus e a Maria. Amém."
+      ],
+      "laBlocks": [
+        "Vírginum custos et pater, sáncte Ioseph, cuius fidéli custódiæ ipsa Innocéntia Christus Iesus et Virgo vírginum Maria commíssa fuit: te per hoc utrúmque caríssimum pignus Iesum et Maríam óbsecro et obtéstor, ut me, ab omni immundítia præservátum, mente incontamináta, puro corde et casto córpore Iesu et Maríæ semper fácias castíssime famulári. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Cântico dos três jovens",
+      "laTitle": "Trium puerórum",
+      "ptBrBlocks": [
+        "Antífona. Cantemos o hino dos três jovens, o mesmo que esses santos cantavam na fornalha ardente bendizendo o Senhor (T. P. Aleluia).",
+        "Cântico dos Três Jovens",
+        "Dan. 3, 57-88 e 56",
+        "1. Obras do Senhor, bendizei todas o Senhor, louvai-O e exaltai-O para sempre.",
+        "2. Céus, bendizei o Senhor, Anjos do Senhor, bendizei o Senhor.",
+        "3. Águas que estais por cima dos céus, bendizei todas o Senhor; todos os poderes bendigam o Senhor.",
+        "4. Sol e lua, bendizei o Senhor, estrelas do céu, bendizei o Senhor.",
+        "5. Chuvas e orvalhos, bendizei o Senhor; e vós, todos os ventos, bendizei o Senhor.",
+        "6. Fogo e calor, bendizei o Senhor; frio e calor, bendizei o Senhor.",
+        "7. Orvalhos e geadas, bendizei o Senhor; gelo e frio, bendizei o Senhor.",
+        "8. Gelos e neves, bendizei o Senhor; noites e dias, bendizei o Senhor.",
+        "9. Luz e trevas, bendizei o Senhor; relâmpagos e nuvens, bendizei o Senhor.",
+        "10. Que a terra bendiga o Senhor; louve-O e exalte-O para sempre.",
+        "11. Montes e colinas, bendizei o Senhor; plantas que brotais da terra, bendizei o Senhor.",
+        "12. Mares e rios, bendizei o Senhor; fontes, bendizei o Senhor.",
+        "13. Cetáceos e animais que viveis nas águas, bendizei o Senhor; pássaros todos do céu, bendizei o Senhor.",
+        "14. Animais selvagens e rebanhos, bendizei o Senhor; filhos dos homens, bendizei o Senhor.",
+        "15. Bendiga Israel o Senhor; louve-O e exalte-O para sempre.",
+        "16. Sacerdotes do Senhor, bendizei o Senhor; servos do Senhor, bendizei o Senhor.",
+        "17. Espíritos e almas dos justos, bendizei o Senhor; santos e humildes de coração, bendizei o Senhor.",
+        "18. Ananias, Azarias e Misael, bendizei o Senhor; louvai-O e exaltai-O para sempre.",
+        "19. Bendigamos o Pai, o Filho e o Espírito Santo; louvemo-Lo e exaltemo-Lo para sempre.",
+        "20. Senhor, Vós sois bendito no firmamento dos céus; sois digno de louvor e glória para sempre.",
+        "Aqui não se reza o Glória, nem se diz Amém.",
+        "Salmo 150",
+        "1. Louvai o Senhor no seu santuário, louvai-O no seu augusto firmamento.",
+        "2. Louvai-O por suas obras grandiosas, louvai-O por sua excelsa majestade.",
+        "3. Louvai-O ao som da trombeta, louvai-O com o saltério e a cítara.",
+        "4. Louvai-O com tímpanos e danças, louvai-O com a harpa e a flauta.",
+        "5. Louvai-O com címbalos sonoros, louvai-O com címbalos de júbilo: tudo o que respira louve o Senhor",
+        "Glória ao Pai e ao Filho e ao Espírito Santo",
+        "Como era no princípio, agora e sempre. Amém.",
+        "Antífona. Cantemos o hino dos três jovens, o mesmo que esses santos cantavam na fornalha ardente bendizendo o Senhor (T. P. Aleluia).",
+        "Todos se levantam e quem dirige as orações diz:",
+        ". Senhor, tende piedade de nós.",
+        ". Cristo, tende piedade de nós. Senhor, tende piedade de nós.",
+        "Pai Nosso. (em silêncio)",
+        ". E não nos deixeis cair em tentação.",
+        ". Mas livrai-nos do mal.",
+        ". Todas as Vossas obras Vos louvem, Senhor.",
+        ". E os Vossos santos Vos bendigam.",
+        ". Os santos exultarão na glória.",
+        ". E alegrar-se-ão nas suas moradas.",
+        ". Não a nós, Senhor, não a nós.",
+        ". Mas ao Vosso nome dai glória.",
+        ". Ouvi, Senhor, a minha oração.",
+        ". E chegue a Vós o meu clamor.",
+        "Os sacerdotes acrescentam:",
+        ".O Senhor esteja convosco.",
+        ". Ele está no meio de nós.",
+        "Oremos",
+        "Ó Deus, que suavizastes as chamas do fogo aos três jovens, concedei-nos, pela Vossa misericórdia, que não nos deixemos abrasar pelos vícios.",
+        "Nós vos rogamos, Senhor, que prepareis as nossas ações com a vossa inspiração, e as acompanheis com a vossa ajuda, a fim de que todos os nossos trabalhos e orações em Vós comecem sempre e convosco acabem.",
+        "Dai-nos, Senhor, a graça de extinguir o ardor dos vícios, Vós que concedestes a São Lourenço a virtude de vencer o fogo de seu martírio. Por Cristo Senhor Nosso.",
+        ". Amém."
+      ],
+      "laBlocks": [
+        "Antíphona. Trium puerórum cantémus hymnum, quem cantábant sancti in camíno ignis, benedicéntes Dóminum (T. P. Allelúia).",
+        "Cánticum Trium Puerórum",
+        "Dan. 3, 57-88 et 56",
+        "1. Benedícite, ómnia ópera Dómini, Dómino, laudáte et superexaltáte eum in sǽcula.",
+        "2. Benedícite, cæli, Dómino, benedícite, ángeli Dómini, Dómino.",
+        "3. Benedícite, aquæ omnes, quæ super cælos sunt, Dómino, benedícat omnis virtus, Dómino.",
+        "4. Benedícite, sol et luna, Dómino, benedícite, stellæ cæli, Dómino.",
+        "5. Benedícite, omnis imber et ros, Dómino, benedícite, omnes venti, Dómino.",
+        "6. Benedícite, ignis et æstus, Dómino, benedícite, frigus et æstus, Dómino.",
+        "7. Benedícite, rores et prúina, Dómino, benedícite, gelu et frigus, Dómino.",
+        "8. Benedícite, glácies et nives, Dómino, benedícite, noctes et dies, Dómino.",
+        "9. Benedícite, lux et ténebræ, Dómino, benedícite, fúlgura et nubes, Dómino.",
+        "10. Benedícat terra Dóminum, laudet et superexáltet eum in sǽcula.",
+        "11. Benedícite montes et colles, Dómino, benedícite, univérsa germinántia in terra, Dómino.",
+        "12. Benedícite, mária et flúmina, Dómino, benedícite, fontes, Dómino.",
+        "13. Benedícite, cete et ómnia, quæ movéntur in aquis, Dómino, benedícite, omnes vólucres cæli, Dómino.",
+        "14. Benedícite, omnes béstiæ et pécora, Dómino, benedícite, fílii hóminum, Dómino.",
+        "15. Bénedic, Ísraël, Dómino, laudáte et superexaltáte eum in sǽcula.",
+        "16. Benedícite, sacerdótes Dómini, Dómino, benedícite, servi Dómini, Dómino.",
+        "17. Benedícite, spíritus et ánimæ iustórum, Dómino, benedícite, sancti et húmiles corde, Dómino.",
+        "18. Benedícite, Ananía, Azaría, Mísaël, Dómino, laudáte et superexaltáte eum in sǽcula.",
+        "19. Benedicámus Patrem et Fílium cum Sancto Spíritu; laudémus et superexaltémus eum in sǽcula.",
+        "20. Benedíctus es in firmaménto cæli et laudábilis et gloriósus in sǽcula.",
+        "Hic non dícitur Glória Patri, neque Amen.",
+        "Psalmus 150",
+        "1. Laudáte Dóminum in sanctuário eius, laudáte eum in firmaménto virtútis eius.",
+        "2. Laudáte eum in magnálibus eius, laudáte eum secúndum multitúdinem magnitúdinis eius.",
+        "3. Laudáte eum in sono tubæ, laudáte eum in psaltério et cíthara.",
+        "4. Laudáte eum in týmpano et choro, laudáte eum in chordis et órgano.",
+        "5. Laudáte eum in cýmbalis benesonántibus, laudáte eum in cýmbalis iubilatiónis: omne quod spirat, laudet Dóminum.",
+        "Glória Patri, et Fílio, et Spirítui Sancto.",
+        "Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.",
+        "Antiphona. Trium puerórum cantémus hymnum, quem cantábant sancti in camíno ignis, benedicéntes Dóminum (T. P. Allelúia).",
+        "Omnes exsúrgunt, et qui preces moderátur dicit:",
+        ". Kyrie, eléison.",
+        ". Christe, eléison. Kyrie, eléison.",
+        "Pater noster.",
+        ". Et ne nos indúcas in tentatiónem.",
+        ". Sed líbera nos a malo.",
+        ". Confiteántur tibi, Dómine, ómnia ópera tua.",
+        ". Et Sancti tui benedícant tibi.",
+        ". Exsultábunt sancti in glória.",
+        ". Lætabúntur in cubílibus suis.",
+        ". Non nobis, Dómine, non nobis.",
+        ". Sed nómini tuo da glóriam.",
+        ". Dómine, exáudi oratiónem meam.",
+        ". Et clamor meus ad te véniat.",
+        "Sacerdotes addunt:",
+        ". Dóminus vobíscum.",
+        ". Et cum spíritu tuo.",
+        "Orémus",
+        "Deus, qui tribus púeris mitigásti flammas ígnium, concéde propítius; ut nos fámulos tuos non exúrat flamma vitiórum.",
+        "Actiónes nostras, quǽsumus, Dómine, aspirándo prǽveni et adiuvándo proséquere: ut cuncta nostra orátio et operátio a te semper incípiat, et per te cœpta finiátur.",
+        "Da nobis, quǽsumus, Dómine, vitiórum nostrórum flammas extínguere; qui beato Lauréntio tribuísti tormentórum suórum incéndia superáre. Per Christum Dóminum nostrum.",
+        ". Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    }
+  ],
+  "Outras devoções": [
+    {
+      "ptBrTitle": "Salmo 2",
+      "laTitle": "Psalmus II",
+      "ptBrBlocks": [
+        "Antífona.Seu reinado é sempiterno, e todos os reis o servirão e lhe obedecerão. (T. P. Aleluia).",
+        "1. Por que se amotinam as nações e os povos maquinam planos vãos?",
+        "2. Sublevam-se os reis da terra e os príncipes coligam-se contra o Senhor e contra o seu Ungido.",
+        "3. Quebremos, disseram, as suas cadeias, e sacudamos de nós o seu jugo.",
+        "4. Aquele que habita nos céus Ri-se, o Senhor zomba deles.",
+        "5. Ele lhes fala então na sua ira, e no seu furor os aterroriza:",
+        "6. “Eu, porém, constituí o meu rei sobre Sião, meu monte santo”.",
+        "7. Promulgarei o decreto do Senhor. O Senhor disse-me: “Tu és meu filho; eu hoje te gerei.",
+        "8. Pede-me, e eu te darei as nações por herança, e em teu domínio as extremidades da terra.",
+        "9. Tu as governarás com vara de ferro, e qual vaso de oleiro as quebrarás”.",
+        "10. E agora, ó reis, entendei; deixai-vos instruir, vós que governais a terra.",
+        "11. Servi o Senhor com temor e louvai-o com tremor.",
+        "12. Prestai-lhe vassalagem, para que não se indigne e pereçais fora do caminho, quando em breve se acender a sua cólera. Bem-aventurados todos os que n'Ele confiam.",
+        "13. Glória ao Pai, e ao Filho e ao Espírito Santo.",
+        "14. Assim como era no princípio, agora e sempre. Amém.",
+        "Antífona. Seu reinado é sempiterno, e todos os reis o servirão e lhe obedecerão. (T. P. Aleluia).",
+        ". Ouvi, Senhor, a minha oração.",
+        ". E chegue a Vós o meu clamor.",
+        "Os sacerdotes acrescentam:",
+        ".O Senhor esteja convosco.",
+        ".Ele está no meio de nós.",
+        "Oremos",
+        "Ó Deus, onipotente e eterno Deus, que tudo quisestes instaurar no vosso amado Filho, Rei do Universo, concedei, propício, que todas as nações desagregadas pela ferida do pecado se submetam a seu suavíssimo poder. Ele, que convosco vive e reina Deus, na unidade do Espírito Santo, pelos séculos dos séculos.",
+        ". Amém."
+      ],
+      "laBlocks": [
+        "Antiphona. Regnum eius regnum sempitérnum est, et omnes reges sérvient ei et obœdient. (T. P. Allelúia).",
+        "1. Quare fremuérunt gentes, et pópuli meditáti sunt inánia?",
+        "2. Astitérunt reges terræ, et príncipes convenérunt in unum advérsus Dóminum et advérsus Christum eius:",
+        "3. «Dirumpámus víncula eórum et proiciámus a nobis iugum ipsórum!».",
+        "4. Qui hábitat in cælis, irridébit eos, Dóminus subsannábit eos.",
+        "5. Tunc loquétur ad eos in ira sua et in furóre suo conturbábit eos:",
+        "6. «Ego autem constítui regem meum super Sion, montem sanctum meum!».",
+        "7. Prædicábo decrétum eius. Dóminus dixit ad me: «Fílius meus es tu; ego hódie génui te.",
+        "8. Póstula a me, et dabo tibi gentes hereditátem tuam et possessiónem tuam términos terræ.",
+        "9. Reges eos in virga férrea et tamquam vas fíguli confrínges eos».",
+        "10. Et nunc, reges, intellégite, erudímini, qui iudicátis terram.",
+        "11. Servíte Dómino in timóre et exsultáte ei cum tremóre.",
+        "12. Apprehéndite disciplínam, ne quando irascátur, et pereátis de via, cum exárserit in brevi ira eius. Beati omnes, qui confídunt in eo.",
+        "13. Glória Patri, et Fílio, et Spirítui Sancto.",
+        "14. Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.",
+        "Antíphona. Regnum eius regnum sempitérnum est, et omnes reges sérvient ei et obœdient. (T. P. Allelúia).",
+        ". Dómine, exaudi oratiónem meam.",
+        ". Et clamor meus ad te véniat.",
+        "Sacerdotes addunt:",
+        ". Dóminus vobíscum.",
+        ". Et cum spíritu tuo.",
+        "Orémus",
+        "Omnípotens sempitérne Deus, qui in dilécto Fílio tuo, universórum Rege, ómnia instauráre voluísti: concéde propítius; ut cunctæ famíliæ géntium, peccáti vúlnere disgregátæ, eius suavíssimo subdántur império: Qui tecum vivit et regnat in unitáte Spíritus Sancti Deus: per ómnia sǽcula sæculórum.",
+        ". Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Salmo 50",
+      "laTitle": "Psalmus L",
+      "ptBrBlocks": [
+        "Tende piedade de mim, ó Deus, segundo a vossa infinita misericórdia. E segundo a grandeza da vossa clemência, apagai os traços da minha falta.",
+        "Lavai-me de toda a minha iniquidade; purificai-me do meu pecado.",
+        "Porque reconheço a minha maldade, e tenho sempre o meu pecado diante de mim.",
+        "Só contra Vós pequei, e fiz o mal diante dos vossos olhos. Assim é justa a vossa sentença e reto o vosso juízo.",
+        "Porque reconheço ter sido dado à luz na iniquidade, e em pecado me concebeu a minha mãe.",
+        "Porque amais a sinceridade de coração, implantai a sabedoria no íntimo de minha alma.",
+        "Aspergi-me com o hissopo e serei purificado; lavai-me, e ficarei mais branco que a neve.",
+        "Possa eu ouvir de Vós uma palavra de gozo e de alegria, e exultarão meus ossos que triturastes!",
+        "Desviai a vossa face de meus pecados e apagai todas as minhas iniquidades.",
+        "Criai em mim, ó Deus um coração puro; e renovai em meu íntimo um espírito firme.",
+        "Não me afasteis da vossa presença, nem me retireis o vosso espírito de santidade.",
+        "Restituí-me a alegria do vosso salutar auxílio; e fortalecei-me com um espírito generoso.",
+        "Ensinarei as vossas veredas aos maus, e os pecadores voltarão a Vós. Livrai-me do meu sangue derramado.",
+        "Ó Deus, meu Salvador; possa minha língua aclamar a vossa benignidade.",
+        "Senhor, abri os meus lábios, e a minha boca proclamará os vossos louvores.",
+        "Porque se quisésseis um sacrifício, eu Vo-lo teria oferecido; mas o holocausto não Vos agradam.",
+        "O sacrifício mais agradável a Deus é o espírito vencido pela dor; não desprezeis, ó Deus, um coração contrito e humilhado.",
+        "Em vossa bondade, Senhor, sede benigno a Sião, para que se reedifiquem os muros de Jerusalém.",
+        "Então aceitareis os justos sacrifícios, as oblações e os holocaustos; e Vos oferecerão vítimas sobre o vosso altar."
+      ],
+      "laBlocks": [
+        "Miserére mei, Deus, secúndum misericórdiam tuam. Et secúndum multitúdinem miseratiónum tuárum dele iniquitátem meam.",
+        "Ámplius lava me ab iniquitáte mea et a peccáto meo munda me.",
+        "Quóniam iniquitátem meam ego cognósco: et peccátum meum contra me est semper.",
+        "Tibi, tibi soli peccávi, et malum coram te feci, ut iustus inveniáris in senténtia tua et ǽquus in iudício tuo.",
+        "Ecce enim in iniquitáte generátus sum: et in peccáto concépit me mater mea.",
+        "Ecce enim veritátem in corde dilexísti: et in occúlto sapiéntiam manifestásti mihi.",
+        "Aspérges me hyssópo, et mundábor: lavábis me, et super nivem dealbábor.",
+        "Audíre me fácies gáudium et lætítiam, et exsultábunt ossa, quæ contrivísti.",
+        "Avérte fáciem tuam a peccátis meis, et omnes iniquitátes meas dele.",
+        "Cor mundum crea in me, Deus, et spíritum firmum ínnova in viscéribus meis.",
+        "Ne proícias me a fácie tua et spíritum sanctum tuum ne áuferas a me.",
+        "Redde mihi lætítiam salutáris tui, et spíritu promptíssimo confírma me.",
+        "Docébo iníquos vias tuas, et ímpii ad te converténtur.",
+        "Líbera me de sanguínibus, Deus, Deus salútis meæ, et exsultábit língua mea iustítiam tuam.",
+        "Dómine, lábia mea apéries, et os meum annuntiábit laudem tuam.",
+        "Non enim sacrifício delectáris; holocáustum, si ófferam, non placébit.",
+        "Sacrifícium Deo spíritus contribulátus; cor contrítum et humiliátum, Deus, non despícies.",
+        "Benígne fac, Dómine, in bona voluntáte tua Sion, ut ædificéntur muri Ierúsalem.",
+        "Tunc acceptábis sacrifícium iustítiæ, oblatiónes et holocáusta: tunc impónent super altáre tuum vítulos."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Salve Santa Cruz",
+      "laTitle": "O Bona Crux",
+      "ptBrBlocks": [
+        "Atribuída a Santo Andrés Apóstolo",
+        "Salve Santa Cruz, tão desejada, tão amada. Tira-me do meio dos homens e entrega-me ao meu Mestre e Senhor, para que eu de ti receba o que por ti me salvou!"
+      ],
+      "laBlocks": [
+        "Sancto Andreae Apostolo adscripta",
+        "O Bona Crux, quæ decórem ex membris Dómini suscepísti, diu desideráta, sollícite amáta, sine intermissióne quæsíta, et aliquándo cupiénti ánimo præparáta: áccipe me ab homínibus, et redde me magistro meo: ut per te me recípiat, qui per te me redémit."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Via Sacra",
+      "laTitle": "",
+      "ptBrBlocks": [
+        "–﻿ Em nome do Pai, do Filho e do Espírito Santo. Amém.",
+        "Oração introdutória",
+        "–﻿ Anúncio de cada estação.  Estações:  1.  Jesus é condenado à morte  2.  Jesus carrega a Cruz  3.  Jesus cai pela primeira vez  4.  Jesus encontra Maria, Sua Mãe Santíssima  5.  Simão Cireneu ajuda Jesus a levar a Cruz  6.  Uma piedosa mulher enxuga o rosto de Jesus  7.  Jesus cai pela segunda vez  8.  Jesus consola as filhas de Jerusalém  9.  Jesus cai pela terceira vez  10.Jesus é despojado das suas vestes  11.  Jesus é pregado na Cruz  12.  Jesus morre na Cruz  13.  Jesus é despregado da cruz e entregue à Sua Mãe  14.  O corpo de Jesus é sepultado",
+        ". Nós Vos adoramos, ó Cristo, e Vos bendizemos.",
+        ". Porque pela vossa Santa Cruz redimistes o mundo.",
+        "–﻿ Leitura e meditação correspondente a cada estação.",
+        ".  Senhor, pequei.",
+        ". Tende piedade e misericórdia de mim.",
+        "Ao terminar a Via Sacra podem rezar-se estas orações:",
+        "ORAÇÃO DE ACEITAÇÃO DA MORTE",
+        "Ó Deus, meu Pai, Senhor da vida e da morte, que por decreto imutável, em justo castigo de nossas culpas, estabelecestes que todos os homens tem que morrer: olhai-me aqui prostrado diante de Vós. Detesto de todo coração as minhas culpas passadas, pelas quais mereci mil vezes a morte, que agora aceito para expiá-las e para obedecer a Vossa amável Vontade. De bom grado morrerei, Senhor, no tempo, no lugar, do modo que Vós quiserdes, e até esse momento aproveitarei os dias de vida que me restam, para lutar contra os meus defeitos e crescer no vosso amor, para quebrar todos os laços que atam o meu coração as criaturas, para preparar minha alma para comparecer a Vossa presença; e desde agora abandono-me sem reservas nos braços da Vossa Paternal Providência.",
+        "ORAÇÃO PARA OBTER UMA BOA MORTE",
+        "Meu Pai Criador, peço-Vos a mais importante de todas as Vossas graças: a perseverança final e uma morte santa. Por muito que tenha abusado da vida que me destes, fazei-me vivê-la desde agora e terminá-la no Vosso Santo Amor.",
+        "Que eu morra como os santos Patriarcas, deixando sem tristeza este vale de lágrimas, para ir gozar do descanso eterno na minha verdadeira pátria.",
+        "Que eu morra como o glorioso São José, acompanhado de Jesus e de Maria, pronunciando esses nomes por toda a eternidade. Que eu morra como a Virgem Imaculada, na caridade mais pura e com o desejo de unir-me ao Único objeto de meus amores. Que eu morra como Jesus na Cruz, plenamente identificado com a Vontade do Pai, feito holocausto por amor. Jesus, morto por mim, concedei-me a graça de morrer num ato de perfeita caridade para convosco. Santa Maria, Mãe de Deus rogai por mim agora e na hora de minha morte. São José, meu pai e senhor, alcançai-me que eu morra com a morte dos justos.",
+        "ORAÇÃO PARA O MOMENTO DA MORTE",
+        "Senhor, meu Deus, desde já aceito de boa vontade, como vindo da Vossa mão, qualquer gênero de morte que quiserdes enviar-me, com todas as suas angústias, penas e dores.",
+        ". Jesus, José e Maria.",
+        ". Dou-vos o coração e a alma minha.",
+        ". Jesus, José e Maria.",
+        ". Assisti-me na última agonia.",
+        ". Jesus, José e Maria.",
+        ". Expire em paz convosco a minha alma."
+      ],
+      "laBlocks": [],
+      "languages": [
+        "pt-br"
+      ]
+    },
+    {
+      "ptBrTitle": "Oração mental",
+      "laTitle": "",
+      "ptBrBlocks": [
+        "Ao começar:",
+        "Pelo sinal † da Santa Cruz, livrai-nos Deus, † Nosso Senhor, dos nossos † inimigos. Em nome do Pai, e do Filho, † e do Espírito Santo. Amém.",
+        "Meu Senhor e meu Deus, creio firmemente que estás aqui, que me vês, que me ouves. Adoro-Te com profunda reverência. Peço-Te perdão dos meus pecados e graça para fazer com fruto este tempo de oração. Minha Mãe Imaculada, São José, meu Pai e Senhor, meu Anjo da Guarda, intercedei por mim.",
+        "Ao terminar:",
+        "Dou-Te graças, meu Deus, pelos bons propósitos, afetos e inspirações que me comunicastes nesta meditação; peço-Te ajuda para os pôr em prática. Minha Mãe Imaculada, São José, meu Pai e Senhor, meu Anjo da Guarda, intercedei por mim."
+      ],
+      "laBlocks": [],
+      "languages": [
+        "pt-br"
+      ]
+    },
+    {
+      "ptBrTitle": "Leitura espiritual",
+      "laTitle": "Léctio",
+      "ptBrBlocks": [
+        "Ao começar:",
+        "Vinde Espírito Santo enchei os corações dos vossos fiéis e acendei neles o fogo do vosso amor.",
+        ". Enviai Senhor o vosso Espírito e tudo será criado.",
+        ". E assim renovareis a face da terra.",
+        "Oremos",
+        "Ó Deus, que instruístes os corações dos fiéis com a luz do Espírito Santo, fazei que nos regulemos segundo o mesmo Espírito e gozemos da sua consolação. Por Cristo Nosso Senhor.",
+        ". Amém.",
+        "Ao terminar:",
+        ". Nós Vos damos graças, Deus onipotente, por todos os vossos benefícios, Vós que viveis e reinais por todos os séculos dos séculos.",
+        ". Amém.",
+        ". Que o Senhor nos dê a Sua paz,",
+        ". e a vida eterna.",
+        ". Amém."
+      ],
+      "laBlocks": [
+        "Initio",
+        "Veni, Sancte Spíritus!, reple tuórum corda fidélium: et tui amóris in eis ignem accénde.",
+        ". Emitte Spíritum tuum, et creabúntur.",
+        ". Et renovábis faciem terræ.",
+        "Orémus",
+        "Deus, qui corda fidélium Sancti Spíritus illustratióne docuísti, da nobis in eódem Spíritu recta sápere; et de eius semper consolatióne gaudére. Per Christum Dóminum nostrum.",
+        ". Amen.",
+        "In fine",
+        ". Ágimus tibi gratias, omnípotens Deus, pro univérsis benefíciis tuis, qui vivis et regnas in sǽcula sæculórum.",
+        ". Amen.",
+        ". Deus det nobis suam pacem.",
+        ". Et vitam ætérnam.",
+        ". Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Bênção dos alimentos",
+      "laTitle": "Benedíctio mensæ",
+      "ptBrBlocks": [
+        ". Abençoai-nos, Senhor, a nós e a estes dons que da vossa liberalidade recebemos. Por Cristo Senhor Nosso.",
+        ". Amém.",
+        "Antes do almoço:",
+        ". Que o Rei da eterna glória nos faça participantes da mesa Celestial.",
+        ". Amém.",
+        "Antes do jantar:",
+        ". Que o Rei da eterna glória nos conduza à ceia da vida eterna.",
+        ". Amém",
+        "Ação de Graças depois do almoço e do jantar:",
+        ". Nós Vos damos graças, Deus onipotente, por todos os vossos benefícios, Vós que viveis e reinais por todos os séculos dos séculos.",
+        ". Amém.",
+        ". Que o Senhor nos dê a Sua paz,",
+        ". e a vida eterna.",
+        ". Amém."
+      ],
+      "laBlocks": [
+        ". Bénedic, Dómine, nos et hæc tua dona quæ de tua largitáte sumus sumptúri. Per Christum Dóminum nostrum.",
+        ". Amen.",
+        "Ante prándium:",
+        ". Mensæ cæléstis partícipes faciat nos, Rex ætérnæ glóriæ.",
+        ". Amen.",
+        "Ante cenam:",
+        ". Ad cenam vitæ ætérnæ perdúcat nos, Rex ætérnæ glóriæ.",
+        ". Amen.",
+        "Post prándium vel cenam:",
+        ". Ágimus tibi gratias, omnípotens Deus, pro univérsis benefíciis tuis, qui vivis et regnas in sǽcula sæculórum.",
+        ". Amen.",
+        ". Deus det nobis suam pacem.",
+        ". Et vitam ætérnam.",
+        ". Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Bênção de viagem",
+      "laTitle": "Benedíctio pro itínere",
+      "ptBrBlocks": [
+        "Que pela intercessão da Bem-Aventurada Virgem Maria, tenhamos uma boa viagem: que o Senhor esteja no nosso caminho e os seus Anjos nos acompanhem.",
+        "Em nome do Pai e do Filho e do Espírito Santo. Amém."
+      ],
+      "laBlocks": [
+        "Beata Maria intercedénte, bene ambulémus (ámbulem, ámbules, ambulétis): et Dóminus sit in itínere nostro (meo, tuo, vestro), et Ángeli eius comiténtur nobíscum (mecum, tecum, vobíscum).",
+        "In nómine Patris, et Fílii, et Spíritus Sancti. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Preces",
+      "laTitle": "Preces",
+      "ptBrBlocks": [
+        "Servirei!",
+        ". À Santíssima Trindade.",
+        ".Graças a vós, Senhor Deus, graças a vós. Verdadeira e única Trindade, divindade suprema e única, indivisa e Santa Trindade.",
+        ". A Jesus Cristo, Rei.",
+        ". O Senhor é nosso Juiz, nosso Legislador e nosso Rei. Ele nos salvará.",
+        ". Cristo, Filho de Deus vivo, tende misericórdia de nós.",
+        ". Cristo, Filho de Deus vivo, tende misericórdia de nós.",
+        ". Levantai-Vos, ó Cristo, vinde em nosso auxílio.",
+        ". Libertai-nos pelo vosso nome.",
+        ". O Senhor é a minha luz e salvação, a quem temerei?",
+        ". Se os inimigos vierem contra mim, não temerá meu coração; se me combaterem, em Deus esperarei.",
+        ". À Bem-aventurada Virgem Maria, Medianeira.",
+        ". Lembrai-vos, ó Virgem Mãe de Deus, de falar coisas boas de nós quando estiverdes na presença do Senhor.",
+        ". A São José, esposo da Santíssima Virgem Maria.",
+        ". Deus colocou-vos no lugar de Pai do Rei e de senhor da sua casa: rogai por nós.",
+        ". Aos Anjos da Guarda.",
+        ". Ó nossos Santos Anjos da Guarda, defendei-nos no combate, para que não pereçamos no tremendo juízo.",
+        ". A São Josemaria, nosso Fundador.",
+        ". Intercedei pelos vossos filhos, para que, fiéis ao espírito do Opus Dei, santifiquemos o trabalho e ganhemos almas para Cristo.",
+        ". Oremos pelo nosso Santo Padre, o Papa N.",
+        ". Que Deus o conserve e lhe dê vida e o faça santo na terra, e não o entregue nas mãos dos seus inimigos.",
+        ". Oremos também pelo Bispo desta diocese.",
+        ". Senhor, que ele apascente, vigilante, o seu rebanho, com a vossa fortaleza e na grandeza do vosso Nome.",
+        ". Oremos pela unidade do apostolado.",
+        ". Que todos sejam um, como tu, Pai, estás em mim, e eu em ti: para que eles sejam um, assim como nós somos um.",
+        ". Todo reino dividido contra si mesmo será destruído.",
+        ". E toda cidade ou casa internamente dividida não se manterá.",
+        ". Oremos pelos nossos benfeitores.",
+        ". Dignai-vos, Senhor, recompensar com a vida eterna todos aqueles que nos fazem o bem pelo vosso nome. Amém.",
+        ". Oremos pelo Padre.",
+        ". Que a misericórdia do Senhor esteja sobre ele desde sempre e para sempre, pois o Senhor protege todos os que o amam.",
+        ". Oremos pelos nossos irmãos do Opus Dei, vivos e defuntos.",
+        "Salvai, meu Deus, os vossos servos, que em vós esperam.",
+        ". Enviai-lhes, Senhor, o auxílio do céu.",
+        ". E, do santo monte Sião, protegei-os.",
+        ". Dai-lhes, Senhor, o descanso eterno.",
+        ". E brilhe sobre eles a vossa luz.",
+        ". Descansem em paz.",
+        ". Amém.",
+        ". Ouvi, Senhor, minha oração.",
+        ". E chegue até vós o meu clamor.",
+        "Se é um sacerdote quem dirige as Preces, levanta-se e acrescenta:O Senhor esteja convosco, permanecendo de pé enquanto reza a oração.",
+        ". O Senhor esteja convosco.",
+        ". Ele está no meio de nós.",
+        "Oremos.",
+        "Ó Deus, de quem é próprio ter misericórdia sempre e perdoar: recebei as nossas humildes súplicas. Inflamai, Senhor, as nossas entranhas e o nosso coração com o fogo do Espirito Santo: para que vos sirvamos com um corpo casto, e vos agrademos com o coração limpo.",
+        "Nós Vos pedimos, Senhor, que prepareis as nossas ações com a vossa inspiração, e as acompanheis com a vossa ajuda, a fim de que todos os nossos trabalhos e orações em vós comecem sempre e por vós acabem. Por Cristo, Senhor Nosso.",
+        ". Amém.",
+        "Todos dizem:",
+        "Que o Senhor onipotente e misericordioso nos conceda a alegria e a paz, a conversão da nossa vida, um tempo de verdadeira penitência, a graça e o consolo do Espírito Santo e a perseverança no Opus Dei.",
+        ". São Miguel.",
+        ".. Rogai por nós.",
+        ". São Gabriel.",
+        ". Rogai por nós.",
+        ". São Rafael.",
+        ". Rogai por nós.",
+        ". São Pedro",
+        ". Rogai por nós.",
+        ". São Paulo",
+        ". Rogai por nós.",
+        ". São João.",
+        ". Rogai por nós.",
+        "Quando estiver presente um sacerdote, o diretor ou quem o substitua diz",
+        ". Dignai-vos, padre, abençoar-nos.",
+        "O sacerdote abençoa:",
+        "Que o Senhor esteja em vossos corações e em vossos lábios, em nome do Pai † e do Filho e do Espírito Santo.",
+        ". Amém.",
+        ". Paz.",
+        ". Para sempre."
+      ],
+      "laBlocks": [
+        "Sérviam!",
+        ". Ad Trinitátem Beatíssimam.",
+        ". Grátias tibi, Deus, grátias tibi: vera et una Trínitas, una et summa Déitas, sancta et una Únitas.",
+        ". Ad Iesum Christum Regem.",
+        ". Dóminus Iudex noster; Dóminus Légifer noster; Dóminus Rex noster. Ipse salvábit nos.",
+        ". Christe, Fili Dei vivi, miserére nobis.",
+        ". Christe, Fili Dei vivi, miserére nobis.",
+        ". Exsúrge, Christe, ádiuva nos.",
+        ". Et líbera nos propter nomen tuum.",
+        ". Dóminus illuminátio mea et salus mea: quem timébo?",
+        ". Si consístant advérsum me castra, non timébit cor meum; si exsúrgat advérsum me prœlium, in hoc ego sperábo.",
+        ". Ad Beátam Vírginem Maríam Mediatrícem.",
+        ". Recordáre, Virgo Mater Dei, dum stéteris in conspéctu Dómini, ut loquáris pro nobis bona.",
+        ". Ad Sanctum Ioseph Sponsum Beátæ Maríæ Vírginis.",
+        ". Fecit te Deus quasi Patrem Regis, et dóminum univérsæ domus eius: ora pro nobis.",
+        ". Ad Ángelos Custódes.",
+        ". Sancti Ángeli Custódes nostri, deféndite nos in prœlio ut non pereámus in treméndo iudício.",
+        ". Ad Sanctum Iosephmaríam Conditórem nostrum.",
+        ". Intercéde pro fíliis tuis ut, fidéles spirítui Óperis Dei, labórem sanctificémus et ánimas Christo lucrifácere quærámus.",
+        ". Orémus pro Beatíssimo Papa nostro N.",
+        ". Dóminus consérvet eum, et vivíficet eum, et beátum fáciat eum in terra, et non tradat eum in ánimam inimicórum eius.",
+        ". Orémus et pro Antístite huius diœcésis.",
+        ". Stet et pascat in fortitúdine tua, Dómine, in sublimitáte nóminis tui.",
+        ". Orémus pro unitáte apostolátus.",
+        ". Ut omnes unum sint, sicut tu Pater in me et ego in te: ut sint unum, sicut et nos unum sumus.",
+        ". Omne regnum divísum contra se, desolábitur.",
+        ". Et omnis cívitas vel domus divísa contra se non stabit.",
+        ". Orémus pro benefactóribus nostris.",
+        ". Retribúere dignáre, Dómine, ómnibus nobis bona faciéntibus propter nomen tuum, vitam ætérnam. Amen.",
+        ". Orémus pro Patre.",
+        ". Misericórdia Dómini ab ætérno et usque in ætérnum super eum: custódit enim Dóminus omnes diligéntes se.",
+        ". Orémus et pro frátribus nostris Óperis Dei, vivis atque defúnctis.",
+        ". Salvos fac servos tuos, Deus meus, sperántes in te.",
+        ". Mitte eis, Dómine, auxílium de sancto.",
+        ". Et de Sion tuére eos.",
+        ". Réquiem ætérnam dona eis, Dómine.",
+        ". Et lux perpétua lúceat eis.",
+        ". Requiéscant in pace.",
+        ". Amen.",
+        ". Dómine, exáudi oratiónem meam.",
+        ". Et clamor meus ad te véniat.",
+        "Sacerdos, si Preces moderatur, exsurgit et addit Dóminus vobíscum, stans etiam dum recitat orationem.",
+        ". Dóminus vobíscum.",
+        ". Et cum spíritu tuo.",
+        "Orémus.",
+        "Deus, cui próprium est miseréri semper et párcere: súscipe deprecatiónem nostram. Ure igne Sancti Spíritus renes nostros et cor nostrum, Dómine: ut tibi casto córpore serviámus, et mundo corde placeámus.",
+        "Actiónes nostras, quǽsumus Dómine, aspirándo prǽveni et adiuvándo proséquere: ut cuncta nostra orátio et operátio a te semper incípiat, et per te cœpta finiátur. Per Christum Dóminum nostrum.",
+        ". Amen.",
+        "Omnes dicunt:",
+        "Gáudium cum pace, emendatiónem vitæ, spátium veræ pœniténtiæ, grátiam et consolatiónem Sancti Spíritus atque in Ópere Dei perseverántiam, tríbuat nobis Omnípotens et Miséricors Dóminus.",
+        ". Sancte Míchaël.",
+        ". Ora pro nobis.",
+        ". Sancte Gábriel.",
+        ". Ora pro nobis.",
+        ". Sancte Ráphaël.",
+        ". Ora pro nobis.",
+        ". Sancte Petre.",
+        ". Ora pro nobis.",
+        ". Sancte Paule.",
+        ". Ora pro nobis.",
+        ". Sancte Ioánnes.",
+        ". Ora pro nobis.",
+        "Cum adsit aliquis Sacerdos, dignior ait:",
+        "Iube, Domne, benedícere.",
+        "Sacerdos benedicit:",
+        "Dóminus sit in córdibus vestris, et in lábiis vestris, in nómine Patris ✠ et Fílii et Spíritus Sancti.",
+        ". Amen.",
+        ". Pax.",
+        ". In ætérnum."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    }
+  ],
+  "Hinos": [
+    {
+      "ptBrTitle": "Ubi caritas",
+      "laTitle": "Ubi caritas",
+      "ptBrBlocks": [
+        "Onde há caridade e amor, aí está Deus.O amor de Cristo nos uniu em um só corpo.Exultemos e alegremo-nos n’Ele.Temamos e amemos o Deus vivo.E amemo-nos uns aos outros com coração sincero.",
+        "Onde há caridade e amor, aí está Deus.Estando, pois, reunidos num só corpo,Guardemo-nos de toda divisão.Cesse entre nós todo ódio e disputa.E esteja Cristo Deus no meio de nós.",
+        "Onde há caridade e amor, aí está Deus.Juntos, com os bem-aventurados, vejamosTua glória, ó Cristo Deus:Um gozo imenso e verdadeiro,Pelos séculos dos séculos. Amém."
+      ],
+      "laBlocks": [
+        "Ubi caritas et amor, Deus ibi est. Congregavit nos in unum Christi amor. Exultemus, et in ipso iucundemur. Timeamus, et amemus Deum vivum. Et ex corde diligamus nos sincero.",
+        "Ubi caritas et amor, Deus ibi est. Simul ergo cum in unum congregamur, ne nos mente dividamur, caveamus. Cessent iurgia maligna, cessent lites. Et in medio nostri sit Christus Deus.",
+        "Ubi caritas et amor, Deus ibi est. Simul quoque cum beatis videamus, glorianter vultum tuum, Christe Deus, gaudium quod est immensum, atque probum, Saecula per infinita saeculorum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Pax in caelo",
+      "laTitle": "Pax in caelo",
+      "ptBrBlocks": [
+        "Paz en el cielo, paz en la tierra. Paz a todo pueblo. Paz a los sacerdotes de las Iglesias de Dios.",
+        "Jesucristo Rey pacifico, su trono permanece firme para siempre. Él es nuestra paz.",
+        "Paz en el cielo, paz en la tierra.",
+        "Brote en nuestros días la justicia y la abundancia de paz.",
+        "Paz a todo pueblo.",
+        "Gloria a Dios en las alturas y paz en la tierra a los hombres de buena voluntad.",
+        "Paz a los sacerdotes de las Iglesias de Dios."
+      ],
+      "laBlocks": [
+        "Pax in caelo, pax in terra. Pax in omni populo. Pax sacerdotibus Ecclesiarum Dei.",
+        "Christus Iesus Rex Pacificus et thronus eius erit firmissimus in perpetuum. Ipse est pax nostra.",
+        "Pax in caelo, pax in terra.",
+        "Oriatur in diebus nostris iustitia et abundantia pacis.",
+        "Pax in omni populo.",
+        "Gloria in altissimis Deo et in terra pax hominibus bonae voluntatis.",
+        "Pax sacerdotibus Ecclesiarum Dei."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Rorate caeli",
+      "laTitle": "Rorate coeli",
+      "ptBrBlocks": [
+        "Tempo do Advento",
+        "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo.Não vos ireis, Senhor, nem vos lembreis da iniquidade.",
+        "Eis que a cidade do Santuário ficou deserta:Sião tornou-se deserta; Jerusalém está desolada.A casa da vossa santificação e da vossa glória,Onde os nossos pais vos louvaram",
+        "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo.",
+        "Pecamos e nos tornamos como os imundos,E caímos, todos, como folhas.E as nossas iniquidades, como um vento, nos dispersaram.Escondestes de nós o vosso rostoE nos esmagastes pela mão das nossas iniquidades",
+        "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo.",
+        "Olhai, ó Senhor, para a aflição do vosso povo,E enviai Aquele que estais para enviar!Enviai o Cordeiro dominador da terraDa pedra do deserto ao monte da filha de SiãoPara que Ele retire o jugo do nosso cativeiro",
+        "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo.",
+        "Consola-te, consola-te, povo meu,Em breve há de vir a tua salvação!Por que te consomes na tristeza, se a dor te renovou?Eu te salvarei, não tenhas medo!Porque Eu sou o Senhor, teu Deus,o Santo de Israel, o teu Redentor",
+        "Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo."
+      ],
+      "laBlocks": [
+        "Tempus Adventus",
+        "Rorate coeli desúper, Et nubes plúant justum. Ne irascáris Dómine, ne ultra memíneris iniquitátis:",
+        "Ecce cívitas Sancti facta est desérta. Sion desérta facta est: Jerúsalem desoláta est. Domus sanctificatiónis tuae et gloriae tuae, ubi laudavérunt te patres nostri.",
+        "Rorate coeli desúper, et nubes plúant justum.",
+        "Peccávimus et facti sumus quam immúndus nos, et cecídimus quasi fólium univérsi: Et iniquitátes nostrae quasi ventus abstulérunt nos; Abscondísti fáciem tuam a nobis, et allisísti nos in mánu iniquitátis nostrae.",
+        "Rorate coeli desúper, et nubes plúant justum.",
+        "Víde, Dómine, afflictiónem pópuli tui, Et mitte quem missúrus es:Emítte Agnum dominatórem terrae, De pétra desérti ad montem fíliae Sion, ut áuferat ipse jugum captivitátis nostrae.",
+        "Rorate Coeli desúper, et nubes plúant justum.",
+        "Consolámini, consolámini, pópule meus: Cito véniet salus tua. Quare moeróre consúmeris, quia innovávit te dolor? Salvábo te, noli timére, ego énim sum Dóminus Deus túus Sánctus Israël, Redémptor túus.",
+        "Rorate coeli desúper, et nubes plúant justum."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Te, Ioseph",
+      "laTitle": "Te, Ioseph",
+      "ptBrBlocks": [
+        "Celebrem-Vos as celestes multidões, louve o vosso nome o coro dos cristãos, José, cujas virtudes mereceram os esponsais da Virgem.",
+        "Surpreso e cheio de aflição, notando que a casta esposa havia concebido,veio um anjo do céua revelar-vos o segredo de Deus.",
+        "Abraçastes o Senhor recém-nascido,ao Egito a fugir o acompanhastes;quando o encontrastes na cidade santa,de alegria chorastes.",
+        "Os outros homens só depois da mortepodem participar de Deus na glória;gozastes em vida, mais feliz que os outros,sustentá-lo nos braços.",
+        "Trindade augusta, nós Vos suplicamos,pelos merecimentos de José, que alcancemos o céu,a bendizer-Vos em cânticos de júbilo.",
+        "Amém."
+      ],
+      "laBlocks": [
+        "Te, Ioseph, celebrent agmina caelitum,te cuncti resonent Christiadum chori,qui, clarus meritis, iunctus es inclitae,casto foedere Virgini.",
+        "Almo cum tumidam germine coniugemadmirans dubio tangeris anxius,afflatu superi Flaminis, Angelusconceptum puerum docet.",
+        "Tu natum Dominum stringis, ad exterasAegypti profugum tu sequeris plagas;amissum Solymis quaeris et invenis,miscens gaudia fletibus.",
+        "Electos reliquos mors pia consecratpalmamque emeritos gloria suscipit;tu vivens, Superis par, frueris Deo,mira sorte beatior.",
+        "Nobis, summa Trias, parce precantibus;da Ioseph meritis sidera scandere,ut tandem liceat nos tibi perpetimgratum promere canticum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Benedíctus",
+      "laTitle": "Benedíctus",
+      "ptBrBlocks": [
+        "Bendito o Senhor Deus de Israel que visitou e redimiu o seu povo, e nos deu um Salvador poderoso na casa de David, seu servo, conforme prometeu pela boca dos seus santos, os profetas dos tempos antigos.",
+        "Para nos libertar dos nossos inimigos, e das mãos daqueles que nos odeiam. Para mostrar a sua misericórdia a favor dos nossos pais, recordando a sua sagrada aliança, e o juramento que fizera a Abraão, nosso pai,",
+        "que nos havia de conceder esta graça: de O servirmos um dia, sem temor, livres das mãos dos nossos inimigos, em santidade e justiça, na sua presença, todos os dias da nossa vida.",
+        "E tu, menino, serás chamado profeta do Altíssimo, porque irás à sua frente a preparar os seus caminhos, para dar a conhecer ao seu povo a salvação pela remissão dos seus pecados,",
+        "graças ao coração misericordioso do nosso Deus, que das alturas nos visita como sol nascente, para iluminar os que jazem nas trevas e na sombra da morte e dirigir os nossos passos no caminho da paz.",
+        "Glória ao Pai e ao Filho e ao Espírito Santo. Como era no princípio, agora e sempre. Amém."
+      ],
+      "laBlocks": [
+        "Benedíctus Dóminus Deus Ísraël, quia visitávit et fecit redemptiónem plebis suæ; et eréxit cornu salútis nobis, in domo David, púeri sui: sicut locútus est per os sanctórum, qui a saéculo sunt, prophetárum eius.",
+        "Salútem ex inimícis nostris, et de manu ómnium, qui odérunt nos: ad faciéndam misericórdiam cum pátribus nostris, et memorári testaménti sui sancti; iusiurándum, quod iurávit ad Ábraham, patrem nostrum.",
+        "Datúrum se nobis, ut sine timóre, de manu inimicórum nostrórum liberáti, serviámus illi, in sanctitáte et iustítia coram ipso, ómnibus diébus nostris.",
+        "Et tu, puer, prophéta Altíssimi vocáberis: præíbis enim ante fáciem Dómini paráre vias eius, ad dandam sciéntiam salútis plebi eius, in remissiónem peccatórum eórum.",
+        "Per víscera misericórdiæ Dei nostri, in quibus visitávit nos Oriens ex alto: illumináre his, qui in ténebris et in umbra mortis sedent, ad dirigéndos pedes nostros in viam pacis.",
+        "Glória Patri, et Fílio, et Spirítui Sancto. Sicut erat in princípio, et nunc et semper, et in sǽcula sæculórum. Amen."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Media vita",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Tempus Quadragesimæ",
+        "Media vita in morte sumus: quem quaérimus adiutórem nisi te, Dómine, qui pro peccátis nostris iuste irásceris?",
+        "Sancte Deus, sancte fortis, sancte et miséricors Salvátor: amárae morti ne tradas nos.",
+        "In te speravérunt patres nostri; speraverunt et liberásti eos.",
+        "Sancte Deus, sancte fortis, sancte et miséricors Salvátor: amárae morti ne tradas nos.",
+        "Ad te clamavérunt patres nostri Clamavérunt et non sunt confúsi.",
+        "Sancte Deus, sancte fortis, sancte et miséricors Salvátor: amárae morti ne tradas nos.",
+        "Glória a Patri, et Fílio, et Spíritui Sancto.",
+        "Sancte Deus, sancte fortis, sancte et miséricors Salvátor: amárae morti ne tradas nos."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Ave verum",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Ave verum corpus, natum de Maria Virgine: vere passum, immolatum in cruce pro homine.",
+        "Cuius latus perforatum fluxit aqua et sanguine: esto nobis prægustatum mortis in examine.",
+        "O Iesu dulcis! O Iesu pie! O Iesu, fili Mariae."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Ave maris stel la",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Ave maris stella, Dei Mater alma, atque semper Virgo, felix caeli porta.",
+        "Sumens illud Ave Gabrielis ore, funda nos in pace, mutans Hevae nomen.",
+        "Solve vincula reis, profer lumen caecis mala nostra pelle, bona cuncta posce.",
+        "Monstra te esse matrem: sumat per te preces, qui pro nobis natus, tulit esse tuus.",
+        "Virgo singularis, inter omnes mitis, nos culpis solutos, mites fac et castos.",
+        "Vitam praesta puram, iter para tutum: ut videntes Iesum semper collaetemur.",
+        "Sit laus Deo Patri, summo Christo decus, Spiritui Sancto, tribus honor unus. Amen."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Lux aeterna",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Lux aetérna lúceat eis, Dómine, cum sanctis tuis in aetérnum, quia pius es.",
+        "Réquiem aetérnam dona eis, Dómine, et lux perpétua lúceat eis. Cum santis tuis in aetérnum, quia pius es."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Vexil regis la",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "In honore Sanctae Crucis",
+        "Vexílla regis pródeunt, fulget crucis mystérium, quo carne carnis cónditor suspénsus est patibulo.",
+        "Quo vulneratus insuper mucróne diro lánceae, ut nos laváret crimine, manávit unda et sánguine.",
+        "Arbor decóra et fúlgida, ornáta regis púrpura, elécta, digno stípite tam sancta membra tángere!",
+        "Beáta cuius bráchiis pretium pepéndit sæculi! Statéra facta est córporis praedam tulítque tartari.",
+        "Salve ara, salve víctima de passiónis glória, qua vita mortem pértulit et morte vitam réddidit.",
+        "O Crux, ave, spes única! hoc passiónis témpore",
+        "die 14 septembris:in hac triumphi gloria",
+        "piis adáuge grátiam, reisque dele crímina.",
+        "Te, fons salútis Trínitas, colláudet omnis spíritus: quos per Crucis mystérium salvas, fove per saécula. Amen."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Oremus pro pontífice",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Oremus pro pontífice nostro N.",
+        "Dóminus consérvet eum,et vivíficet eum,et beátum fáciat eum in terra,et non tradat eum in ánimam inimicórum éius."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Adeste, fideles",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        "Hymnus Nativitatis",
+        "Adeste, fideles, laeti triumphantes;Veníte, veníte in Bethlehem:Natum videte Regem angelorum.",
+        "Venite adoremus, venite adoremus Dominum.",
+        "En grege relicto, humiles ad cunas,Vocati pastores approperant;Et nos ovanti gradu festinemus.",
+        "Venite adoremus, venite adoremus Dominum.",
+        "Aeterni Parentis splendorem aeternum,Velatum sub carne vidébimus;Deum infantem, pannis involutum.",
+        "Venite adoremus, venite adoremus Dominum.",
+        "Pro nobis egénum Et foeno cubantem,Piis foveámus amplexibus;Sic nos amantem quis non redamáret?",
+        "Venite adoremus, venite adoremus Dominum."
+      ],
+      "languages": [
+        "la"
+      ]
+    }
+  ],
+  "Falecidos": [
+    {
+      "ptBrTitle": "Responso I",
+      "laTitle": "",
+      "ptBrBlocks": [
+        "Eu sou a ressurreição e a vida; quem crê em Mim, mesmo que esteja morto, viverá; e quem vive e crê em Mim não morrerá eternamente (Jo 11, 25).",
+        "Santos de Deus, vinde em seu auxílio; anjos do Senhor, correi ao seu encontro!",
+        "Acolhei a(s) sua(s) alma(s), levando-a(s) à presença do Altíssimo.",
+        ". Cristo te (vos) chamou. Ele te (vos) receba, e os anjos te (vos) acompanhem ao seio de Abraão.",
+        ".Acolhei a(s) sua(s) alma(s), levando-a(s) à presença do Altíssimo.",
+        ". Dai-lhe(s), Senhor, o repouso eterno e brilhe para ele(s) a vossa luz.",
+        ". Acolhei a(s) sua(s) alma(s), levando-a(s) à presença do Altíssimo.",
+        ". Senhor, tende piedade de nós.",
+        ". Cristo, tende piedade de nós. Senhor, tende piedade de nós.",
+        "Pai nosso.",
+        ".",
+        ".",
+        ".",
+        ".",
+        ".",
+        ".",
+        ". O Senhor esteja convosco.",
+        ". Ele está no meio de nós.",
+        "Oremos",
+        "Ouvi ó Pai, as nossas preces; sede misericordioso para com o(s) vosso(s) servo(s) N., que chamastes deste mundo. Concedei--lhe(s) a luz e a paz no convívio dos vossos santos. Por Nosso Senhor Jesus Cristo, na unidade do Espírito Santo.",
+        ". Amém.",
+        "Eu sou a ressurreição e a vida; quem crê em Mim, mesmo que esteja morto, viverá; e quem vive e crê em Mim não morrerá eternamente.",
+        ". Dai-lhe(s), Senhor, o repouso eterno.",
+        ". E brilhe(m) para ele(s) a vossa luz.",
+        ". Descanse(m) em paz.",
+        ". Amém."
+      ],
+      "laBlocks": [],
+      "languages": [
+        "pt-br"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Responsórium I",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        ". Ne recordéris peccáta mea, Dómine.",
+        ". Dum véneris iudicáre sǽculum per ignem.",
+        ". Dírige, Dómine Deus meus, in conspéctu tuo viam meam.",
+        ". Dum véneris iudicáre sǽculum per ignem.",
+        ". Réquiem ætérnam dona ei(s), Dómine, et lux perpétua lúceat ei(s).",
+        ". Dum véneris iudicáre sǽculum per ignem.",
+        ". Kýrie, eléison.",
+        ". Christe, eléison. Kýrie, eléison.",
+        "Sacérdos dicit alta voce:",
+        "Pater noster.",
+        "Et secréto continuátur ab ómnibus. Póstea sacérdos dicit:",
+        ". Et ne nos indúcas in tentatiónem.",
+        ". Sed líbera nos a malo.",
+        ". A porta ínferi.",
+        ". Érue, Dómine, ánimam eius (ánimas eórum).",
+        ". Requiésca(n)t in pace.",
+        ". Amen.",
+        ". Dómine, exáudi oratiónem meam.",
+        ". Et clamor meus ad te véniat.",
+        ". Dóminus vobíscum.",
+        ". Et cum spíritu tuo.",
+        "Pro uno defúncto:",
+        "Orémus",
+        "Absolve quǽsumus, Dómine, fámulum tuum (fámulam tuam) N. ab omni vínculo delictórum, ut, qui (quæ) in hoc sǽculo Christo méruit conformári, in resurrectiónis glória inter Sanctos tuos resuscitátus (resuscitáta) respíret. Per Christum Dóminum nostrum.",
+        "Pro ómnibus fidélibus defúnctis:",
+        "Orémus",
+        "Fidélium, Deus, ómnium cónditor et redémptor: animábus famulórum, famularúmque tuarum remissiónem cunctórum tríbue peccatórum; ut indulgéntiam, quam semper optavérunt, piis supplicatiónibus consequántur. Per Christum Dóminum nostrum.",
+        ". Amen.",
+        ". Réquiem ætérnam dona ei(s), Dómine.",
+        ". Et lux perpétua lúceat ei(s).",
+        ". Requiésca(n)t in pace.",
+        ". Amen.",
+        ". Ánima eius (Ánimæ eórum) et ánimæ ómnium fidélium defunctórum per misericórdiam Dei requiéscant in pace.",
+        ". Amen."
+      ],
+      "languages": [
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "",
+      "laTitle": "Responsórium II",
+      "ptBrBlocks": [],
+      "laBlocks": [
+        ". In nómine Patris, et Fílii et Spíritus Sancti.",
+        ". Amen.",
+        ". Benedíctus Deus et Pater Dómini nostri Iesu Christi, Pater misericordiárum et Deus totíus consolatiónis, qui consolátur nos in omni tribulatióne nostra.",
+        ". Amen.",
+        ". De profúndis clamávi ad te, Dómine; Dómine, exáudi vocem meam.",
+        ". Sperávit ánima mea in Dómino.",
+        ". Fiant aures tuæ intendéntes in vocem deprecatiónis meæ.",
+        ". Sperávit ánima mea in Dómino.",
+        ". Si iniquitátes observáveris, Dómine, Dómine, quis sustinébit?",
+        ". Sperávit ánima mea in Dómino.",
+        ". Quia apud te propitiátio est, et propter legem tuam sustínui te, Dómine.",
+        ". Sperávit ánima mea in Dómino.",
+        ". Sustínuit ánima mea in verbo eius; sperávit ánima mea in Dómino.",
+        ". Sperávit ánima mea in Dómino.",
+        ". A custódia matutina usque ad noctem, speret Ísraël in Dómino.",
+        ". Sperávit ánima mea in Dómino.",
+        ". Quia apud Dóminum misericórdia: et copiosa apud eum redémptio.",
+        ". Sperávit ánima mea in Dómino.",
+        ". Et ipse redímet Ísraël ex ómnibus iniquitátibus eius.",
+        ". Sperávit ánima mea in Dómino.",
+        ". Dóminus vobíscum.",
+        ". Et cum spíritu tuo.",
+        "Orémus",
+        "Inclína, Dómine, aurem tuam ad preces nostras, quibus misericórdiam tuam súpplices deprecámur, ut ánimam fámuli tui (fámulæ tuæ) N., quam de hoc sǽculo migráre iussísti, in pacis ac lucis regióne constítuas, et sanctórum tuórum iúbeas esse consórtem. Per Christum Dóminum nostrum.",
+        ". Amen."
+      ],
+      "languages": [
+        "la"
+      ]
+    }
+  ],
+  "Doutrina": [
+    {
+      "ptBrTitle": "Os dois mandamentos da caridade",
+      "laTitle": "Duo praecepta dilectionis",
+      "ptBrBlocks": [
+        "1. Amarás o Senhor teu Deus, com todo o teu coração, com toda a tua alma e com toda a tua mente.",
+        "2. Amarás o próximo como a ti mesmo."
+      ],
+      "laBlocks": [
+        "–﻿ Diliges Dominum Deum tuum ex toto corde tuo et in tota anima tua et in tota mente tua.",
+        "–﻿ Diliges proximum tuum sicut teipsum."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "A regra de ouro (Mt 7, 12)",
+      "laTitle": "Regula aurea (Mt 7, 12)",
+      "ptBrBlocks": [
+        "Tudo aquilo que quereis que os homens façam a vós, Fazei-o vós mesmos a eles."
+      ],
+      "laBlocks": [
+        "Omnia quaecumque vultis ut faciant vobis homines, ita et vos facite eis."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Os dez mandamentos",
+      "laTitle": "Decem Praecepta",
+      "ptBrBlocks": [
+        "1. Amar a Deus sobre todas as coisas.",
+        "2. Não tomar seu Santo Nome em vão.",
+        "3. Guardar domingos e festas de guarda",
+        "4. Honra pai e mãe.",
+        "5. Não matar.",
+        "6. Não pecar contra a castidade.",
+        "7. Não furtar.",
+        "8. Não levantar falso testemunho.",
+        "9. Não desejar a mulher do próximo.",
+        "10. Não cobiçar as coisas alheias."
+      ],
+      "laBlocks": [
+        "1. Ego sum Dominus Deus tuus: non habebis deos alios coram me.",
+        "2. Non assumes Nomen Domini Dei tui in vanum.",
+        "3. Memento ut dies festos sanctifices.",
+        "4. Honora patrem tuum et matrem tuam.",
+        "5. Non occides.",
+        "6. Non moechaberis.",
+        "7. Non furtum facies.",
+        "8. Non loqueris contra proximum tuum falsum testimonium.",
+        "9. Non desiderabis uxorem eius.",
+        "10. Non concupisces eius bona."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "As Bem-aventuranças",
+      "laTitle": "Beatitudines",
+      "ptBrBlocks": [
+        "Bem-aventurados os pobres de coração, porque deles é o reino dos céus.",
+        "Bem-aventurados os mansos, porque herdarão a terra.",
+        "Bem-aventurados os que choram, porque serão consolados.",
+        "Bem-aventurados os que têm fome e sede de justiça, porque serão saciados.",
+        "Bem-aventurados os misericordiosos, porque alcançarão misericórdia.",
+        "Bem-aventurados os puros de coração, porque verão a Deus.",
+        "Bem-aventurados os pacificadores, porque serão chamados filhos de Deus.",
+        "Bem-aventurados os perseguidos por causa da justiça, porque deles é o reino dos céus.",
+        "Bem-aventurados sois vós quando vos insultam, vos perseguem e, mentindo, dizem toda espécie de mal contra vós por minha causa. Alegrai-vos e exultai, porque grande é a vossa recompensa nos céus."
+      ],
+      "laBlocks": [
+        "1. Beati pauperes spiritu, quoniam ipsorum est Regnum caelorum.",
+        "2. Beati, qui lugent, quoniam ipsi consolabuntur.",
+        "3. Beati mites, quoniam ipsi possidebunt terram.",
+        "4. Beati, qui esuriunt et sitiunt iustitiam, quoniam ipsi saturabuntur.",
+        "5. Beati misericordes, quia ipsi misericordiam consequentur.",
+        "6. Beati mundo corde, quoniam ipsi Deum videbunt.",
+        "7. Beati pacifici, quoniam filii Dei vocabuntur.",
+        "8. Beati, qui persecutionem patiuntur propter iustitiam, quoniam ipsorum est Regnum caelorum.",
+        "–﻿ Beati estis, cum maledixerint vobis et persecuti vos fuerint et dixerint omne malum adversum vos, mentientes, propter me. Gaudete et exsultate, quoniam merces vestra copiosa est in caelis."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "As três virtudes teologais",
+      "laTitle": "Tres virtutes theologales",
+      "ptBrBlocks": [
+        "1. Fé.",
+        "2. Esperança.",
+        "3. Caridade."
+      ],
+      "laBlocks": [
+        "1. Fides.",
+        "2. Spes.",
+        "3. Caritas."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "As quatro virtudes cardeais",
+      "laTitle": "Quattuor virtutes cardinales",
+      "ptBrBlocks": [
+        "1. Prudência",
+        "2. Justiça",
+        "3. Fortaleza",
+        "4. Temperança"
+      ],
+      "laBlocks": [
+        "1. Prudentia.",
+        "2. Iustitia.",
+        "3. Fortitudo.",
+        "4. Temperantia."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Os sete dons do Espírito Santo",
+      "laTitle": "Septem Dona Spiritus Sancti",
+      "ptBrBlocks": [
+        "1. Sabedoria",
+        "2. Inteligência",
+        "3. Conselho",
+        "4. Fortaleza",
+        "5. Ciência",
+        "6. Piedade",
+        "7. Temor de Deus"
+      ],
+      "laBlocks": [
+        "1. Sapientia.",
+        "2. Intellectus.",
+        "3. Consilium.",
+        "4. Fortitudo.",
+        "5. Scientia.",
+        "6. Pietas.",
+        "7. Timor Dei."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Os doze frutos do Espírito Santo",
+      "laTitle": "Duodecim Fructus Spiritus Sancti",
+      "ptBrBlocks": [
+        "1. Amor",
+        "2. Alegria",
+        "3. Paz",
+        "4. Paciência",
+        "5. Benignidade",
+        "6. Longanimidade",
+        "7. Benevolência",
+        "8. Humildade",
+        "9. Fidelidade",
+        "10. Modéstia",
+        "11. Continência",
+        "12. Castidade"
+      ],
+      "laBlocks": [
+        "1. Caritas.",
+        "2. Gaudium.",
+        "3. Pax.",
+        "4. Patientia.",
+        "5. Benignitas.",
+        "6. Bonitas.",
+        "7. Longanimitas.",
+        "8. Mansuetudo.",
+        "9. Fides.",
+        "10. Modestia.",
+        "11. Continentia.",
+        "12. Castitas."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Os cinco preceitos da Igreja",
+      "laTitle": "Praecepta Ecclesiae",
+      "ptBrBlocks": [
+        "1. Participar da Missa aos domingos e festas de guarda e permanecer livres de trabalhos e de atividades que poderiam impedir a santificação desses dias.",
+        "2. Confessar os próprios pecados pelo menos uma vez ao ano.",
+        "3. Receber o sacramento da Eucaristia pelo menos na Páscoa.",
+        "4. Abster-se de comer carne e observar o jejum nos dias estabelecidos pela Igreja.",
+        "5. Suprir as necessidades materiais da própria Igreja, segundo as próprias possibilidades."
+      ],
+      "laBlocks": [
+        "1. Missam audire diebus Dominicis ceterisque festis de praecepto.",
+        "2. Peccata sua mortalia saltem semel in anno confiteri, et in mortis periculo, et si quis ad Sacram Communionem accedere debet.",
+        "3. Eucharistiae Sacramentum saltem tempore paschali recipere.",
+        "4. Ieiunium et abstinentiam servare diebus ab Ecclesia statutis.",
+        "5. Ecclesiae in suis necessitatibus subvenire."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "As sete obras de misericórdia corporais",
+      "laTitle": "Septem opera misericordiae corporalia",
+      "ptBrBlocks": [
+        "1. Dar de comer aos famintos.",
+        "2. Dar de beber aos sedentos.",
+        "3. Vestir os nus.",
+        "4. Acolher os peregrinos.",
+        "5. Visitar os enfermos.",
+        "6. Visitar os encarcerados.",
+        "7. Sepultar os mortos."
+      ],
+      "laBlocks": [
+        "1. Infirmos visitare.",
+        "2. Cibum praebere esurientibus.",
+        "3. Potum praebere sitientibus.",
+        "4. Hospites excipere.",
+        "5. Nudos cooperire.",
+        "6. Carcere clausos invisere.",
+        "7. Mortuos sepelire."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "As sete obras de misericórdia espirituais",
+      "laTitle": "Septem opera misericordiae spiritualia",
+      "ptBrBlocks": [
+        "1. Aconselhar os duvidosos.",
+        "2. Ensinar os ignorantes.",
+        "3. Admoestar os pecadores.",
+        "4. Consolar os aflitos.",
+        "5. Perdoar as ofensas.",
+        "6. Suportar pacientemente as pessoas incômodas.",
+        "7. Rezar a Deus pelos vivos e pelos mortos."
+      ],
+      "laBlocks": [
+        "1. Ignorantes instruere.",
+        "2. Dubitantibus consilia dare.",
+        "3. Peccatores monere.",
+        "4. Offensas remittere.",
+        "5. Afflictos solari.",
+        "6. Molestos patienter sustinere.",
+        "7. Pro vivis et defunctis Deum orare."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Os sete pecados capitais",
+      "laTitle": "Septem peccata capitalia",
+      "ptBrBlocks": [
+        "1. Soberba.",
+        "2. Avareza.",
+        "3. Luxúria.",
+        "4. Ira.",
+        "5. Gula.",
+        "6. Inveja.",
+        "7. Preguiça."
+      ],
+      "laBlocks": [
+        "1. Superbia.",
+        "2. Avaritia.",
+        "3. Luxuria.",
+        "4. Ira.",
+        "5. Gula.",
+        "6. Invidia.",
+        "7. Acedia."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    },
+    {
+      "ptBrTitle": "Os novíssimos",
+      "laTitle": "Novissimis",
+      "ptBrBlocks": [
+        "1. Morte.",
+        "2. Juízo.",
+        "3. Inferno.",
+        "4. Paraíso."
+      ],
+      "laBlocks": [
+        "1. Mors.",
+        "2. Iudicium.",
+        "3. Infernus.",
+        "4. Paradisus."
+      ],
+      "languages": [
+        "pt-br",
+        "la"
+      ]
+    }
+  ]
+}

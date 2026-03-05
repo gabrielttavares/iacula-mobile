@@ -2,11 +2,15 @@
   "slug": "oracao-aojesus-crucificado",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Oração a Jesus Crucificado"
+    "pt-br": "Oração a Jesus Crucificado",
+    "la": "Orátio ad D. N. I. C. Crucifíxum"
   },
   "blocks": {
     "pt-br": [
-      "Ó Jesus, que na Cruz derramastes todo o vosso Sangue e morrestes por amor de nós, grazias Vos dou pela salvação que me haveis conquistado. Dai-me a graça de morrer amando-Vos e de ir gozar da vossa glorya no céu."
+      "Eis-me aqui, ó bom e dulcíssimo Jesus! De joelhos ante a vossa divina presença, eu Vos peço e suplico, com o mais ardente fervor de minha alma, que Vos digneis gravar em meu coração profundos sentimentos de fé, de esperança e de caridade, de verdadeiro arrependimento de meus pecados e vontade firmíssima de me emendar, enquanto com sincero afeto e íntima dor de coração considero e medito em vossas cinco chagas, tendo bem presentes aquelas palavras que o Profeta Davi já dizia de Vós, ó bom Jesus: Trespassaram as minhas mãos e os meus pés, e contaram todos os meus ossos (Sl 21, 17-18)."
+    ],
+    "la": [
+      "En ego, o bone et dulcíssime Iesu, ante conspéctum tuum génibus me provólvo, ac máximo ánimi ardóre te oro atque obtéstor, ut meum in cor vívidos fídei, spei et caritátis sensus, atque veram peccatórum meórum pœniténtiam, eáque emmendándi firmíssimam voluntátem velis imprímere; dum magno ánimi afféctu et dolóre tua quinque vúlnera mecum ipse consídero ac mente contémplor, illud præ óculis habens, quod iam in ore ponébat tuo David prophéta de te, o bone Iesu: Fodérunt manus meas et pedes meos: dinumeravérunt ómnia ossa mea (Ps. 21,17-18)."
     ]
   }
 }

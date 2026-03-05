@@ -1,0 +1,34 @@
+{
+  "slug": "dez-mandamentos",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Os dez mandamentos",
+    "la": "Decem Praecepta"
+  },
+  "blocks": {
+    "pt-br": [
+      "1. Amar a Deus sobre todas as coisas.",
+      "2. Não tomar seu Santo Nome em vão.",
+      "3. Guardar domingos e festas de guarda",
+      "4. Honra pai e mãe.",
+      "5. Não matar.",
+      "6. Não pecar contra a castidade.",
+      "7. Não furtar.",
+      "8. Não levantar falso testemunho.",
+      "9. Não desejar a mulher do próximo.",
+      "10. Não cobiçar as coisas alheias."
+    ],
+    "la": [
+      "1. Ego sum Dominus Deus tuus: non habebis deos alios coram me.",
+      "2. Non assumes Nomen Domini Dei tui in vanum.",
+      "3. Memento ut dies festos sanctifices.",
+      "4. Honora patrem tuum et matrem tuam.",
+      "5. Non occides.",
+      "6. Non moechaberis.",
+      "7. Non furtum facies.",
+      "8. Non loqueris contra proximum tuum falsum testimonium.",
+      "9. Non desiderabis uxorem eius.",
+      "10. Non concupisces eius bona."
+    ]
+  }
+}

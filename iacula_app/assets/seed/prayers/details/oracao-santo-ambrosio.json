@@ -2,31 +2,31 @@
   "slug": "oracao-santo-ambrosio",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Oração de Santo Ambrósio",
+    "pt-br": "Oração de Santo Ambrosio",
     "la": "Orátio S. Ambrósii"
   },
   "blocks": {
     "pt-br": [
-      "Senhor Jesus Cristo, eu, pecador não presumindo dos meus próprios méritos, mas confiando na vossa bondade e misericórdia, temo entretanto e hesito em aproximar-me da mesa do vosso doce convite. Pois meu corpo e minha alma estão manchados por muitas faltas, e não guardei com cuidado o meu espírito e a minha língua..",
-      "Por isso, ó bondade divina e temível majestade, na minha miséria recorro a Vós, fonte de misericórdia; corro para junto de Vós a fim de ser curado, refugio-me na vossa proteção, e anseio ter como Salvador Aquele que não posso suportar como Juiz.",
-      "Senhor, eu Vos mostro as minhas chagas e Vos revelo a minha vergonha. Sei que os meus pecados são muitos e grandes, e temo por causa deles, mas espero na vossa infinita misericórdia.",
-      "Olhai-me, pois, com os vossos olhos misericordiosos, Senhor Jesus Cristo, Rei eterno, Deus e homem, crucificado por causa do homem. Escutai-me pois espero em Vós; tende piedade de mim, cheio de misérias e pecados, Vós que jamais deixareis de ser para nós a fonte da compaixão.",
-      "Salve, Vítima Salvadora, oferecida no patíbulo da Cruz por mim e por todos os homens.",
-      "Salve, nobre e precioso Sangue, que brotas das chagas do meu Senhor Jesus Cristo crucificado e lavas os pecados do mundo inteiro.",
-      "Lembrai-Vos, Senhor, da vossa criatura resgatada por vosso Sangue. Arrependo-me de ter pecado, desejo reparar o que fiz.",
-      "Livrai-me, ó Pai Clementíssimo, todas as minhas iniquidades e pecados, para que, inteiramente purificado, mereça saborear dignamente o Santo dos santos.",
-      "E concedei que o vosso Corpo e o vosso Sangue, que eu, embora indigno, me preparo para receber, sejam perdão para os meus pecados, a completa purificação das minhas faltas. Que eles afastem de mim os meus maus pensamentos e despertem os bons sentimentos; tornem eficazes as obras que Vos agradam, e protejam meu corpo e minha alma contra as ciladas dos meus inimigos. Amém."
+      "Senhor Jesus Cristo, eu, pecador não presumindo dos meus próprios méritos, mas confiando na vossa bondade e misericórdia, temo entretanto e hesito em aproximar-me da mesa do vosso doce convite. Pois meu corpo e minha alma estão manchados por muitas faltas, e não guardei com cuidado o meu espírito e a minha língua..",
+      "Por isso, ó bondade divina e temível majestade, na minha miséria recorro a Vós, fonte de misericórdia; corro para junto de Vós a fim de ser curado, refugio-me na vossa proteção, e anseio ter como Salvador Aquele que não posso suportar como Juiz.",
+      "Senhor, eu Vos mostro as minhas chagas e Vos revelo a minha vergonha. Sei que os meus pecados são muitos e grandes, e temo por causa deles, mas espero na vossa infinita misericórdia.",
+      "Olhai-me, pois, com os vossos olhos misericordiosos, Senhor Jesus Cristo, Rei eterno, Deus e homem, crucificado por causa do homem. Escutai-me pois espero em Vós; tende piedade de mim, cheio de misérias e pecados, Vós que jamais deixareis de ser para nós a fonte da compaixão.",
+      "Salve, Vítima Salvadora, oferecida no patíbulo da Cruz por mim e por todos os homens.",
+      "Salve, nobre e precioso Sangue, que brotas das chagas do meu Senhor Jesus Cristo crucificado e lavas os pecados do mundo inteiro.",
+      "Lembrai-Vos, Senhor, da vossa criatura resgatada por vosso Sangue. Arrependo-me de ter pecado, desejo reparar o que fiz.",
+      "Livrai-me, ó Pai Clementíssimo, todas as minhas iniquidades e pecados, para que, inteiramente purificado, mereça saborear dignamente o Santo dos santos.",
+      "E concedei que o vosso Corpo e o vosso Sangue, que eu, embora indigno, me preparo para receber, sejam perdão para os meus pecados, a completa purificação das minhas faltas. Que eles afastem de mim os meus maus pensamentos e despertem os bons sentimentos; tornem eficazes as obras que Vos agradam, e protejam meu corpo e minha alma contra as ciladas dos meus inimigos. Amém."
     ],
     "la": [
-      "Ad mensam dulcíssimi convívii tui, pie Dómine Iesu Christe, ego peccátor de própriis meis méritis nihil præsúmens, sed de tua confídens misericórdia et bonitáte, accédere véreor et contremísco. Nam cor et corpus hábeo multis crimínibus maculátum, mentem et línguam non caute custodítam.",
-      "Ergo, o pia Déitas, o treménda Maiéstas, ego miser, inter angústias deprehénsus, ad te fontem misericórdiæ recúrro, ad te festíno sanándus, sub tuam protectiónem fúgio: et, quem Iúdicem sustinére néqueo, Salvatórem habére suspíro.",
-      "Tibi, Dómine, plagas meas osténdo, tibi verecúndiam meam détego. Scío peccáta mea multa et magna, pro quibus tímeo. Spero in misericórdias tuas, quarum non est númerus.",
-      "Réspice ergo in me óculis misericórdiæ tuæ, Dómine Iesu Christe, Rex ætérne, Deus et homo, crucifíxus propter hóminem. Exáudi me sperántem in te: miserére mei pleni misériis et peccátis, tu qui fontem miseratiónis numquam manáre cessábis.",
-      "Salve, salutáris víctima, pro me et omni humáno génere in patíbulo Crucis obláta.",
-      "Salve, nóbilis et pretióse Sanguis, de vulnéribus crucifíxi Dómini mei Iesu Christi prófluens, et peccáta totíus mundi ábluens.",
-      "Recordáre, Dómine, creatúræ tuæ, quam tuo Sánguine redemísti. Pœnitet me peccásse, cúpio emmendáre quod feci.",
-      "Aufer ergo a me, clementíssime Pater, omnes iniquitátes et peccáta mea, ut, purificátus mente et córpore, digne degustáre mérear Sancta sanctórum.",
-      "Et concéde, ut hæc sancta prælibátio Córporis et Sánguinis tui, quam ego indígnus súmere inténdo, sit peccatórum meórum remíssio, sit delictórum perfécta purgátio, sit túrpium cogitatiónum effugátio, ac bonórum sénsuum regenerátio, operúmque tibi placéntium salúbris efficácia, ánimæ quoque et córporis contra inimicórum meórum insídias firmíssima tuítio. Amen."
+      "Ad mensam dulcíssimi convívii tui, pie Dómine Iesu Christe, ego peccátor de própriis meis méritis nihil præsúmens, sed de tua confídens misericórdia et bonitáte, accédere véreor et contremísco. Nam cor et corpus hábeo multis crimínibus maculátum, mentem et línguam non caute custodítam.",
+      "Ergo, o pia Déitas, o treménda Maiéstas, ego miser, inter angústias deprehénsus, ad te fontem misericórdiæ recúrro, ad te festíno sanándus, sub tuam protectiónem fúgio: et, quem Iúdicem sustinére néqueo, Salvatórem habére suspíro.",
+      "Tibi, Dómine, plagas meas osténdo, tibi verecúndiam meam détego. Scío peccáta mea multa et magna, pro quibus tímeo. Spero in misericórdias tuas, quarum non est númerus.",
+      "Réspice ergo in me óculis misericórdiæ tuæ, Dómine Iesu Christe, Rex ætérne, Deus et homo, crucifíxus propter hóminem. Exáudi me sperántem in te: miserére mei pleni misériis et peccátis, tu qui fontem miseratiónis numquam manáre cessábis.",
+      "Salve, salutáris víctima, pro me et omni humáno génere in patíbulo Crucis obláta.",
+      "Salve, nóbilis et pretióse Sanguis, de vulnéribus crucifíxi Dómini mei Iesu Christi prófluens, et peccáta totíus mundi ábluens.",
+      "Recordáre, Dómine, creatúræ tuæ, quam tuo Sánguine redemísti. Pœnitet me peccásse, cúpio emmendáre quod feci.",
+      "Aufer ergo a me, clementíssime Pater, omnes iniquitátes et peccáta mea, ut, purificátus mente et córpore, digne degustáre mérear Sancta sanctórum.",
+      "Et concéde, ut hæc sancta prælibátio Córporis et Sánguinis tui, quam ego indígnus súmere inténdo, sit peccatórum meórum remíssio, sit delictórum perfécta purgátio, sit túrpium cogitatiónum effugátio, ac bonórum sénsuum regenerátio, operúmque tibi placéntium salúbris efficácia, ánimæ quoque et córporis contra inimicórum meórum insídias firmíssima tuítio. Amen."
     ]
   }
 }

@@ -1,0 +1,20 @@
+{
+  "slug": "media-vita",
+  "default_language": "la",
+  "titles": {
+    "la": "Media vita"
+  },
+  "blocks": {
+    "la": [
+      "Tempus Quadragesimæ",
+      "Media vita in morte sumus: quem quaérimus adiutórem nisi te, Dómine, qui pro peccátis nostris iuste irásceris?",
+      "Sancte Deus, sancte fortis, sancte et miséricors Salvátor: amárae morti ne tradas nos.",
+      "In te speravérunt patres nostri; speraverunt et liberásti eos.",
+      "Sancte Deus, sancte fortis, sancte et miséricors Salvátor: amárae morti ne tradas nos.",
+      "Ad te clamavérunt patres nostri Clamavérunt et non sunt confúsi.",
+      "Sancte Deus, sancte fortis, sancte et miséricors Salvátor: amárae morti ne tradas nos.",
+      "Glória a Patri, et Fílio, et Spíritui Sancto.",
+      "Sancte Deus, sancte fortis, sancte et miséricors Salvátor: amárae morti ne tradas nos."
+    ]
+  }
+}

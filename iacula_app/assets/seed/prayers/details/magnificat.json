@@ -1,0 +1,24 @@
+{
+  "slug": "magnificat",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Magníficat",
+    "la": "Magníficat"
+  },
+  "blocks": {
+    "pt-br": [
+      "A minh’alma engrandece o Senhor, exulta meu espírito em Deus, meu Salvador! Porque olhou para a humildade de sua serva.",
+      "Doravante as gerações hão de chamar-me de bendita! O Poderoso fez em mim maravilhas, e Santo é seu nome! Seu amor para sempre se estende, sobre aqueles que O temem!",
+      "Manifesta o poder de seu braço, dispersa os soberbos; derruba os poderosos de seus tronos e eleva os humildes; sacia de bens os famintos, despede os ricos sem nada..",
+      "Acolhe Israel, seu servidor, fiel ao seu amor, como havia prometido a nossos pais, em favor de Abraão e de seus filhos para sempre!.",
+      "Glória ao Pai e ao Filho e ao Espírito Santo. Como era no princípio, agora e sempre. Amém!"
+    ],
+    "la": [
+      "Magníficat ánima mea Dóminum, et exsultávit spíritus meus in Deo salvatóre meo, quia respéxit humilitátem ancíllæ suæ.",
+      "Ecce enim ex hoc beátam me dicent omnes generatiónes, quia fecit mihi magna, qui potens est, et sanctum nomen eius, et misericórdia eius in progénies et progénies timéntibus eum.",
+      "Fecit poténtiam in bráchio suo, dispérsit supérbos mente cordis sui; depósuit poténtes de sede et exaltávit húmiles, esuriéntes implévit bonis et dívites dimísit inánes.",
+      "Suscépit Ísraël púerum suum, recordátus misericórdiæ, sicut locútus est ad patres nostros, Ábraham et sémini eius in sǽcula.",
+      "Glória Patri, et Fílio, et Spirítui Sancto. Sicut erat in princípio, et nunc et semper, et in sǽcula sæculórum. Amen."
+    ]
+  }
+}

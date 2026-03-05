@@ -2,11 +2,19 @@
   "slug": "oracao-santissima-virgem-maria-acao",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Oração à Santíssima Virgem Maria (Ação de Graças)"
+    "pt-br": "Oração a Nossa Senhora",
+    "la": "Orátio ad B. Maríam Vírginem"
   },
   "blocks": {
     "pt-br": [
-      "Ó Santíssima Virgem Maria, Mãe de Deus e minha Mãe,abei-Vos me apresentado ao vosso Filho Jesus na Santa Missa. Rogai por mim, para que eu possa viver em graça e alcançar a vida eterna."
+      "Ó Maria, Virgem e Mãe Santíssima, eis que recebi o vosso amadíssimo Filho, a quem concebestes no vosso seio imaculado, criastes e alimentastes em vosso peito, e abraçastes amorosamente.",
+      "Eis que Vos apresento e ofereço com amor e humildade Aquele que vos alegrava contemplar e que Vos enchia de delícias, para que o aperteis em vossos braços, o ameis em vosso coração e o ofereçais em supremo culto de adoração à Santíssima Trindade, para vossa honra e glória e pelas minhas necessidades e pelas de todo o mundo.",
+      "Suplico-Vos, piedosíssima Mãe, que me alcanceis o perdão de todos os meus pecados e graça abundante para servir o Senhor desde agora com maior fidelidade; e por último a graça da perseverança final, para que possa louvá-lo convosco pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "O Maria, Virgo et Mater sanctíssima, ecce suscépi dilectíssimum Fílium tuum, quem immaculáto útero tuo concepísti, genuísti, lactásti, atque suavíssimis ampléxibus strinxísti.",
+      "Ecce, cuius aspéctu lætabáris et ómnibus delíciis replebáris, illum ipsum tibi humíliter et amánter repræsénto et óffero tuis bráchiis constringéndum, tuo corde amándum, sanctissimǽque Trinitáti in suprémum latríæ cultum, pro tui ipsíus honóre et glória et pro meis totiúsque mundi necessitátibus, offeréndum.",
+      "Rogo ergo te, piíssima Mater, ímpetra mihi véniam ómnium peccatórum meórum, uberémque grátiam ipsi deínceps fidélius serviéndi, ac dénique grátiam finálem, ut eum tecum laudáre possim per omnia sǽcula sæculórum. Amen."
     ]
   }
 }

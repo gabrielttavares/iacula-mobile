@@ -2,7 +2,7 @@
   "slug": "dons-espirito-santo",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Dons do Espírito Santo",
+    "pt-br": "Os sete dons do Espírito Santo",
     "la": "Septem Dona Spiritus Sancti"
   },
   "blocks": {
@@ -13,7 +13,7 @@
       "4. Fortaleza",
       "5. Ciência",
       "6. Piedade",
-      "7. Temor de Deus"
+      "7. Temor de Deus"
     ],
     "la": [
       "1. Sapientia.",

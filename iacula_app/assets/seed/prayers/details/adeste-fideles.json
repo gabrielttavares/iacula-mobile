@@ -1,0 +1,20 @@
+{
+  "slug": "adeste-fideles",
+  "default_language": "la",
+  "titles": {
+    "la": "Adeste, fideles"
+  },
+  "blocks": {
+    "la": [
+      "Hymnus Nativitatis",
+      "Adeste, fideles, laeti triumphantes;Veníte, veníte in Bethlehem:Natum videte Regem angelorum.",
+      "Venite adoremus, venite adoremus Dominum.",
+      "En grege relicto, humiles ad cunas,Vocati pastores approperant;Et nos ovanti gradu festinemus.",
+      "Venite adoremus, venite adoremus Dominum.",
+      "Aeterni Parentis splendorem aeternum,Velatum sub carne vidébimus;Deum infantem, pannis involutum.",
+      "Venite adoremus, venite adoremus Dominum.",
+      "Pro nobis egénum Et foeno cubantem,Piis foveámus amplexibus;Sic nos amantem quis non redamáret?",
+      "Venite adoremus, venite adoremus Dominum."
+    ]
+  }
+}

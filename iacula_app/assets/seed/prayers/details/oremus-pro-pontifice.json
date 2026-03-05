@@ -1,0 +1,13 @@
+{
+  "slug": "oremus-pro-pontifice",
+  "default_language": "la",
+  "titles": {
+    "la": "Oremus pro pontífice"
+  },
+  "blocks": {
+    "la": [
+      "Oremus pro pontífice nostro N.",
+      "Dóminus consérvet eum,et vivíficet eum,et beátum fáciat eum in terra,et non tradat eum in ánimam inimicórum éius."
+    ]
+  }
+}

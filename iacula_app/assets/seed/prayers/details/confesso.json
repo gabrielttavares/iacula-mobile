@@ -1,0 +1,28 @@
+{
+  "slug": "confesso",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Confesso",
+    "la": "Confíteor"
+  },
+  "blocks": {
+    "pt-br": [
+      "Confesso a Deus todo-poderoso e a vós, irmãos, que pequei muitas vezes por pensamentos e palavras, atos e omissões.",
+      "Por minha culpa, minha culpa, minha tão grande culpa",
+      "E peço à Virgem Maria, aos Anjos e Santos, e a vós, irmãos, que rogueis por mim a Deus, nosso Senhor.",
+      "Outra fórmula do Confesso ou Confíteor, que insiste mais na referência à Igreja do Céu, onde os santos gozam já da glória de Deus e intercedem por nós:",
+      "Confesso a Deus todo-poderoso, à Santíssima Virgem Maria, ao Arcanjo São Miguel, a São João Batista, aos santos apóstolos Pedro e Paulo, a todos os santos e a vós, irmãos, que pequei muitas vezes por palavras e obras.",
+      "Por minha culpa, minha culpa, minha tão grande culpa.",
+      "E peço à Virgem Maria, ao Arcanjo São Miguel, a São João Batista, aos santos apóstolos Pedro e Paulo, a todos os santos, e a vós, irmãos, que rogueis por mim a Deus, nosso Senhor."
+    ],
+    "la": [
+      "Confíteor Deo omnipoténti, et vobis, fratres: quia peccávi nimis cogitatióne, verbo, ópere et omissióne.",
+      "Mea culpa, mea culpa, mea máxima culpa.",
+      "Ídeo precor beatam Maríam semper Vírginem, omnes Ángelos et Sanctos, et vos, fratres, oráre pro me ad Dóminum Deum nostrum.",
+      "Alia formula Confiteor, quae magis insistit in relatione ad Ecclesiam caelestem, ubi sancti iam gloria Dei fruuntur et pro nobis intercedunt.",
+      "Confíteor Deo omnipoténti, beatæ Mariæ semper Vírgini, beato Michaëli Archángelo, beato Ioanni Baptístæ, sanctis Apóstolis Petro et Paulo, ómnibus Sanctis, et vobis, fratres: quia peccávi nimis cogitatióne, verbo et ópere.",
+      "Mea culpa, mea culpa, mea máxima culpa.",
+      "Ídeo precor beatam Maríam semper Vírginem, beatum Michaëlem Archángelum, beatum Ioannem Baptístam, sanctos Apóstolos Petrum et Paulum, omnes Sanctos, et vos, fratres, oráre pro me ad Dóminum Deum nostrum."
+    ]
+  }
+}

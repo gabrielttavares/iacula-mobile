@@ -2,11 +2,37 @@
   "slug": "invocacoes-santisimo-redentor",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Invocações ao Santíssimo Redentor"
+    "pt-br": "Aspirações ao Santíssimo Redentor",
+    "la": "Aspiratiónes ad Ssmum. Redemptórem"
   },
   "blocks": {
     "pt-br": [
-      "Ó Santíssimo Redentor, que Vos offerrecestes na Cruz pelo mundo inteiro, recebei as minhas ações de graças e abençoai todas as graças que recebi na Santa Missa."
+      "Alma de Cristo, santificai-me.",
+      "Corpo de Cristo, salvai-me.",
+      "Sangue de Cristo, inebriai-me.",
+      "Água do lado de Cristo, lavai-me.",
+      "Paixão de Cristo, confortai-me.",
+      "Ó bom Jesus, ouvi-me.",
+      "Dentro das vossas chagas, escondei-me.",
+      "Não permitais que me separe de Vós.",
+      "Do espírito maligno, defendei-me.",
+      "Na hora da minha morte, chamai-me.",
+      "E mandai-me ir para Vós,",
+      "para que vos louve com os vossos Santos, por todos os séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Ánima Christi, sanctífica me.",
+      "Corpus Christi, salva me.",
+      "Sanguis Christi, inébria me.",
+      "Aqua láteris Christi, lava me.",
+      "Pássio Christi, confórta me.",
+      "O bone Iesu, exáudi me.",
+      "Intra tua vúlnera abscónde me.",
+      "Ne permíttas me separári a te.",
+      "Ab hoste malígno defénde me.",
+      "In hora mortis meæ voca me.",
+      "Et iube me veníre ad te.",
+      "Ut cum Sanctis tuis laudem te in sǽcula sæculórum. Amen."
     ]
   }
 }

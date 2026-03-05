@@ -2,15 +2,15 @@
   "slug": "regra-de-ouro",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Regra de Ouro",
-    "la": "Regula aurea (Mt 7, 12)"
+    "pt-br": "A regra de ouro (Mt 7, 12)",
+    "la": "Regula aurea (Mt 7, 12)"
   },
   "blocks": {
     "pt-br": [
-      "Tudo aquilo que quereis que os homens façam a vós, Fazei-o vós mesmos a eles."
+      "Tudo aquilo que quereis que os homens façam a vós, Fazei-o vós mesmos a eles."
     ],
     "la": [
-      "Omnia quaecumque vultis ut faciant vobis homines, ita et vos facite eis."
+      "Omnia quaecumque vultis ut faciant vobis homines, ita et vos facite eis."
     ]
   }
 }

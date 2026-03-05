@@ -2,15 +2,15 @@
   "slug": "oracao-a-sao-jose-acao",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Oração a São José (Ação de Graças)",
-    "la": "Orátio ad S. Ioseph"
+    "pt-br": "Oração a São José",
+    "la": "Orátio ad S. Ioseph"
   },
   "blocks": {
     "pt-br": [
-      "Ó glorioso São José, Pai e protetor das virgens, guarda fiel a quem Deus confiou Jesus, a própria inocência, e Maria, Virgem das virgens! Em nome de Jesus e de Maria, este duplo tesouro que vos foi tão caro, vos suplico que me conserveis livre de toda a impureza, para que, com alma pura e corpo casto, sirva sempre, fielmente, a Jesus e a Maria. Amém."
+      "Ó glorioso São José, Pai e protetor das virgens, guarda fiel a quem Deus confiou Jesus, a própria inocência, e Maria, Virgem das virgens! Em nome de Jesus e de Maria, este duplo tesouro que vos foi tão caro, vos suplico que me conserveis livre de toda a impureza, para que, com alma pura e corpo casto, sirva sempre, fielmente, a Jesus e a Maria. Amém."
     ],
     "la": [
-      "Vírginum custos et pater, sáncte Ioseph, cuius fidéli custódiæ ipsa Innocéntia Christus Iesus et Virgo vírginum Maria commíssa fuit: te per hoc utrúmque caríssimum pignus Iesum et Maríam óbsecro et obtéstor, ut me, ab omni immundítia præservátum, mente incontamináta, puro corde et casto córpore Iesu et Maríæ semper fácias castíssime famulári. Amen."
+      "Vírginum custos et pater, sáncte Ioseph, cuius fidéli custódiæ ipsa Innocéntia Christus Iesus et Virgo vírginum Maria commíssa fuit: te per hoc utrúmque caríssimum pignus Iesum et Maríam óbsecro et obtéstor, ut me, ab omni immundítia præservátum, mente incontamináta, puro corde et casto córpore Iesu et Maríæ semper fácias castíssime famulári. Amen."
     ]
   }
 }

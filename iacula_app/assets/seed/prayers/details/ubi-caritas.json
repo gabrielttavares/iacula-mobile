@@ -2,18 +2,19 @@
   "slug": "ubi-caritas",
   "default_language": "la",
   "titles": {
-    "la": "Ubi caritas"
+    "la": "Ubi caritas",
+    "pt-br": "Ubi caritas"
   },
   "blocks": {
     "la": [
-      "Ubi caritas et amor, Deus ibi est. Congregavit nos in unum Christi amor. Exultemus, et in ipso iucundemur. Timeamus, et amemus Deum vivum. Et ex corde diligamus nos sincero.",
-      "Ubi caritas et amor, Deus ibi est. Simul ergo cum in unum congregamur, ne nos mente dividamur, caveamus. Cessent iurgia maligna, cessent lites. Et in medio nostri sit Christus Deus.",
-      "Ubi caritas et amor, Deus ibi est. Simul quoque cum beatis videamus, glorianter vultum tuum, Christe Deus, gaudium quod est immensum, atque probum, Saecula per infinita saeculorum. Amen."
+      "Ubi caritas et amor, Deus ibi est. Congregavit nos in unum Christi amor. Exultemus, et in ipso iucundemur. Timeamus, et amemus Deum vivum. Et ex corde diligamus nos sincero.",
+      "Ubi caritas et amor, Deus ibi est. Simul ergo cum in unum congregamur, ne nos mente dividamur, caveamus. Cessent iurgia maligna, cessent lites. Et in medio nostri sit Christus Deus.",
+      "Ubi caritas et amor, Deus ibi est. Simul quoque cum beatis videamus, glorianter vultum tuum, Christe Deus, gaudium quod est immensum, atque probum, Saecula per infinita saeculorum. Amen."
     ],
     "pt-br": [
-      "Onde há caridade e amor, aí está Deus.O amor de Cristo nos uniu em um só corpo.Exultemos e alegremo-nos n’Ele.Temamos e amemos o Deus vivo.E amemo-nos uns aos outros com coração sincero.",
-      "Onde há caridade e amor, aí está Deus.Estando, pois, reunidos num só corpo,Guardemo-nos de toda divisão.Cesse entre nós todo ódio e disputa.E esteja Cristo Deus no meio de nós.",
-      "Onde há caridade e amor, aí está Deus.Juntos, com os bem-aventurados, vejamosTua glória, ó Cristo Deus:Um gozo imenso e verdadeiro,Pelos séculos dos séculos. Amém."
+      "Onde há caridade e amor, aí está Deus.O amor de Cristo nos uniu em um só corpo.Exultemos e alegremo-nos n’Ele.Temamos e amemos o Deus vivo.E amemo-nos uns aos outros com coração sincero.",
+      "Onde há caridade e amor, aí está Deus.Estando, pois, reunidos num só corpo,Guardemo-nos de toda divisão.Cesse entre nós todo ódio e disputa.E esteja Cristo Deus no meio de nós.",
+      "Onde há caridade e amor, aí está Deus.Juntos, com os bem-aventurados, vejamosTua glória, ó Cristo Deus:Um gozo imenso e verdadeiro,Pelos séculos dos séculos. Amém."
     ]
   }
 }

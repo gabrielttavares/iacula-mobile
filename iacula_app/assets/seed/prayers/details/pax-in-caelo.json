@@ -1,0 +1,28 @@
+{
+  "slug": "pax-in-caelo",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pax in caelo",
+    "la": "Pax in caelo"
+  },
+  "blocks": {
+    "pt-br": [
+      "Paz en el cielo, paz en la tierra. Paz a todo pueblo. Paz a los sacerdotes de las Iglesias de Dios.",
+      "Jesucristo Rey pacifico, su trono permanece firme para siempre. Él es nuestra paz.",
+      "Paz en el cielo, paz en la tierra.",
+      "Brote en nuestros días la justicia y la abundancia de paz.",
+      "Paz a todo pueblo.",
+      "Gloria a Dios en las alturas y paz en la tierra a los hombres de buena voluntad.",
+      "Paz a los sacerdotes de las Iglesias de Dios."
+    ],
+    "la": [
+      "Pax in caelo, pax in terra. Pax in omni populo. Pax sacerdotibus Ecclesiarum Dei.",
+      "Christus Iesus Rex Pacificus et thronus eius erit firmissimus in perpetuum. Ipse est pax nostra.",
+      "Pax in caelo, pax in terra.",
+      "Oriatur in diebus nostris iustitia et abundantia pacis.",
+      "Pax in omni populo.",
+      "Gloria in altissimis Deo et in terra pax hominibus bonae voluntatis.",
+      "Pax sacerdotibus Ecclesiarum Dei."
+    ]
+  }
+}

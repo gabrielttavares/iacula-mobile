@@ -116,6 +116,7 @@
     "section_id": "oracoes-comuns",
     "section_title": "Orações Comuns",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -140,6 +141,21 @@
     "saints": [
       "anjos"
     ]
+  },
+  {
+    "id": "confesso",
+    "title": "Confesso",
+    "content": "Confesso a Deus todo-poderoso e a vós, irmãos, que pequei muitas vezes por pensamentos e palavras, atos e omissões. Por minha culpa, minha culpa, minha tão grande culpa",
+    "section_id": "oracoes-comuns",
+    "section_title": "Orações Comuns",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-comuns"
+    ],
+    "saints": []
   },
   {
     "id": "simbolo-atanasiano",
@@ -214,6 +230,21 @@
     "saints": []
   },
   {
+    "id": "trisagio-angelico",
+    "title": "Triságio Angélico",
+    "content": "Em nome do Pai, do Filho, e do Espírito Santo. Amém. . Abri, Senhor os meus lábios.",
+    "section_id": "oracoes-santissima-trindade",
+    "section_title": "Orações à Santíssima Trindade",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "santissima-trindade"
+    ],
+    "saints": []
+  },
+  {
     "id": "visita-ao-santissimo",
     "title": "Visita ao Santíssimo",
     "content": "V/. Graças e louvores sejam dados a todo momento. R/. Ao santíssimo e diviníssimo Sacramento. Pai-Nosso, Ave-Maria e Glória. Comunhão espiritual: Eu quisera, Senhor, receber-vos com aquela pureza, humildade e devoção com que vos recebeu a vossa Santíssima Mãe, com o espírito e o fervor dos Santos.",
@@ -259,6 +290,62 @@
     "saints": []
   },
   {
+    "id": "sacris-solemniis",
+    "title": "Sacris solémniis",
+    "content": "Ultimae duae strophae sunt hymnus 'Panis Angelicus' Sacris solémniis iuncta sint gáudia,Et ex praecórdiis sonent praecónia;Recédant vétera, nova sint ómnia,Corda, voces, et ópera.Noctis recólitur coen",
+    "section_id": "adoracao-eucaristica",
+    "section_title": "Adoração Eucarística",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "eucaristica"
+    ],
+    "saints": []
+  },
+  {
+    "id": "lauda-sion",
+    "title": "Lauda Sion",
+    "content": "Hymnus eucharisticus Lauda, Sion Salvatórem,lauda ducem et pastóremin hymnis et cánticis.Quantum potes, tantum aude:quia maior omni laude,nec laudáre súfficis.",
+    "section_id": "adoracao-eucaristica",
+    "section_title": "Adoração Eucarística",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "eucaristica"
+    ],
+    "saints": []
+  },
+  {
+    "id": "iesu-dulcis-memoria",
+    "title": "Iesu dulcis memória",
+    "content": "Iesu dulcis memóriaDans vera cordis gáudiaSed super mel et ómniaEius dulcis praésentia. Nil cánitur suáviusNil audítur iucúndiusNil cogitátur dúlciusQuam Jesus Dei Fílius.",
+    "section_id": "adoracao-eucaristica",
+    "section_title": "Adoração Eucarística",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "eucaristica"
+    ],
+    "saints": []
+  },
+  {
+    "id": "verbum-supernum",
+    "title": "Verbum supérnum",
+    "content": "Ultimae duae strophae sunt 'O Salutáris Hóstia' Verbum supérnum pródiens,nec Patris linquens déxteram,ad opus suum éxiens,venit ad vitae vésperam.",
+    "section_id": "adoracao-eucaristica",
+    "section_title": "Adoração Eucarística",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "eucaristica"
+    ],
+    "saints": []
+  },
+  {
     "id": "veni-creator",
     "title": "Veni, Creátor",
     "content": "Vinde, Espírito Criador, visitai a alma dos vossos fiéis; enchei de graça celestial os corações que Vós criastes. Vós, chamado o Consolador, dom do Deus altíssimo, fonte viva, fogo, caridade e unção espiritual. Vós, com vossos sete dons, sois força da destra de Deus, Vós, o promise pelo Pai; a vossa palavra enriquece nossos lábios.",
@@ -294,6 +381,7 @@
     "section_id": "ao-espirito-santo",
     "section_title": "Ao Espírito Santo",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -443,6 +531,7 @@
     "section_id": "oracoes-a-nossa-senhora",
     "section_title": "Orações a Nossa Senhora",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -492,6 +581,7 @@
     "section_id": "oracoes-a-nossa-senhora",
     "section_title": "Orações a Nossa Senhora",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -505,13 +595,14 @@
     "id": "ave-maris-stella",
     "title": "Ave Maris Stella",
     "content": "Ave Estrela do Mar, Ave Mãe de Deus, Virgem para sempre, Porta ditosa dos céus. De Gabriel, o Arcanjo aquele Ave tomando, concede ao mundo a paz de Eva o nome trocando.",
-    "section_id": "oracoes-a-nossa-senhora",
-    "section_title": "Orações a Nossa Senhora",
+    "section_id": "hinos",
+    "section_title": "Hinos",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
-      "mariano"
+      "hinos"
     ],
     "saints": [
       "virgem-maria"
@@ -569,12 +660,45 @@
     ]
   },
   {
+    "id": "consagracao-a-nossa-senhora",
+    "title": "Consagração a Nossa Senhora",
+    "content": "Ó Senhora minha, ó minha Mãe, eu me ofereço todo a Vós e, em prova da minha devoção para convosco, Vos consagro neste dia meus olhos, meus ouvidos, minha boca, meu coração e inteiramente todo o meu se",
+    "section_id": "oracoes-a-nossa-senhora",
+    "section_title": "Orações a Nossa Senhora",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "mariano"
+    ],
+    "saints": [
+      "virgem-maria"
+    ]
+  },
+  {
+    "id": "magnificat",
+    "title": "Magníficat",
+    "content": "A minh’alma engrandece o Senhor, exulta meu espírito em Deus, meu Salvador! Porque olhou para a humildade de sua serva. Doravante as gerações hão de chamar-me de bendita! O Poderoso fez em mim maravil",
+    "section_id": "oracoes-a-nossa-senhora",
+    "section_title": "Orações a Nossa Senhora",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "mariano"
+    ],
+    "saints": []
+  },
+  {
     "id": "preparacao-santa-missa",
     "title": "Preparação para a Santa Missa",
     "content": "À Santissima Virgem: Ó Mãe de bondade e de misericórdia, Santissima Virgem Maria, eu, miserável e indigno pecador, a Vós recorro de todo o coração e com todo o amor; e Vos suplico que, assim como estivestes de pé junto ao vosso amabilissimo Filho pendente da Cruz, me assistais também a mim, mísero pecador, e a todos os sacerdotes que hoje na Santa Igreja oferecem o Santo Sacrifício.",
     "section_id": "preparacao-santa-missa",
     "section_title": "Preparação para a Santa Missa",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -742,6 +866,7 @@
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -773,6 +898,7 @@
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -804,6 +930,7 @@
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -818,6 +945,7 @@
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -939,6 +1067,7 @@
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -953,12 +1082,31 @@
     "section_id": "acao-de-gracas-santa-missa",
     "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
       "missa-acao-de-gracas"
     ],
     "saints": []
+  },
+  {
+    "id": "oracao-sao-miguel-arcanjo",
+    "title": "Oração a São Miguel Arcanjo",
+    "content": "São Miguel Arcanjo, defendei-nos no combate, sede o nosso refúgio contra as maldades e ciladas do demônio. Ordene-lhe Deus, instantemente o pedimos, e vós, príncipe da milícia celeste, pela virtude di",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": [
+      "sao-miguel-arcanjo",
+      "anjos"
+    ]
   },
   {
     "id": "para-o-trabalho",
@@ -1085,13 +1233,14 @@
     "id": "ubi-caritas",
     "title": "Ubi caritas",
     "content": "Ubi cáritas et amor, Deus ibi est. Congregavit nos in unum Christi amor. Exsultemus et in ipso iucundemur. Timeamus et amemus Deum vivum. Et ex corde diligamus nos sincero.",
-    "section_id": "outras-devocoes",
-    "section_title": "Outras Devoções, Hinos e Salmos",
+    "section_id": "hinos",
+    "section_title": "Hinos",
     "languages": [
-      "la"
+      "la",
+      "pt-br"
     ],
     "theme": [
-      "devocoes"
+      "hinos"
     ],
     "saints": []
   },
@@ -1220,6 +1369,7 @@
     "section_id": "oracoes-pelos-defuntos",
     "section_title": "Orações pelos Defuntos",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -1279,6 +1429,7 @@
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -1338,6 +1489,7 @@
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -1352,6 +1504,7 @@
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -1366,6 +1519,7 @@
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -1380,6 +1534,7 @@
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
+      "la",
       "pt-br"
     ],
     "theme": [
@@ -1391,6 +1546,21 @@
     "id": "novissimos",
     "title": "Os novíssimos",
     "content": "Morte, Juízo, Inferno ou Paraíso, e Glória.",
+    "section_id": "formulas-doutrina-catolica",
+    "section_title": "Fórmulas de Doutrina Católica",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "doutrina"
+    ],
+    "saints": []
+  },
+  {
+    "id": "dez-mandamentos",
+    "title": "Os dez mandamentos",
+    "content": "1. Amar a Deus sobre todas as coisas. 2. Não tomar seu Santo Nome em vão.",
     "section_id": "formulas-doutrina-catolica",
     "section_title": "Fórmulas de Doutrina Católica",
     "languages": [
@@ -1531,17 +1701,222 @@
     "saints": []
   },
   {
+    "id": "salve-santa-cruz",
+    "title": "Salve Santa Cruz",
+    "content": "Atribuída a Santo Andrés Apóstolo Salve Santa Cruz, tão desejada, tão amada. Tira-me do meio dos homens e entrega-me ao meu Mestre e Senhor, para que eu de ti receba o que por ti me salvou!",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "via-sacra",
+    "title": "Via Sacra",
+    "content": "–﻿ Em nome do Pai, do Filho e do Espírito Santo. Amém. Oração introdutória",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "leitura-espiritual",
+    "title": "Leitura espiritual",
+    "content": "Ao começar: Vinde Espírito Santo enchei os corações dos vossos fiéis e acendei neles o fogo do vosso amor.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "bencao-de-viagem",
+    "title": "Bênção de viagem",
+    "content": "Que pela intercessão da Bem-Aventurada Virgem Maria, tenhamos uma boa viagem: que o Senhor esteja no nosso caminho e os seus Anjos nos acompanhem. Em nome do Pai e do Filho e do Espírito Santo. Amém.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "preces",
+    "title": "Preces",
+    "content": "Servirei! . À Santíssima Trindade.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "devocoes"
+    ],
+    "saints": []
+  },
+  {
     "id": "benedictus",
     "title": "Benedíctus",
     "content": "Benedictus Dominus Deus Israel, quia visitavit et fecit redemptionem plebis suae.",
-    "section_id": "outras-devocoes",
-    "section_title": "Outras Devoções, Hinos e Salmos",
+    "section_id": "hinos",
+    "section_title": "Hinos",
     "languages": [
       "la",
       "pt-br"
     ],
     "theme": [
-      "devocoes"
+      "hinos"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pax-in-caelo",
+    "title": "Pax in caelo",
+    "content": "Paz en el cielo, paz en la tierra. Paz a todo pueblo. Paz a los sacerdotes de las Iglesias de Dios. Jesucristo Rey pacifico, su trono permanece firme para siempre. Él es nuestra paz.",
+    "section_id": "hinos",
+    "section_title": "Hinos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "hinos"
+    ],
+    "saints": []
+  },
+  {
+    "id": "rorate-caeli",
+    "title": "Rorate caeli",
+    "content": "Tempo do Advento Derramai, ó céus, o vosso orvalho do alto, e as nuvens chovam o Justo.Não vos ireis, Senhor, nem vos lembreis da iniquidade.",
+    "section_id": "hinos",
+    "section_title": "Hinos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "hinos"
+    ],
+    "saints": []
+  },
+  {
+    "id": "te-ioseph",
+    "title": "Te, Ioseph",
+    "content": "Celebrem-Vos as celestes multidões, louve o vosso nome o coro dos cristãos, José, cujas virtudes mereceram os esponsais da Virgem. Surpreso e cheio de aflição, notando que a casta esposa havia concebi",
+    "section_id": "hinos",
+    "section_title": "Hinos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "hinos"
+    ],
+    "saints": [
+      "sao-jose"
+    ]
+  },
+  {
+    "id": "media-vita",
+    "title": "Media vita",
+    "content": "Tempus Quadragesimæ Media vita in morte sumus: quem quaérimus adiutórem nisi te, Dómine, qui pro peccátis nostris iuste irásceris?",
+    "section_id": "hinos",
+    "section_title": "Hinos",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "hinos"
+    ],
+    "saints": []
+  },
+  {
+    "id": "ave-verum",
+    "title": "Ave verum",
+    "content": "Ave verum corpus, natum de Maria Virgine: vere passum, immolatum in cruce pro homine. Cuius latus perforatum fluxit aqua et sanguine: esto nobis prægustatum mortis in examine.",
+    "section_id": "hinos",
+    "section_title": "Hinos",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "hinos"
+    ],
+    "saints": []
+  },
+  {
+    "id": "lux-aeterna",
+    "title": "Lux aeterna",
+    "content": "Lux aetérna lúceat eis, Dómine, cum sanctis tuis in aetérnum, quia pius es. Réquiem aetérnam dona eis, Dómine, et lux perpétua lúceat eis. Cum santis tuis in aetérnum, quia pius es.",
+    "section_id": "hinos",
+    "section_title": "Hinos",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "hinos"
+    ],
+    "saints": []
+  },
+  {
+    "id": "vexilla-regis",
+    "title": "Vexil regis la",
+    "content": "In honore Sanctae Crucis Vexílla regis pródeunt, fulget crucis mystérium, quo carne carnis cónditor suspénsus est patibulo.",
+    "section_id": "hinos",
+    "section_title": "Hinos",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "hinos"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oremus-pro-pontifice",
+    "title": "Oremus pro pontífice",
+    "content": "Oremus pro pontífice nostro N. Dóminus consérvet eum,et vivíficet eum,et beátum fáciat eum in terra,et non tradat eum in ánimam inimicórum éius.",
+    "section_id": "hinos",
+    "section_title": "Hinos",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "hinos"
+    ],
+    "saints": []
+  },
+  {
+    "id": "adeste-fideles",
+    "title": "Adeste, fideles",
+    "content": "Hymnus Nativitatis Adeste, fideles, laeti triumphantes;Veníte, veníte in Bethlehem:Natum videte Regem angelorum.",
+    "section_id": "hinos",
+    "section_title": "Hinos",
+    "languages": [
+      "la"
+    ],
+    "theme": [
+      "hinos"
     ],
     "saints": []
   }

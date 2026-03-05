@@ -2,14 +2,27 @@
   "slug": "vicios-capitais",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Vícios Capitais"
+    "pt-br": "Os sete pecados capitais",
+    "la": "Septem peccata capitalia"
   },
   "blocks": {
     "pt-br": [
-      "Soberba, Avareza, Luxúria, Ira, Gula, Inveja e Preguiça.",
-      "Os sete vícios capitais são as fontes principais de que brotam todos os pecados. São chamados capitais porque têm o papel de cabeça em relação aos outros vícios.",
-      "A soberba é o amor desordenado da própria excelência. A avareza é a cobiça desordenada das riquezas. A luxúria é a cobiça desordenada dos prazeres sensuais.",
-      "A ira é a cobiça desordenada de vingança. A gula é o desejo desordenado de comer e beber. A inveja é a tristeza pelo bem alheio. A preguiça é a negligência no cumprimento do dever."
+      "1. Soberba.",
+      "2. Avareza.",
+      "3. Luxúria.",
+      "4. Ira.",
+      "5. Gula.",
+      "6. Inveja.",
+      "7. Preguiça."
+    ],
+    "la": [
+      "1. Superbia.",
+      "2. Avaritia.",
+      "3. Luxuria.",
+      "4. Ira.",
+      "5. Gula.",
+      "6. Invidia.",
+      "7. Acedia."
     ]
   }
 }

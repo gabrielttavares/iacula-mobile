@@ -1,0 +1,21 @@
+{
+  "slug": "vexilla-regis",
+  "default_language": "la",
+  "titles": {
+    "la": "Vexil regis la"
+  },
+  "blocks": {
+    "la": [
+      "In honore Sanctae Crucis",
+      "Vexílla regis pródeunt, fulget crucis mystérium, quo carne carnis cónditor suspénsus est patibulo.",
+      "Quo vulneratus insuper mucróne diro lánceae, ut nos laváret crimine, manávit unda et sánguine.",
+      "Arbor decóra et fúlgida, ornáta regis púrpura, elécta, digno stípite tam sancta membra tángere!",
+      "Beáta cuius bráchiis pretium pepéndit sæculi! Statéra facta est córporis praedam tulítque tartari.",
+      "Salve ara, salve víctima de passiónis glória, qua vita mortem pértulit et morte vitam réddidit.",
+      "O Crux, ave, spes única! hoc passiónis témpore",
+      "die 14 septembris:in hac triumphi gloria",
+      "piis adáuge grátiam, reisque dele crímina.",
+      "Te, fons salútis Trínitas, colláudet omnis spíritus: quos per Crucis mystérium salvas, fove per saécula. Amen."
+    ]
+  }
+}

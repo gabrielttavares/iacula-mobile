@@ -2,12 +2,45 @@
   "slug": "responso-latim",
   "default_language": "pt-br",
   "titles": {
-    "la": "Responso (Latim)",
+    "la": "Responsórium I",
     "pt-br": "Responso (Português)"
   },
   "blocks": {
     "la": [
-      "Requiem æternam dona eis, Domine, et lux perpetua luceat eis. Requiescant in pace. Amen. Deus, cui proprium est misereri semper et parcere, propitius esto animabus illorum, ut perintercessionem Sanctissimorum omnium Sanctorum tuorum a peccatorum suorum omnibus absoluti, beatæ quondam claritatis in conspectu tuo resident."
+      ". Ne recordéris peccáta mea, Dómine.",
+      ". Dum véneris iudicáre sǽculum per ignem.",
+      ". Dírige, Dómine Deus meus, in conspéctu tuo viam meam.",
+      ". Dum véneris iudicáre sǽculum per ignem.",
+      ". Réquiem ætérnam dona ei(s), Dómine, et lux perpétua lúceat ei(s).",
+      ". Dum véneris iudicáre sǽculum per ignem.",
+      ". Kýrie, eléison.",
+      ". Christe, eléison. Kýrie, eléison.",
+      "Sacérdos dicit alta voce:",
+      "Pater noster.",
+      "Et secréto continuátur ab ómnibus. Póstea sacérdos dicit:",
+      ". Et ne nos indúcas in tentatiónem.",
+      ". Sed líbera nos a malo.",
+      ". A porta ínferi.",
+      ". Érue, Dómine, ánimam eius (ánimas eórum).",
+      ". Requiésca(n)t in pace.",
+      ". Amen.",
+      ". Dómine, exáudi oratiónem meam.",
+      ". Et clamor meus ad te véniat.",
+      ". Dóminus vobíscum.",
+      ". Et cum spíritu tuo.",
+      "Pro uno defúncto:",
+      "Orémus",
+      "Absolve quǽsumus, Dómine, fámulum tuum (fámulam tuam) N. ab omni vínculo delictórum, ut, qui (quæ) in hoc sǽculo Christo méruit conformári, in resurrectiónis glória inter Sanctos tuos resuscitátus (resuscitáta) respíret. Per Christum Dóminum nostrum.",
+      "Pro ómnibus fidélibus defúnctis:",
+      "Orémus",
+      "Fidélium, Deus, ómnium cónditor et redémptor: animábus famulórum, famularúmque tuarum remissiónem cunctórum tríbue peccatórum; ut indulgéntiam, quam semper optavérunt, piis supplicatiónibus consequántur. Per Christum Dóminum nostrum.",
+      ". Amen.",
+      ". Réquiem ætérnam dona ei(s), Dómine.",
+      ". Et lux perpétua lúceat ei(s).",
+      ". Requiésca(n)t in pace.",
+      ". Amen.",
+      ". Ánima eius (Ánimæ eórum) et ánimæ ómnium fidélium defunctórum per misericórdiam Dei requiéscant in pace.",
+      ". Amen."
     ],
     "pt-br": [
       "Eterno Pai, pelas chagas de Jesus Cristo, concedei o descanso eterno às almas dos fiéis defuntos, especialmente às que mais precisam de vossa misericórdia. Que descansem em paz. Amém."

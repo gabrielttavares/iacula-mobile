@@ -2,15 +2,61 @@
   "slug": "salmo-2",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Salmo 2"
+    "pt-br": "Salmo 2",
+    "la": "Psalmus II"
   },
   "blocks": {
     "pt-br": [
-      "Por que se amotinam as nações, e os povos tramam em vão?",
-      "Levantam-se os reis da terra e os príncipes conspiram unidos contra o Senhor e contra o seu Ungido.",
-      "Rompamos as suas cadeias e lancemos de nós os seus grilhões.",
-      "Aquele que habita nos céus os escarnecerá, e o Senhor zombará deles.",
-      "Então lhes falará em sua ira e em seu furor os confundirá."
+      "Antífona.Seu reinado é sempiterno, e todos os reis o servirão e lhe obedecerão. (T. P. Aleluia).",
+      "1. Por que se amotinam as nações e os povos maquinam planos vãos?",
+      "2. Sublevam-se os reis da terra e os príncipes coligam-se contra o Senhor e contra o seu Ungido.",
+      "3. Quebremos, disseram, as suas cadeias, e sacudamos de nós o seu jugo.",
+      "4. Aquele que habita nos céus Ri-se, o Senhor zomba deles.",
+      "5. Ele lhes fala então na sua ira, e no seu furor os aterroriza:",
+      "6. “Eu, porém, constituí o meu rei sobre Sião, meu monte santo”.",
+      "7. Promulgarei o decreto do Senhor. O Senhor disse-me: “Tu és meu filho; eu hoje te gerei.",
+      "8. Pede-me, e eu te darei as nações por herança, e em teu domínio as extremidades da terra.",
+      "9. Tu as governarás com vara de ferro, e qual vaso de oleiro as quebrarás”.",
+      "10. E agora, ó reis, entendei; deixai-vos instruir, vós que governais a terra.",
+      "11. Servi o Senhor com temor e louvai-o com tremor.",
+      "12. Prestai-lhe vassalagem, para que não se indigne e pereçais fora do caminho, quando em breve se acender a sua cólera. Bem-aventurados todos os que n'Ele confiam.",
+      "13. Glória ao Pai, e ao Filho e ao Espírito Santo.",
+      "14. Assim como era no princípio, agora e sempre. Amém.",
+      "Antífona. Seu reinado é sempiterno, e todos os reis o servirão e lhe obedecerão. (T. P. Aleluia).",
+      ". Ouvi, Senhor, a minha oração.",
+      ". E chegue a Vós o meu clamor.",
+      "Os sacerdotes acrescentam:",
+      ".O Senhor esteja convosco.",
+      ".Ele está no meio de nós.",
+      "Oremos",
+      "Ó Deus, onipotente e eterno Deus, que tudo quisestes instaurar no vosso amado Filho, Rei do Universo, concedei, propício, que todas as nações desagregadas pela ferida do pecado se submetam a seu suavíssimo poder. Ele, que convosco vive e reina Deus, na unidade do Espírito Santo, pelos séculos dos séculos.",
+      ". Amém."
+    ],
+    "la": [
+      "Antiphona. Regnum eius regnum sempitérnum est, et omnes reges sérvient ei et obœdient. (T. P. Allelúia).",
+      "1. Quare fremuérunt gentes, et pópuli meditáti sunt inánia?",
+      "2. Astitérunt reges terræ, et príncipes convenérunt in unum advérsus Dóminum et advérsus Christum eius:",
+      "3. «Dirumpámus víncula eórum et proiciámus a nobis iugum ipsórum!».",
+      "4. Qui hábitat in cælis, irridébit eos, Dóminus subsannábit eos.",
+      "5. Tunc loquétur ad eos in ira sua et in furóre suo conturbábit eos:",
+      "6. «Ego autem constítui regem meum super Sion, montem sanctum meum!».",
+      "7. Prædicábo decrétum eius. Dóminus dixit ad me: «Fílius meus es tu; ego hódie génui te.",
+      "8. Póstula a me, et dabo tibi gentes hereditátem tuam et possessiónem tuam términos terræ.",
+      "9. Reges eos in virga férrea et tamquam vas fíguli confrínges eos».",
+      "10. Et nunc, reges, intellégite, erudímini, qui iudicátis terram.",
+      "11. Servíte Dómino in timóre et exsultáte ei cum tremóre.",
+      "12. Apprehéndite disciplínam, ne quando irascátur, et pereátis de via, cum exárserit in brevi ira eius. Beati omnes, qui confídunt in eo.",
+      "13. Glória Patri, et Fílio, et Spirítui Sancto.",
+      "14. Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.",
+      "Antíphona. Regnum eius regnum sempitérnum est, et omnes reges sérvient ei et obœdient. (T. P. Allelúia).",
+      ". Dómine, exaudi oratiónem meam.",
+      ". Et clamor meus ad te véniat.",
+      "Sacerdotes addunt:",
+      ". Dóminus vobíscum.",
+      ". Et cum spíritu tuo.",
+      "Orémus",
+      "Omnípotens sempitérne Deus, qui in dilécto Fílio tuo, universórum Rege, ómnia instauráre voluísti: concéde propítius; ut cunctæ famíliæ géntium, peccáti vúlnere disgregátæ, eius suavíssimo subdántur império: Qui tecum vivit et regnat in unitáte Spíritus Sancti Deus: per ómnia sǽcula sæculórum.",
+      ". Amen."
     ]
   }
 }

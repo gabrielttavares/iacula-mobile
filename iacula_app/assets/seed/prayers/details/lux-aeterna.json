@@ -1,0 +1,13 @@
+{
+  "slug": "lux-aeterna",
+  "default_language": "la",
+  "titles": {
+    "la": "Lux aeterna"
+  },
+  "blocks": {
+    "la": [
+      "Lux aetérna lúceat eis, Dómine, cum sanctis tuis in aetérnum, quia pius es.",
+      "Réquiem aetérnam dona eis, Dómine, et lux perpétua lúceat eis. Cum santis tuis in aetérnum, quia pius es."
+    ]
+  }
+}

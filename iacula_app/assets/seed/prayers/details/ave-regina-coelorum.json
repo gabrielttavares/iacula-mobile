@@ -2,11 +2,19 @@
   "slug": "ave-regina-coelorum",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Ave, Regina Caelorum"
+    "pt-br": "Ave, Regína cælórum",
+    "la": "Ave, Regína cælórum"
   },
   "blocks": {
     "pt-br": [
-      "Ave, Regina Caelorum, Ave, Domina Angelorum: Salve, radix, salve, porta Ex qua mundo lux est orta: Gaude, Virgo gloriosa, Super omnes speciosa, Vale, o valde decora, Et pro nobis Christum exora."
+      "Para o Tempo da Quaresma",
+      "Ave, Rainha do céu! Ave, dos Anjos Senhora! Ave, raiz! Ave, porta! Da Luz do mundo és aurora!",
+      "Exulta, ó Virgem bela; as outras seguem-te após! Nós te saudamos! Salve! E pede a Cristo por nós."
+    ],
+    "la": [
+      "A die 2 Februarii usque ad Feriam IV in Hebdomada sancta",
+      "Ave, Regína cælórum, ave, Dómina Angelórum, salve, radix, salve, porta, ex qua mundo lux est orta.",
+      "Gaude, Virgo gloriósa, super omnes speciósa; vale, o valde decóra, et pro nobis Christum exóra."
     ]
   }
 }

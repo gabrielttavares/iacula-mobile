@@ -2,15 +2,15 @@
   "slug": "ao-anjo-da-guarda",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Ao Anjo da Guarda",
+    "pt-br": "Ao Anjo da Guarda",
     "la": "Ángele Dei"
   },
   "blocks": {
     "pt-br": [
-      "Santo Anjo do Senhor, meu zeloso guardador, se a ti me confiou a piedade divina, sempre me rege, guarda, governa e ilumina. Amém."
+      "Santo Anjo do Senhor, meu zeloso guardador, se a ti me confiou a piedade divina, sempre me rege, guarda, governa e ilumina. Amém."
     ],
     "la": [
-      "Ángele Dei, qui custos es mei, me, tibi commíssum pietáte supérna, illúmina, custódi, rege et gubérna. Amen."
+      "Ángele Dei, qui custos es mei, me, tibi commíssum pietáte supérna, illúmina, custódi, rege et gubérna. Amen."
     ]
   }
 }

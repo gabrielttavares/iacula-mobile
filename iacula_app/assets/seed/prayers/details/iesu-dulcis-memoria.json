@@ -1,0 +1,17 @@
+{
+  "slug": "iesu-dulcis-memoria",
+  "default_language": "la",
+  "titles": {
+    "la": "Iesu dulcis memória"
+  },
+  "blocks": {
+    "la": [
+      "Iesu dulcis memóriaDans vera cordis gáudiaSed super mel et ómniaEius dulcis praésentia.",
+      "Nil cánitur suáviusNil audítur iucúndiusNil cogitátur dúlciusQuam Jesus Dei Fílius.",
+      "Iesu, spes paeniténtibusQuam pius es peténtibusQuam bonus Te quaeréntibusSed quid inveniéntibus?",
+      "Nec lingua valet dícereNec líttera exprímereExpértus potest crédereQuid sit Iesum dilígere.",
+      "Sis, Iesu, nostrum gáudium,Qui es futúrus praémium:Sit nostra in te glóriaPer cuncta semper saecula.",
+      "Amen."
+    ]
+  }
+}

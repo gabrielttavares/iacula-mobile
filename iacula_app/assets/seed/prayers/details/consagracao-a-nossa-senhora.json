@@ -1,0 +1,16 @@
+{
+  "slug": "consagracao-a-nossa-senhora",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Consagração a Nossa Senhora",
+    "la": "Consecration to Mary"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Senhora minha, ó minha Mãe, eu me ofereço todo a Vós e, em prova da minha devoção para convosco, Vos consagro neste dia meus olhos, meus ouvidos, minha boca, meu coração e inteiramente todo o meu ser. E como assim sou vosso, ó incomparável Mãe, guardai-me e defendei-me como coisa e propriedade Vossa."
+    ],
+    "la": [
+      "My queen and my mother, I give myself entirely to you; and to show my devotion to you, I consecrate to you this day, my eyes, my ears, my mouth, my heart, my whole being without reserve. Wherefore, good mother, as I am your own, keep me, guard me, as your property and possession. Amen."
+    ]
+  }
+}

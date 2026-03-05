@@ -2,13 +2,27 @@
   "slug": "obras-misericordia-corporal",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Obras de Misericórdia Corporal"
+    "pt-br": "As sete obras de misericórdia corporais",
+    "la": "Septem opera misericordiae corporalia"
   },
   "blocks": {
     "pt-br": [
-      "Dar de comer ao faminto, dar de beber ao sedento, vestir o nu, acolher o peregrino, assistir o enfermo, visitar o preso, sepultar os mortos.",
-      "As sete obras de misericórdia corporal imitam a compaixão de Cristo pelas necessidades físicas do próximo. São atos de caridade que aliviam o sofrimento material do nosso semelhante.",
-      "Cristo mesmo nos ensinou por seu exemplo a alimentar os famintos, a dar de beber aos sedentos, a vestir os nus, a cuidar dos doentes e a consolar os aflitos."
+      "1. Dar de comer aos famintos.",
+      "2. Dar de beber aos sedentos.",
+      "3. Vestir os nus.",
+      "4. Acolher os peregrinos.",
+      "5. Visitar os enfermos.",
+      "6. Visitar os encarcerados.",
+      "7. Sepultar os mortos."
+    ],
+    "la": [
+      "1. Infirmos visitare.",
+      "2. Cibum praebere esurientibus.",
+      "3. Potum praebere sitientibus.",
+      "4. Hospites excipere.",
+      "5. Nudos cooperire.",
+      "6. Carcere clausos invisere.",
+      "7. Mortuos sepelire."
     ]
   }
 }

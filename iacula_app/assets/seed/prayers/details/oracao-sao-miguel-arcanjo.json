@@ -1,0 +1,16 @@
+{
+  "slug": "oracao-sao-miguel-arcanjo",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração a São Miguel Arcanjo",
+    "la": "Orátio ad S. Míchaël"
+  },
+  "blocks": {
+    "pt-br": [
+      "São Miguel Arcanjo, defendei-nos no combate, sede o nosso refúgio contra as maldades e ciladas do demônio. Ordene-lhe Deus, instantemente o pedimos, e vós, príncipe da milícia celeste, pela virtude divina, precipitai no inferno a satanás e a todos os espíritos malignos, que andam pelo mundo para perder as almas. Amém"
+    ],
+    "la": [
+      "Sancte Míchaël Archángele, defénde nos in prœlio: contra nequítiam et insídias diáboli esto præsídium. Impéret illi Deus, súpplices deprecámur; tuque, Princeps milítiæ cæléstis, sátanam aliósque spíritus malígnos, qui ad perditiónem animárum pervagántur in mundo, divína virtúte in inférnum detrúde. Amen."
+    ]
+  }
+}

@@ -2,11 +2,39 @@
   "slug": "responosrium-ii",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Responsórium II"
+    "pt-br": "Responsórium II",
+    "la": "Responsórium II"
   },
   "blocks": {
     "pt-br": [
       "Libera me, Domine, de morte æterna in die illa tremenda, quando cæli movendi sunt et terra, quando venies iudicare sæculum per ignem. Tremens factus sum ego et timeo, dum discussio venerit atque ventura ira."
+    ],
+    "la": [
+      ". In nómine Patris, et Fílii et Spíritus Sancti.",
+      ". Amen.",
+      ". Benedíctus Deus et Pater Dómini nostri Iesu Christi, Pater misericordiárum et Deus totíus consolatiónis, qui consolátur nos in omni tribulatióne nostra.",
+      ". Amen.",
+      ". De profúndis clamávi ad te, Dómine; Dómine, exáudi vocem meam.",
+      ". Sperávit ánima mea in Dómino.",
+      ". Fiant aures tuæ intendéntes in vocem deprecatiónis meæ.",
+      ". Sperávit ánima mea in Dómino.",
+      ". Si iniquitátes observáveris, Dómine, Dómine, quis sustinébit?",
+      ". Sperávit ánima mea in Dómino.",
+      ". Quia apud te propitiátio est, et propter legem tuam sustínui te, Dómine.",
+      ". Sperávit ánima mea in Dómino.",
+      ". Sustínuit ánima mea in verbo eius; sperávit ánima mea in Dómino.",
+      ". Sperávit ánima mea in Dómino.",
+      ". A custódia matutina usque ad noctem, speret Ísraël in Dómino.",
+      ". Sperávit ánima mea in Dómino.",
+      ". Quia apud Dóminum misericórdia: et copiosa apud eum redémptio.",
+      ". Sperávit ánima mea in Dómino.",
+      ". Et ipse redímet Ísraël ex ómnibus iniquitátibus eius.",
+      ". Sperávit ánima mea in Dómino.",
+      ". Dóminus vobíscum.",
+      ". Et cum spíritu tuo.",
+      "Orémus",
+      "Inclína, Dómine, aurem tuam ad preces nostras, quibus misericórdiam tuam súpplices deprecámur, ut ánimam fámuli tui (fámulæ tuæ) N., quam de hoc sǽculo migráre iussísti, in pacis ac lucis regióne constítuas, et sanctórum tuórum iúbeas esse consórtem. Per Christum Dóminum nostrum.",
+      ". Amen."
     ]
   }
 }
