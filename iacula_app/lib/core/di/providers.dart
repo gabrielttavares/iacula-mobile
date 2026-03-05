@@ -86,6 +86,11 @@ import '../../features/prayer_activity/infrastructure/repositories/isar_prayer_a
 import '../../features/rosary/domain/entities/rosary_mystery_set.dart';
 import '../../features/rosary/infrastructure/repositories/asset_rosary_repository.dart';
 import '../../features/rosary/domain/repositories/rosary_repository.dart';
+import '../../features/bible/domain/entities/bible_book.dart';
+import '../../features/bible/domain/entities/bible_chapter_ref.dart';
+import '../../features/bible/domain/entities/bible_verse.dart';
+import '../../features/bible/domain/repositories/bible_repository.dart';
+import '../../features/bible/infrastructure/repositories/asset_bible_repository.dart';
 import '../../features/challenges/domain/entities/challenge.dart';
 import '../../features/challenges/domain/repositories/challenge_repository.dart';
 import '../../features/challenges/domain/repositories/challenge_progress_repository.dart';
@@ -223,16 +228,22 @@ final favoritesProvider = StreamProvider<List<FavoriteItem>>((ref) {
 });
 
 /// Returns the favorite item whose [quoteText] matches, or null.
-final favoriteItemByQuoteTextProvider = Provider.family<AsyncValue<FavoriteItem?>, String>((ref, quoteText) {
-  final async = ref.watch(favoritesProvider);
-  return async.whenData((list) => list.where((e) => e.quoteText == quoteText).firstOrNull);
-});
+final favoriteItemByQuoteTextProvider =
+    Provider.family<AsyncValue<FavoriteItem?>, String>((ref, quoteText) {
+      final async = ref.watch(favoritesProvider);
+      return async.whenData(
+        (list) => list.where((e) => e.quoteText == quoteText).firstOrNull,
+      );
+    });
 
 /// Returns the favorite item whose [prayerSlug] matches, or null.
-final favoriteItemByPrayerSlugProvider = Provider.family<AsyncValue<FavoriteItem?>, String>((ref, slug) {
-  final async = ref.watch(favoritesProvider);
-  return async.whenData((list) => list.where((e) => e.prayerSlug == slug).firstOrNull);
-});
+final favoriteItemByPrayerSlugProvider =
+    Provider.family<AsyncValue<FavoriteItem?>, String>((ref, slug) {
+      final async = ref.watch(favoritesProvider);
+      return async.whenData(
+        (list) => list.where((e) => e.prayerSlug == slug).firstOrNull,
+      );
+    });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return InMemoryAuthRepository();
@@ -376,10 +387,10 @@ final getPrayerCatalogUseCaseProvider = Provider<GetPrayerCatalogUseCase>((
 
 final prayerEntryBySlugProvider =
     FutureProvider.family<PrayerCatalogEntry?, String>((ref, slug) async {
-  final settings = await ref.watch(getSettingsUseCaseProvider).call();
-  final useCase = ref.watch(getPrayerCatalogUseCaseProvider);
-  return useCase.getBySlug(language: settings.language, slug: slug);
-});
+      final settings = await ref.watch(getSettingsUseCaseProvider).call();
+      final useCase = ref.watch(getPrayerCatalogUseCaseProvider);
+      return useCase.getBySlug(language: settings.language, slug: slug);
+    });
 
 final getLiturgyPeriodUseCaseProvider = Provider<GetLiturgyPeriodUseCase>((
   ref,
@@ -477,7 +488,9 @@ final planOfLifeNotifierProvider =
 // -- Prayer Intentions Providers --
 
 final listIntentionsUseCaseProvider = Provider<ListIntentionsUseCase>((ref) {
-  return ListIntentionsUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+  return ListIntentionsUseCase(
+    ref.watch(prayerIntentionEntryRepositoryProvider),
+  );
 });
 
 final addIntentionUseCaseProvider = Provider<AddIntentionUseCase>((ref) {
@@ -485,7 +498,9 @@ final addIntentionUseCaseProvider = Provider<AddIntentionUseCase>((ref) {
 });
 
 final updateIntentionUseCaseProvider = Provider<UpdateIntentionUseCase>((ref) {
-  return UpdateIntentionUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+  return UpdateIntentionUseCase(
+    ref.watch(prayerIntentionEntryRepositoryProvider),
+  );
 });
 
 final deleteIntentionUseCaseProvider = Provider<DeleteIntentionUseCase>((ref) {
@@ -495,35 +510,43 @@ final deleteIntentionUseCaseProvider = Provider<DeleteIntentionUseCase>((ref) {
   );
 });
 
-final respondIntentionUseCaseProvider = Provider<RespondIntentionUseCase>((ref) {
-  return RespondIntentionUseCase(ref.watch(prayerIntentionEntryRepositoryProvider));
+final respondIntentionUseCaseProvider = Provider<RespondIntentionUseCase>((
+  ref,
+) {
+  return RespondIntentionUseCase(
+    ref.watch(prayerIntentionEntryRepositoryProvider),
+  );
 });
 
 final schedulePrayerIntentionReminderUseCaseProvider =
     Provider<SchedulePrayerIntentionReminderUseCase>((ref) {
-  return SchedulePrayerIntentionReminderUseCase(
-    ref.watch(prayerIntentionEntryRepositoryProvider),
-    ref.watch(notificationSchedulerRepositoryProvider),
-  );
-});
+      return SchedulePrayerIntentionReminderUseCase(
+        ref.watch(prayerIntentionEntryRepositoryProvider),
+        ref.watch(notificationSchedulerRepositoryProvider),
+      );
+    });
 
 final cancelPrayerIntentionReminderUseCaseProvider =
     Provider<CancelPrayerIntentionReminderUseCase>((ref) {
-  return CancelPrayerIntentionReminderUseCase(
-    ref.watch(prayerIntentionEntryRepositoryProvider),
-    ref.watch(notificationSchedulerRepositoryProvider),
-  );
-});
+      return CancelPrayerIntentionReminderUseCase(
+        ref.watch(prayerIntentionEntryRepositoryProvider),
+        ref.watch(notificationSchedulerRepositoryProvider),
+      );
+    });
 
 final prayerIntentionsNotifierProvider =
-    StateNotifierProvider<PrayerIntentionsNotifier, PrayerIntentionsState>((ref) {
+    StateNotifierProvider<PrayerIntentionsNotifier, PrayerIntentionsState>((
+      ref,
+    ) {
       return PrayerIntentionsNotifier(
         listIntentions: ref.watch(listIntentionsUseCaseProvider),
         addIntention: ref.watch(addIntentionUseCaseProvider),
         updateIntention: ref.watch(updateIntentionUseCaseProvider),
         deleteIntention: ref.watch(deleteIntentionUseCaseProvider),
         respondIntention: ref.watch(respondIntentionUseCaseProvider),
-        scheduleReminder: ref.watch(schedulePrayerIntentionReminderUseCaseProvider),
+        scheduleReminder: ref.watch(
+          schedulePrayerIntentionReminderUseCaseProvider,
+        ),
         cancelReminder: ref.watch(cancelPrayerIntentionReminderUseCaseProvider),
       );
     });
@@ -549,12 +572,16 @@ final customPhrasesNotifierProvider =
 
 // -- Prayer Activity / Streak Providers --
 
-final prayerActivityRepositoryProvider = Provider<PrayerActivityRepository>((ref) {
+final prayerActivityRepositoryProvider = Provider<PrayerActivityRepository>((
+  ref,
+) {
   return IsarPrayerActivityRepository(store: IsarStore.instance);
 });
 
 final prayerActivityLoggerProvider = Provider<PrayerActivityLogger>((ref) {
-  return PrayerActivityLogger(repository: ref.watch(prayerActivityRepositoryProvider));
+  return PrayerActivityLogger(
+    repository: ref.watch(prayerActivityRepositoryProvider),
+  );
 });
 
 final streakInfoProvider = FutureProvider<StreakInfo>((ref) async {
@@ -575,13 +602,42 @@ final rosaryRepositoryProvider = Provider<RosaryRepository>((ref) {
   return AssetRosaryRepository();
 });
 
-final rosaryMysterySetProvider = FutureProvider.family<RosaryMysterySet?, RosaryMysteryType>((ref, type) async {
-  return ref.watch(rosaryRepositoryProvider).getMysterySet(type);
-});
+final rosaryMysterySetProvider =
+    FutureProvider.family<RosaryMysterySet?, RosaryMysteryType>((
+      ref,
+      type,
+    ) async {
+      return ref.watch(rosaryRepositoryProvider).getMysterySet(type);
+    });
 
-final allRosaryMysterySetProvider = FutureProvider<List<RosaryMysterySet>>((ref) async {
+final allRosaryMysterySetProvider = FutureProvider<List<RosaryMysterySet>>((
+  ref,
+) async {
   return ref.watch(rosaryRepositoryProvider).listAll();
 });
+
+// -- Bible Providers --
+
+final bibleRepositoryProvider = Provider<BibleRepository>((ref) {
+  return AssetBibleRepository();
+});
+
+final bibleBooksProvider = FutureProvider<List<BibleBook>>((ref) async {
+  return ref.watch(bibleRepositoryProvider).listBooks();
+});
+
+final bibleChapterProvider =
+    FutureProvider.family<List<BibleVerse>, BibleChapterRef>((
+      ref,
+      chapter,
+    ) async {
+      return ref
+          .watch(bibleRepositoryProvider)
+          .getChapter(
+            bookAbbrev: chapter.bookAbbrev,
+            chapterNumber: chapter.chapterNumber,
+          );
+    });
 
 // -- Challenge Providers --
 
@@ -589,9 +645,10 @@ final challengeRepositoryProvider = Provider<ChallengeRepository>((ref) {
   return AssetChallengeRepository();
 });
 
-final challengeProgressRepositoryProvider = Provider<ChallengeProgressRepository>((ref) {
-  return IsarChallengeProgressRepository(store: IsarStore.instance);
-});
+final challengeProgressRepositoryProvider =
+    Provider<ChallengeProgressRepository>((ref) {
+      return IsarChallengeProgressRepository(store: IsarStore.instance);
+    });
 
 final challengeCatalogProvider = FutureProvider<List<Challenge>>((ref) async {
   return ref.watch(challengeRepositoryProvider).listAll();

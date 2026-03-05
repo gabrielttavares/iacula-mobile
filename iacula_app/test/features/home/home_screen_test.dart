@@ -11,6 +11,7 @@ import 'package:iacula_app/features/notifications/domain/repositories/last_deliv
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import 'package:iacula_app/features/prayers/presentation/prayer_catalog_group_screen.dart';
+import 'package:iacula_app/features/bible/presentation/bible_books_screen.dart';
 import 'package:iacula_app/features/rosary/presentation/rosary_intro_screen.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
@@ -372,7 +373,11 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    for (var i = 0; i < 20 && find.text('Virgem Maria').evaluate().isEmpty; i++) {
+    for (
+      var i = 0;
+      i < 20 && find.text('Virgem Maria').evaluate().isEmpty;
+      i++
+    ) {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
       await tester.pump(const Duration(milliseconds: 200));
     }
@@ -413,6 +418,44 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(find.byType(RosaryIntroScreen), findsOneWidget);
+    expect(find.text('Em breve'), findsNothing);
+  });
+
+  testWidgets('feature rail Bíblia opens books screen', (tester) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    for (var i = 0; i < 20 && find.text('Bíblia').evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+
+    final horizontalRail = find.byWidgetPredicate(
+      (widget) =>
+          widget is ListView && widget.scrollDirection == Axis.horizontal,
+    );
+    for (var i = 0; i < 10 && find.text('Bíblia').evaluate().isEmpty; i++) {
+      await tester.drag(
+        horizontalRail,
+        const Offset(-140, 0),
+        warnIfMissed: false,
+      );
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+
+    final bibleFinder = find.text('Bíblia').first;
+    await tester.ensureVisible(bibleFinder);
+    await tester.pump();
+    await tester.tap(bibleFinder);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(find.byType(BibleBooksScreen), findsOneWidget);
     expect(find.text('Em breve'), findsNothing);
   });
 }

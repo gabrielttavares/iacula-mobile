@@ -32,6 +32,7 @@ import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../../examination/presentation/examination_flow_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../rosary/presentation/rosary_intro_screen.dart';
+import '../../bible/presentation/bible_books_screen.dart';
 import 'hero_reflection_sheet.dart';
 import 'home_prayer_groups.dart';
 import 'widgets/home_action_grid.dart';
@@ -337,6 +338,16 @@ class _FeatureRail extends StatelessWidget {
           Navigator.of(context).push(
             CupertinoPageRoute(builder: (_) => const ExaminationFlowScreen()),
           );
+        },
+      ),
+      _RailCard(
+        label: 'Bíblia',
+        isComingSoon: false,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          Navigator.of(
+            context,
+          ).push(CupertinoPageRoute(builder: (_) => const BibleBooksScreen()));
         },
       ),
       _RailCard(label: 'Novenas', isComingSoon: true),

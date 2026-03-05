@@ -85,6 +85,9 @@ flutter:
     - assets/seed/journal_prompts/
     - assets/seed/night_prayer/
     - assets/seed/liturgy_hours/
+    - assets/seed/bible/
+    - assets/seed/bible/antigotestamento/
+    - assets/seed/bible/novotestamento/
     - assets/fonts/google_fonts/
 
 
