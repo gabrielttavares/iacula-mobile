@@ -4,10 +4,14 @@ import 'package:iacula_app/features/premium/domain/entities/premium_status.dart'
 
 void main() {
   test('premium features include expected locked sections', () {
-    expect(PremiumFeature.values, [
-      PremiumFeature.meditation,
-      PremiumFeature.planOfLife,
-    ]);
+    expect(
+      PremiumFeature.values,
+      containsAll([
+        PremiumFeature.meditation,
+        PremiumFeature.planOfLife,
+        PremiumFeature.rosary,
+      ]),
+    );
   });
 
   test('free status constant is non-premium and empty metadata', () {

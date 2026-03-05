@@ -1,8 +1,8 @@
 enum RosaryMysteryType {
-  joyful,    // Gozosos — Mon/Sat
+  joyful, // Gozosos — Mon/Sat
   sorrowful, // Dolorosos — Tue/Fri
-  glorious,  // Gloriosos — Wed/Sun
-  luminous,  // Luminosos — Thu
+  glorious, // Gloriosos — Wed/Sun
+  luminous, // Luminosos — Thu
 }
 
 extension RosaryMysteryTypeX on RosaryMysteryType {
@@ -42,10 +42,12 @@ final class RosaryMysterySet {
   const RosaryMysterySet({
     required this.type,
     required this.mysteries,
+    this.setImagePath,
   });
 
   final RosaryMysteryType type;
   final List<RosaryMystery> mysteries;
+  final String? setImagePath;
 
   factory RosaryMysterySet.fromJson(Map<String, dynamic> json) {
     return RosaryMysterySet(
@@ -53,6 +55,7 @@ final class RosaryMysterySet {
       mysteries: (json['mysteries'] as List)
           .map((m) => RosaryMystery.fromJson(m as Map<String, dynamic>))
           .toList(),
+      setImagePath: json['setImagePath'] as String?,
     );
   }
 }

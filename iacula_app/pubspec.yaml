@@ -85,6 +85,7 @@ flutter:
     - assets/seed/journal_prompts/
     - assets/seed/night_prayer/
     - assets/seed/liturgy_hours/
+    - assets/fonts/google_fonts/
 
 
 dependency_overrides:

@@ -31,6 +31,7 @@ import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../../examination/presentation/examination_flow_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
+import '../../rosary/presentation/rosary_intro_screen.dart';
 import 'hero_reflection_sheet.dart';
 import 'home_prayer_groups.dart';
 import 'widgets/home_action_grid.dart';
@@ -270,10 +271,8 @@ class _HomeHeroSection extends ConsumerWidget {
     return quoteAsync.when(
       data: (quote) =>
           HomeHeroCard(quote: quote, isFallback: isFallback, onTap: onHeroTap),
-      loading: () => const SizedBox(
-        height: 240,
-        child: IaculaShimmerCard(height: 240),
-      ),
+      loading: () =>
+          const SizedBox(height: 240, child: IaculaShimmerCard(height: 240)),
       error: (error, stackTrace) => IaculaErrorState(
         title: 'Não foi possível carregar a reflexão',
         message: 'Tente novamente em instantes.',
@@ -320,7 +319,16 @@ class _FeatureRail extends StatelessWidget {
     final width = MediaQuery.of(context).size.width * 0.42;
 
     final cards = [
-      _RailCard(label: 'Rosário', isComingSoon: true),
+      _RailCard(
+        label: 'Rosário',
+        isComingSoon: false,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          Navigator.of(
+            context,
+          ).push(CupertinoPageRoute(builder: (_) => const RosaryIntroScreen()));
+        },
+      ),
       _RailCard(
         label: 'Confissão',
         isComingSoon: false,

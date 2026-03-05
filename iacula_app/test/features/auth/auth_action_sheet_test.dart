@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:iacula_app/core/presentation/widgets/iacula_spring_button.dart';
 import 'package:iacula_app/features/auth/presentation/auth_action_sheet.dart';
 
 void main() {
@@ -91,15 +92,15 @@ void main() {
         expect(find.byType(CupertinoActivityIndicator), findsOneWidget);
         expect(find.text('Continuar com Google'), findsNothing);
 
-        final appleButton = tester.widget<CupertinoButton>(
+        final appleButton = tester.widget<IaculaSpringButton>(
           find
               .ancestor(
                 of: find.text('Continuar com Apple'),
-                matching: find.byType(CupertinoButton),
+                matching: find.byType(IaculaSpringButton),
               )
               .first,
         );
-        expect(appleButton.onPressed, isNull);
+        expect(appleButton.onTap, isNull);
 
         completer.complete();
         await tester.pumpAndSettle();

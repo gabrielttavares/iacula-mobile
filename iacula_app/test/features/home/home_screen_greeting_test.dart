@@ -61,6 +61,14 @@ Widget _buildApp({List<Override> extraOverrides = const []}) {
 }
 
 void main() {
+  String _largeTitleText(WidgetTester tester) {
+    final nav = tester.widget<CupertinoSliverNavigationBar>(
+      find.byType(CupertinoSliverNavigationBar),
+    );
+    final text = nav.largeTitle! as Text;
+    return text.data ?? '';
+  }
+
   testWidgets('shows generic greeting when unauthenticated', (tester) async {
     await tester.pumpWidget(
       _buildApp(
@@ -70,8 +78,9 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.textContaining('Bem vindo'), findsWidgets);
-    expect(find.text('Bem vindo, Pedro!'), findsNothing);
+    final greeting = _largeTitleText(tester);
+    expect(greeting, contains('Bem vindo'));
+    expect(greeting, isNot(contains('Pedro')));
   });
 
   testWidgets('shows user name in greeting when authenticated (female)', (
@@ -91,7 +100,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Bem vinda, Maria!'), findsWidgets);
+    expect(_largeTitleText(tester), 'Bem vinda, Maria!');
   });
 
   testWidgets('shows user name in greeting when authenticated (male)', (
@@ -111,7 +120,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Bem vindo, Pedro!'), findsWidgets);
+    expect(_largeTitleText(tester), 'Bem vindo, Pedro!');
   });
 
   testWidgets('shows generic greeting when user has no displayName', (
@@ -126,6 +135,6 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.textContaining('Bem vindo'), findsOneWidget);
+    expect(_largeTitleText(tester), 'Bem vindo!');
   });
 }

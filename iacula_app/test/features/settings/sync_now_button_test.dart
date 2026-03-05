@@ -34,8 +34,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final finder = find.text(
-      'Entre para sincronizar seus dados espirituais entre dispositivos.\nSincronizacao automatica quando online.',
+    final finder = find.textContaining(
+      'Faça login para manter seus dados espirituais sincronizados entre dispositivos.',
     );
     for (var i = 0; i < 24 && finder.evaluate().isEmpty; i++) {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));

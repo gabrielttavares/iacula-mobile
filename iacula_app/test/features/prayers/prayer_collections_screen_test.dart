@@ -48,6 +48,9 @@ class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
 
 void main() {
   testWidgets('renders group cards from catalog entries', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [

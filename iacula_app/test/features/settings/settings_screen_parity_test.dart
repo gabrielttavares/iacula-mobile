@@ -90,6 +90,9 @@ void main() {
     await tester.tap(find.text('Salvar'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Use 1..60 no intervalo.'), findsOneWidget);
+    expect(
+      find.text('O intervalo deve ser entre 1 e 60 minutos.'),
+      findsOneWidget,
+    );
   });
 }

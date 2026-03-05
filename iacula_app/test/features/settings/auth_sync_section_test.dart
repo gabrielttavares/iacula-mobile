@@ -44,7 +44,7 @@ void main() {
       expect(finder, findsOneWidget);
     }
 
-    await expectVisible('Sincronizacao opcional');
+    await expectVisible('Sincronização entre dispositivos');
     await expectVisible('Continuar com Google');
     await expectVisible('Continuar com Microsoft');
   });

@@ -18,7 +18,7 @@ void main() {
     expect(find.text('Privacidade e segurança'), findsOneWidget);
     final settingsRow = find.textContaining('Configura');
     for (var i = 0; i < 10 && settingsRow.evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(ListView), const Offset(0, -220));
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
       await tester.pumpAndSettle();
     }
     expect(settingsRow, findsOneWidget);

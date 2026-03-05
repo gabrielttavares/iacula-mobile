@@ -11,6 +11,7 @@ import 'package:iacula_app/features/notifications/domain/repositories/last_deliv
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import 'package:iacula_app/features/prayers/presentation/prayer_catalog_group_screen.dart';
+import 'package:iacula_app/features/rosary/presentation/rosary_intro_screen.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
 
@@ -210,12 +211,15 @@ void main() {
       expect(finder, findsOneWidget);
     }
 
-    expect(find.textContaining('Bem vindo'), findsWidgets);
+    final nav = tester.widget<CupertinoSliverNavigationBar>(
+      find.byType(CupertinoSliverNavigationBar),
+    );
+    final greeting = (nav.largeTitle! as Text).data ?? '';
+    expect(greeting, contains('Bem vindo'));
     expect(find.text('Destaques'), findsNothing);
     await reveal('Frases Personalizadas');
     await reveal('Sugestão de oração');
-    await reveal('Orações temáticas');
-    await reveal('Orações de Santos');
+    await reveal('Orações Temáticas');
   });
 
   testWidgets('home renders hero card before quick actions', (tester) async {
@@ -325,7 +329,7 @@ void main() {
 
     expect(find.byType(LiturgiaScreen), findsOneWidget);
     expect(find.text('Domingo'), findsOneWidget);
-    expect(find.text('Coleta: Coleta'), findsOneWidget);
+    expect(find.text('Coleta'), findsWidgets);
   });
 
   testWidgets('home thematic and saint sections show grouped cards', (
@@ -368,12 +372,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    for (var i = 0; i < 20 && find.text('Mariano').evaluate().isEmpty; i++) {
+    for (var i = 0; i < 20 && find.text('Virgem Maria').evaluate().isEmpty; i++) {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
       await tester.pump(const Duration(milliseconds: 200));
     }
 
-    final groupFinder = find.text('Mariano').first;
+    final groupFinder = find.text('Virgem Maria').first;
     await tester.ensureVisible(groupFinder);
     await tester.pumpAndSettle();
     await tester.tap(groupFinder);
@@ -383,5 +387,32 @@ void main() {
     expect(find.text('Salve Rainha'), findsOneWidget);
     expect(find.text('Ave Maria'), findsOneWidget);
     expect(find.text('Ao Anjo da Guarda'), findsNothing);
+  });
+
+  testWidgets('feature rail Rosário opens contemplative intro screen', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    for (var i = 0; i < 20 && find.text('Rosário').evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+
+    final rosaryFinder = find.text('Rosário').first;
+    await tester.ensureVisible(rosaryFinder);
+    await tester.pump();
+    await tester.tap(rosaryFinder);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(find.byType(RosaryIntroScreen), findsOneWidget);
+    expect(find.text('Em breve'), findsNothing);
   });
 }

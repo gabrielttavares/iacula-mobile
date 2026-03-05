@@ -19,7 +19,7 @@ import '../features/liturgy_hours/presentation/liturgy_hours_landing_screen.dart
 import '../features/night_prayer/presentation/night_prayer_screen.dart';
 import '../features/prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../features/prayers/presentation/prayer_screen.dart';
-import '../features/rosary/presentation/rosary_landing_screen.dart';
+import '../features/rosary/presentation/rosary_intro_screen.dart';
 import '../features/settings/domain/entities/settings.dart';
 import '../features/sync/infrastructure/services/background_sync_scheduler.dart';
 
@@ -98,7 +98,9 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
               (route) => false,
             );
             nav.push(
-              CupertinoPageRoute(builder: (_) => const PrayerIntentionsScreen()),
+              CupertinoPageRoute(
+                builder: (_) => const PrayerIntentionsScreen(),
+              ),
             );
             return;
 
@@ -126,17 +128,13 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
 
           case NotificationRouteTarget.rosary:
             nav.push(
-              CupertinoPageRoute(
-                builder: (_) => const RosaryLandingScreen(),
-              ),
+              CupertinoPageRoute(builder: (_) => const RosaryIntroScreen()),
             );
             return;
 
           case NotificationRouteTarget.journal:
             nav.push(
-              CupertinoPageRoute(
-                builder: (_) => const JournalListScreen(),
-              ),
+              CupertinoPageRoute(builder: (_) => const JournalListScreen()),
             );
             return;
         }

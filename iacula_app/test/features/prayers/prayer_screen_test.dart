@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer.dart';
 import 'package:iacula_app/features/prayers/presentation/prayer_screen.dart';
@@ -19,8 +20,9 @@ void main() {
 
   testWidgets('renders prayer content in cupertino layout', (tester) async {
     await tester.pumpWidget(
-      const CupertinoApp(home: PrayerScreen(prayer: prayer)),
+      const ProviderScope(child: CupertinoApp(home: PrayerScreen(prayer: prayer))),
     );
+    await tester.pumpAndSettle();
 
     expect(find.byType(CupertinoPageScaffold), findsOneWidget);
     expect(find.text('Angelus'), findsOneWidget);
@@ -36,19 +38,21 @@ void main() {
 
   testWidgets('back button pops the prayer screen', (tester) async {
     await tester.pumpWidget(
-      CupertinoApp(
-        home: Builder(
-          builder: (context) => CupertinoPageScaffold(
-            child: Center(
-              child: CupertinoButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (_) => const PrayerScreen(prayer: prayer),
-                    ),
-                  );
-                },
-                child: const Text('open'),
+      ProviderScope(
+        child: CupertinoApp(
+          home: Builder(
+            builder: (context) => CupertinoPageScaffold(
+              child: Center(
+                child: CupertinoButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (_) => const PrayerScreen(prayer: prayer),
+                      ),
+                    );
+                  },
+                  child: const Text('open'),
+                ),
               ),
             ),
           ),
