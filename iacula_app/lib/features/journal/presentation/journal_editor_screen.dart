@@ -8,11 +8,13 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../prayer_activity/domain/entities/prayer_activity_entry.dart';
 import '../domain/entities/journal_entry.dart';
+import '../../journal_prompts/domain/entities/journal_prompt.dart';
 
 class JournalEditorScreen extends ConsumerStatefulWidget {
-  const JournalEditorScreen({super.key, this.entry});
+  const JournalEditorScreen({super.key, this.entry, this.initialPrompt});
 
   final JournalEntry? entry;
+  final JournalPrompt? initialPrompt;
 
   @override
   ConsumerState<JournalEditorScreen> createState() =>
@@ -70,7 +72,9 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
 
     // Log activity
     final elapsed = DateTime.now().difference(_startedAt).inSeconds;
-    ref.read(prayerActivityLoggerProvider).logActivity(
+    ref
+        .read(prayerActivityLoggerProvider)
+        .logActivity(
           type: PrayerActivityType.journal,
           durationSeconds: elapsed,
           featureSlug: 'journal',
@@ -118,6 +122,32 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (widget.initialPrompt != null) ...[
+                IaculaSoftCard(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.initialPrompt!.category.label,
+                        style: context.textStyles.secondary.copyWith(
+                          color: context.colors.primaryButton,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.initialPrompt!.text,
+                        style: context.textStyles.cardTitle.copyWith(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: IaculaSpacing.md),
+              ],
               // Mood selector
               IaculaSoftCard(
                 padding: const EdgeInsets.all(12),
@@ -126,7 +156,9 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
                   children: [
                     Text(
                       'Como está seu espírito?',
-                      style: context.textStyles.secondary.copyWith(fontSize: 13),
+                      style: context.textStyles.secondary.copyWith(
+                        fontSize: 13,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -147,17 +179,24 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? context.colors.primaryButton.withValues(alpha: 0.15)
+                                  ? context.colors.primaryButton.withValues(
+                                      alpha: 0.15,
+                                    )
                                   : context.colors.systemGray6,
                               borderRadius: BorderRadius.circular(20),
                               border: isSelected
-                                  ? Border.all(color: context.colors.primaryButton)
+                                  ? Border.all(
+                                      color: context.colors.primaryButton,
+                                    )
                                   : null,
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(mood.emoji, style: const TextStyle(fontSize: 18)),
+                                Text(
+                                  mood.emoji,
+                                  style: const TextStyle(fontSize: 18),
+                                ),
                                 const SizedBox(width: 6),
                                 Text(
                                   mood.label,
@@ -219,7 +258,9 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
                   children: [
                     Text(
                       'Tags',
-                      style: context.textStyles.secondary.copyWith(fontSize: 13),
+                      style: context.textStyles.secondary.copyWith(
+                        fontSize: 13,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     if (_tags.isNotEmpty) ...[
@@ -235,7 +276,9 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: context.colors.primaryButton.withValues(alpha: 0.1),
+                                color: context.colors.primaryButton.withValues(
+                                  alpha: 0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -243,10 +286,11 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
                                 children: [
                                   Text(
                                     tag,
-                                    style: context.textStyles.secondary.copyWith(
-                                      fontSize: 13,
-                                      color: context.colors.primaryButton,
-                                    ),
+                                    style: context.textStyles.secondary
+                                        .copyWith(
+                                          fontSize: 13,
+                                          color: context.colors.primaryButton,
+                                        ),
                                   ),
                                   const SizedBox(width: 4),
                                   Icon(

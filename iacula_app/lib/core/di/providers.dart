@@ -100,6 +100,9 @@ import '../../features/challenges/infrastructure/repositories/isar_challenge_pro
 import '../../features/journal/domain/entities/journal_entry.dart';
 import '../../features/journal/domain/repositories/journal_repository.dart';
 import '../../features/journal/infrastructure/repositories/isar_journal_repository.dart';
+import '../../features/journal_prompts/domain/entities/journal_prompt.dart';
+import '../../features/journal_prompts/domain/repositories/journal_prompt_repository.dart';
+import '../../features/journal_prompts/infrastructure/repositories/asset_journal_prompt_repository.dart';
 import '../../features/doctrina/application/use_cases/get_doctrine_catalog_use_case.dart';
 import '../../features/doctrina/domain/entities/doctrine_entry.dart';
 import '../../features/doctrina/domain/repositories/doctrine_repository.dart';
@@ -200,6 +203,18 @@ final meditationCatalogRepositoryProvider =
 
 final meditationCatalogProvider = FutureProvider<List<MeditationItem>>((ref) {
   return ref.watch(meditationCatalogRepositoryProvider).listAll();
+});
+
+final journalPromptRepositoryProvider = Provider<JournalPromptRepository>((
+  ref,
+) {
+  return AssetJournalPromptRepository();
+});
+
+final journalPromptCatalogProvider = FutureProvider<List<JournalPrompt>>((
+  ref,
+) async {
+  return ref.watch(journalPromptRepositoryProvider).listAll();
 });
 
 final doctrineRepositoryProvider = Provider<DoctrineRepository>((ref) {

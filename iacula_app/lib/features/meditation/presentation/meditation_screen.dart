@@ -11,8 +11,11 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_spring_button.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../journal_prompts/domain/entities/journal_prompt.dart';
 import '../domain/entities/meditation_item.dart';
+import 'journal_prompt_detail_screen.dart';
 import 'meditation_detail_screen.dart';
+import 'models/meditation_feed_item.dart';
 
 class MeditationScreen extends ConsumerStatefulWidget {
   const MeditationScreen({super.key});
@@ -26,6 +29,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
 
   static const _filters = [
     'Todos',
+    'Reflexão guiada',
     'Espiritual',
     'Evangelho',
     'Diário',
@@ -42,6 +46,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
 
   Widget _buildContent(BuildContext context) {
     final catalogAsync = ref.watch(meditationCatalogProvider);
+    final promptsAsync = ref.watch(journalPromptCatalogProvider);
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
@@ -52,6 +57,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
             onRefresh: () async {
               HapticFeedback.lightImpact();
               ref.invalidate(meditationCatalogProvider);
+              ref.invalidate(journalPromptCatalogProvider);
               await Future.delayed(const Duration(milliseconds: 500));
             },
           ),
@@ -75,47 +81,57 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
             ),
           ),
           SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
-                child: Column(
-                  children: [
-                    _FilterChips(
-                      filters: _filters,
-                      selected: _selectedFilter,
-                      onSelected: (f) => setState(() => _selectedFilter = f),
-                    ),
-                    const SizedBox(height: IaculaSpacing.md),
-                  ],
-                ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
+              child: Column(
+                children: [
+                  _FilterChips(
+                    filters: _filters,
+                    selected: _selectedFilter,
+                    onSelected: (f) => setState(() => _selectedFilter = f),
+                  ),
+                  const SizedBox(height: IaculaSpacing.md),
+                ],
               ),
             ),
-            ...catalogAsync.maybeWhen(
-              data: (items) => _buildSliverFeed(context, _applyFilter(items)),
-              loading: () => [
-                SliverPadding(
-                  padding: const EdgeInsets.all(IaculaSpacing.md),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: const [
-                        IaculaShimmerCard(height: 280),
-                        SizedBox(height: IaculaSpacing.md),
-                        IaculaShimmerList(itemCount: 3),
-                      ],
-                    ),
+          ),
+          ...catalogAsync.when(
+            data: (items) {
+              final prompts =
+                  promptsAsync.valueOrNull ?? const <JournalPrompt>[];
+              return _buildSliverFeed(
+                context,
+                _buildFeedItems(
+                  meditations: _applyFilter(items),
+                  prompts: prompts,
+                ),
+              );
+            },
+            loading: () => [
+              SliverPadding(
+                padding: const EdgeInsets.all(IaculaSpacing.md),
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    children: const [
+                      IaculaShimmerCard(height: 280),
+                      SizedBox(height: IaculaSpacing.md),
+                      IaculaShimmerList(itemCount: 3),
+                    ],
                   ),
                 ),
-              ],
-              orElse: () => [
-                SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      'Não foi possível carregar as meditações.',
-                      style: context.textStyles.secondary,
-                    ),
+              ),
+            ],
+            error: (error, stackTrace) => [
+              SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    'Não foi possível carregar as meditações.',
+                    style: context.textStyles.secondary,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -129,7 +145,46 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
         .toList(growable: false);
   }
 
-  List<Widget> _buildSliverFeed(BuildContext context, List<MeditationItem> items) {
+  List<MeditationFeedItem> _buildFeedItems({
+    required List<MeditationItem> meditations,
+    required List<JournalPrompt> prompts,
+  }) {
+    if (_selectedFilter == 'Reflexão guiada') {
+      return prompts
+          .map<MeditationFeedItem>((prompt) => JournalPromptFeedItem(prompt))
+          .toList(growable: false);
+    }
+
+    final includePrompts = _selectedFilter == 'Todos';
+
+    if (meditations.isEmpty) {
+      return includePrompts
+          ? prompts
+                .map<MeditationFeedItem>(
+                  (prompt) => JournalPromptFeedItem(prompt),
+                )
+                .toList(growable: false)
+          : const <MeditationFeedItem>[];
+    }
+
+    final items = <MeditationFeedItem>[
+      MeditationContentFeedItem(meditations.first),
+      if (includePrompts)
+        ...prompts.map<MeditationFeedItem>(
+          (prompt) => JournalPromptFeedItem(prompt),
+        ),
+      ...meditations
+          .skip(1)
+          .map<MeditationFeedItem>((item) => MeditationContentFeedItem(item)),
+    ];
+
+    return items;
+  }
+
+  List<Widget> _buildSliverFeed(
+    BuildContext context,
+    List<MeditationFeedItem> items,
+  ) {
     if (items.isEmpty) {
       return [
         SliverFillRemaining(
@@ -143,16 +198,47 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
       ];
     }
 
-    final hero = items.first;
+    final hero = items.whereType<MeditationContentFeedItem>().firstOrNull;
+    if (hero == null) {
+      return [
+        SliverPadding(
+          padding: EdgeInsets.only(
+            left: IaculaSpacing.md,
+            right: IaculaSpacing.md,
+            bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+          ),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final prompt = (items[index] as JournalPromptFeedItem).prompt;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+                child: _JournalPromptCard(
+                  prompt: prompt,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (_) =>
+                            JournalPromptDetailScreen(prompt: prompt),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }, childCount: items.length),
+          ),
+        ),
+      ];
+    }
+
     final heroAdapter = SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
         child: _MeditationHeroCard(
-          item: hero,
+          item: hero.item,
           onTap: () {
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (_) => MeditationDetailScreen(item: hero),
+                builder: (_) => MeditationDetailScreen(item: hero.item),
               ),
             );
           },
@@ -164,7 +250,51 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
       return [heroAdapter];
     }
 
-    final library = items.skip(1).toList();
+    final prompts = items.whereType<JournalPromptFeedItem>().toList(
+      growable: false,
+    );
+    final library = items
+        .whereType<MeditationContentFeedItem>()
+        .skip(1)
+        .toList(growable: false);
+
+    final slivers = <Widget>[heroAdapter];
+    if (prompts.isNotEmpty) {
+      slivers.add(
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            IaculaSpacing.md,
+            16,
+            IaculaSpacing.md,
+            0,
+          ),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final prompt = prompts[index].prompt;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+                child: _JournalPromptCard(
+                  prompt: prompt,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (_) =>
+                            JournalPromptDetailScreen(prompt: prompt),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }, childCount: prompts.length),
+          ),
+        ),
+      );
+    }
+
+    if (library.isEmpty) {
+      return slivers;
+    }
+
     final librarySliverPadding = SliverPadding(
       padding: EdgeInsets.only(
         top: 16,
@@ -179,26 +309,24 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
           crossAxisSpacing: 16,
           childAspectRatio: 0.8,
         ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final item = library[index];
-            return _MeditationGridCard(
-              item: item,
-              onTap: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (_) => MeditationDetailScreen(item: item),
-                  ),
-                );
-              },
-            );
-          },
-          childCount: library.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final item = library[index].item;
+          return _MeditationGridCard(
+            item: item,
+            onTap: () {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (_) => MeditationDetailScreen(item: item),
+                ),
+              );
+            },
+          );
+        }, childCount: library.length),
       ),
     );
 
-    return [heroAdapter, librarySliverPadding];
+    slivers.add(librarySliverPadding);
+    return slivers;
   }
 }
 
@@ -257,10 +385,7 @@ class _FilterChips extends StatelessWidget {
 }
 
 class _MeditationGridCard extends StatelessWidget {
-  const _MeditationGridCard({
-    required this.item,
-    required this.onTap,
-  });
+  const _MeditationGridCard({required this.item, required this.onTap});
 
   final MeditationItem item;
   final VoidCallback onTap;
@@ -274,11 +399,7 @@ class _MeditationGridCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _TypeGlyph(
-              type: item.type,
-              size: 32,
-              iconSize: 16,
-            ),
+            _TypeGlyph(type: item.type, size: 32, iconSize: 16),
             const SizedBox(height: 12),
             Text(
               item.title,
@@ -300,7 +421,8 @@ class _MeditationGridCard extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                if (item.durationLabel != null) _Badge(text: item.durationLabel!),
+                if (item.durationLabel != null)
+                  _Badge(text: item.durationLabel!),
                 if (item.availability.kind == MeditationAvailabilityKind.daily)
                   const _Badge(text: 'Diário'),
               ],
@@ -312,12 +434,63 @@ class _MeditationGridCard extends StatelessWidget {
   }
 }
 
+class _JournalPromptCard extends StatelessWidget {
+  const _JournalPromptCard({required this.prompt, required this.onTap});
+
+  final JournalPrompt prompt;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return IaculaTouchableCard(
+      onTap: onTap,
+      child: IaculaSoftCard(
+        showShadow: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: context.colors.primaryButton.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    CupertinoIcons.pencil_ellipsis_rectangle,
+                    color: context.colors.primaryButton,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    prompt.category.label,
+                    style: context.textStyles.secondary.copyWith(
+                      color: context.colors.primaryButton,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(prompt.text, style: context.textStyles.cardTitle),
+            const SizedBox(height: 8),
+            Text(
+              prompt.category.description,
+              style: context.textStyles.secondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _TypeGlyph extends StatelessWidget {
-  const _TypeGlyph({
-    required this.type,
-    this.size = 44,
-    this.iconSize = 22,
-  });
+  const _TypeGlyph({required this.type, this.size = 44, this.iconSize = 22});
 
   final MeditationType type;
   final double size;
@@ -326,8 +499,14 @@ class _TypeGlyph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (icon, color) = switch (type) {
-      MeditationType.video => (CupertinoIcons.play_circle, context.colors.primaryButton),
-      MeditationType.audio => (CupertinoIcons.waveform, const Color(0xFF34C759)),
+      MeditationType.video => (
+        CupertinoIcons.play_circle,
+        context.colors.primaryButton,
+      ),
+      MeditationType.audio => (
+        CupertinoIcons.waveform,
+        const Color(0xFF34C759),
+      ),
       MeditationType.text => (CupertinoIcons.doc_text, const Color(0xFFFF9500)),
     };
 
@@ -346,25 +525,23 @@ class _TypeGlyph extends StatelessWidget {
 BoxDecoration _getGradientForType(MeditationType type, BuildContext context) {
   final LinearGradient gradient = switch (type) {
     MeditationType.video => const LinearGradient(
-        colors: [Color(0xFF673AB7), Color(0xFFE91E63)], // Deep Purple to Magenta
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+      colors: [Color(0xFF673AB7), Color(0xFFE91E63)], // Deep Purple to Magenta
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
     MeditationType.audio => const LinearGradient(
-        colors: [Color(0xFF0D47A1), Color(0xFF00BCD4)], // Deep Blue to Cyan
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+      colors: [Color(0xFF0D47A1), Color(0xFF00BCD4)], // Deep Blue to Cyan
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
     MeditationType.text => const LinearGradient(
-        colors: [Color(0xFFE64A19), Color(0xFFFFEB3B)], // Deep Orange to Yellow
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+      colors: [Color(0xFFE64A19), Color(0xFFFFEB3B)], // Deep Orange to Yellow
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
   };
 
-  return BoxDecoration(
-    gradient: gradient,
-  );
+  return BoxDecoration(gradient: gradient);
 }
 
 class _Badge extends StatelessWidget {
@@ -393,10 +570,7 @@ class _Badge extends StatelessWidget {
 }
 
 class _MeditationHeroCard extends StatelessWidget {
-  const _MeditationHeroCard({
-    required this.item,
-    required this.onTap,
-  });
+  const _MeditationHeroCard({required this.item, required this.onTap});
 
   final MeditationItem item;
   final VoidCallback onTap;
@@ -415,9 +589,10 @@ class _MeditationHeroCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         child: Container(
           height: 280,
-          decoration: _getGradientForType(item.type, context).copyWith(
-            borderRadius: BorderRadius.circular(24),
-          ),
+          decoration: _getGradientForType(
+            item.type,
+            context,
+          ).copyWith(borderRadius: BorderRadius.circular(24)),
           child: Stack(
             children: [
               Positioned(
