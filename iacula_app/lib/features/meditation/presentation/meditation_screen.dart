@@ -149,30 +149,27 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
     required List<MeditationItem> meditations,
     required List<JournalPrompt> prompts,
   }) {
+    final promptGroup = _buildPromptGroup(prompts);
+
     if (_selectedFilter == 'Reflexão guiada') {
-      return prompts
-          .map<MeditationFeedItem>((prompt) => JournalPromptFeedItem(prompt))
-          .toList(growable: false);
+      return promptGroup == null
+          ? const <MeditationFeedItem>[]
+          : <MeditationFeedItem>[promptGroup];
     }
 
     final includePrompts = _selectedFilter == 'Todos';
 
     if (meditations.isEmpty) {
       return includePrompts
-          ? prompts
-                .map<MeditationFeedItem>(
-                  (prompt) => JournalPromptFeedItem(prompt),
-                )
-                .toList(growable: false)
+          ? promptGroup == null
+                ? const <MeditationFeedItem>[]
+                : <MeditationFeedItem>[promptGroup]
           : const <MeditationFeedItem>[];
     }
 
     final items = <MeditationFeedItem>[
       MeditationContentFeedItem(meditations.first),
-      if (includePrompts)
-        ...prompts.map<MeditationFeedItem>(
-          (prompt) => JournalPromptFeedItem(prompt),
-        ),
+      if (includePrompts && promptGroup != null) promptGroup,
       ...meditations
           .skip(1)
           .map<MeditationFeedItem>((item) => MeditationContentFeedItem(item)),
@@ -200,6 +197,22 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
 
     final hero = items.whereType<MeditationContentFeedItem>().firstOrNull;
     if (hero == null) {
+      final promptGroup = items
+          .whereType<JournalPromptGroupFeedItem>()
+          .firstOrNull;
+      if (promptGroup == null) {
+        return [
+          SliverFillRemaining(
+            child: Center(
+              child: Text(
+                'Nenhuma meditação encontrada para este filtro.',
+                style: context.textStyles.secondary,
+              ),
+            ),
+          ),
+        ];
+      }
+
       return [
         SliverPadding(
           padding: EdgeInsets.only(
@@ -207,24 +220,11 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
             right: IaculaSpacing.md,
             bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
           ),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final prompt = (items[index] as JournalPromptFeedItem).prompt;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-                child: _JournalPromptCard(
-                  prompt: prompt,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) =>
-                            JournalPromptDetailScreen(prompt: prompt),
-                      ),
-                    );
-                  },
-                ),
-              );
-            }, childCount: items.length),
+          sliver: SliverToBoxAdapter(
+            child: _ReflexoesCard(
+              sections: promptGroup.sections,
+              onPromptTap: (prompt) => _openPromptDetail(context, prompt),
+            ),
           ),
         ),
       ];
@@ -250,16 +250,16 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
       return [heroAdapter];
     }
 
-    final prompts = items.whereType<JournalPromptFeedItem>().toList(
-      growable: false,
-    );
+    final promptGroup = items
+        .whereType<JournalPromptGroupFeedItem>()
+        .firstOrNull;
     final library = items
         .whereType<MeditationContentFeedItem>()
         .skip(1)
         .toList(growable: false);
 
     final slivers = <Widget>[heroAdapter];
-    if (prompts.isNotEmpty) {
+    if (promptGroup != null) {
       slivers.add(
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(
@@ -268,24 +268,11 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
             IaculaSpacing.md,
             0,
           ),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final prompt = prompts[index].prompt;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-                child: _JournalPromptCard(
-                  prompt: prompt,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) =>
-                            JournalPromptDetailScreen(prompt: prompt),
-                      ),
-                    );
-                  },
-                ),
-              );
-            }, childCount: prompts.length),
+          sliver: SliverToBoxAdapter(
+            child: _ReflexoesCard(
+              sections: promptGroup.sections,
+              onPromptTap: (prompt) => _openPromptDetail(context, prompt),
+            ),
           ),
         ),
       );
@@ -327,6 +314,32 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
 
     slivers.add(librarySliverPadding);
     return slivers;
+  }
+
+  JournalPromptGroupFeedItem? _buildPromptGroup(List<JournalPrompt> prompts) {
+    if (prompts.isEmpty) return null;
+
+    final sections = JournalPromptCategory.values
+        .map((category) {
+          final items = prompts
+              .where((prompt) => prompt.category == category)
+              .toList(growable: false);
+          if (items.isEmpty) return null;
+          return JournalPromptSection(category: category, prompts: items);
+        })
+        .nonNulls
+        .toList(growable: false);
+
+    if (sections.isEmpty) return null;
+    return JournalPromptGroupFeedItem(sections);
+  }
+
+  void _openPromptDetail(BuildContext context, JournalPrompt prompt) {
+    Navigator.of(context).push(
+      CupertinoPageRoute(
+        builder: (_) => JournalPromptDetailScreen(prompt: prompt),
+      ),
+    );
   }
 }
 
@@ -434,57 +447,112 @@ class _MeditationGridCard extends StatelessWidget {
   }
 }
 
-class _JournalPromptCard extends StatelessWidget {
-  const _JournalPromptCard({required this.prompt, required this.onTap});
+class _ReflexoesCard extends StatelessWidget {
+  const _ReflexoesCard({required this.sections, required this.onPromptTap});
 
-  final JournalPrompt prompt;
-  final VoidCallback onTap;
+  final List<JournalPromptSection> sections;
+  final ValueChanged<JournalPrompt> onPromptTap;
 
   @override
   Widget build(BuildContext context) {
-    return IaculaTouchableCard(
-      onTap: onTap,
-      child: IaculaSoftCard(
-        showShadow: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: context.colors.primaryButton.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    CupertinoIcons.pencil_ellipsis_rectangle,
-                    color: context.colors.primaryButton,
-                  ),
+    return IaculaSoftCard(
+      showShadow: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: context.colors.primaryButton.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    prompt.category.label,
-                    style: context.textStyles.secondary.copyWith(
-                      color: context.colors.primaryButton,
-                      fontWeight: FontWeight.w600,
+                child: Icon(
+                  CupertinoIcons.pencil_ellipsis_rectangle,
+                  color: context.colors.primaryButton,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Reflexões', style: context.textStyles.cardTitle),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Lectio, exame inaciano e outras perguntas para aprofundar a oração.',
+                      style: context.textStyles.secondary,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          for (var index = 0; index < sections.length; index++) ...[
+            if (index > 0) const SizedBox(height: 16),
+            _PromptSection(section: sections[index], onPromptTap: onPromptTap),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PromptSection extends StatelessWidget {
+  const _PromptSection({required this.section, required this.onPromptTap});
+
+  final JournalPromptSection section;
+  final ValueChanged<JournalPrompt> onPromptTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          section.category.label,
+          style: context.textStyles.secondary.copyWith(
+            color: context.colors.primaryButton,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
+        for (var index = 0; index < section.prompts.length; index++) ...[
+          if (index > 0) const SizedBox(height: 8),
+          IaculaTouchableCard(
+            onTap: () => onPromptTap(section.prompts[index]),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: context.colors.secondaryButton,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      section.prompts[index].text,
+                      style: context.textStyles.secondary.copyWith(
+                        color: context.colors.textPrimary,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Icon(
+                    CupertinoIcons.chevron_right,
+                    size: 16,
+                    color: context.colors.textSecondary,
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            Text(prompt.text, style: context.textStyles.cardTitle),
-            const SizedBox(height: 8),
-            Text(
-              prompt.category.description,
-              style: context.textStyles.secondary,
-            ),
-          ],
-        ),
-      ),
+          ),
+        ],
+      ],
     );
   }
 }

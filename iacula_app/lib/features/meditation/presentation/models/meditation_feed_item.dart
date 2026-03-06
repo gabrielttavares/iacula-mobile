@@ -11,8 +11,15 @@ final class MeditationContentFeedItem extends MeditationFeedItem {
   final MeditationItem item;
 }
 
-final class JournalPromptFeedItem extends MeditationFeedItem {
-  const JournalPromptFeedItem(this.prompt);
+final class JournalPromptGroupFeedItem extends MeditationFeedItem {
+  const JournalPromptGroupFeedItem(this.sections);
 
-  final JournalPrompt prompt;
+  final List<JournalPromptSection> sections;
+}
+
+final class JournalPromptSection {
+  const JournalPromptSection({required this.category, required this.prompts});
+
+  final JournalPromptCategory category;
+  final List<JournalPrompt> prompts;
 }

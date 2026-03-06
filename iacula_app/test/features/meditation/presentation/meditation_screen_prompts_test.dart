@@ -68,6 +68,21 @@ final class _FakeJournalPromptRepository implements JournalPromptRepository {
         category: JournalPromptCategory.ignatian,
         text: 'Pelo que sou grato a Deus hoje?',
       ),
+      JournalPrompt(
+        id: 'prompt-2',
+        category: JournalPromptCategory.lectioDivina,
+        text: 'Que palavra Deus me dirige através desta leitura?',
+      ),
+      JournalPrompt(
+        id: 'prompt-3',
+        category: JournalPromptCategory.liturgical,
+        text: 'Como a leitura de hoje fala à minha vida?',
+      ),
+      JournalPrompt(
+        id: 'prompt-4',
+        category: JournalPromptCategory.general,
+        text: 'Que graças recebi hoje?',
+      ),
     ];
   }
 }
@@ -94,50 +109,56 @@ final class _FakeJournalRepository implements JournalRepository {
 }
 
 void main() {
-  testWidgets('meditation screen shows prompt filter and opens journal flow', (
-    tester,
-  ) async {
-    final journalRepository = _FakeJournalRepository();
+  testWidgets(
+    'meditation screen shows grouped Reflexões card and opens journal flow',
+    (tester) async {
+      final journalRepository = _FakeJournalRepository();
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          premiumStatusProvider.overrideWith((ref) {
-            return Stream<PremiumStatus>.value(
-              const PremiumStatus(isPremium: true),
-            );
-          }),
-          meditationCatalogRepositoryProvider.overrideWithValue(
-            _FakeMeditationCatalogRepository(),
-          ),
-          journalPromptRepositoryProvider.overrideWithValue(
-            _FakeJournalPromptRepository(),
-          ),
-          journalRepositoryProvider.overrideWithValue(journalRepository),
-        ],
-        child: const CupertinoApp(home: MeditationScreen()),
-      ),
-    );
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            premiumStatusProvider.overrideWith((ref) {
+              return Stream<PremiumStatus>.value(
+                const PremiumStatus(isPremium: true),
+              );
+            }),
+            meditationCatalogRepositoryProvider.overrideWithValue(
+              _FakeMeditationCatalogRepository(),
+            ),
+            journalPromptRepositoryProvider.overrideWithValue(
+              _FakeJournalPromptRepository(),
+            ),
+            journalRepositoryProvider.overrideWithValue(journalRepository),
+          ],
+          child: const CupertinoApp(home: MeditationScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('Reflexão guiada'), findsOneWidget);
+      expect(find.text('Reflexão guiada'), findsOneWidget);
 
-    await tester.tap(find.text('Reflexão guiada'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Reflexão guiada'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
+      expect(find.text('Reflexões'), findsOneWidget);
+      expect(find.text('Lectio Divina'), findsOneWidget);
+      expect(find.text('Inaciano'), findsOneWidget);
+      expect(find.text('Litúrgico'), findsOneWidget);
+      expect(find.text('Geral'), findsOneWidget);
+      expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
 
-    await tester.tap(find.text('Pelo que sou grato a Deus hoje?'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Pelo que sou grato a Deus hoje?'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Escrever no diário'), findsOneWidget);
+      expect(find.text('Escrever no diário'), findsOneWidget);
 
-    await tester.tap(find.text('Escrever no diário'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Escrever no diário'));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(JournalEditorScreen), findsOneWidget);
-    expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
-  });
+      expect(find.byType(JournalEditorScreen), findsOneWidget);
+      expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
+    },
+  );
 
   testWidgets('prompt detail shortcuts open Leituras and Bíblia', (
     tester,
@@ -202,15 +223,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(find.text('Reflexões'), findsOneWidget);
     expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
 
     await tester.tap(find.text('Espiritual'));
     await tester.pumpAndSettle();
+    expect(find.text('Reflexões'), findsNothing);
     expect(find.text('Pelo que sou grato a Deus hoje?'), findsNothing);
     expect(find.text('Meditação do dia'), findsOneWidget);
 
     await tester.tap(find.text('Reflexão guiada'));
     await tester.pumpAndSettle();
+    expect(find.text('Reflexões'), findsOneWidget);
     expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
     expect(find.text('Meditação do dia'), findsNothing);
   });
