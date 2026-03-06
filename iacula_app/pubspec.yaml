@@ -90,6 +90,8 @@ flutter:
     - assets/seed/bible/novotestamento/
     - assets/books/escriva/
     - assets/books/library/
+    - assets/books/library/authors/
+    - assets/books/library/works/
     - assets/fonts/google_fonts/
 
 
