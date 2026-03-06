@@ -4,7 +4,8 @@ import '../../domain/entities/notification_action_event.dart';
 import '../../domain/entities/reminder_event.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
-final class InMemoryNotificationSchedulerRepository implements NotificationSchedulerRepository {
+final class InMemoryNotificationSchedulerRepository
+    implements NotificationSchedulerRepository {
   static int _idForEvent(ReminderEvent event) {
     return event.scheduledId ?? _idForType(event.type);
   }
@@ -35,12 +36,12 @@ final class InMemoryNotificationSchedulerRepository implements NotificationSched
   @override
   Future<void> schedule(ReminderEvent event) async {
     final id = _idForEvent(event);
-    _events[id] = event;
+    _events[id] = event.copyWith(scheduledId: id);
   }
 
   @override
   Future<void> scheduleWithId(int id, ReminderEvent event) async {
-    _events[id] = event;
+    _events[id] = event.copyWith(scheduledId: id);
   }
 
   @override

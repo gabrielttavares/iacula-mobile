@@ -23,7 +23,7 @@ final class _InMemoryLastDeliveredCardRepository
 
 void main() {
   test(
-    'schedules quote reminder with quote text and stores last delivered card',
+    'schedules a quote reminder batch and stores first delivered card',
     () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final lastCardRepo = _InMemoryLastDeliveredCardRepository();
@@ -53,11 +53,33 @@ void main() {
 
       await useCase(settings, now: now);
 
-      final quoteEvent = scheduler.events.firstWhere(
-        (e) => e.type == ReminderEventType.quoteInterval,
+      final quoteEvents =
+          scheduler.events
+              .where((e) => e.type == ReminderEventType.quoteInterval)
+              .toList()
+            ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+      expect(quoteEvents.length, 64);
+      expect(quoteEvents.first.title, '');
+      expect(quoteEvents.first.body, 'Sede santos, porque eu sou santo.');
+      expect(
+        quoteEvents.map((event) => event.scheduledId).whereType<int>().toSet(),
+        hasLength(64),
       );
-      expect(quoteEvent.title, '');
-      expect(quoteEvent.body, 'Sede santos, porque eu sou santo.');
+      expect(quoteEvents.first.scheduledId, 9000);
+      expect(quoteEvents.last.scheduledId, 9063);
+      expect(
+        quoteEvents.first.scheduledAt,
+        now.add(const Duration(minutes: 15)),
+      );
+      expect(
+        quoteEvents.last.scheduledAt,
+        now.add(const Duration(minutes: 15 * 64)),
+      );
+
+      final angelusEvent = scheduler.events.firstWhere(
+        (e) => e.type == ReminderEventType.angelusNoon,
+      );
+      expect(angelusEvent.scheduledId, 200);
 
       final lastCard = await lastCardRepo.load();
       expect(lastCard, isNotNull);

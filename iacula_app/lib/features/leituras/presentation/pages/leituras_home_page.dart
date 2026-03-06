@@ -1,64 +1,15 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../../../core/theme/cupertino_tokens.dart';
-import '../../../premium/domain/entities/premium_feature.dart';
-import '../../../premium/presentation/premium_gate.dart';
 import 'author_list_page.dart';
-import 'book_list_page.dart';
 
 class LeiturasHomePage extends StatelessWidget {
   const LeiturasHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: context.colors.background,
-      navigationBar: const CupertinoNavigationBar(middle: Text('Leituras')),
-      child: PremiumGate(
-        feature: PremiumFeature.leituras,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(IaculaSpacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Leituras', style: context.textStyles.largeTitle),
-                const SizedBox(height: IaculaSpacing.sm),
-                Text(
-                  'A biblioteca reúne os melhores livros de autores e Santos renomados da espiritualidade meditativa e prática.',
-                  style: context.textStyles.secondary,
-                ),
-                const SizedBox(height: IaculaSpacing.lg),
-                CupertinoButton.filled(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => const BookListPage(
-                          authorId: 'sao-josemaria-escriva',
-                          authorName: 'São Josemaría Escrivá',
-                          title: 'São Josemaría Escrivá',
-                        ),
-                      ),
-                    );
-                  },
-                  child: const Text('São Josemaría Escrivá'),
-                ),
-                const SizedBox(height: IaculaSpacing.sm),
-                CupertinoButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => const AuthorListPage(),
-                      ),
-                    );
-                  },
-                  child: const Text('Ver autores e santos'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+    return const AuthorListPage(
+      navigationTitle: 'Leituras',
+      showLeiturasIntro: true,
     );
   }
 }

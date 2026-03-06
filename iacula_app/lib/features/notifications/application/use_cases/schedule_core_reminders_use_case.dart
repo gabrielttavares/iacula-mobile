@@ -10,6 +10,9 @@ typedef QuoteFetcher =
     Future<Quote> Function({required String language, required DateTime now});
 
 final class ScheduleCoreRemindersUseCase {
+  static const int quoteScheduleIdBase = 9000;
+  static const int maxQueuedQuoteReminders = 64;
+
   const ScheduleCoreRemindersUseCase(
     this._scheduler, {
     required QuoteFetcher quoteFetcher,
@@ -23,26 +26,40 @@ final class ScheduleCoreRemindersUseCase {
 
   Future<void> call(Settings settings, {DateTime? now}) async {
     final current = now ?? DateTime.now();
-    final nextQuote = await _quoteFetcher(
-      language: settings.language,
-      now: current,
-    );
+    Quote? firstQuote;
+    DateTime? firstQuoteAt;
 
-    final quoteAt = current.add(Duration(minutes: settings.intervalMinutes));
-    await _scheduler.schedule(
-      ReminderEvent(
-        type: ReminderEventType.quoteInterval,
-        title: '',
-        body: nextQuote.text,
-        scheduledAt: quoteAt,
-        withVibration: true,
-        isAlarm: false,
-        routeTarget: NotificationRouteTarget.home,
-      ),
-    );
-    await _lastDeliveredCardRepository.save(
-      LastDeliveredCard.fromQuote(nextQuote, deliveredAt: quoteAt),
-    );
+    for (var i = 0; i < maxQueuedQuoteReminders; i++) {
+      final quoteAt = current.add(
+        Duration(minutes: settings.intervalMinutes * (i + 1)),
+      );
+      final quote = await _quoteFetcher(
+        language: settings.language,
+        now: quoteAt,
+      );
+      firstQuote ??= quote;
+      firstQuoteAt ??= quoteAt;
+
+      await _scheduler.scheduleWithId(
+        quoteScheduleIdBase + i,
+        ReminderEvent(
+          type: ReminderEventType.quoteInterval,
+          title: '',
+          body: quote.text,
+          scheduledAt: quoteAt,
+          withVibration: true,
+          isAlarm: false,
+          routeTarget: NotificationRouteTarget.home,
+          scheduledId: quoteScheduleIdBase + i,
+        ),
+      );
+    }
+
+    if (firstQuote != null && firstQuoteAt != null) {
+      await _lastDeliveredCardRepository.save(
+        LastDeliveredCard.fromQuote(firstQuote, deliveredAt: firstQuoteAt),
+      );
+    }
 
     final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
     await _scheduler.schedule(

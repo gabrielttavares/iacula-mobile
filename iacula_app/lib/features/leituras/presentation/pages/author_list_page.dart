@@ -13,8 +13,39 @@ final _authorsProvider = FutureProvider<List<AuthorModel>>((ref) async {
   return ref.watch(leituraRepositoryProvider).listAuthors();
 });
 
+const _enabledAuthorId = 'sao-josemaria-escriva';
+
+bool _isAuthorEnabled(AuthorModel author) {
+  return author.id == _enabledAuthorId;
+}
+
+void _showCuradoriaDialog(BuildContext context) {
+  showCupertinoDialog<void>(
+    context: context,
+    builder: (context) => CupertinoAlertDialog(
+      title: const Text('Em preparação'),
+      content: const Text(
+        'Esta obra está em curadoria e será adicionada em breve.',
+      ),
+      actions: [
+        CupertinoDialogAction(
+          child: const Text('Fechar'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ],
+    ),
+  );
+}
+
 class AuthorListPage extends ConsumerWidget {
-  const AuthorListPage({super.key});
+  const AuthorListPage({
+    super.key,
+    this.navigationTitle = 'Autores e Santos',
+    this.showLeiturasIntro = false,
+  });
+
+  final String navigationTitle;
+  final bool showLeiturasIntro;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,8 +53,8 @@ class AuthorListPage extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Autores e Santos'),
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(navigationTitle),
       ),
       child: PremiumGate(
         feature: PremiumFeature.leituras,
@@ -37,7 +68,92 @@ class AuthorListPage extends ConsumerWidget {
               ),
             ),
             data: (authors) {
-              return ListView.separated(
+              final listItems = <Widget>[
+                if (showLeiturasIntro) ...[
+                  Text('Leituras', style: context.textStyles.largeTitle),
+                  const SizedBox(height: IaculaSpacing.sm),
+                  Text(
+                    'A biblioteca reúne os melhores livros de autores e Santos renomados da espiritualidade meditativa e prática.',
+                    style: context.textStyles.secondary,
+                  ),
+                  const SizedBox(height: IaculaSpacing.lg),
+                ],
+                ...List<Widget>.generate(authors.length, (index) {
+                  final author = authors[index];
+                  final isEnabled = _isAuthorEnabled(author);
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+                    child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        if (!isEnabled) {
+                          _showCuradoriaDialog(context);
+                          return;
+                        }
+
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => BookListPage(
+                              authorId: author.id,
+                              authorName: author.name,
+                              title: author.name,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Opacity(
+                        opacity: isEnabled ? 1 : 0.6,
+                        child: IaculaSoftCard(
+                          radius: 16,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      author.name,
+                                      style: context.textStyles.cardTitle,
+                                    ),
+                                    if (!isEnabled) ...[
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Em breve',
+                                        style: context.textStyles.secondary,
+                                      ),
+                                    ] else if (author.description.isNotEmpty) ...[
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        author.description,
+                                        style: context.textStyles.secondary,
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                '${author.worksCount}',
+                                style: context.textStyles.secondary,
+                              ),
+                              const SizedBox(width: IaculaSpacing.sm),
+                              Icon(
+                                isEnabled
+                                    ? CupertinoIcons.chevron_right
+                                    : CupertinoIcons.lock,
+                                color: context.colors.textSecondary,
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ];
+
+              return ListView(
                 physics: const BouncingScrollPhysics(),
                 padding: EdgeInsets.fromLTRB(
                   IaculaSpacing.md,
@@ -45,61 +161,7 @@ class AuthorListPage extends ConsumerWidget {
                   IaculaSpacing.md,
                   IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
                 ),
-                itemCount: authors.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(height: IaculaSpacing.sm),
-                itemBuilder: (context, index) {
-                  final author = authors[index];
-                  return CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        CupertinoPageRoute(
-                          builder: (_) => BookListPage(
-                            authorId: author.id,
-                            authorName: author.name,
-                            title: author.name,
-                          ),
-                        ),
-                      );
-                    },
-                    child: IaculaSoftCard(
-                      radius: 16,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  author.name,
-                                  style: context.textStyles.cardTitle,
-                                ),
-                                if (author.description.isNotEmpty) ...[
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    author.description,
-                                    style: context.textStyles.secondary,
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                          Text(
-                            '${author.worksCount}',
-                            style: context.textStyles.secondary,
-                          ),
-                          const SizedBox(width: IaculaSpacing.sm),
-                          Icon(
-                            CupertinoIcons.chevron_right,
-                            color: context.colors.textSecondary,
-                            size: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                children: listItems,
               );
             },
           ),
