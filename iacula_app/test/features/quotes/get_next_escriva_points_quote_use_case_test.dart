@@ -5,11 +5,14 @@ import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/leituras/data/repositories/leitura_repository.dart';
 import 'package:iacula_app/features/leituras/data/sources/leitura_local_source.dart';
 import 'package:iacula_app/features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
+import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 
 void main() {
   test('maps Caminho/Sulco/Forja points into quote payload', () async {
     final useCase = GetNextEscrivaPointsQuoteUseCase(
-      LeituraRepository(localSource: LeituraLocalSource(loadAsset: _fakeAssetLoader)),
+      LeituraRepository(
+        localSource: LeituraLocalSource(loadAsset: _fakeAssetLoader),
+      ),
     );
 
     final quote = await useCase.call(
@@ -20,6 +23,8 @@ void main() {
     expect(quote.text, 'Caminho ponto 1');
     expect(quote.theme, 'Caminho · Caráter');
     expect(quote.season, LiturgicalSeason.ordinary);
+    expect(quote.source, QuoteSource.escrivaPoints);
+    expect(quote.referenceLabel, 'Caminho, 1');
   });
 
   test('returns unavailable content fallback when no points exist', () async {

@@ -124,7 +124,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             if (value != null) {
                               HapticFeedback.selectionClick();
                               setState(() => _themeMode = value);
-                              ref.read(themeModeProvider.notifier).state = value;
+                              ref.read(themeModeProvider.notifier).state =
+                                  value;
                             }
                           },
                         ),
@@ -140,7 +141,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _fieldLabel(context, 'Intervalo das jaculatórias (minutos)'),
+                        _fieldLabel(
+                          context,
+                          'Intervalo das jaculatórias (minutos)',
+                        ),
                         IaculaTextInput(
                           controller: _intervalController,
                           placeholder: '1..60',
@@ -267,7 +271,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     setState(() => _validationMessage = null);
     final interval = int.tryParse(_intervalController.text);
     if (interval == null || interval < 1 || interval > 60) {
-      setState(() => _validationMessage = 'O intervalo deve ser entre 1 e 60 minutos.');
+      setState(
+        () => _validationMessage = 'O intervalo deve ser entre 1 e 60 minutos.',
+      );
       return;
     }
 
@@ -288,6 +294,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await ScheduleCoreRemindersUseCase(
       schedulerRepo,
       quoteFetcher: ({required String language, required DateTime now}) {
+        if (settings.escrivaPointsFeedEnabled) {
+          return ref
+              .read(getNextEscrivaPointsQuoteUseCaseProvider)
+              .call(language: language, now: now);
+        }
+
         return ref
             .read(getNextQuoteUseCaseProvider)
             .call(language: language, now: now);

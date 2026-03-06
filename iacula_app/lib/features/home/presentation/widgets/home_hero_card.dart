@@ -44,9 +44,15 @@ class HomeHeroCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isEscrivaPoints = quote.resolvedSource == QuoteSource.escrivaPoints;
     final imagePath = _resolveAssetPath(quote.imagePath);
-    final labelText = quote.feastName ??
-        (quote.theme == 'personal' ? 'frase pessoal' : _seasonLabels[quote.season]) ??
+    final labelText =
+        quote.feastName ??
+        (isEscrivaPoints
+            ? quote.referenceLabel
+            : quote.theme == 'personal'
+            ? 'frase pessoal'
+            : _seasonLabels[quote.season]) ??
         '';
 
     return PremiumTouchableCard(
@@ -72,7 +78,22 @@ class HomeHeroCard extends ConsumerWidget {
               children: [
                 SizedBox(height: 240, width: double.infinity),
                 Positioned.fill(
-                  child: imagePath != null
+                  child: isEscrivaPoints
+                      ? DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                const Color(0xFF1A2640),
+                                const Color(0xFF101B32),
+                                const Color(0xFF232346),
+                              ],
+                              stops: const [0.0, 0.48, 1.0],
+                            ),
+                          ),
+                        )
+                      : imagePath != null
                       ? Image.asset(
                           imagePath,
                           fit: BoxFit.cover,
@@ -89,28 +110,46 @@ class HomeHeroCard extends ConsumerWidget {
                             color: context.colors.homeHeroFallback,
                           ),
                         ),
+                ),
+                if (isEscrivaPoints)
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: const Alignment(-0.45, -0.5),
+                          radius: 1.05,
+                          colors: [
+                            Colors.white.withValues(alpha: 0.11),
+                            Colors.transparent,
+                          ],
                         ),
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.34),
+                      ),
                     ),
                   ),
-                ),
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          context.colors.homeHeroTop,
-                          context.colors.homeHeroBottom,
-                        ],
+                      color: Colors.black.withValues(
+                        alpha: isEscrivaPoints ? 0.22 : 0.34,
                       ),
                     ),
                   ),
                 ),
+                if (!isEscrivaPoints)
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            context.colors.homeHeroTop,
+                            context.colors.homeHeroBottom,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 Positioned(
                   top: 18,
                   right: 18,
@@ -120,29 +159,21 @@ class HomeHeroCard extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(18),
                     child: Center(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              quote.text,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                color: context.colors.homeHeroText,
-                                height: 1.5,
-                              ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: _AutoSizingQuoteText(text: quote.text),
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                if (!isFallback)
+                if (!isFallback || isEscrivaPoints)
                   Positioned(
                     left: 18,
                     bottom: 8,
@@ -165,6 +196,56 @@ class HomeHeroCard extends ConsumerWidget {
   }
 }
 
+class _AutoSizingQuoteText extends StatelessWidget {
+  const _AutoSizingQuoteText({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    const maxFontSize = 17.0;
+    const minFontSize = 12.0;
+    const lineHeight = 1.45;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var chosenSize = maxFontSize;
+        for (var size = maxFontSize; size >= minFontSize; size -= 0.5) {
+          final painter = TextPainter(
+            text: TextSpan(
+              text: text,
+              style: TextStyle(
+                fontSize: size,
+                fontWeight: FontWeight.w600,
+                color: context.colors.homeHeroText,
+                height: lineHeight,
+              ),
+            ),
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.ltr,
+          )..layout(maxWidth: constraints.maxWidth);
+
+          if (painter.height <= constraints.maxHeight) {
+            chosenSize = size;
+            break;
+          }
+        }
+
+        return Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: chosenSize,
+            fontWeight: FontWeight.w600,
+            color: context.colors.homeHeroText,
+            height: lineHeight,
+          ),
+        );
+      },
+    );
+  }
+}
+
 class _HeroBookmarkButton extends ConsumerWidget {
   const _HeroBookmarkButton({required this.quote});
 
@@ -172,7 +253,9 @@ class _HeroBookmarkButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final favoriteAsync = ref.watch(favoriteItemByQuoteTextProvider(quote.text));
+    final favoriteAsync = ref.watch(
+      favoriteItemByQuoteTextProvider(quote.text),
+    );
     final isSaved = favoriteAsync.valueOrNull != null;
     final savedItem = favoriteAsync.valueOrNull;
 

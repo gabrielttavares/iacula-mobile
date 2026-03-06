@@ -563,6 +563,17 @@ final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
 final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
   final lastDeliveredCardRepo = ref.watch(lastDeliveredCardRepositoryProvider);
+
+  if (settings.escrivaPointsFeedEnabled) {
+    final quote = await ref
+        .watch(getNextEscrivaPointsQuoteUseCaseProvider)
+        .call(language: settings.language);
+    await lastDeliveredCardRepo.save(
+      LastDeliveredCard.fromQuote(quote, deliveredAt: DateTime.now()),
+    );
+    return quote;
+  }
+
   final lastDeliveredCard = await lastDeliveredCardRepo.load();
 
   if (lastDeliveredCard != null) {
@@ -587,6 +598,7 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
       theme: 'personal',
       season: LiturgicalSeason.ordinary,
       imagePath: null, // uses fallback color
+      source: QuoteSource.personal,
     );
   }
 

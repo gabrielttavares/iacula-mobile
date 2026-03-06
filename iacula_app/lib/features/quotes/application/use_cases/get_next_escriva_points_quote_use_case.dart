@@ -21,7 +21,9 @@ final class GetNextEscrivaPointsQuoteUseCase {
         continue;
       }
 
-      final pointChapters = book.chapters.where((chapter) => chapter.kind == 'points');
+      final pointChapters = book.chapters.where(
+        (chapter) => chapter.kind == 'points',
+      );
       for (final chapter in pointChapters) {
         for (final section in chapter.sections) {
           final text = section.paragraphs
@@ -36,6 +38,9 @@ final class GetNextEscrivaPointsQuoteUseCase {
             _EscrivaPoint(
               text: text,
               theme: '${book.title} · ${chapter.title}',
+              referenceLabel: section.number != null
+                  ? '${book.title}, ${section.number}'
+                  : '${book.title}, ${chapter.title}',
             ),
           );
         }
@@ -57,13 +62,20 @@ final class GetNextEscrivaPointsQuoteUseCase {
       dayOfWeek: dayOfWeek,
       theme: selected.theme,
       season: LiturgicalSeason.ordinary,
+      source: QuoteSource.escrivaPoints,
+      referenceLabel: selected.referenceLabel,
     );
   }
 }
 
 final class _EscrivaPoint {
-  const _EscrivaPoint({required this.text, required this.theme});
+  const _EscrivaPoint({
+    required this.text,
+    required this.theme,
+    required this.referenceLabel,
+  });
 
   final String text;
   final String theme;
+  final String referenceLabel;
 }

@@ -1,5 +1,7 @@
 import '../../../liturgical/domain/liturgical_season.dart';
 
+enum QuoteSource { liturgical, personal, escrivaPoints }
+
 final class Quote {
   const Quote({
     required this.text,
@@ -9,6 +11,8 @@ final class Quote {
     this.imagePath,
     this.feast,
     this.feastName,
+    this.source = QuoteSource.liturgical,
+    this.referenceLabel,
   });
 
   final String text;
@@ -18,4 +22,8 @@ final class Quote {
   final String? imagePath;
   final String? feast;
   final String? feastName;
+  final QuoteSource? source;
+  final String? referenceLabel;
+
+  QuoteSource get resolvedSource => source ?? QuoteSource.liturgical;
 }
