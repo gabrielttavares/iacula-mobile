@@ -1,5 +1,4 @@
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
-import '../../liturgical/domain/liturgical_season.dart';
 
 enum HomePrayerGroupType { theme, saint, section }
 
@@ -61,61 +60,6 @@ const kHomeThematicImages = <String, String>{
   'igreja': 'assets/placeholders/oracoes-tematicas/igreja.png',
   'eucaristica': 'assets/placeholders/oracoes-tematicas/eucaristia.png',
   'anjos': 'assets/placeholders/oracoes-tematicas/anjos.png',
-};
-
-const _baseDailyWeights = <String, int>{
-  'trabalho': 8,
-  'estudos': 7,
-  'familia': 7,
-  'viagem': 5,
-  'matrimonio': 5,
-  'gestacao': 4,
-  'igreja': 4,
-  'eucaristica': 4,
-  'anjos': 5,
-};
-
-const _seasonWeights = <LiturgicalSeason, Map<String, int>>{
-  LiturgicalSeason.advent: {
-    'igreja': 6,
-    'familia': 4,
-    'anjos': 2,
-  },
-  LiturgicalSeason.lent: {
-    'igreja': 8,
-    'eucaristica': 7,
-    'familia': 2,
-  },
-  LiturgicalSeason.easter: {
-    'eucaristica': 8,
-    'igreja': 6,
-    'anjos': 4,
-  },
-  LiturgicalSeason.christmas: {
-    'familia': 7,
-    'igreja': 5,
-    'gestacao': 3,
-  },
-  LiturgicalSeason.ordinary: {
-    'trabalho': 4,
-    'estudos': 3,
-    'familia': 3,
-  },
-};
-
-const _weekdayWeights = <int, Map<String, int>>{
-  DateTime.sunday: {
-    'eucaristica': 7,
-    'igreja': 6,
-    'anjos': 4,
-  },
-  DateTime.friday: {
-    'igreja': 6,
-    'eucaristica': 5,
-  },
-  DateTime.monday: {
-    'trabalho': 2,
-  },
 };
 
 const _curatedSaintOrder = <String>[
@@ -181,17 +125,10 @@ List<HomePrayerGroup> buildSaintPrayerGroups(List<PrayerCatalogEntry> entries) {
 }
 
 List<HomePrayerGroup> buildHomeThematicGroups(
-  List<PrayerCatalogEntry> entries, {
-  LiturgicalSeason season = LiturgicalSeason.ordinary,
-  int? weekday,
-}) {
+  List<PrayerCatalogEntry> entries,
+) {
   final counts = <String, int>{};
   final saintKeys = <String>{};
-
-  final normalizedWeekday =
-      weekday != null && weekday >= DateTime.monday && weekday <= DateTime.sunday
-      ? weekday
-      : DateTime.now().weekday;
 
   for (final entry in entries) {
     for (final key in entry.themes) {
@@ -206,56 +143,24 @@ List<HomePrayerGroup> buildHomeThematicGroups(
     }
   }
 
-  final groups = counts.entries
-      .where((entry) => entry.value > 0)
+  final groups = kHomeThematicOrder
+      .where((key) => counts.containsKey(key) || saintKeys.contains(key))
       .map(
-        (entry) => HomePrayerGroup(
-          key: entry.key,
-          label: _homeThematicLabels[entry.key] ??
-              _themeLabels[entry.key] ??
-              _saintLabels[entry.key] ??
-              _humanizeKey(entry.key),
-          itemCount: entry.value,
-          type: saintKeys.contains(entry.key)
+        (key) => HomePrayerGroup(
+          key: key,
+          label: _homeThematicLabels[key] ??
+              _themeLabels[key] ??
+              _saintLabels[key] ??
+              _humanizeKey(key),
+          itemCount: counts[key] ?? 0,
+          type: saintKeys.contains(key)
               ? HomePrayerGroupType.saint
               : HomePrayerGroupType.theme,
         ),
       )
       .toList(growable: false);
 
-  int curatedIndex(String key) {
-    final index = kHomeThematicOrder.indexOf(key);
-    return index >= 0 ? index : kHomeThematicOrder.length + 1;
-  }
-
-  int scoreFor(String key) {
-    return (_baseDailyWeights[key] ?? 0) +
-        (_seasonWeights[season]?[key] ?? 0) +
-        (_weekdayWeights[normalizedWeekday]?[key] ?? 0);
-  }
-
-  final sorted = [...groups]
-    ..sort((a, b) {
-      final aScore = scoreFor(a.key);
-      final bScore = scoreFor(b.key);
-      if (aScore != bScore) {
-        return bScore.compareTo(aScore);
-      }
-
-      if (a.itemCount != b.itemCount) {
-        return b.itemCount.compareTo(a.itemCount);
-      }
-
-      final aCurated = curatedIndex(a.key);
-      final bCurated = curatedIndex(b.key);
-      if (aCurated != bCurated) {
-        return aCurated.compareTo(bCurated);
-      }
-
-      return a.label.compareTo(b.label);
-    });
-
-  return sorted;
+  return groups;
 }
 
 String prayerCountLabel(int count) {

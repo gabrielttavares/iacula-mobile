@@ -500,7 +500,7 @@ void main() {
     expect(find.text('1 oração'), findsWidgets);
   });
 
-  testWidgets('home thematic ranking reflects lent friday context', (
+  testWidgets('home thematic groups follow fixed order regardless of season', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -520,51 +520,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    for (var i = 0; i < 20 && find.text('Igreja').evaluate().isEmpty; i++) {
+    for (var i = 0; i < 20 && find.text('Trabalho').evaluate().isEmpty; i++) {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
       await tester.pump(const Duration(milliseconds: 200));
     }
 
-    expect(find.text('Igreja'), findsOneWidget);
+    expect(find.text('Trabalho'), findsOneWidget);
     expect(find.text('Família'), findsOneWidget);
 
-    final igrejaY = tester.getTopLeft(find.text('Igreja')).dy;
+    // Fixed order: trabalho < familia < igreja < eucaristica
+    final trabalhoY = tester.getTopLeft(find.text('Trabalho')).dy;
     final familiaY = tester.getTopLeft(find.text('Família')).dy;
-    expect(igrejaY, lessThan(familiaY));
-  });
-
-  testWidgets('home thematic ranking falls back to useful daily in ordinary', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _buildApp(
-        settingsRepo: _defaultSettingsRepo(),
-        lastCardRepo: _defaultLastCardRepo(),
-        prayerCatalogRepo: const _RankingPrayerCatalogRepository(),
-        liturgicalSeasonService: const _FakeLiturgicalSeasonService(
-          LiturgicalContext(
-            season: LiturgicalSeason.ordinary,
-            rank: LiturgicalRank.weekday,
-            apiQuotes: <String>[],
-            isFallback: true,
-          ),
-        ),
-        now: DateTime(2026, 3, 4),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    for (var i = 0; i < 20 && find.text('Igreja').evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-
-    expect(find.text('Igreja'), findsOneWidget);
-    expect(find.text('Família'), findsOneWidget);
-
-    final familiaY = tester.getTopLeft(find.text('Família')).dy;
-    final igrejaY = tester.getTopLeft(find.text('Igreja')).dy;
-    expect(familiaY, lessThan(igrejaY));
+    expect(trabalhoY, lessThan(familiaY));
   });
 
   testWidgets('tapping thematic group opens grouped prayer list screen', (
@@ -581,23 +548,22 @@ void main() {
 
     for (
       var i = 0;
-      i < 20 && find.text('Virgem Maria').evaluate().isEmpty;
+      i < 20 && find.text('Santos Anjos').evaluate().isEmpty;
       i++
     ) {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
       await tester.pump(const Duration(milliseconds: 200));
     }
 
-    final groupFinder = find.text('Virgem Maria').first;
+    final groupFinder = find.text('Santos Anjos').first;
     await tester.ensureVisible(groupFinder);
     await tester.pumpAndSettle();
     await tester.tap(groupFinder);
     await tester.pumpAndSettle();
 
     expect(find.byType(PrayerCatalogGroupScreen), findsOneWidget);
-    expect(find.text('Salve Rainha'), findsOneWidget);
-    expect(find.text('Ave Maria'), findsOneWidget);
-    expect(find.text('Ao Anjo da Guarda'), findsNothing);
+    expect(find.text('Ao Anjo da Guarda'), findsOneWidget);
+    expect(find.text('Salve Rainha'), findsNothing);
   });
 
   testWidgets('feature rail Rosário opens contemplative intro screen', (

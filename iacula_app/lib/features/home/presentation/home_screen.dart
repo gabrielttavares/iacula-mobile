@@ -535,19 +535,11 @@ final _suggestionProvider = FutureProvider<PrayerCatalogEntry?>((ref) async {
 final _homeThematicGroupsProvider = FutureProvider<List<HomePrayerGroup>>((
   ref,
 ) async {
-  final now = ref.watch(homeNowProvider);
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
   final catalog = await ref
       .watch(getPrayerCatalogUseCaseProvider)
       .listAll(language: settings.language);
-  final liturgicalContext = await ref
-      .watch(liturgicalSeasonServiceProvider)
-      .getCurrentContext(date: now);
-  return buildHomeThematicGroups(
-    catalog,
-    season: liturgicalContext.season,
-    weekday: now.weekday,
-  );
+  return buildHomeThematicGroups(catalog);
 });
 
 final homeNowProvider = Provider<DateTime>((ref) => DateTime.now());

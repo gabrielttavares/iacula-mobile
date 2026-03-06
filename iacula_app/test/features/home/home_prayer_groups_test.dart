@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/home/presentation/home_prayer_groups.dart';
-import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 
 void main() {
@@ -68,9 +67,16 @@ void main() {
     expect(unknown.label, 'Santo Desconhecido');
   });
 
-  test('buildHomeThematicGroups boosts igreja keys on friday in lent', () {
+  test('buildHomeThematicGroups follows fixed kHomeThematicOrder', () {
     final groups = buildHomeThematicGroups(
       const <PrayerCatalogEntry>[
+        PrayerCatalogEntry(
+          slug: 'familia-1',
+          title: 'Família 1',
+          content: 'Texto',
+          themes: ['familia'],
+          saints: [],
+        ),
         PrayerCatalogEntry(
           slug: 'igreja-1',
           title: 'Igreja',
@@ -79,31 +85,6 @@ void main() {
           saints: [],
         ),
         PrayerCatalogEntry(
-          slug: 'eucaristica-1',
-          title: 'Eucarística',
-          content: 'Texto',
-          themes: ['eucaristica'],
-          saints: [],
-        ),
-        PrayerCatalogEntry(
-          slug: 'familia-1',
-          title: 'Família 1',
-          content: 'Texto',
-          themes: ['familia'],
-          saints: [],
-        ),
-      ],
-      season: LiturgicalSeason.lent,
-      weekday: DateTime.friday,
-    );
-
-    expect(groups.first.key, 'igreja');
-  });
-
-  test('buildHomeThematicGroups boosts eucaristica on sunday in easter', () {
-    final groups = buildHomeThematicGroups(
-      const <PrayerCatalogEntry>[
-        PrayerCatalogEntry(
           slug: 'trabalho-1',
           title: 'Trabalho',
           content: 'Texto',
@@ -118,14 +99,17 @@ void main() {
           saints: [],
         ),
       ],
-      season: LiturgicalSeason.easter,
-      weekday: DateTime.sunday,
     );
 
-    expect(groups.first.key, 'eucaristica');
+    expect(groups.map((g) => g.key).toList(), [
+      'trabalho',
+      'familia',
+      'igreja',
+      'eucaristica',
+    ]);
   });
 
-  test('buildHomeThematicGroups keeps useful-daily order for ordinary weekdays', () {
+  test('buildHomeThematicGroups only includes themes in kHomeThematicOrder', () {
     final groups = buildHomeThematicGroups(
       const <PrayerCatalogEntry>[
         PrayerCatalogEntry(
@@ -136,18 +120,42 @@ void main() {
           saints: [],
         ),
         PrayerCatalogEntry(
-          slug: 'familia-1',
-          title: 'Família',
+          slug: 'mariano-1',
+          title: 'Mariano',
           content: 'Texto',
-          themes: ['familia'],
+          themes: ['mariano'],
           saints: [],
         ),
       ],
-      season: LiturgicalSeason.ordinary,
-      weekday: DateTime.wednesday,
     );
 
-    expect(groups.first.key, 'trabalho');
+    expect(groups.map((g) => g.key), ['trabalho']);
+  });
+
+  test('buildHomeThematicGroups uses correct labels', () {
+    final groups = buildHomeThematicGroups(
+      const <PrayerCatalogEntry>[
+        PrayerCatalogEntry(
+          slug: 'eucaristica-1',
+          title: 'Eucarística',
+          content: 'Texto',
+          themes: ['eucaristica'],
+          saints: [],
+        ),
+        PrayerCatalogEntry(
+          slug: 'anjos-1',
+          title: 'Anjos',
+          content: 'Texto',
+          themes: [],
+          saints: ['anjos'],
+        ),
+      ],
+    );
+
+    final eucaristica = groups.firstWhere((g) => g.key == 'eucaristica');
+    final anjos = groups.firstWhere((g) => g.key == 'anjos');
+    expect(eucaristica.label, 'Divina Eucaristia');
+    expect(anjos.label, 'Santos Anjos');
   });
 
   test('buildHomeThematicGroups returns empty for empty catalog', () {
@@ -155,23 +163,22 @@ void main() {
     expect(groups, isEmpty);
   });
 
-  test('buildHomeThematicGroups handles saints-only entries', () {
+  test('buildHomeThematicGroups includes saints in kHomeThematicOrder', () {
     final groups = buildHomeThematicGroups(
       const <PrayerCatalogEntry>[
         PrayerCatalogEntry(
-          slug: 'sao-jose',
-          title: 'A São José',
+          slug: 'anjo-da-guarda',
+          title: 'Anjo da Guarda',
           content: 'Texto',
           themes: [],
-          saints: ['sao-jose'],
+          saints: ['anjos'],
         ),
       ],
-      season: LiturgicalSeason.ordinary,
-      weekday: DateTime.monday,
     );
 
     expect(groups, hasLength(1));
     expect(groups.first.type, HomePrayerGroupType.saint);
-    expect(groups.first.key, 'sao-jose');
+    expect(groups.first.key, 'anjos');
+    expect(groups.first.label, 'Santos Anjos');
   });
 }
