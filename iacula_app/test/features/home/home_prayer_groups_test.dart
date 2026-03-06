@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/home/presentation/home_prayer_groups.dart';
+import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 
 void main() {
@@ -65,5 +66,112 @@ void main() {
       (group) => group.key == 'santo-desconhecido',
     );
     expect(unknown.label, 'Santo Desconhecido');
+  });
+
+  test('buildHomeThematicGroups boosts penitential keys on friday in lent', () {
+    final groups = buildHomeThematicGroups(
+      const <PrayerCatalogEntry>[
+        PrayerCatalogEntry(
+          slug: 'ato-contricao',
+          title: 'Ato de Contrição',
+          content: 'Texto',
+          themes: ['penitencia'],
+          saints: [],
+        ),
+        PrayerCatalogEntry(
+          slug: 'via-sacra',
+          title: 'Via Sacra',
+          content: 'Texto',
+          themes: ['paixao-de-cristo'],
+          saints: [],
+        ),
+        PrayerCatalogEntry(
+          slug: 'familia-1',
+          title: 'Família 1',
+          content: 'Texto',
+          themes: ['familia'],
+          saints: [],
+        ),
+      ],
+      season: LiturgicalSeason.lent,
+      weekday: DateTime.friday,
+    );
+
+    expect(groups.first.key, 'penitencia');
+  });
+
+  test('buildHomeThematicGroups boosts festal keys on sunday in easter', () {
+    final groups = buildHomeThematicGroups(
+      const <PrayerCatalogEntry>[
+        PrayerCatalogEntry(
+          slug: 'trabalho-1',
+          title: 'Trabalho',
+          content: 'Texto',
+          themes: ['trabalho'],
+          saints: [],
+        ),
+        PrayerCatalogEntry(
+          slug: 'eucaristica-1',
+          title: 'Eucarística',
+          content: 'Texto',
+          themes: ['eucaristica'],
+          saints: [],
+        ),
+      ],
+      season: LiturgicalSeason.easter,
+      weekday: DateTime.sunday,
+    );
+
+    expect(groups.first.key, 'eucaristica');
+  });
+
+  test('buildHomeThematicGroups keeps useful-daily order for ordinary weekdays', () {
+    final groups = buildHomeThematicGroups(
+      const <PrayerCatalogEntry>[
+        PrayerCatalogEntry(
+          slug: 'trabalho-1',
+          title: 'Trabalho',
+          content: 'Texto',
+          themes: ['trabalho'],
+          saints: [],
+        ),
+        PrayerCatalogEntry(
+          slug: 'familia-1',
+          title: 'Família',
+          content: 'Texto',
+          themes: ['familia'],
+          saints: [],
+        ),
+      ],
+      season: LiturgicalSeason.ordinary,
+      weekday: DateTime.wednesday,
+    );
+
+    expect(groups.first.key, 'familia');
+  });
+
+  test('buildHomeThematicGroups returns empty for empty catalog', () {
+    final groups = buildHomeThematicGroups(const <PrayerCatalogEntry>[]);
+    expect(groups, isEmpty);
+  });
+
+  test('buildHomeThematicGroups handles saints-only entries', () {
+    final groups = buildHomeThematicGroups(
+      const <PrayerCatalogEntry>[
+        PrayerCatalogEntry(
+          slug: 'sao-jose',
+          title: 'A São José',
+          content: 'Texto',
+          themes: [],
+          saints: ['sao-jose'],
+        ),
+      ],
+      season: LiturgicalSeason.ordinary,
+      weekday: DateTime.monday,
+    );
+
+    expect(groups, hasLength(1));
+    expect(groups.first.type, HomePrayerGroupType.saint);
+    expect(groups.first.key, 'sao-jose');
   });
 }

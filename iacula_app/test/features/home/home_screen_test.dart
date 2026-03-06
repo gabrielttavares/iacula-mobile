@@ -7,6 +7,9 @@ import 'package:iacula_app/features/home/presentation/home_screen.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/entities/daily_liturgy.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
+import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
+import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
+import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
 import 'package:iacula_app/features/leituras/data/repositories/leitura_repository.dart';
 import 'package:iacula_app/features/leituras/data/sources/leitura_local_source.dart';
 import 'package:iacula_app/features/leituras/presentation/pages/leituras_home_page.dart';
@@ -123,11 +126,69 @@ final class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
   }
 }
 
+final class _RankingPrayerCatalogRepository implements PrayerCatalogRepository {
+  const _RankingPrayerCatalogRepository();
+
+  @override
+  Future<List<PrayerCatalogEntry>> listCatalog({
+    required String language,
+  }) async {
+    return const <PrayerCatalogEntry>[
+      PrayerCatalogEntry(
+        slug: 'familia-1',
+        title: 'Família',
+        content: 'Texto',
+        themes: ['familia'],
+        saints: [],
+      ),
+      PrayerCatalogEntry(
+        slug: 'penitencia-1',
+        title: 'Penitência',
+        content: 'Texto',
+        themes: ['penitencia'],
+        saints: [],
+      ),
+      PrayerCatalogEntry(
+        slug: 'trabalho-1',
+        title: 'Trabalho',
+        content: 'Texto',
+        themes: ['trabalho'],
+        saints: [],
+      ),
+      PrayerCatalogEntry(
+        slug: 'eucaristica-1',
+        title: 'Eucarística',
+        content: 'Texto',
+        themes: ['eucaristica'],
+        saints: [],
+      ),
+    ];
+  }
+}
+
+final class _FakeLiturgicalSeasonService implements LiturgicalSeasonService {
+  const _FakeLiturgicalSeasonService(this.context);
+
+  final LiturgicalContext context;
+
+  @override
+  Future<LiturgicalSeason> getCurrentSeason({DateTime? date}) async {
+    return context.season;
+  }
+
+  @override
+  Future<LiturgicalContext> getCurrentContext({DateTime? date}) async {
+    return context;
+  }
+}
+
 Widget _buildApp({
   required _FakeSettingsRepository settingsRepo,
   required _FakeLastDeliveredCardRepository lastCardRepo,
   _FakeLiturgiaRepository? liturgiaRepo,
   PrayerCatalogRepository? prayerCatalogRepo,
+  LiturgicalSeasonService? liturgicalSeasonService,
+  DateTime? now,
   Map<String, WidgetBuilder>? routes,
 }) {
   return ProviderScope(
@@ -138,6 +199,9 @@ Widget _buildApp({
         liturgiaCacheRepositoryProvider.overrideWithValue(liturgiaRepo),
       if (prayerCatalogRepo != null)
         prayerCatalogRepositoryProvider.overrideWithValue(prayerCatalogRepo),
+      if (liturgicalSeasonService != null)
+        liturgicalSeasonServiceProvider.overrideWithValue(liturgicalSeasonService),
+      if (now != null) homeNowProvider.overrideWithValue(now),
     ],
     child: CupertinoApp(routes: routes ?? const {}, home: const HomeScreen()),
   );
@@ -434,6 +498,73 @@ void main() {
 
     expect(find.text('Trabalho'), findsOneWidget);
     expect(find.text('1 oração'), findsWidgets);
+  });
+
+  testWidgets('home thematic ranking reflects lent friday context', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+        prayerCatalogRepo: const _RankingPrayerCatalogRepository(),
+        liturgicalSeasonService: const _FakeLiturgicalSeasonService(
+          LiturgicalContext(
+            season: LiturgicalSeason.lent,
+            rank: LiturgicalRank.weekday,
+            apiQuotes: <String>[],
+          ),
+        ),
+        now: DateTime(2026, 3, 6),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    for (var i = 0; i < 20 && find.text('Penitência').evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+
+    expect(find.text('Penitência'), findsOneWidget);
+    expect(find.text('Família'), findsOneWidget);
+
+    final penitenciaY = tester.getTopLeft(find.text('Penitência')).dy;
+    final familiaY = tester.getTopLeft(find.text('Família')).dy;
+    expect(penitenciaY, lessThan(familiaY));
+  });
+
+  testWidgets('home thematic ranking falls back to useful daily in ordinary', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+        prayerCatalogRepo: const _RankingPrayerCatalogRepository(),
+        liturgicalSeasonService: const _FakeLiturgicalSeasonService(
+          LiturgicalContext(
+            season: LiturgicalSeason.ordinary,
+            rank: LiturgicalRank.weekday,
+            apiQuotes: <String>[],
+            isFallback: true,
+          ),
+        ),
+        now: DateTime(2026, 3, 4),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    for (var i = 0; i < 20 && find.text('Penitência').evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+
+    expect(find.text('Penitência'), findsOneWidget);
+    expect(find.text('Família'), findsOneWidget);
+
+    final familiaY = tester.getTopLeft(find.text('Família')).dy;
+    final penitenciaY = tester.getTopLeft(find.text('Penitência')).dy;
+    expect(familiaY, lessThan(penitenciaY));
   });
 
   testWidgets('tapping thematic group opens grouped prayer list screen', (
