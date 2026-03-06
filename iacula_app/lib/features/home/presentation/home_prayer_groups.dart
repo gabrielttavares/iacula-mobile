@@ -1,4 +1,5 @@
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
+import '../../liturgical/domain/liturgical_season.dart';
 
 enum HomePrayerGroupType { theme, saint, section }
 
@@ -33,6 +34,13 @@ const kHomeThematicOrder = <String>[
   'virgem-maria',
   'anjos',
   'penitencia',
+  'paixao-de-cristo',
+  'eucaristica',
+  'santissima-trindade',
+  'protecao',
+  'devocoes',
+  'espirito-santo',
+  'rosario',
 ];
 
 const _homeThematicLabels = <String, String>{
@@ -42,6 +50,65 @@ const _homeThematicLabels = <String, String>{
   'virgem-maria': 'Virgem Maria',
   'anjos': 'Anjos',
   'penitencia': 'Penitência',
+  'paixao-de-cristo': 'Paixão de Cristo',
+  'eucaristica': 'Eucarística',
+  'santissima-trindade': 'Santíssima Trindade',
+  'protecao': 'Proteção',
+  'devocoes': 'Devoções',
+  'espirito-santo': 'Espírito Santo',
+  'rosario': 'Rosário',
+};
+
+const _baseDailyWeights = <String, int>{
+  'familia': 8,
+  'trabalho': 7,
+  'protecao': 6,
+  'virgem-maria': 6,
+  'anjos': 5,
+  'penitencia': 4,
+};
+
+const _seasonWeights = <LiturgicalSeason, Map<String, int>>{
+  LiturgicalSeason.advent: {
+    'virgem-maria': 6,
+    'espirito-santo': 4,
+    'santissima-trindade': 2,
+  },
+  LiturgicalSeason.lent: {
+    'penitencia': 8,
+    'paixao-de-cristo': 7,
+    'protecao': 2,
+  },
+  LiturgicalSeason.easter: {
+    'eucaristica': 8,
+    'santissima-trindade': 6,
+    'devocoes': 4,
+  },
+  LiturgicalSeason.christmas: {
+    'virgem-maria': 7,
+    'familia': 5,
+    'devocoes': 3,
+  },
+  LiturgicalSeason.ordinary: {
+    'familia': 4,
+    'trabalho': 3,
+    'protecao': 3,
+  },
+};
+
+const _weekdayWeights = <int, Map<String, int>>{
+  DateTime.sunday: {
+    'eucaristica': 7,
+    'santissima-trindade': 6,
+    'devocoes': 4,
+  },
+  DateTime.friday: {
+    'penitencia': 8,
+    'paixao-de-cristo': 7,
+  },
+  DateTime.monday: {
+    'trabalho': 2,
+  },
 };
 
 const _curatedSaintOrder = <String>[
@@ -106,27 +173,82 @@ List<HomePrayerGroup> buildSaintPrayerGroups(List<PrayerCatalogEntry> entries) {
   );
 }
 
-List<HomePrayerGroup> buildHomeThematicGroups(List<PrayerCatalogEntry> entries) {
+List<HomePrayerGroup> buildHomeThematicGroups(
+  List<PrayerCatalogEntry> entries, {
+  LiturgicalSeason season = LiturgicalSeason.ordinary,
+  int? weekday,
+}) {
   final counts = <String, int>{};
+  final saintKeys = <String>{};
+
+  final normalizedWeekday =
+      weekday != null && weekday >= DateTime.monday && weekday <= DateTime.sunday
+      ? weekday
+      : DateTime.now().weekday;
 
   for (final entry in entries) {
-    for (final key in [...entry.themes, ...entry.saints]) {
+    for (final key in entry.themes) {
       if (key.trim().isEmpty) continue;
+      counts.update(key, (v) => v + 1, ifAbsent: () => 1);
+    }
+
+    for (final key in entry.saints) {
+      if (key.trim().isEmpty) continue;
+      saintKeys.add(key);
       counts.update(key, (v) => v + 1, ifAbsent: () => 1);
     }
   }
 
-  return kHomeThematicOrder
-      .where((key) => (counts[key] ?? 0) > 0)
-      .map((key) => HomePrayerGroup(
-            key: key,
-            label: _homeThematicLabels[key] ?? _humanizeKey(key),
-            itemCount: counts[key]!,
-            type: _saintLabels.containsKey(key)
-                ? HomePrayerGroupType.saint
-                : HomePrayerGroupType.theme,
-          ))
-      .toList();
+  final groups = counts.entries
+      .where((entry) => entry.value > 0)
+      .map(
+        (entry) => HomePrayerGroup(
+          key: entry.key,
+          label: _homeThematicLabels[entry.key] ??
+              _themeLabels[entry.key] ??
+              _saintLabels[entry.key] ??
+              _humanizeKey(entry.key),
+          itemCount: entry.value,
+          type: saintKeys.contains(entry.key)
+              ? HomePrayerGroupType.saint
+              : HomePrayerGroupType.theme,
+        ),
+      )
+      .toList(growable: false);
+
+  int curatedIndex(String key) {
+    final index = kHomeThematicOrder.indexOf(key);
+    return index >= 0 ? index : kHomeThematicOrder.length + 1;
+  }
+
+  int scoreFor(String key) {
+    return (_baseDailyWeights[key] ?? 0) +
+        (_seasonWeights[season]?[key] ?? 0) +
+        (_weekdayWeights[normalizedWeekday]?[key] ?? 0);
+  }
+
+  final sorted = [...groups]
+    ..sort((a, b) {
+      final aScore = scoreFor(a.key);
+      final bScore = scoreFor(b.key);
+      if (aScore != bScore) {
+        return bScore.compareTo(aScore);
+      }
+
+      if (a.itemCount != b.itemCount) {
+        return b.itemCount.compareTo(a.itemCount);
+      }
+
+      final aCurated = curatedIndex(a.key);
+      final bCurated = curatedIndex(b.key);
+      if (aCurated != bCurated) {
+        return aCurated.compareTo(bCurated);
+      }
+
+      return a.label.compareTo(b.label);
+    });
+
+  return sorted;
 }
 
 String prayerCountLabel(int count) {
