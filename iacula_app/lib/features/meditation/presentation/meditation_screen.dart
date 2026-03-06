@@ -1,24 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/widgets/iacula_horizontal_card_rail.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
+import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_spring_button.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../challenges/presentation/challenge_library_screen.dart';
 import '../../journal_prompts/domain/entities/journal_prompt.dart';
 import '../domain/entities/meditation_item.dart';
 import 'journal_prompt_detail_screen.dart';
 import 'meditation_detail_screen.dart';
 import 'models/meditation_feed_item.dart';
+import 'models/monthly_novena_item.dart';
 
 class MeditationScreen extends ConsumerStatefulWidget {
-  const MeditationScreen({super.key});
+  const MeditationScreen({super.key, this.now});
+
+  final DateTime Function()? now;
 
   @override
   ConsumerState<MeditationScreen> createState() => _MeditationScreenState();
@@ -182,6 +189,8 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
     BuildContext context,
     List<MeditationFeedItem> items,
   ) {
+    final novenas = _monthlyNovenasFor(widget.now?.call() ?? DateTime.now());
+
     if (items.isEmpty) {
       return [
         SliverFillRemaining(
@@ -218,7 +227,9 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
           padding: EdgeInsets.only(
             left: IaculaSpacing.md,
             right: IaculaSpacing.md,
-            bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+            bottom: novenas.isEmpty
+                ? MediaQuery.paddingOf(context).bottom + IaculaSpacing.md
+                : 0,
           ),
           sliver: SliverToBoxAdapter(
             child: _ReflexoesCard(
@@ -227,6 +238,18 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
             ),
           ),
         ),
+        if (novenas.isNotEmpty)
+          SliverPadding(
+            padding: EdgeInsets.only(
+              top: 16,
+              left: IaculaSpacing.md,
+              right: IaculaSpacing.md,
+              bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: _MonthlyNovenasSection(items: novenas),
+            ),
+          ),
       ];
     }
 
@@ -246,10 +269,6 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
       ),
     );
 
-    if (items.length == 1) {
-      return [heroAdapter];
-    }
-
     final promptGroup = items
         .whereType<JournalPromptGroupFeedItem>()
         .firstOrNull;
@@ -259,6 +278,32 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
         .toList(growable: false);
 
     final slivers = <Widget>[heroAdapter];
+    if (items.length == 1) {
+      if (novenas.isNotEmpty) {
+        slivers.add(
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(
+              IaculaSpacing.md,
+              16,
+              IaculaSpacing.md,
+              0,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: _MonthlyNovenasSection(items: novenas),
+            ),
+          ),
+        );
+        slivers.add(
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+            ),
+          ),
+        );
+      }
+      return slivers;
+    }
+
     if (promptGroup != null) {
       slivers.add(
         SliverPadding(
@@ -278,7 +323,32 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
       );
     }
 
+    if (novenas.isNotEmpty) {
+      slivers.add(
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            IaculaSpacing.md,
+            16,
+            IaculaSpacing.md,
+            0,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: _MonthlyNovenasSection(items: novenas),
+          ),
+        ),
+      );
+    }
+
     if (library.isEmpty) {
+      if (novenas.isNotEmpty) {
+        slivers.add(
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+            ),
+          ),
+        );
+      }
       return slivers;
     }
 
@@ -341,7 +411,179 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
       ),
     );
   }
+
+  List<MonthlyNovenaItem> _monthlyNovenasFor(DateTime date) {
+    if (_selectedFilter != 'Todos') return const <MonthlyNovenaItem>[];
+    return _novenaCatalog
+        .where((item) => item.month == date.month)
+        .toList(growable: false);
+  }
 }
+
+const _novenaCatalog = <MonthlyNovenaItem>[
+  MonthlyNovenaItem(
+    title: 'Novena à Sagrada Família',
+    dateLabel: '20 a 28 de janeiro',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 1,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Nossa Senhora de Lourdes',
+    dateLabel: '2 a 10 de fevereiro',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 2,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a São Patrício',
+    dateLabel: '8 a 16 de março',
+    imageAsset: 'assets/placeholders/novenas/sao-jose.png',
+    month: 3,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a São José',
+    dateLabel: '10 a 18 de março',
+    imageAsset: 'assets/placeholders/novenas/sao-jose.png',
+    month: 3,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena da Anunciação',
+    dateLabel: '16 a 24 de março',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 3,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Santa Gemma Galgani',
+    dateLabel: '2 a 10 de abril',
+    imageAsset: 'assets/placeholders/novenas/sao-jose.png',
+    month: 4,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Santa Bernadette',
+    dateLabel: '8 a 16 de abril',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 4,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a São Jorge',
+    dateLabel: '14 a 22 de abril',
+    imageAsset: 'assets/placeholders/novenas/sao-jose.png',
+    month: 4,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Santa Catarina de Sena',
+    dateLabel: '20 a 28 de abril',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 4,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Nossa Senhora de Fátima',
+    dateLabel: '4 a 12 de maio',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 5,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena ao Espírito Santo',
+    dateLabel: 'móvel conforme Pentecostes',
+    imageAsset: 'assets/placeholders/novenas/espirito-santo.png',
+    month: 5,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Santa Rita de Cássia',
+    dateLabel: '14 a 22 de maio',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 5,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Santo Antônio',
+    dateLabel: '4 a 12 de junho',
+    imageAsset: 'assets/placeholders/novenas/santo-antonio.png',
+    month: 6,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena ao Sagrado Coração de Jesus',
+    dateLabel: 'móvel após Corpus Christi',
+    imageAsset: 'assets/placeholders/novenas/sagrado-coracao.png',
+    month: 6,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a São Pedro',
+    dateLabel: '20 a 28 de junho',
+    imageAsset: 'assets/placeholders/novenas/sao-jose.png',
+    month: 6,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Nossa Senhora do Carmo',
+    dateLabel: '7 a 15 de julho',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 7,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Sant\'Ana',
+    dateLabel: '17 a 25 de julho',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 7,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a São João Maria Vianney',
+    dateLabel: '27 de julho a 4 de agosto',
+    imageAsset: 'assets/placeholders/novenas/sao-jose.png',
+    month: 8,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena da Assunção de Nossa Senhora',
+    dateLabel: '6 a 14 de agosto',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 8,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Nossa Senhora Rainha',
+    dateLabel: '14 a 22 de agosto',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 8,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a São Miguel Arcanjo',
+    dateLabel: '20 a 28 de setembro',
+    imageAsset: 'assets/placeholders/novenas/sao-miguel.png',
+    month: 9,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Santa Teresa de Ávila',
+    dateLabel: '6 a 14 de outubro',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 10,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a São Judas Tadeu',
+    dateLabel: '20 a 28 de outubro',
+    imageAsset: 'assets/placeholders/novenas/sao-jose.png',
+    month: 10,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a São Martinho de Tours',
+    dateLabel: '2 a 10 de novembro',
+    imageAsset: 'assets/placeholders/novenas/sao-jose.png',
+    month: 11,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena da Medalha Milagrosa',
+    dateLabel: '18 a 26 de novembro',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 11,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena da Imaculada Conceição',
+    dateLabel: '29 de novembro a 7 de dezembro',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 12,
+  ),
+  MonthlyNovenaItem(
+    title: 'Novena a Santa Luzia',
+    dateLabel: '4 a 12 de dezembro',
+    imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
+    month: 12,
+  ),
+];
 
 class _FilterChips extends StatelessWidget {
   const _FilterChips({
@@ -392,6 +634,155 @@ class _FilterChips extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _MonthlyNovenasSection extends StatelessWidget {
+  const _MonthlyNovenasSection({required this.items});
+
+  final List<MonthlyNovenaItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const IaculaSectionHeader(title: 'Novenas do mês'),
+        const SizedBox(height: 12),
+        IaculaHorizontalCardRail(
+          itemCount: items.length,
+          itemBuilder: (context, index) =>
+              _MonthlyNovenaCard(item: items[index]),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (_) => const ChallengeLibraryScreen(),
+                ),
+              );
+            },
+            child: Text(
+              'Ver todas',
+              style: context.textStyles.secondary.copyWith(
+                color: context.colors.primaryButton,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MonthlyNovenaCard extends StatelessWidget {
+  const _MonthlyNovenaCard({required this.item});
+
+  final MonthlyNovenaItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return IaculaSoftCard(
+      showShadow: true,
+      padding: EdgeInsets.zero,
+      radius: 24,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            child: SizedBox(
+              height: 84,
+              width: double.infinity,
+              child: Image.asset(
+                item.imageAsset,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          context.colors.primaryButton.withValues(alpha: 0.2),
+                          context.colors.primaryButton.withValues(alpha: 0.08),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        CupertinoIcons.book,
+                        size: 28,
+                        color: context.colors.primaryButton,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textStyles.cardTitle,
+                ),
+                const SizedBox(height: 8),
+                _NovenaDateBadge(text: item.dateLabel),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NovenaDateBadge extends StatelessWidget {
+  const _NovenaDateBadge({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: context.colors.secondaryButton,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            CupertinoIcons.calendar,
+            size: 14,
+            color: context.colors.primaryButton,
+          ),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              style: context.textStyles.secondary.copyWith(
+                color: context.colors.textPrimary,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -460,35 +851,11 @@ class _ReflexoesCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: context.colors.primaryButton.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  CupertinoIcons.pencil_ellipsis_rectangle,
-                  color: context.colors.primaryButton,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Reflexões', style: context.textStyles.cardTitle),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Lectio, exame inaciano e outras perguntas para aprofundar a oração.',
-                      style: context.textStyles.secondary,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          _MeditationResourceHeader(
+            title: 'Reflexões',
+            subtitle:
+                'Lectio, exame inaciano e outras perguntas para aprofundar a oração.',
+            iconKind: MeditationResourceIconKind.reflexoes,
           ),
           const SizedBox(height: 16),
           for (var index = 0; index < sections.length; index++) ...[
@@ -497,6 +864,69 @@ class _ReflexoesCard extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+enum MeditationResourceIconKind { reflexoes, biblia, rosario }
+
+extension on MeditationResourceIconKind {
+  String get assetPath => switch (this) {
+    // Intended CC0/usable replacements from SVG Repo sources:
+    // reflections/catholic-prayers, holy-bible, rosary.
+    MeditationResourceIconKind.reflexoes =>
+      'assets/seed/icons/meditation_resources/reflexoes.svg',
+    MeditationResourceIconKind.biblia =>
+      'assets/seed/icons/meditation_resources/biblia.svg',
+    MeditationResourceIconKind.rosario =>
+      'assets/seed/icons/meditation_resources/rosario.svg',
+  };
+}
+
+class _MeditationResourceHeader extends StatelessWidget {
+  const _MeditationResourceHeader({
+    required this.title,
+    required this.subtitle,
+    required this.iconKind,
+  });
+
+  final String title;
+  final String subtitle;
+  final MeditationResourceIconKind iconKind;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          padding: const EdgeInsets.all(9),
+          decoration: BoxDecoration(
+            color: context.colors.primaryButton.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: SvgPicture.asset(
+            iconKind.assetPath,
+            key: ValueKey('meditation-resource-icon-${iconKind.name}'),
+            colorFilter: ColorFilter.mode(
+              context.colors.primaryButton,
+              BlendMode.srcIn,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: context.textStyles.cardTitle),
+              const SizedBox(height: 4),
+              Text(subtitle, style: context.textStyles.secondary),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

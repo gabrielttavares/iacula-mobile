@@ -68,21 +68,21 @@ void main() {
     expect(unknown.label, 'Santo Desconhecido');
   });
 
-  test('buildHomeThematicGroups boosts penitential keys on friday in lent', () {
+  test('buildHomeThematicGroups boosts igreja keys on friday in lent', () {
     final groups = buildHomeThematicGroups(
       const <PrayerCatalogEntry>[
         PrayerCatalogEntry(
-          slug: 'ato-contricao',
-          title: 'Ato de Contrição',
+          slug: 'igreja-1',
+          title: 'Igreja',
           content: 'Texto',
-          themes: ['penitencia'],
+          themes: ['igreja'],
           saints: [],
         ),
         PrayerCatalogEntry(
-          slug: 'via-sacra',
-          title: 'Via Sacra',
+          slug: 'eucaristica-1',
+          title: 'Eucarística',
           content: 'Texto',
-          themes: ['paixao-de-cristo'],
+          themes: ['eucaristica'],
           saints: [],
         ),
         PrayerCatalogEntry(
@@ -97,10 +97,10 @@ void main() {
       weekday: DateTime.friday,
     );
 
-    expect(groups.first.key, 'penitencia');
+    expect(groups.first.key, 'igreja');
   });
 
-  test('buildHomeThematicGroups boosts festal keys on sunday in easter', () {
+  test('buildHomeThematicGroups boosts eucaristica on sunday in easter', () {
     final groups = buildHomeThematicGroups(
       const <PrayerCatalogEntry>[
         PrayerCatalogEntry(
@@ -147,7 +147,7 @@ void main() {
       weekday: DateTime.wednesday,
     );
 
-    expect(groups.first.key, 'familia');
+    expect(groups.first.key, 'trabalho');
   });
 
   test('buildHomeThematicGroups returns empty for empty catalog', () {

@@ -41,9 +41,13 @@ final class LiturgiaApiService {
       final decoded = jsonDecode(response.body);
       final nodes = _extractDayNodes(decoded);
       final baseDate = DateTime.now();
-      return nodes.asMap().entries.map((entry) {
-        return _parseDay(entry.value, entry.key, baseDate);
-      }).toList(growable: false);
+      return nodes
+          .asMap()
+          .entries
+          .map((entry) {
+            return _parseDay(entry.value, entry.key, baseDate);
+          })
+          .toList(growable: false);
     } catch (_) {
       return const <LiturgyDay>[];
     }
@@ -87,7 +91,11 @@ final class LiturgiaApiService {
         map.containsKey('leituras');
   }
 
-  LiturgyDay _parseDay(Map<String, dynamic> data, int index, DateTime baseDate) {
+  LiturgyDay _parseDay(
+    Map<String, dynamic> data,
+    int index,
+    DateTime baseDate,
+  ) {
     return LiturgyDay(
       date: _parseDate(data, index, baseDate),
       title: _text(data['liturgia'], fallback: 'Liturgia diária'),
@@ -114,7 +122,11 @@ final class LiturgiaApiService {
       return DateTime(year, month, day);
     }
 
-    final normalizedBase = DateTime(baseDate.year, baseDate.month, baseDate.day);
+    final normalizedBase = DateTime(
+      baseDate.year,
+      baseDate.month,
+      baseDate.day,
+    );
     return normalizedBase.add(Duration(days: index));
   }
 
@@ -209,7 +221,8 @@ final class LiturgiaApiService {
   };
 
   List<LiturgyReading> _parseReadings(dynamic value) {
-    final candidates = <({LiturgyReadingKind kind, Map<String, dynamic> raw})>[];
+    final candidates =
+        <({LiturgyReadingKind kind, Map<String, dynamic> raw})>[];
 
     if (value is Map) {
       final map = Map<String, dynamic>.from(value);
@@ -253,10 +266,13 @@ final class LiturgiaApiService {
     return LiturgyReadingKind.other;
   }
 
-  LiturgyReading? _parseReadingMap(Map<String, dynamic> map, LiturgyReadingKind kind) {
+  LiturgyReading? _parseReadingMap(
+    Map<String, dynamic> map,
+    LiturgyReadingKind kind,
+  ) {
     final reference = _text(map['referencia'] ?? map['ref']);
-    final fallbackTitle = _kindLabels[kind] ??
-        (reference.isEmpty ? 'Leitura' : reference);
+    final fallbackTitle =
+        _kindLabels[kind] ?? (reference.isEmpty ? 'Leitura' : reference);
     final title = _text(map['titulo'], fallback: fallbackTitle);
     final text = _text(map['texto']);
     final response = _optionalText(map['refrao'] ?? map['resposta']);

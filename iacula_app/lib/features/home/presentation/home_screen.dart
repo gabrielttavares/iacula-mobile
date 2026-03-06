@@ -499,6 +499,7 @@ class _ThematicPrayerList extends ConsumerWidget {
                     subtitle: prayerCountLabel(group.itemCount),
                     onTap: () => _openPrayerGroup(context, group),
                     height: 120,
+                    imageAsset: kHomeThematicImages[group.key],
                   ),
                 ),
               ),

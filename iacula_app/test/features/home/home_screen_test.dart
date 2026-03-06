@@ -142,10 +142,10 @@ final class _RankingPrayerCatalogRepository implements PrayerCatalogRepository {
         saints: [],
       ),
       PrayerCatalogEntry(
-        slug: 'penitencia-1',
-        title: 'Penitência',
+        slug: 'igreja-1',
+        title: 'Igreja',
         content: 'Texto',
-        themes: ['penitencia'],
+        themes: ['igreja'],
         saints: [],
       ),
       PrayerCatalogEntry(
@@ -520,17 +520,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    for (var i = 0; i < 20 && find.text('Penitência').evaluate().isEmpty; i++) {
+    for (var i = 0; i < 20 && find.text('Igreja').evaluate().isEmpty; i++) {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
       await tester.pump(const Duration(milliseconds: 200));
     }
 
-    expect(find.text('Penitência'), findsOneWidget);
+    expect(find.text('Igreja'), findsOneWidget);
     expect(find.text('Família'), findsOneWidget);
 
-    final penitenciaY = tester.getTopLeft(find.text('Penitência')).dy;
+    final igrejaY = tester.getTopLeft(find.text('Igreja')).dy;
     final familiaY = tester.getTopLeft(find.text('Família')).dy;
-    expect(penitenciaY, lessThan(familiaY));
+    expect(igrejaY, lessThan(familiaY));
   });
 
   testWidgets('home thematic ranking falls back to useful daily in ordinary', (
@@ -554,17 +554,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    for (var i = 0; i < 20 && find.text('Penitência').evaluate().isEmpty; i++) {
+    for (var i = 0; i < 20 && find.text('Igreja').evaluate().isEmpty; i++) {
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
       await tester.pump(const Duration(milliseconds: 200));
     }
 
-    expect(find.text('Penitência'), findsOneWidget);
+    expect(find.text('Igreja'), findsOneWidget);
     expect(find.text('Família'), findsOneWidget);
 
     final familiaY = tester.getTopLeft(find.text('Família')).dy;
-    final penitenciaY = tester.getTopLeft(find.text('Penitência')).dy;
-    expect(familiaY, lessThan(penitenciaY));
+    final igrejaY = tester.getTopLeft(find.text('Igreja')).dy;
+    expect(familiaY, lessThan(igrejaY));
   });
 
   testWidgets('tapping thematic group opens grouped prayer list screen', (

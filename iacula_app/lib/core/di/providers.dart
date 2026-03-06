@@ -16,8 +16,12 @@ import '../../features/meditation/domain/entities/meditation_item.dart';
 import '../../features/meditation/domain/repositories/meditation_catalog_repository.dart';
 import '../../features/meditation/infrastructure/repositories/asset_meditation_catalog_repository.dart';
 import '../../features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
+import '../../features/liturgia_diaria/domain/repositories/saint_repository.dart';
 import '../../features/liturgia_diaria/infrastructure/repositories/liturgia_cache_repository.dart';
+import '../../features/liturgia_diaria/infrastructure/repositories/saint_cache_repository.dart';
 import '../../features/liturgia_diaria/infrastructure/services/liturgia_api_service.dart';
+import '../../features/liturgia_diaria/infrastructure/services/saint_api_service.dart';
+import '../../features/liturgia_diaria/infrastructure/services/saint_image_resolver.dart';
 import '../../features/liturgical/domain/repositories/liturgical_season_cache_repository.dart';
 import '../../features/liturgical/domain/services/liturgical_season_service.dart';
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
@@ -140,9 +144,24 @@ final liturgiaApiServiceProvider = Provider<LiturgiaApiService>((ref) {
   return LiturgiaApiService(httpClient: ref.watch(httpClientProvider));
 });
 
+final saintApiServiceProvider = Provider<SaintApiService>((ref) {
+  return SaintApiService(httpClient: ref.watch(httpClientProvider));
+});
+
+final saintImageResolverProvider = Provider<SaintImageResolver>((ref) {
+  return SaintImageResolver(httpClient: ref.watch(httpClientProvider));
+});
+
 final liturgiaCacheRepositoryProvider = Provider<LiturgiaRepository>((ref) {
   return LiturgiaCacheRepository(
     apiService: ref.watch(liturgiaApiServiceProvider),
+  );
+});
+
+final saintRepositoryProvider = Provider<SaintRepository>((ref) {
+  return SaintCacheRepository(
+    apiService: ref.watch(saintApiServiceProvider),
+    imageResolver: ref.watch(saintImageResolverProvider),
   );
 });
 

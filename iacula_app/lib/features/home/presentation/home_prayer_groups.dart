@@ -28,83 +28,90 @@ const kCuratedThemeOrder = <String>[
 ];
 
 const kHomeThematicOrder = <String>[
-  'familia',
   'trabalho',
   'estudos',
-  'virgem-maria',
-  'anjos',
-  'penitencia',
-  'paixao-de-cristo',
+  'viagem',
+  'matrimonio',
+  'familia',
+  'gestacao',
+  'igreja',
   'eucaristica',
-  'santissima-trindade',
-  'protecao',
-  'devocoes',
-  'espirito-santo',
-  'rosario',
+  'anjos',
 ];
 
 const _homeThematicLabels = <String, String>{
-  'familia': 'Família',
   'trabalho': 'Trabalho',
   'estudos': 'Estudos',
-  'virgem-maria': 'Virgem Maria',
-  'anjos': 'Anjos',
-  'penitencia': 'Penitência',
-  'paixao-de-cristo': 'Paixão de Cristo',
-  'eucaristica': 'Eucarística',
-  'santissima-trindade': 'Santíssima Trindade',
-  'protecao': 'Proteção',
-  'devocoes': 'Devoções',
-  'espirito-santo': 'Espírito Santo',
-  'rosario': 'Rosário',
+  'viagem': 'Viagem',
+  'matrimonio': 'Matrimônio',
+  'familia': 'Família',
+  'gestacao': 'Gestação',
+  'igreja': 'Igreja',
+  'eucaristica': 'Divina Eucaristia',
+  'anjos': 'Santos Anjos',
+};
+
+const kHomeThematicImages = <String, String>{
+  'trabalho': 'assets/placeholders/oracoes-tematicas/trabalho.png',
+  'estudos': 'assets/placeholders/oracoes-tematicas/estudos.png',
+  'viagem': 'assets/placeholders/oracoes-tematicas/viagem.png',
+  'matrimonio': 'assets/placeholders/oracoes-tematicas/matrimonio.png',
+  'familia': 'assets/placeholders/oracoes-tematicas/familia.png',
+  'gestacao': 'assets/placeholders/oracoes-tematicas/gestacao.png',
+  'igreja': 'assets/placeholders/oracoes-tematicas/igreja.png',
+  'eucaristica': 'assets/placeholders/oracoes-tematicas/eucaristia.png',
+  'anjos': 'assets/placeholders/oracoes-tematicas/anjos.png',
 };
 
 const _baseDailyWeights = <String, int>{
-  'familia': 8,
-  'trabalho': 7,
-  'protecao': 6,
-  'virgem-maria': 6,
+  'trabalho': 8,
+  'estudos': 7,
+  'familia': 7,
+  'viagem': 5,
+  'matrimonio': 5,
+  'gestacao': 4,
+  'igreja': 4,
+  'eucaristica': 4,
   'anjos': 5,
-  'penitencia': 4,
 };
 
 const _seasonWeights = <LiturgicalSeason, Map<String, int>>{
   LiturgicalSeason.advent: {
-    'virgem-maria': 6,
-    'espirito-santo': 4,
-    'santissima-trindade': 2,
+    'igreja': 6,
+    'familia': 4,
+    'anjos': 2,
   },
   LiturgicalSeason.lent: {
-    'penitencia': 8,
-    'paixao-de-cristo': 7,
-    'protecao': 2,
+    'igreja': 8,
+    'eucaristica': 7,
+    'familia': 2,
   },
   LiturgicalSeason.easter: {
     'eucaristica': 8,
-    'santissima-trindade': 6,
-    'devocoes': 4,
+    'igreja': 6,
+    'anjos': 4,
   },
   LiturgicalSeason.christmas: {
-    'virgem-maria': 7,
-    'familia': 5,
-    'devocoes': 3,
+    'familia': 7,
+    'igreja': 5,
+    'gestacao': 3,
   },
   LiturgicalSeason.ordinary: {
-    'familia': 4,
-    'trabalho': 3,
-    'protecao': 3,
+    'trabalho': 4,
+    'estudos': 3,
+    'familia': 3,
   },
 };
 
 const _weekdayWeights = <int, Map<String, int>>{
   DateTime.sunday: {
     'eucaristica': 7,
-    'santissima-trindade': 6,
-    'devocoes': 4,
+    'igreja': 6,
+    'anjos': 4,
   },
   DateTime.friday: {
-    'penitencia': 8,
-    'paixao-de-cristo': 7,
+    'igreja': 6,
+    'eucaristica': 5,
   },
   DateTime.monday: {
     'trabalho': 2,

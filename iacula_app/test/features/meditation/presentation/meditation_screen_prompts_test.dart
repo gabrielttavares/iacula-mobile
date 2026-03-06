@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
+import 'package:iacula_app/core/presentation/widgets/iacula_horizontal_card_rail.dart';
+import 'package:iacula_app/features/challenges/presentation/challenge_library_screen.dart';
 import 'package:iacula_app/features/journal/domain/repositories/journal_repository.dart';
 import 'package:iacula_app/features/journal/domain/entities/journal_entry.dart';
 import 'package:iacula_app/features/journal/presentation/journal_editor_screen.dart';
@@ -108,6 +110,30 @@ final class _FakeJournalRepository implements JournalRepository {
   Future<List<JournalEntry>> search(String query) async => const [];
 }
 
+Widget _buildMeditationTestApp({
+  JournalRepository? journalRepository,
+  DateTime Function()? now,
+}) {
+  return ProviderScope(
+    overrides: [
+      premiumStatusProvider.overrideWith((ref) {
+        return Stream<PremiumStatus>.value(
+          const PremiumStatus(isPremium: true),
+        );
+      }),
+      meditationCatalogRepositoryProvider.overrideWithValue(
+        _FakeMeditationCatalogRepository(),
+      ),
+      journalPromptRepositoryProvider.overrideWithValue(
+        _FakeJournalPromptRepository(),
+      ),
+      if (journalRepository != null)
+        journalRepositoryProvider.overrideWithValue(journalRepository),
+    ],
+    child: CupertinoApp(home: MeditationScreen(now: now)),
+  );
+}
+
 void main() {
   testWidgets(
     'meditation screen shows grouped Reflexões card and opens journal flow',
@@ -141,6 +167,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Reflexões'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('meditation-resource-icon-reflexoes')),
+        findsOneWidget,
+      );
       expect(find.text('Lectio Divina'), findsOneWidget);
       expect(find.text('Inaciano'), findsOneWidget);
       expect(find.text('Litúrgico'), findsOneWidget);
@@ -203,24 +233,7 @@ void main() {
   testWidgets('existing meditation filters do not show prompt cards', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          premiumStatusProvider.overrideWith((ref) {
-            return Stream<PremiumStatus>.value(
-              const PremiumStatus(isPremium: true),
-            );
-          }),
-          meditationCatalogRepositoryProvider.overrideWithValue(
-            _FakeMeditationCatalogRepository(),
-          ),
-          journalPromptRepositoryProvider.overrideWithValue(
-            _FakeJournalPromptRepository(),
-          ),
-        ],
-        child: const CupertinoApp(home: MeditationScreen()),
-      ),
-    );
+    await tester.pumpWidget(_buildMeditationTestApp());
     await tester.pumpAndSettle();
 
     expect(find.text('Reflexões'), findsOneWidget);
@@ -232,10 +245,64 @@ void main() {
     expect(find.text('Pelo que sou grato a Deus hoje?'), findsNothing);
     expect(find.text('Meditação do dia'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Reflexão guiada'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Reflexão guiada'));
     await tester.pumpAndSettle();
     expect(find.text('Reflexões'), findsOneWidget);
     expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
     expect(find.text('Meditação do dia'), findsNothing);
+  });
+
+  testWidgets('meditation screen shows March novenas rail with dates', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildMeditationTestApp(now: () => DateTime(2026, 3, 6)),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Novenas do mês'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Novenas do mês'), findsOneWidget);
+    expect(find.text('Novena a São Patrício'), findsOneWidget);
+    expect(find.text('8 a 16 de março'), findsOneWidget);
+    expect(find.text('Novena a São José'), findsOneWidget);
+    expect(find.text('10 a 18 de março'), findsOneWidget);
+    expect(find.text('Ver todas'), findsOneWidget);
+
+    await tester.drag(
+      find.byType(IaculaHorizontalCardRail),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Novena da Anunciação'), findsOneWidget);
+    expect(find.text('16 a 24 de março'), findsOneWidget);
+  });
+
+  testWidgets('tapping ver todas opens challenge library screen', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildMeditationTestApp(now: () => DateTime(2026, 3, 6)),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Ver todas'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ver todas'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ChallengeLibraryScreen), findsOneWidget);
   });
 }

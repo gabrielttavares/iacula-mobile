@@ -50,28 +50,31 @@ void main() {
     expect(result, isEmpty);
   });
 
-  test('fetchPeriod derives sequential dates when payload lacks explicit dates', () async {
-    final client = MockClient((_) async {
-      return http.Response(
-        '[{"liturgia":"Dia 1","cor":"Verde","oracoes":{"coleta":"Coleta 1"},"leituras":[]},{"liturgia":"Dia 2","cor":"Vermelho","oracoes":{"coleta":"Coleta 2"},"leituras":[]},{"liturgia":"Dia 3","cor":"Branco","oracoes":{"coleta":"Coleta 3"},"leituras":[]}]',
-        200,
+  test(
+    'fetchPeriod derives sequential dates when payload lacks explicit dates',
+    () async {
+      final client = MockClient((_) async {
+        return http.Response(
+          '[{"liturgia":"Dia 1","cor":"Verde","oracoes":{"coleta":"Coleta 1"},"leituras":[]},{"liturgia":"Dia 2","cor":"Vermelho","oracoes":{"coleta":"Coleta 2"},"leituras":[]},{"liturgia":"Dia 3","cor":"Branco","oracoes":{"coleta":"Coleta 3"},"leituras":[]}]',
+          200,
+        );
+      });
+
+      final service = LiturgiaApiService(
+        httpClient: client,
+        baseUrl: 'https://example.com/v2',
       );
-    });
 
-    final service = LiturgiaApiService(
-      httpClient: client,
-      baseUrl: 'https://example.com/v2',
-    );
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final result = await service.fetchPeriod(days: 3);
 
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final result = await service.fetchPeriod(days: 3);
-
-    expect(result, hasLength(3));
-    expect(result[0].date, today);
-    expect(result[1].date, today.add(const Duration(days: 1)));
-    expect(result[2].date, today.add(const Duration(days: 2)));
-  });
+      expect(result, hasLength(3));
+      expect(result[0].date, today);
+      expect(result[1].date, today.add(const Duration(days: 1)));
+      expect(result[2].date, today.add(const Duration(days: 2)));
+    },
+  );
 
   test('fetchPeriod respects explicit dates when provided in payload', () async {
     final client = MockClient((_) async {

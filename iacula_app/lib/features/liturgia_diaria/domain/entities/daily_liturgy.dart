@@ -1,6 +1,14 @@
 enum LiturgyColor { green, red, purple, pink, white }
 
-enum LiturgyReadingKind { first, psalm, second, sequence, acclamation, gospel, other }
+enum LiturgyReadingKind {
+  first,
+  psalm,
+  second,
+  sequence,
+  acclamation,
+  gospel,
+  other,
+}
 
 final class LiturgyPrayer {
   const LiturgyPrayer({

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,6 +12,7 @@ import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/daily_liturgy.dart';
+import '../domain/entities/saint_of_day.dart';
 
 final _liturgyPeriodProvider =
     FutureProvider.family<List<LiturgyDay>, DateTime>((ref, anchorDate) {
@@ -17,6 +20,13 @@ final _liturgyPeriodProvider =
           .watch(getLiturgyPeriodUseCaseProvider)
           .call(days: 7, anchorDate: anchorDate);
     });
+
+final _saintOfDayProvider = FutureProvider.family<SaintOfDay?, DateTime>((
+  ref,
+  date,
+) {
+  return ref.watch(saintRepositoryProvider).getSaintForDate(date);
+});
 
 enum _LiturgySegment { prayers, readings, antiphons }
 
@@ -66,136 +76,144 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
             if (selectedIndex < 0) {
               _selectedDate = selected.date;
             }
+            final saintAsync = ref.watch(_saintOfDayProvider(selected.date));
             final accent = _accentColor(selected.color);
 
             return Padding(
               padding: const EdgeInsets.all(IaculaSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const IaculaLargeTitle('Liturgia'),
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () async {
-                          final picked = await _showCalendarSheet(
-                            context,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.only(
+                  bottom:
+                      MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const IaculaLargeTitle('Liturgia'),
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () async {
+                            final picked = await _showCalendarSheet(
+                              context,
+                              _selectedDate,
+                            );
+                            if (picked == null) return;
+                            if (!mounted) return;
+                            _selectDateFromCalendar(picked, days);
+                          },
+                          child: Text(
+                            'Calendário',
+                            style: TextStyle(
+                              color: context.colors.primaryButton,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: IaculaSpacing.md),
+                    SizedBox(
+                      height: 44,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          final day = days[index];
+                          final selectedDay = _sameDate(
+                            day.date,
                             _selectedDate,
                           );
-                          if (picked == null) return;
-                          if (!mounted) return;
-                          _selectDateFromCalendar(picked, days);
+                          return GestureDetector(
+                            onTap: () =>
+                                setState(() => _selectedDate = day.date),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: selectedDay
+                                    ? accent.withValues(alpha: 0.18)
+                                    : context.colors.background,
+                                border: Border.all(
+                                  color: selectedDay
+                                      ? accent
+                                      : const Color(0x26000000),
+                                ),
+                              ),
+                              child: Text(
+                                _dayLabel(day.date),
+                                style: TextStyle(
+                                  color: selectedDay
+                                      ? context.colors.textPrimary
+                                      : context.colors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          );
                         },
-                        child: Text(
-                          'Calendário',
-                          style: TextStyle(
-                            color: context.colors.primaryButton,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(width: IaculaSpacing.sm),
+                        itemCount: days.length,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: IaculaSpacing.md),
-                  SizedBox(
-                    height: 44,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final day = days[index];
-                        final selectedDay = _sameDate(day.date, _selectedDate);
-                        return GestureDetector(
-                          onTap: () => setState(() => _selectedDate = day.date),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: selectedDay
-                                  ? accent.withValues(alpha: 0.18)
-                                  : context.colors.background,
-                              border: Border.all(
-                                color: selectedDay
-                                    ? accent
-                                    : const Color(0x26000000),
-                              ),
-                            ),
-                            child: Text(
-                              _dayLabel(day.date),
-                              style: TextStyle(
-                                color: selectedDay
-                                    ? context.colors.textPrimary
-                                    : context.colors.textSecondary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                    ),
+                    const SizedBox(height: IaculaSpacing.md),
+                    CupertinoSlidingSegmentedControl<_LiturgySegment>(
+                      groupValue: _segment,
+                      children: const {
+                        _LiturgySegment.prayers: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 6,
                           ),
-                        );
+                          child: Text('Orações'),
+                        ),
+                        _LiturgySegment.readings: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
+                          child: Text('Leituras'),
+                        ),
+                        _LiturgySegment.antiphons: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
+                          child: Text('Antífonas'),
+                        ),
                       },
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(width: IaculaSpacing.sm),
-                      itemCount: days.length,
+                      onValueChanged: (segment) {
+                        if (segment != null) {
+                          setState(() => _segment = segment);
+                        }
+                      },
                     ),
-                  ),
-                  const SizedBox(height: IaculaSpacing.md),
-                  CupertinoSlidingSegmentedControl<_LiturgySegment>(
-                    groupValue: _segment,
-                    children: const {
-                      _LiturgySegment.prayers: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('Orações'),
-                      ),
-                      _LiturgySegment.readings: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('Leituras'),
-                      ),
-                      _LiturgySegment.antiphons: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        child: Text('Antífonas'),
-                      ),
-                    },
-                    onValueChanged: (segment) {
-                      if (segment != null) {
-                        setState(() => _segment = segment);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: IaculaSpacing.md),
-                  Text(selected.title, style: context.textStyles.sectionTitle),
-                  const SizedBox(height: IaculaSpacing.sm),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.paddingOf(context).bottom +
-                            IaculaSpacing.md,
-                      ),
-                      child: IaculaSoftCard(
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: _SegmentedContent(
-                            key: ValueKey<_LiturgySegment>(_segment),
-                            day: selected,
-                            segment: _segment,
-                          ),
+                    const SizedBox(height: IaculaSpacing.md),
+                    Text(
+                      selected.title,
+                      style: context.textStyles.sectionTitle,
+                    ),
+                    const SizedBox(height: IaculaSpacing.sm),
+                    _SaintOfDaySection(asyncSaint: saintAsync),
+                    const SizedBox(height: IaculaSpacing.md),
+                    IaculaSoftCard(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: _SegmentedContent(
+                          key: ValueKey<_LiturgySegment>(_segment),
+                          day: selected,
+                          segment: _segment,
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
@@ -277,8 +295,85 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
   }
 }
 
+class _SaintOfDaySection extends StatelessWidget {
+  const _SaintOfDaySection({required this.asyncSaint});
+
+  final AsyncValue<SaintOfDay?> asyncSaint;
+
+  @override
+  Widget build(BuildContext context) {
+    return asyncSaint.when(
+      data: (saint) {
+        if (saint == null) {
+          return const SizedBox.shrink();
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const IaculaSectionHeader(title: 'Santo do dia'),
+            const SizedBox(height: IaculaSpacing.sm),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(IaculaRadius.card),
+              child: SizedBox(
+                height: 220,
+                width: double.infinity,
+                child: _SaintImage(saint: saint),
+              ),
+            ),
+            const SizedBox(height: IaculaSpacing.md),
+            Text(saint.name, style: context.textStyles.sectionTitle),
+            const SizedBox(height: IaculaSpacing.sm),
+            for (final paragraph in saint.biographyParagraphs) ...[
+              Text(
+                paragraph,
+                style: context.textStyles.secondary.copyWith(
+                  color: context.colors.textPrimary,
+                  height: 1.55,
+                ),
+                textAlign: TextAlign.start,
+              ),
+              const SizedBox(height: IaculaSpacing.sm),
+            ],
+          ],
+        );
+      },
+      loading: () => const IaculaShimmerCard(height: 280),
+      error: (_, _) => const SizedBox.shrink(),
+    );
+  }
+}
+
+class _SaintImage extends StatelessWidget {
+  const _SaintImage({required this.saint});
+
+  final SaintOfDay saint;
+
+  @override
+  Widget build(BuildContext context) {
+    if (saint.localImagePath != null) {
+      return Image.file(
+        File(saint.localImagePath!),
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => _assetOrFallback(),
+      );
+    }
+    return _assetOrFallback();
+  }
+
+  Widget _assetOrFallback() {
+    return Image.asset(
+      saint.imageAssetPath ?? 'assets/placeholders/saint-placeholder.png',
+      fit: BoxFit.cover,
+    );
+  }
+}
+
 class _SegmentedContent extends StatelessWidget {
-  const _SegmentedContent({super.key, required this.day, required this.segment});
+  const _SegmentedContent({
+    super.key,
+    required this.day,
+    required this.segment,
+  });
 
   final LiturgyDay day;
   final _LiturgySegment segment;
@@ -366,13 +461,15 @@ class _SegmentedContent extends StatelessWidget {
                 text: 'Não há antífonas disponíveis.',
               )
             else ...[
-              if (day.antiphons.entry != null && day.antiphons.entry!.isNotEmpty)
-                _LabeledBlock(
-                    label: 'Entrada', text: day.antiphons.entry!),
+              if (day.antiphons.entry != null &&
+                  day.antiphons.entry!.isNotEmpty)
+                _LabeledBlock(label: 'Entrada', text: day.antiphons.entry!),
               if (day.antiphons.communion != null &&
                   day.antiphons.communion!.isNotEmpty)
                 _LabeledBlock(
-                    label: 'Comunhão', text: day.antiphons.communion!),
+                  label: 'Comunhão',
+                  text: day.antiphons.communion!,
+                ),
               for (final extra in day.antiphons.extra)
                 if (extra.isNotEmpty)
                   _LabeledBlock(label: 'Extra', text: extra),
@@ -413,11 +510,7 @@ class _LabeledBlock extends StatelessWidget {
         children: [
           Text(label, style: _labelStyle(context)),
           const SizedBox(height: 4),
-          Text(
-            text,
-            style: _bodyStyle(context),
-            textAlign: TextAlign.start,
-          ),
+          Text(text, style: _bodyStyle(context), textAlign: TextAlign.start),
         ],
       ),
     );
@@ -460,4 +553,3 @@ class _ResponseBlock extends StatelessWidget {
     );
   }
 }
-
