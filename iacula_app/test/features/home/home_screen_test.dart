@@ -7,6 +7,7 @@ import 'package:iacula_app/features/home/presentation/home_screen.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/entities/daily_liturgy.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
+import 'package:iacula_app/core/presentation/widgets/premium_touchable_card.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
@@ -747,5 +748,36 @@ void main() {
 
     expect((frasesRect.top - leiturasRect.top).abs(), lessThan(1));
     expect((frasesRect.width - leiturasRect.width).abs(), lessThan(1));
+  });
+
+  testWidgets('home action cards keep equal heights for long labels', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final intentionsCard = find.ancestor(
+      of: find.text('Intenções'),
+      matching: find.byType(PremiumTouchableCard),
+    );
+    final examinationCard = find.ancestor(
+      of: find.text('Exame de consciência'),
+      matching: find.byType(PremiumTouchableCard),
+    );
+
+    expect(intentionsCard, findsOneWidget);
+    expect(examinationCard, findsOneWidget);
+
+    final intentionsRect = tester.getRect(intentionsCard);
+    final examinationRect = tester.getRect(examinationCard);
+
+    expect((intentionsRect.height - examinationRect.height).abs(), lessThan(1));
+    expect((intentionsRect.top - examinationRect.top).abs(), lessThan(1));
+    expect(intentionsRect.height, lessThan(96));
   });
 }

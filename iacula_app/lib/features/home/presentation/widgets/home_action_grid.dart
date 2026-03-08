@@ -66,21 +66,31 @@ class HomeActionGrid extends StatelessWidget {
 class _HorizontalFeatureCard extends StatelessWidget {
   const _HorizontalFeatureCard({required this.label, required this.onTap});
 
+  static const double _cardHeight = 65;
+
   final String label;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return PremiumTouchableCard(
-      onTap: onTap,
-      child: IaculaSoftCard(
-        radius: 16,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Center(
-          child: Text(
-            label,
-            style: context.textStyles.cardTitle.copyWith(fontSize: 16),
-            textAlign: TextAlign.center,
+    return SizedBox(
+      height: _cardHeight,
+      child: PremiumTouchableCard(
+        onTap: onTap,
+        child: IaculaSoftCard(
+          radius: 16,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Center(
+            child: Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: context.textStyles.cardTitle.copyWith(
+                fontSize: 15,
+                height: 1.1,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ),
