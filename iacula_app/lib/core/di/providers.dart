@@ -15,6 +15,7 @@ import '../../features/liturgia_diaria/application/use_cases/get_liturgy_period_
 import '../../features/meditation/domain/entities/meditation_item.dart';
 import '../../features/meditation/domain/repositories/meditation_catalog_repository.dart';
 import '../../features/meditation/infrastructure/repositories/asset_meditation_catalog_repository.dart';
+import '../../features/meditation/infrastructure/services/remote_meditation_reader_service.dart';
 import '../../features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
 import '../../features/liturgia_diaria/domain/repositories/saint_repository.dart';
 import '../../features/liturgia_diaria/infrastructure/repositories/liturgia_cache_repository.dart';
@@ -235,6 +236,13 @@ final journalPromptCatalogProvider = FutureProvider<List<JournalPrompt>>((
 ) async {
   return ref.watch(journalPromptRepositoryProvider).listAll();
 });
+
+final remoteMeditationReaderServiceProvider =
+    Provider<RemoteMeditationReaderService>((ref) {
+      return RemoteMeditationReaderService(
+        httpClient: ref.watch(httpClientProvider),
+      );
+    });
 
 final doctrineRepositoryProvider = Provider<DoctrineRepository>((ref) {
   return AssetDoctrineRepository();
