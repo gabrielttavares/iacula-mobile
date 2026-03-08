@@ -91,7 +91,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    expect(find.text('Ver todos os misterios'), findsOneWidget);
+    expect(find.text('Ver todos os mistérios'), findsOneWidget);
     expect(find.text('Mistérios Luminosos'), findsOneWidget);
   });
 

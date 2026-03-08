@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -77,19 +78,7 @@ class MeditationDetailScreen extends StatelessWidget {
     final uri = Uri.parse(url);
     final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!opened && context.mounted) {
-      await showCupertinoDialog<void>(
-        context: context,
-        builder: (ctx) => CupertinoAlertDialog(
-          title: const Text('Erro'),
-          content: const Text('Não foi possível abrir o link.'),
-          actions: [
-            CupertinoDialogAction(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      await IaculaModal.showOpenLinkAlert(context);
     }
   }
 }

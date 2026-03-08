@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/presentation/design/iacula_modal.dart';
 import '../../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
@@ -20,19 +21,7 @@ class MeditationCard extends StatelessWidget {
   Future<void> _launchUrl(BuildContext context) async {
     final parsedUrl = Uri.parse(url);
     if (!await launchUrl(parsedUrl) && context.mounted) {
-      await showCupertinoDialog<void>(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: const Text('Erro'),
-          content: const Text('Não foi possível abrir o link.'),
-          actions: [
-            CupertinoDialogAction(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      await IaculaModal.showOpenLinkAlert(context);
     }
   }
 

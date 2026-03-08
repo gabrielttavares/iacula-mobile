@@ -8,21 +8,29 @@ class IaculaTextInput extends StatefulWidget {
     this.controller,
     this.placeholder,
     this.keyboardType,
+    this.style,
     this.textCapitalization = TextCapitalization.none,
     this.autofocus = false,
     this.maxLines = 1,
+    this.minLines,
     this.readOnly = false,
+    this.padding,
     this.onChanged,
+    this.onSubmitted,
   });
 
   final TextEditingController? controller;
   final String? placeholder;
   final TextInputType? keyboardType;
+  final TextStyle? style;
   final TextCapitalization textCapitalization;
   final bool autofocus;
-  final int maxLines;
+  final int? maxLines;
+  final int? minLines;
   final bool readOnly;
+  final EdgeInsetsGeometry? padding;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   State<IaculaTextInput> createState() => _IaculaTextInputState();
@@ -68,14 +76,18 @@ class _IaculaTextInputState extends State<IaculaTextInput> {
         controller: widget.controller,
         placeholder: widget.placeholder,
         keyboardType: widget.keyboardType,
+        style: widget.style,
         textCapitalization: widget.textCapitalization,
         autofocus: widget.autofocus,
         maxLines: widget.maxLines,
+        minLines: widget.minLines,
         readOnly: widget.readOnly,
         focusNode: _focusNode,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: widget.padding ??
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: null,
         onChanged: widget.onChanged,
+        onSubmitted: widget.onSubmitted,
       ),
     );
   }

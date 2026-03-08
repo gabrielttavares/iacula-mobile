@@ -8,6 +8,7 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/premium_feature.dart';
 import 'paywall_screen.dart';
+import 'premium_copy.dart';
 
 class PremiumGate extends ConsumerWidget {
   const PremiumGate({
@@ -72,6 +73,7 @@ class _LockedFallback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final copy = premiumCopyFor(feature);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -86,19 +88,19 @@ class _LockedFallback extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Acesso Premium',
+                'Continue com o Premium',
                 textAlign: TextAlign.center,
                 style: context.textStyles.sectionTitle,
               ),
               const SizedBox(height: 12),
               Text(
-                '${_label(feature)} faz parte do acesso Premium. Pague uma vez (R\$ 39,90) e use para sempre.',
+                copy.gateMessage,
                 textAlign: TextAlign.center,
                 style: context.textStyles.secondary,
               ),
               const SizedBox(height: 24),
               IaculaPrimaryPillButton(
-                label: 'Ver o que inclui',
+                label: 'Conhecer o Premium',
                 onPressed: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(builder: (_) => const PaywallScreen()),
@@ -112,20 +114,6 @@ class _LockedFallback extends StatelessWidget {
     );
   }
 
-  static String _label(PremiumFeature value) {
-    return switch (value) {
-      PremiumFeature.meditation => 'A Meditação',
-      PremiumFeature.planOfLife => 'O Plano de vida',
-      PremiumFeature.streakDashboard => 'O Painel Espiritual',
-      PremiumFeature.rosary => 'O Rosário Guiado',
-      PremiumFeature.leituras => 'As Leituras',
-      PremiumFeature.challenges => 'Os Desafios e Novenas',
-      PremiumFeature.journal => 'O Diário Espiritual',
-      PremiumFeature.nightPrayer => 'A Oração da Noite',
-      PremiumFeature.liturgyOfHours => 'A Liturgia das Horas',
-      PremiumFeature.widgets => 'Os Widgets',
-    };
-  }
 }
 
 class _PremiumGateModal extends StatelessWidget {
@@ -135,6 +123,7 @@ class _PremiumGateModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final copy = premiumCopyFor(feature);
     return Padding(
       padding: const EdgeInsets.all(24),
       child: SafeArea(
@@ -150,19 +139,19 @@ class _PremiumGateModal extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Acesso Premium',
+              'Continue com o Premium',
               textAlign: TextAlign.center,
               style: context.textStyles.sectionTitle,
             ),
             const SizedBox(height: 12),
             Text(
-              '${_LockedFallback._label(feature)} faz parte do acesso Premium. Pague uma vez (R\$ 39,90) e use para sempre.',
+              copy.gateMessage,
               textAlign: TextAlign.center,
               style: context.textStyles.secondary,
             ),
             const SizedBox(height: 24),
             IaculaPrimaryPillButton(
-              label: 'Ver o que inclui',
+              label: 'Conhecer o Premium',
               onPressed: () {
                 Navigator.pop(context);
                 Future.delayed(Duration.zero, () {

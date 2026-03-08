@@ -360,8 +360,8 @@ void main() {
     expect(greeting, contains('Bem vindo'));
     expect(find.text('Destaques'), findsNothing);
     await reveal('Minhas frases');
-    await reveal('Sugestão de oração');
-    await reveal('Orações Temáticas');
+    await reveal('Reze agora');
+    await reveal('Encontre uma oração para este momento');
   });
 
   testWidgets('home renders hero card before quick actions', (tester) async {
@@ -429,9 +429,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Orações'), findsOneWidget);
-    expect(find.text('Liturgia Diária'), findsOneWidget);
+    expect(find.text('Liturgia de hoje'), findsOneWidget);
     expect(find.text('Intenções'), findsOneWidget);
-    expect(find.text('Exame'), findsOneWidget);
+    expect(find.text('Exame de consciência'), findsOneWidget);
     expect(find.text('Leituras'), findsOneWidget);
     expect(find.text('Premium'), findsNothing);
   });
@@ -461,7 +461,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final liturgiaFinder = find.text('Liturgia Diária');
+    final liturgiaFinder = find.text('Liturgia de hoje');
     await tester.dragUntilVisible(
       liturgiaFinder,
       find.byType(CustomScrollView),
@@ -496,7 +496,7 @@ void main() {
       expect(finder, findsOneWidget);
     }
 
-    await reveal('Orações Temáticas');
+    await reveal('Encontre uma oração para este momento');
     await reveal('Trabalho');
 
     expect(find.text('Trabalho'), findsOneWidget);
@@ -641,13 +641,13 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.scrollUntilVisible(
-      find.text('Novenas do mês'),
+      find.text('Novenas deste mês'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Novenas do mês'), findsOneWidget);
+    expect(find.text('Novenas deste mês'), findsOneWidget);
     expect(find.text('Novena a São Patrício'), findsOneWidget);
     expect(find.text('8 a 16 de março'), findsOneWidget);
     expect(find.text('Ver todas'), findsOneWidget);

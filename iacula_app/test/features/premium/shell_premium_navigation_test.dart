@@ -88,8 +88,8 @@ void main() {
     await tester.tap(find.text('Meditação'));
     await tester.pump();
 
-    expect(find.text('Acesso Premium'), findsAtLeastNWidgets(1));
-    expect(find.text('Ver o que inclui'), findsAtLeastNWidgets(1));
+    expect(find.text('Continue com o Premium'), findsAtLeastNWidgets(1));
+    expect(find.text('Conhecer o Premium'), findsAtLeastNWidgets(1));
 
     await purchaseService.dispose();
   });
@@ -126,8 +126,8 @@ void main() {
       await tester.pump();
 
       // Verify premium modal is NOT shown
-      expect(find.text('Acesso Premium'), findsNothing);
-      expect(find.text('Ver o que inclui'), findsNothing);
+      expect(find.text('Continue com o Premium'), findsNothing);
+      expect(find.text('Conhecer o Premium'), findsNothing);
 
       // Verify tab bar state updated to profile index (4)
       final tabBar = tester.widget<CupertinoTabBar>(

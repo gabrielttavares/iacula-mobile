@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_progress_bar.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -55,24 +56,16 @@ class _HourPrayerScreenState extends ConsumerState<HourPrayerScreen> {
           featureSlug: 'liturgy_${widget.hour.type.name}',
         );
 
-    showCupertinoDialog(
+    IaculaModal.showAlert(
       context: context,
-      builder: (ctx) => CupertinoAlertDialog(
-        title: Text('${widget.hour.type.label} Concluída'),
-        content: Text(
-          'Tempo: ${(elapsed / 60).ceil()} minutos.',
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('Concluir'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
+      title: '${widget.hour.type.label} concluída',
+      message: 'Tempo: ${(elapsed / 60).ceil()} minutos.',
+      actionLabel: 'Fechar',
+    ).then((_) {
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   @override

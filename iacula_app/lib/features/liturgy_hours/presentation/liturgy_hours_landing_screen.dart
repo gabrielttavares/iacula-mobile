@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../liturgical/domain/liturgical_season.dart';
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
 import '../domain/entities/liturgical_hour.dart';
@@ -13,8 +14,8 @@ import 'hour_prayer_screen.dart';
 
 final _liturgyHoursRepository = AssetLiturgyHoursRepository();
 
-final _todayHoursProvider = FutureProvider<List<LiturgicalHour>>((ref) async {
-  return _liturgyHoursRepository.getHoursForDay(DateTime.now());
+final _liturgicalSeasonProvider = FutureProvider<LiturgicalSeason>((ref) async {
+  return ref.watch(liturgicalSeasonServiceProvider).getCurrentSeason();
 });
 
 class LiturgyHoursLandingScreen extends ConsumerWidget {
@@ -24,6 +25,7 @@ class LiturgyHoursLandingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
     final todayStr = '${_weekday(now.weekday)}, ${now.day} de ${_month(now.month)}';
+    final seasonAsync = ref.watch(_liturgicalSeasonProvider);
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
@@ -52,7 +54,10 @@ class LiturgyHoursLandingScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Tempo Comum', // TODO: from liturgical season service
+                      seasonAsync.maybeWhen(
+                        data: _seasonLabel,
+                        orElse: () => 'Carregando tempo litúrgico...',
+                      ),
                       style: context.textStyles.secondary,
                     ),
                   ],
@@ -77,6 +82,16 @@ class LiturgyHoursLandingScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+String _seasonLabel(LiturgicalSeason season) {
+  return switch (season) {
+    LiturgicalSeason.ordinary => 'Tempo Comum',
+    LiturgicalSeason.advent => 'Tempo do Advento',
+    LiturgicalSeason.lent => 'Tempo da Quaresma',
+    LiturgicalSeason.easter => 'Tempo Pascal',
+    LiturgicalSeason.christmas => 'Tempo do Natal',
+  };
 }
 
 class _HourCard extends ConsumerWidget {

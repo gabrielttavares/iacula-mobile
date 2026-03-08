@@ -34,7 +34,7 @@ class HomeActionGrid extends StatelessWidget {
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Liturgia Diária',
+                label: 'Liturgia de hoje',
                 onTap: onOpenLiturgy,
               ),
             ),
@@ -52,7 +52,7 @@ class HomeActionGrid extends StatelessWidget {
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Exame',
+                label: 'Exame de consciência',
                 onTap: onOpenExamination,
               ),
             ),

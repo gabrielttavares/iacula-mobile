@@ -21,6 +21,12 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.textContaining('Pesquise'), findsOneWidget);
+    expect(find.text('Busque no app'), findsOneWidget);
+    expect(
+      find.text(
+        'Procure por uma oração, meditação, leitura ou citação.',
+      ),
+      findsOneWidget,
+    );
   });
 }

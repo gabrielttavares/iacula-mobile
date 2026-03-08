@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../prayer_activity/domain/entities/prayer_activity_entry.dart';
@@ -219,30 +220,22 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
               const SizedBox(height: IaculaSpacing.md),
 
               // Title
-              CupertinoTextField(
+              IaculaTextInput(
                 controller: _titleController,
                 placeholder: 'Título (opcional)',
                 style: context.textStyles.cardTitle,
-                decoration: BoxDecoration(
-                  color: context.colors.card,
-                  borderRadius: BorderRadius.circular(12),
-                ),
                 padding: const EdgeInsets.all(16),
               ),
               const SizedBox(height: IaculaSpacing.sm),
 
               // Body
-              CupertinoTextField(
+              IaculaTextInput(
                 controller: _bodyController,
                 placeholder: 'Escreva sua reflexão...',
                 style: context.textStyles.secondary.copyWith(
                   color: context.colors.textPrimary,
                   fontSize: 16,
                   height: 1.6,
-                ),
-                decoration: BoxDecoration(
-                  color: context.colors.card,
-                  borderRadius: BorderRadius.circular(12),
                 ),
                 padding: const EdgeInsets.all(16),
                 maxLines: null,
@@ -309,15 +302,11 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: CupertinoTextField(
+                          child: IaculaTextInput(
                             controller: _tagController,
                             placeholder: 'Adicionar tag',
                             style: context.textStyles.secondary.copyWith(
                               color: context.colors.textPrimary,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.colors.systemGray6,
-                              borderRadius: BorderRadius.circular(8),
                             ),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,

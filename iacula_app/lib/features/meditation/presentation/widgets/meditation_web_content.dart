@@ -109,7 +109,6 @@ class _MeditationWebContentState extends State<MeditationWebContent> {
             if (_lastError != null && widget.fallback == null)
               _WebErrorState(
                 title: widget.title,
-                message: _lastError!,
                 onRetry: _loadUrl,
               ),
             if (_progress < 100 && _lastError == null)
@@ -129,12 +128,10 @@ class _MeditationWebContentState extends State<MeditationWebContent> {
 class _WebErrorState extends StatelessWidget {
   const _WebErrorState({
     required this.title,
-    required this.message,
     required this.onRetry,
   });
 
   final String title;
-  final String message;
   final Future<void> Function() onRetry;
 
   @override
@@ -163,16 +160,6 @@ class _WebErrorState extends StatelessWidget {
                 'Não foi possível carregar este conteúdo agora.',
                 textAlign: TextAlign.center,
                 style: context.textStyles.secondary,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  height: 1.4,
-                  color: context.colors.textSecondary,
-                ),
               ),
               const SizedBox(height: 16),
               CupertinoButton(

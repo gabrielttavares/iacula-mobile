@@ -92,6 +92,7 @@ import '../../features/prayer_activity/infrastructure/repositories/isar_prayer_a
 import '../../features/rosary/domain/entities/rosary_mystery_set.dart';
 import '../../features/rosary/infrastructure/repositories/asset_rosary_repository.dart';
 import '../../features/rosary/domain/repositories/rosary_repository.dart';
+import '../../features/search/application/app_search_service.dart';
 import '../../features/bible/domain/entities/bible_book.dart';
 import '../../features/bible/domain/entities/bible_chapter_ref.dart';
 import '../../features/bible/domain/entities/bible_verse.dart';
@@ -254,6 +255,15 @@ final leituraLocalSourceProvider = Provider<LeituraLocalSource>((ref) {
 
 final leituraRepositoryProvider = Provider<LeituraRepository>((ref) {
   return LeituraRepository(localSource: ref.watch(leituraLocalSourceProvider));
+});
+
+final appSearchServiceProvider = Provider<AppSearchService>((ref) {
+  return AppSearchService(
+    prayerCatalogRepository: ref.watch(prayerCatalogRepositoryProvider),
+    meditationCatalogRepository: ref.watch(meditationCatalogRepositoryProvider),
+    leituraRepository: ref.watch(leituraRepositoryProvider),
+    quoteContentRepository: ref.watch(quoteContentRepositoryProvider),
+  );
 });
 
 final doctrineCatalogProvider = FutureProvider<List<DoctrineEntry>>((ref) {
