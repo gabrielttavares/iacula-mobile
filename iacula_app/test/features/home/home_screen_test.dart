@@ -18,6 +18,7 @@ import 'package:iacula_app/features/notifications/domain/repositories/last_deliv
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import 'package:iacula_app/features/prayers/presentation/prayer_catalog_group_screen.dart';
+import 'package:iacula_app/features/challenges/presentation/challenge_library_screen.dart';
 import 'package:iacula_app/features/bible/presentation/bible_books_screen.dart';
 import 'package:iacula_app/features/rosary/presentation/rosary_intro_screen.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
@@ -200,7 +201,9 @@ Widget _buildApp({
       if (prayerCatalogRepo != null)
         prayerCatalogRepositoryProvider.overrideWithValue(prayerCatalogRepo),
       if (liturgicalSeasonService != null)
-        liturgicalSeasonServiceProvider.overrideWithValue(liturgicalSeasonService),
+        liturgicalSeasonServiceProvider.overrideWithValue(
+          liturgicalSeasonService,
+        ),
       if (now != null) homeNowProvider.overrideWithValue(now),
     ],
     child: CupertinoApp(routes: routes ?? const {}, home: const HomeScreen()),
@@ -602,33 +605,87 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    for (var i = 0; i < 20 && find.text('Bíblia').evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-      await tester.pump(const Duration(milliseconds: 200));
-    }
+    final bibleCard = find.byKey(const Key('home_feature_biblia_card'));
 
-    final horizontalRail = find.byWidgetPredicate(
-      (widget) =>
-          widget is ListView && widget.scrollDirection == Axis.horizontal,
+    await tester.scrollUntilVisible(
+      find.text('Rosário'),
+      220,
+      scrollable: find.byType(Scrollable).first,
     );
-    for (var i = 0; i < 10 && find.text('Bíblia').evaluate().isEmpty; i++) {
-      await tester.drag(
-        horizontalRail,
-        const Offset(-140, 0),
-        warnIfMissed: false,
-      );
-      await tester.pump(const Duration(milliseconds: 200));
-    }
+    await tester.pumpAndSettle();
 
-    final bibleFinder = find.text('Bíblia').first;
-    await tester.ensureVisible(bibleFinder);
+    final featureRail = find.byKey(const Key('home_feature_rail'));
+    await tester.fling(featureRail, const Offset(-400, 0), 1000);
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(bibleCard);
     await tester.pump();
-    await tester.tap(bibleFinder);
+    await tester.tap(bibleCard);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(find.byType(BibleBooksScreen), findsOneWidget);
     expect(find.text('Em breve'), findsNothing);
+  });
+
+  testWidgets('home shows monthly novenas section for March 2026', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+        now: DateTime(2026, 3, 6),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Novenas do mês'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Novenas do mês'), findsOneWidget);
+    expect(find.text('Novena a São Patrício'), findsOneWidget);
+    expect(find.text('8 a 16 de março'), findsOneWidget);
+    expect(find.text('Ver todas'), findsOneWidget);
+    expect(find.text('Em breve'), findsNothing);
+
+    final horizontalRails = find.byWidgetPredicate(
+      (widget) =>
+          widget is ListView && widget.scrollDirection == Axis.horizontal,
+    );
+    await tester.drag(horizontalRails.last, const Offset(-250, 0));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Novena a São José'), findsOneWidget);
+    expect(find.text('10 a 18 de março'), findsOneWidget);
+  });
+
+  testWidgets('home novenas CTA opens challenge library screen', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+        now: DateTime(2026, 3, 6),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Ver todas'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ver todas'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ChallengeLibraryScreen), findsOneWidget);
   });
 
   testWidgets('home quick action Leituras opens Leituras home', (tester) async {
