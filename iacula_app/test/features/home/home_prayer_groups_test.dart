@@ -67,39 +67,51 @@ void main() {
     expect(unknown.label, 'Santo Desconhecido');
   });
 
+  test('buildSaintPrayerGroups keeps devotional naming consistent', () {
+    final groups = buildSaintPrayerGroups(const <PrayerCatalogEntry>[
+      PrayerCatalogEntry(
+        slug: 'forja',
+        title: 'Forja',
+        content: 'Texto',
+        themes: [],
+        saints: ['sao-josemaria'],
+      ),
+    ]);
+
+    expect(groups.single.label, 'São Josemaría');
+  });
+
   test('buildHomeThematicGroups follows fixed kHomeThematicOrder', () {
-    final groups = buildHomeThematicGroups(
-      const <PrayerCatalogEntry>[
-        PrayerCatalogEntry(
-          slug: 'familia-1',
-          title: 'Família 1',
-          content: 'Texto',
-          themes: ['familia'],
-          saints: [],
-        ),
-        PrayerCatalogEntry(
-          slug: 'igreja-1',
-          title: 'Igreja',
-          content: 'Texto',
-          themes: ['igreja'],
-          saints: [],
-        ),
-        PrayerCatalogEntry(
-          slug: 'trabalho-1',
-          title: 'Trabalho',
-          content: 'Texto',
-          themes: ['trabalho'],
-          saints: [],
-        ),
-        PrayerCatalogEntry(
-          slug: 'eucaristica-1',
-          title: 'Eucarística',
-          content: 'Texto',
-          themes: ['eucaristica'],
-          saints: [],
-        ),
-      ],
-    );
+    final groups = buildHomeThematicGroups(const <PrayerCatalogEntry>[
+      PrayerCatalogEntry(
+        slug: 'familia-1',
+        title: 'Família 1',
+        content: 'Texto',
+        themes: ['familia'],
+        saints: [],
+      ),
+      PrayerCatalogEntry(
+        slug: 'igreja-1',
+        title: 'Igreja',
+        content: 'Texto',
+        themes: ['igreja'],
+        saints: [],
+      ),
+      PrayerCatalogEntry(
+        slug: 'trabalho-1',
+        title: 'Trabalho',
+        content: 'Texto',
+        themes: ['trabalho'],
+        saints: [],
+      ),
+      PrayerCatalogEntry(
+        slug: 'eucaristica-1',
+        title: 'Eucarística',
+        content: 'Texto',
+        themes: ['eucaristica'],
+        saints: [],
+      ),
+    ]);
 
     expect(groups.map((g) => g.key).toList(), [
       'trabalho',
@@ -109,9 +121,10 @@ void main() {
     ]);
   });
 
-  test('buildHomeThematicGroups only includes themes in kHomeThematicOrder', () {
-    final groups = buildHomeThematicGroups(
-      const <PrayerCatalogEntry>[
+  test(
+    'buildHomeThematicGroups only includes themes in kHomeThematicOrder',
+    () {
+      final groups = buildHomeThematicGroups(const <PrayerCatalogEntry>[
         PrayerCatalogEntry(
           slug: 'trabalho-1',
           title: 'Trabalho',
@@ -126,31 +139,29 @@ void main() {
           themes: ['mariano'],
           saints: [],
         ),
-      ],
-    );
+      ]);
 
-    expect(groups.map((g) => g.key), ['trabalho']);
-  });
+      expect(groups.map((g) => g.key), ['trabalho']);
+    },
+  );
 
   test('buildHomeThematicGroups uses correct labels', () {
-    final groups = buildHomeThematicGroups(
-      const <PrayerCatalogEntry>[
-        PrayerCatalogEntry(
-          slug: 'eucaristica-1',
-          title: 'Eucarística',
-          content: 'Texto',
-          themes: ['eucaristica'],
-          saints: [],
-        ),
-        PrayerCatalogEntry(
-          slug: 'anjos-1',
-          title: 'Anjos',
-          content: 'Texto',
-          themes: [],
-          saints: ['anjos'],
-        ),
-      ],
-    );
+    final groups = buildHomeThematicGroups(const <PrayerCatalogEntry>[
+      PrayerCatalogEntry(
+        slug: 'eucaristica-1',
+        title: 'Eucarística',
+        content: 'Texto',
+        themes: ['eucaristica'],
+        saints: [],
+      ),
+      PrayerCatalogEntry(
+        slug: 'anjos-1',
+        title: 'Anjos',
+        content: 'Texto',
+        themes: [],
+        saints: ['anjos'],
+      ),
+    ]);
 
     final eucaristica = groups.firstWhere((g) => g.key == 'eucaristica');
     final anjos = groups.firstWhere((g) => g.key == 'anjos');
@@ -164,17 +175,15 @@ void main() {
   });
 
   test('buildHomeThematicGroups includes saints in kHomeThematicOrder', () {
-    final groups = buildHomeThematicGroups(
-      const <PrayerCatalogEntry>[
-        PrayerCatalogEntry(
-          slug: 'anjo-da-guarda',
-          title: 'Anjo da Guarda',
-          content: 'Texto',
-          themes: [],
-          saints: ['anjos'],
-        ),
-      ],
-    );
+    final groups = buildHomeThematicGroups(const <PrayerCatalogEntry>[
+      PrayerCatalogEntry(
+        slug: 'anjo-da-guarda',
+        title: 'Anjo da Guarda',
+        content: 'Texto',
+        themes: [],
+        saints: ['anjos'],
+      ),
+    ]);
 
     expect(groups, hasLength(1));
     expect(groups.first.type, HomePrayerGroupType.saint);

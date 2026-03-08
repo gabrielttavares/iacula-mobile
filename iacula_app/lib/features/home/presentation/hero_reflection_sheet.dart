@@ -10,8 +10,8 @@ final class HeroReflectionSheet {
 
   static const _seasonReflections = <LiturgicalSeason, String>{
     LiturgicalSeason.ordinary:
-        'Os cards do início acompanham o Tempo Comum e o ritmo do ano litúrgico. '
-        'Cada dia traz uma jaculatória ou reflexão que se harmoniza com a vida da Igreja.',
+        'Os cards do início acompanham o Tempo Comum e o ritmo cotidiano da Igreja. '
+        'Cada dia oferece uma jaculatória ou breve reflexão para sustentar a oração no meio do trabalho.',
     LiturgicalSeason.advent:
         'Os cards refletem a espera e a preparação do Advento. '
         'São um convite a vigiar e a preparar o coração para a vinda do Senhor.',
@@ -29,8 +29,8 @@ final class HeroReflectionSheet {
   static const _exclusivityBody =
       'O Iacula foi pensado para ajudar você a manter viva a oração breve no meio '
       'das tarefas normais do dia. Uma jaculatória, um versículo, um lembrete discreto '
-      '— e o coração se volta a Deus sem interromper o trabalho.\n\n'
-      'Inspirado na espiritualidade do trabalho santificado, o app acompanha você '
+      'e o coração volta a Deus sem romper o ritmo do dever.\n\n'
+      'Inspirado na espiritualidade do trabalho santificado, o app procura acompanhar você '
       'nos momentos certos. Como escreveu São João Crisóstomo: '
       '«Ergue um altar a Deus no meio de teus trabalhos, e oferece ali a oração do coração.»';
 
@@ -69,10 +69,7 @@ class _HeroReflectionContent extends StatelessWidget {
             style: context.textStyles.sectionTitle,
           ),
           const SizedBox(height: IaculaSpacing.sm),
-          Text(
-            reflectionText,
-            style: context.textStyles.secondary,
-          ),
+          Text(reflectionText, style: context.textStyles.secondary),
           const SizedBox(height: IaculaSpacing.xl),
           Text(
             'O que torna o Iacula único',

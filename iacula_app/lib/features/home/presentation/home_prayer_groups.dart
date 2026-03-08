@@ -98,7 +98,7 @@ const _saintLabels = <String, String>{
   'sao-boaventura': 'São Boaventura',
   'sao-francisco': 'São Francisco',
   'sao-jose': 'São José',
-  'sao-josemaria': 'São Josemaria',
+  'sao-josemaria': 'São Josemaría',
   'sao-paulo': 'São Paulo',
   'sao-tomas-de-aquino': 'São Tomás de Aquino',
   'virgem-maria': 'Virgem Maria',
@@ -148,7 +148,8 @@ List<HomePrayerGroup> buildHomeThematicGroups(
       .map(
         (key) => HomePrayerGroup(
           key: key,
-          label: _homeThematicLabels[key] ??
+          label:
+              _homeThematicLabels[key] ??
               _themeLabels[key] ??
               _saintLabels[key] ??
               _humanizeKey(key),

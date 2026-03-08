@@ -12,6 +12,7 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/daily_liturgy.dart';
 import '../domain/entities/saint_of_day.dart';
+import '../domain/entities/saint_of_day_fallback.dart';
 
 final _liturgyPeriodProvider =
     FutureProvider.family<List<LiturgyDay>, DateTime>((ref, anchorDate) {
@@ -304,9 +305,7 @@ class _SaintOfDaySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return asyncSaint.when(
       data: (saint) {
-        if (saint == null) {
-          return const SizedBox.shrink();
-        }
+        final displaySaint = saintOfDayOrFallback(saint);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -317,13 +316,13 @@ class _SaintOfDaySection extends StatelessWidget {
               child: SizedBox(
                 height: 220,
                 width: double.infinity,
-                child: _SaintImage(saint: saint),
+                child: _SaintImage(saint: displaySaint),
               ),
             ),
             const SizedBox(height: IaculaSpacing.md),
-            Text(saint.name, style: context.textStyles.sectionTitle),
+            Text(displaySaint.name, style: context.textStyles.sectionTitle),
             const SizedBox(height: IaculaSpacing.sm),
-            for (final paragraph in saint.biographyParagraphs) ...[
+            for (final paragraph in displaySaint.biographyParagraphs) ...[
               Text(
                 paragraph,
                 style: context.textStyles.secondary.copyWith(

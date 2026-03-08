@@ -6,6 +6,8 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../liturgical/domain/liturgical_season.dart';
+import '../../liturgia_diaria/domain/entities/saint_of_day.dart';
+import '../../liturgia_diaria/domain/entities/saint_of_day_fallback.dart';
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
 import '../domain/entities/liturgical_hour.dart';
@@ -18,24 +20,27 @@ final _liturgicalSeasonProvider = FutureProvider<LiturgicalSeason>((ref) async {
   return ref.watch(liturgicalSeasonServiceProvider).getCurrentSeason();
 });
 
+final _saintOfDayProvider = FutureProvider<SaintOfDay?>((ref) async {
+  return ref.watch(saintRepositoryProvider).getSaintForDate(DateTime.now());
+});
+
 class LiturgyHoursLandingScreen extends ConsumerWidget {
   const LiturgyHoursLandingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
-    final todayStr = '${_weekday(now.weekday)}, ${now.day} de ${_month(now.month)}';
+    final todayStr =
+        '${_weekday(now.weekday)}, ${now.day} de ${_month(now.month)}';
     final seasonAsync = ref.watch(_liturgicalSeasonProvider);
+    final saintAsync = ref.watch(_saintOfDayProvider);
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
       navigationBar: CupertinoNavigationBar(
         backgroundColor: context.colors.background,
         border: null,
-        middle: Text(
-          'Liturgia das Horas',
-          style: context.textStyles.cardTitle,
-        ),
+        middle: Text('Liturgia das Horas', style: context.textStyles.cardTitle),
       ),
       child: SafeArea(
         child: SingleChildScrollView(
@@ -48,10 +53,7 @@ class LiturgyHoursLandingScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      todayStr,
-                      style: context.textStyles.sectionTitle,
-                    ),
+                    Text(todayStr, style: context.textStyles.sectionTitle),
                     const SizedBox(height: 4),
                     Text(
                       seasonAsync.maybeWhen(
@@ -59,6 +61,15 @@ class LiturgyHoursLandingScreen extends ConsumerWidget {
                         orElse: () => 'Carregando tempo litúrgico...',
                       ),
                       style: context.textStyles.secondary,
+                    ),
+                    saintAsync.maybeWhen(
+                      data: (saint) => Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: _SaintOfDaySummary(
+                          saint: saintOfDayOrFallback(saint, date: now),
+                        ),
+                      ),
+                      orElse: SizedBox.shrink,
                     ),
                   ],
                 ),
@@ -70,16 +81,34 @@ class LiturgyHoursLandingScreen extends ConsumerWidget {
                 final isFree = hourType == LiturgicalHourType.laudes;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-                  child: _HourCard(
-                    hourType: hourType,
-                    isFree: isFree,
-                  ),
+                  child: _HourCard(hourType: hourType, isFree: isFree),
                 );
               }),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SaintOfDaySummary extends StatelessWidget {
+  const _SaintOfDaySummary({required this.saint});
+
+  final SaintOfDay saint;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(saint.name, style: context.textStyles.cardTitle),
+        const SizedBox(height: 4),
+        Text(
+          saint.biographyParagraphs.firstOrNull ?? '',
+          style: context.textStyles.secondary,
+        ),
+      ],
     );
   }
 }
@@ -95,10 +124,7 @@ String _seasonLabel(LiturgicalSeason season) {
 }
 
 class _HourCard extends ConsumerWidget {
-  const _HourCard({
-    required this.hourType,
-    required this.isFree,
-  });
+  const _HourCard({required this.hourType, required this.isFree});
 
   final LiturgicalHourType hourType;
   final bool isFree;
@@ -128,9 +154,7 @@ class _HourCard extends ConsumerWidget {
 
         if (hour != null && context.mounted) {
           Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (_) => HourPrayerScreen(hour: hour),
-            ),
+            CupertinoPageRoute(builder: (_) => HourPrayerScreen(hour: hour)),
           );
         }
       },

@@ -279,4 +279,21 @@ void main() {
       expect(find.text('Texto de São Policarpo'), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'renders a devotional santo do dia fallback when no saint is available',
+    (tester) async {
+      await tester.pumpWidget(_buildApp(repository));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Santo do dia'), findsOneWidget);
+      expect(find.text('Comunhão dos santos'), findsOneWidget);
+      expect(
+        find.text(
+          'Hoje a Igreja convida você a rezar em sintonia com o tempo litúrgico.',
+        ),
+        findsOneWidget,
+      );
+    },
+  );
 }
