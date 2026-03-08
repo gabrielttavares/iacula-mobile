@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
-import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_scroll_item_entrance.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -53,14 +52,17 @@ class PrayerCollectionsScreen extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: context.colors.background,
+        border: null,
+        middle: Text('Orações', style: context.textStyles.cardTitle),
+      ),
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(IaculaSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const IaculaLargeTitle('Orações'),
-              const SizedBox(height: IaculaSpacing.lg),
               _PrayerCategoryCard(
                 title: 'Angelus / Regina Caeli',
                 icon: CupertinoIcons.bell,
@@ -100,13 +102,15 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                     child: ListView.builder(
                       physics: const BouncingScrollPhysics(),
                       padding: EdgeInsets.only(
-                        bottom: MediaQuery.paddingOf(context).bottom +
+                        bottom:
+                            MediaQuery.paddingOf(context).bottom +
                             IaculaSpacing.md,
                       ),
                       itemCount: grouped.length,
                       itemBuilder: (context, index) {
                         final group = grouped[index];
-                        final isFirstRecurso = group.sectionId ==
+                        final isFirstRecurso =
+                            group.sectionId ==
                             _recursosAdicionaisSections.first;
 
                         return IaculaScrollItemEntrance(
@@ -125,10 +129,11 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                                     ),
                                     child: Text(
                                       'Recursos Adicionais',
-                                      style: context.textStyles.sectionTitle.copyWith(
-                                        fontSize: 20,
-                                        color: context.colors.textPrimary,
-                                      ),
+                                      style: context.textStyles.sectionTitle
+                                          .copyWith(
+                                            fontSize: 20,
+                                            color: context.colors.textPrimary,
+                                          ),
                                     ),
                                   ),
                                   const SizedBox(height: IaculaSpacing.sm),
@@ -139,11 +144,12 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                                   onTap: () {
                                     Navigator.of(context).push(
                                       CupertinoPageRoute(
-                                        builder: (_) => PrayerCatalogGroupScreen(
-                                          type: HomePrayerGroupType.section,
-                                          groupKey: group.sectionId,
-                                          title: group.sectionTitle,
-                                        ),
+                                        builder: (_) =>
+                                            PrayerCatalogGroupScreen(
+                                              type: HomePrayerGroupType.section,
+                                              groupKey: group.sectionId,
+                                              title: group.sectionTitle,
+                                            ),
                                       ),
                                     );
                                   },
@@ -156,9 +162,8 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                     ),
                   );
                 },
-                loading: () => const Expanded(
-                  child: IaculaShimmerList(itemCount: 6),
-                ),
+                loading: () =>
+                    const Expanded(child: IaculaShimmerList(itemCount: 6)),
                 error: (error, stackTrace) => Text(
                   'Erro ao carregar orações',
                   style: context.textStyles.secondary,
@@ -245,11 +250,13 @@ List<_SectionGroup> _groupBySection(List<PrayerCatalogEntry> entries) {
 
   // Create groups in order
   final groups = sortedIds
-      .map((id) => _SectionGroup(
-            sectionId: id,
-            sectionTitle: sectionTitles[id] ?? 'Outras',
-            entries: buckets[id]!,
-          ))
+      .map(
+        (id) => _SectionGroup(
+          sectionId: id,
+          sectionTitle: sectionTitles[id] ?? 'Outras',
+          entries: buckets[id]!,
+        ),
+      )
       .toList(growable: false);
 
   return groups;

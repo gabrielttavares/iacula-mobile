@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_calendar_modal.dart';
-import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -58,6 +57,11 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: context.colors.background,
+        border: null,
+        middle: Text('Liturgia', style: context.textStyles.cardTitle),
+      ),
       child: SafeArea(
         child: asyncDays.when(
           data: (days) {
@@ -90,32 +94,28 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const IaculaLargeTitle('Liturgia'),
-                        CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () async {
-                            final picked = await _showCalendarSheet(
-                              context,
-                              _selectedDate,
-                            );
-                            if (picked == null) return;
-                            if (!mounted) return;
-                            _selectDateFromCalendar(picked, days);
-                          },
-                          child: Text(
-                            'Calendário',
-                            style: TextStyle(
-                              color: context.colors.primaryButton,
-                              fontWeight: FontWeight.w600,
-                            ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () async {
+                          final picked = await _showCalendarSheet(
+                            context,
+                            _selectedDate,
+                          );
+                          if (picked == null || !mounted) return;
+                          _selectDateFromCalendar(picked, days);
+                        },
+                        child: Text(
+                          'Calendário',
+                          style: TextStyle(
+                            color: context.colors.primaryButton,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                    const SizedBox(height: IaculaSpacing.md),
+                    const SizedBox(height: IaculaSpacing.sm),
                     SizedBox(
                       height: 44,
                       child: ListView.separated(

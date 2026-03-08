@@ -23,6 +23,10 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
   int _currentIndex = 0;
   final _tabController = CupertinoTabController();
   static const _premiumIndexes = <int>{1, 2};
+  late final List<GlobalKey<NavigatorState>> _navigatorKeys = List.generate(
+    _screens.length,
+    (_) => GlobalKey<NavigatorState>(),
+  );
 
   static const _screens = <Widget>[
     HomeScreen(),
@@ -59,6 +63,20 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
             }
           }
 
+          if (index == _currentIndex) {
+            final tabNavigator = _navigatorKeys[index].currentState;
+            if (tabNavigator != null && tabNavigator.canPop()) {
+              tabNavigator.popUntil((route) => route.isFirst);
+              return;
+            }
+
+            final rootNavigator = Navigator.of(context, rootNavigator: true);
+            if (rootNavigator.canPop()) {
+              rootNavigator.popUntil((route) => route.isFirst);
+            }
+            return;
+          }
+
           setState(() {
             _currentIndex = index;
           });
@@ -87,7 +105,10 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
         ],
       ),
       tabBuilder: (context, index) {
-        return CupertinoTabView(builder: (_) => _screens[index]);
+        return CupertinoTabView(
+          navigatorKey: _navigatorKeys[index],
+          builder: (_) => _screens[index],
+        );
       },
     );
   }

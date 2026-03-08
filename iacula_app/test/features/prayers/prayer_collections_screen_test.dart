@@ -47,10 +47,35 @@ class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
 }
 
 void main() {
+  Widget _buildScreen() {
+    return ProviderScope(
+      overrides: [
+        settingsRepositoryProvider.overrideWithValue(_FakeSettingsRepository()),
+        prayerCatalogRepositoryProvider.overrideWithValue(
+          _FakePrayerCatalogRepository(),
+        ),
+      ],
+      child: const CupertinoApp(home: PrayerCollectionsScreen()),
+    );
+  }
+
   testWidgets('renders group cards from catalog entries', (tester) async {
     await tester.binding.setSurfaceSize(const Size(390, 844));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
+    await tester.pumpWidget(_buildScreen());
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Orações Comuns'), findsOneWidget);
+    expect(find.text('Orações Marianas'), findsOneWidget);
+    expect(find.text('Pai Nosso'), findsNothing);
+    expect(find.text('Lembrai-vos'), findsNothing);
+  });
+
+  testWidgets('shows Cupertino back button when pushed and pops on tap', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -61,15 +86,37 @@ void main() {
             _FakePrayerCatalogRepository(),
           ),
         ],
-        child: const CupertinoApp(home: PrayerCollectionsScreen()),
+        child: CupertinoApp(
+          home: Builder(
+            builder: (context) => CupertinoPageScaffold(
+              navigationBar: const CupertinoNavigationBar(middle: Text('Home')),
+              child: Center(
+                child: CupertinoButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute<void>(
+                        builder: (_) => const PrayerCollectionsScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('open'),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
 
+    await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Orações Comuns'), findsOneWidget);
-    expect(find.text('Orações Marianas'), findsOneWidget);
-    expect(find.text('Pai Nosso'), findsNothing);
-    expect(find.text('Lembrai-vos'), findsNothing);
+    expect(find.byType(CupertinoNavigationBarBackButton), findsOneWidget);
+
+    await tester.tap(find.byType(CupertinoNavigationBarBackButton));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PrayerCollectionsScreen), findsNothing);
+    expect(find.text('Home'), findsOneWidget);
   });
 }

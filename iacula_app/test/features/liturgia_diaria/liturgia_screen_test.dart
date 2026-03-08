@@ -123,6 +123,50 @@ void main() {
     },
   );
 
+  testWidgets('shows Cupertino back button when pushed and pops on tap', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          liturgiaCacheRepositoryProvider.overrideWithValue(repository),
+          saintRepositoryProvider.overrideWithValue(saintRepository),
+        ],
+        child: CupertinoApp(
+          home: Builder(
+            builder: (context) => CupertinoPageScaffold(
+              navigationBar: const CupertinoNavigationBar(middle: Text('Home')),
+              child: Center(
+                child: CupertinoButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute<void>(
+                        builder: (_) => const LiturgiaScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('open'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CupertinoNavigationBarBackButton), findsOneWidget);
+
+    await tester.tap(find.byType(CupertinoNavigationBarBackButton));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LiturgiaScreen), findsNothing);
+    expect(find.text('Home'), findsOneWidget);
+  });
+
   testWidgets('switches day when tapping date selector', (tester) async {
     await tester.pumpWidget(
       _buildApp(repository, saintRepository: saintRepository),
