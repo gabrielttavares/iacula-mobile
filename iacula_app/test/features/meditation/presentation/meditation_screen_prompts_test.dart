@@ -156,9 +156,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Reflexão guiada'), findsOneWidget);
+      expect(find.text('Reflexões guiadas'), findsOneWidget);
+      expect(
+        find.text('Escolha um caminho mais concreto para rezar agora.'),
+        findsOneWidget,
+      );
 
-      await tester.tap(find.text('Reflexão guiada'));
+      await tester.tap(find.text('Reflexões guiadas'));
       await tester.pumpAndSettle();
 
       expect(find.text('Reflexões'), findsOneWidget);
@@ -208,7 +212,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Reflexão guiada'));
+    await tester.tap(find.text('Reflexões guiadas'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Pelo que sou grato a Deus hoje?'));
     await tester.pumpAndSettle();
@@ -234,18 +238,51 @@ void main() {
     expect(find.text('Reflexões'), findsOneWidget);
     expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
 
-    await tester.tap(find.text('Espiritual'));
+    expect(find.text('Silêncio e presença de Deus'), findsOneWidget);
+
+    await tester.tap(find.text('Silêncio e presença de Deus'));
     await tester.pumpAndSettle();
     expect(find.text('Reflexões'), findsNothing);
     expect(find.text('Pelo que sou grato a Deus hoje?'), findsNothing);
     expect(find.text('Meditação do dia'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('Reflexão guiada'));
+    await tester.ensureVisible(find.text('Reflexões guiadas'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Reflexão guiada'));
+    await tester.tap(find.text('Reflexões guiadas'));
     await tester.pumpAndSettle();
     expect(find.text('Reflexões'), findsOneWidget);
     expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
     expect(find.text('Meditação do dia'), findsNothing);
+  });
+
+  testWidgets('free user can browse Meditação and gets premium gate on open', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          premiumStatusProvider.overrideWith((ref) {
+            return Stream<PremiumStatus>.value(PremiumStatus.free);
+          }),
+          meditationCatalogRepositoryProvider.overrideWithValue(
+            _FakeMeditationCatalogRepository(),
+          ),
+          journalPromptRepositoryProvider.overrideWithValue(
+            _FakeJournalPromptRepository(),
+          ),
+        ],
+        child: const CupertinoApp(home: MeditationScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MeditationScreen), findsOneWidget);
+    expect(find.text('Meditação do dia'), findsOneWidget);
+
+    await tester.tap(find.text('Meditação do dia'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Continue com o Premium'), findsAtLeastNWidgets(1));
+    expect(find.text('Conhecer o Premium'), findsAtLeastNWidgets(1));
   });
 }

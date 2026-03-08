@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/core/presentation/shell_screen.dart';
+import 'package:iacula_app/features/meditation/presentation/meditation_screen.dart';
 import 'package:iacula_app/features/premium/domain/entities/premium_status.dart';
 import 'package:iacula_app/features/premium/domain/repositories/premium_repository.dart';
 import 'package:iacula_app/features/premium/infrastructure/purchase_service.dart';
@@ -59,7 +60,7 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-  testWidgets('free user tapping Meditação tab opens premium gate modal', (
+  testWidgets('free user tapping Meditação tab opens the meditation screen', (
     tester,
   ) async {
     final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
@@ -86,10 +87,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100)); // wait for provider
     await tester.tap(find.text('Meditação'));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(find.text('Continue com o Premium'), findsAtLeastNWidgets(1));
-    expect(find.text('Conhecer o Premium'), findsAtLeastNWidgets(1));
+    expect(find.byType(MeditationScreen), findsOneWidget);
+    expect(find.text('Continue com o Premium'), findsNothing);
 
     await purchaseService.dispose();
   });
