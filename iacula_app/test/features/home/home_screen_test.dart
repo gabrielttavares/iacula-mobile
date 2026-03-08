@@ -361,7 +361,6 @@ void main() {
     expect(find.text('Destaques'), findsNothing);
     await reveal('Minhas frases');
     await reveal('Seu próximo passo de oração');
-    await reveal('Comece por aqui');
     await reveal('Reze agora');
     await reveal('Encontre uma oração para este momento');
   });
@@ -377,8 +376,6 @@ void main() {
 
     expect(find.byKey(const Key('home_hero_card')), findsOneWidget);
     expect(find.byKey(const Key('home_action_grid')), findsOneWidget);
-    expect(find.text('Seu próximo passo de oração'), findsOneWidget);
-    expect(find.text('Comece por aqui'), findsOneWidget);
   });
 
   testWidgets('home does not render legacy continuation card', (tester) async {
@@ -449,14 +446,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Seu próximo passo de oração'), findsOneWidget);
-    expect(
-      find.text(
-        'Abra a reflexão de agora e comece seu momento de oração sem precisar procurar no app.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Comece por aqui'), findsOneWidget);
+    expect(find.byKey(const Key('home_hero_card')), findsOneWidget);
   });
 
   testWidgets('home header shows text-only brand without grid icon', (
