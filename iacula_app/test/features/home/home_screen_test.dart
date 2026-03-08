@@ -360,7 +360,6 @@ void main() {
     expect(greeting, contains('Bem vindo'));
     expect(find.text('Destaques'), findsNothing);
     await reveal('Minhas frases');
-    await reveal('Seu próximo passo de oração');
     await reveal('Reze agora');
     await reveal('Encontre uma oração para este momento');
   });
@@ -437,7 +436,9 @@ void main() {
     expect(find.text('Premium'), findsNothing);
   });
 
-  testWidgets('home hero frames a single immediate next step', (tester) async {
+  testWidgets('home no longer shows the removed next-step CTA copy', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -447,6 +448,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('home_hero_card')), findsOneWidget);
+    expect(find.text('Seu próximo passo de oração'), findsNothing);
+    expect(
+      find.text(
+        'Abra a reflexão de agora e comece seu momento de oração sem precisar procurar no app.',
+      ),
+      findsNothing,
+    );
+    expect(find.text('Comece por aqui'), findsNothing);
   });
 
   testWidgets('home header shows text-only brand without grid icon', (
