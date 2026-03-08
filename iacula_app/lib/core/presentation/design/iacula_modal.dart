@@ -26,6 +26,15 @@ final class IaculaModal {
     );
   }
 
+  static Future<void> showOpenLinkAlert(BuildContext context) {
+    return showAlert(
+      context: context,
+      title: 'Não foi possível abrir este link',
+      message: 'Tente novamente em instantes ou abra o conteúdo mais tarde.',
+      actionLabel: 'Fechar',
+    );
+  }
+
   static Future<bool> showConfirm({
     required BuildContext context,
     required String title,

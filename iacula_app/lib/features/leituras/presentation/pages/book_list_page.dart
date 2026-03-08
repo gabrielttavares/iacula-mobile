@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/providers.dart';
+import '../../../../core/presentation/design/iacula_modal.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../premium/domain/entities/premium_feature.dart';
 import '../../../premium/presentation/premium_gate.dart';
@@ -89,20 +90,12 @@ class _UnlockedBookList extends ConsumerWidget {
                 description: book.description,
                 onTap: () {
                   if (!book.available) {
-                    showCupertinoDialog<void>(
+                    IaculaModal.showAlert(
                       context: context,
-                      builder: (context) => CupertinoAlertDialog(
-                        title: const Text('Em preparação'),
-                        content: const Text(
+                      title: 'Em preparação',
+                      message:
                           'Esta obra está em curadoria e será adicionada em breve.',
-                        ),
-                        actions: [
-                          CupertinoDialogAction(
-                            child: const Text('Fechar'),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                        ],
-                      ),
+                      actionLabel: 'Fechar',
                     );
                     return;
                   }

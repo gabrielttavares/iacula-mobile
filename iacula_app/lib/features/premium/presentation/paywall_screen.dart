@@ -8,6 +8,8 @@ import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../application/premium_bloc.dart';
+import '../domain/entities/premium_feature.dart';
+import 'premium_copy.dart';
 
 const premiumLifetimeProductId = 'premium_lifetime';
 
@@ -85,21 +87,34 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 Text('Iacula Premium', style: context.textStyles.sectionTitle),
                 const SizedBox(height: 10),
                 Text(
-                  'Acesso vitalício por R\$ 39,90.',
+                  'Um único pagamento para rezar com mais profundidade todos os dias.',
                   style: context.textStyles.secondary,
                 ),
                 const SizedBox(height: 20),
-                _featureTile(context, CupertinoIcons.play_circle, 'Meditações'),
+                _featureTile(
+                  context,
+                  CupertinoIcons.play_circle,
+                  premiumCopyFor(PremiumFeature.meditation).featureTitle,
+                  premiumCopyFor(PremiumFeature.meditation).gateMessage,
+                ),
                 _featureTile(
                   context,
                   CupertinoIcons.check_mark_circled,
-                  'Plano de vida',
+                  premiumCopyFor(PremiumFeature.planOfLife).featureTitle,
+                  premiumCopyFor(PremiumFeature.planOfLife).gateMessage,
                 ),
-                _featureTile(context, CupertinoIcons.book, 'Leituras'),
+                _featureTile(
+                  context,
+                  CupertinoIcons.book,
+                  premiumCopyFor(PremiumFeature.leituras).featureTitle,
+                  premiumCopyFor(PremiumFeature.leituras).gateMessage,
+                ),
                 const SizedBox(height: 20),
                 if (authUser == null) ...[
                   IaculaPrimaryPillButton(
-                    label: isLoading ? 'Aguarde...' : 'Entrar para continuar',
+                    label: isLoading
+                        ? 'Aguarde...'
+                        : 'Entrar para liberar o Premium',
                     onPressed: isLoading
                         ? null
                         : () async {
@@ -114,7 +129,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                   IaculaPrimaryPillButton(
                     label: isLoading
                         ? 'Aguarde...'
-                        : 'Desbloquear por R\$ 39,90',
+                        : 'Liberar Premium por R\$ 39,90',
                     onPressed: isLoading
                         ? null
                         : () async {
@@ -147,17 +162,36 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     );
   }
 
-  Widget _featureTile(BuildContext context, IconData icon, String label) {
+  Widget _featureTile(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String description,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: context.colors.primaryButton),
           const SizedBox(width: 10),
-          Text(
-            label,
-            style: context.textStyles.secondary.copyWith(
-              color: context.colors.textPrimary,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: context.textStyles.secondary.copyWith(
+                    color: context.colors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: context.textStyles.secondary,
+                ),
+              ],
             ),
           ),
         ],

@@ -53,12 +53,19 @@ void main() {
     expect(find.byType(OnboardingScreen), findsOneWidget);
     expect(find.text('Iacula'), findsOneWidget);
     expect(find.byIcon(CupertinoIcons.circle_grid_3x3_fill), findsNothing);
-    expect(find.text('Jaculatória Diária'), findsOneWidget);
-    expect(find.text('Orações curtas ao longo do dia.'), findsOneWidget);
-    await reveal('Começar com sua conta');
+    expect(find.text('Reze com constância em cada momento do dia.'), findsOneWidget);
+    expect(
+      find.text(
+        'Orações, leituras e meditações para ajudar você a voltar a Deus ao longo do dia.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Jaculatórias do dia'), findsOneWidget);
+    expect(find.text('Pequenas orações para recolher o coração.'), findsOneWidget);
+    await reveal('Entrar e começar');
     expect(find.text('Iacula • presença de Deus no cotidiano'), findsNothing);
 
-    await tester.tap(find.text('Começar com sua conta'));
+    await tester.tap(find.text('Entrar e começar'));
     await tester.pumpAndSettle();
 
     expect(repo.value.onboardingCompleted, isTrue);

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_progress_bar.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../prayer_activity/domain/entities/prayer_activity_entry.dart';
@@ -127,24 +128,17 @@ class _NightPrayerBodyState extends ConsumerState<_NightPrayerBody> {
           featureSlug: 'compline',
         );
 
-    showCupertinoDialog(
+    IaculaModal.showAlert(
       context: context,
-      builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('Completas Concluídas'),
-        content: Text(
-          'Boa noite! Descanse na paz de Deus.\nTempo: ${(elapsed / 60).ceil()} minutos.',
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('Concluir'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
+      title: 'Completas concluídas',
+      message:
+          'Boa noite. Descanse na paz de Deus.\nTempo: ${(elapsed / 60).ceil()} minutos.',
+      actionLabel: 'Fechar',
+    ).then((_) {
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   Widget _buildSectionContent() {

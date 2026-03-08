@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_calendar_modal.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
@@ -155,15 +156,11 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        CupertinoTextField(
+                        IaculaTextInput(
                           controller: _textController,
                           placeholder: 'Escreva uma frase espiritual...',
                           maxLines: 5,
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: context.colors.card,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
                           onChanged: (val) => setState(() {}),
                         ),
                         const SizedBox(height: 4),

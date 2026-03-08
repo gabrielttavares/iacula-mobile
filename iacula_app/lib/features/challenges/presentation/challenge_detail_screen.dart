@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_progress_bar.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -222,22 +223,16 @@ class _DetailContent extends ConsumerWidget {
     ref.invalidate(_challengeProgressProvider(challenge.id));
 
     if (isNowComplete && context.mounted) {
-      showCupertinoDialog(
+      IaculaModal.showAlert(
         context: context,
-        builder: (ctx) => CupertinoAlertDialog(
-          title: const Text('Desafio Concluído!'),
-          content: Text('Parabéns! Você completou "${challenge.title}".'),
-          actions: [
-            CupertinoDialogAction(
-              child: const Text('Concluir'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      );
+        title: 'Desafio concluído',
+        message: 'Você concluiu "${challenge.title}".',
+        actionLabel: 'Fechar',
+      ).then((_) {
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+      });
     }
   }
 }

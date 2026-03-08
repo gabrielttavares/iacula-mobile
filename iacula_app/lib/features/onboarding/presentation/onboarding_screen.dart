@@ -37,13 +37,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 const _BrandBlock(),
                 const SizedBox(height: IaculaSpacing.md),
                 Text(
-                  'Reze. Cresça. Persevere.',
+                  'Reze com constância em cada momento do dia.',
                   textAlign: TextAlign.center,
                   style: context.textStyles.sectionTitle,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Tudo para sua vida de oração, no ritmo do seu dia.',
+                  'Orações, leituras e meditações para ajudar você a voltar a Deus ao longo do dia.',
                   textAlign: TextAlign.center,
                   style: context.textStyles.secondary,
                 ),
@@ -53,8 +53,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     Expanded(
                       child: _FeatureCard(
                         icon: CupertinoIcons.bell_fill,
-                        title: 'Jaculatória Diária',
-                        subtitle: 'Orações curtas ao longo do dia.',
+                        title: 'Jaculatórias do dia',
+                        subtitle: 'Pequenas orações para recolher o coração.',
                         minHeight: 120,
                       ),
                     ),
@@ -62,8 +62,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     Expanded(
                       child: _FeatureCard(
                         icon: CupertinoIcons.book,
-                        title: 'Liturgia Diária',
-                        subtitle: 'Leituras e orações de cada dia.',
+                        title: 'Liturgia de hoje',
+                        subtitle: 'Leituras e orações para acompanhar a Igreja.',
                         minHeight: 120,
                       ),
                     ),
@@ -75,8 +75,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     Expanded(
                       child: _FeatureCard(
                         icon: CupertinoIcons.rosette,
-                        title: 'Rosário',
-                        subtitle: 'Todos os mistérios para meditar.',
+                        title: 'Rosário guiado',
+                        subtitle: 'Mistérios e textos para rezar com calma.',
                         minHeight: 120,
                       ),
                     ),
@@ -85,7 +85,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: _FeatureCard(
                         icon: CupertinoIcons.sparkles,
                         title: 'Meditação',
-                        subtitle: 'Reflexões guiadas para o silêncio.',
+                        subtitle: 'Caminhos de recolhimento para rezar melhor.',
                         minHeight: 120,
                       ),
                     ),
@@ -97,8 +97,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     Expanded(
                       child: _FeatureCard(
                         icon: CupertinoIcons.check_mark_circled,
-                        title: 'Plano de Vida',
-                        subtitle: 'Constância com pequenos passos.',
+                        title: 'Plano de vida',
+                        subtitle: 'Fidelidade nas pequenas práticas de cada dia.',
                         minHeight: 120,
                       ),
                     ),
@@ -106,8 +106,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     Expanded(
                       child: _FeatureCard(
                         icon: CupertinoIcons.pencil_outline,
-                        title: 'Exame Pessoal',
-                        subtitle: 'Prepare-se para a confissão.',
+                        title: 'Exame de consciência',
+                        subtitle: 'Prepare a confissão com serenidade.',
                         minHeight: 120,
                       ),
                     ),
@@ -115,12 +115,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 const SizedBox(height: IaculaSpacing.xl),
                 IaculaPrimaryPillButton(
-                  label: _saving ? 'Entrando...' : 'Começar com sua conta',
+                  label: _saving ? 'Entrando...' : 'Entrar e começar',
                   onPressed: _saving ? null : _completeOnboarding,
                 ),
                 const SizedBox(height: IaculaSpacing.sm),
                 IaculaSecondaryPillButton(
-                  label: 'Começar sem conta',
+                  label: 'Continuar sem conta',
                   onPressed: _saving ? null : _skipWithoutAccount,
                 ),
               ],

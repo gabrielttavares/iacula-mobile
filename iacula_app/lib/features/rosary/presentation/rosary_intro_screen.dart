@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/rosary_mystery_set.dart';
 import 'rosary_mystery_set_screen.dart';
@@ -167,38 +168,53 @@ class _RosaryIntroView extends ConsumerWidget {
         allMysterySets ?? await ref.read(allRosaryMysterySetProvider.future);
     if (!context.mounted) return;
 
-    await showCupertinoModalPopup<void>(
+    await IaculaModal.showSheet<void>(
       context: context,
-      builder: (ctx) => CupertinoActionSheet(
-        title: const Text('Ver todos os misterios'),
-        actions: [
-          for (final set in sets)
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                HapticFeedback.lightImpact();
-                _openSet(context, set);
-              },
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 36,
-                    height: 36,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: KenBurnsImage(imagePath: set.setImagePath),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(set.type.label)),
-                ],
+      builder: (ctx) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.all(IaculaSpacing.md),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Ver todos os mistérios',
+                style: context.textStyles.sectionTitle,
+                textAlign: TextAlign.center,
               ),
-            ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          isDefaultAction: true,
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: const Text('Fechar'),
+              const SizedBox(height: IaculaSpacing.md),
+              for (final set in sets) ...[
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    HapticFeedback.lightImpact();
+                    _openSet(context, set);
+                  },
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: KenBurnsImage(imagePath: set.setImagePath),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(child: Text(set.type.label)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: IaculaSpacing.xs),
+              ],
+              CupertinoButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Fechar'),
+              ),
+            ],
+          ),
         ),
       ),
     );

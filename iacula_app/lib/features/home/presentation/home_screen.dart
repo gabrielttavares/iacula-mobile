@@ -211,7 +211,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           },
                         ),
                         const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Sugestão de oração'),
+                        const IaculaSectionHeader(title: 'Reze agora'),
                         const SizedBox(height: IaculaSpacing.sm),
                         const _DailyPrayerList(),
                         const SizedBox(height: IaculaSpacing.xl),
@@ -219,7 +219,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const SizedBox(height: IaculaSpacing.xl),
                         const _MonthlyNovenasSection(),
                         const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Orações Temáticas'),
+                        const IaculaSectionHeader(
+                          title: 'Encontre uma oração para este momento',
+                        ),
                         const SizedBox(height: IaculaSpacing.sm),
                         const _ThematicPrayerList(),
                       ],
@@ -333,8 +335,9 @@ class _HomeHeroSection extends ConsumerWidget {
       loading: () =>
           const SizedBox(height: 240, child: IaculaShimmerCard(height: 240)),
       error: (error, stackTrace) => IaculaErrorState(
-        title: 'Não foi possível carregar a reflexão',
-        message: 'Tente novamente em instantes.',
+        title: 'Não conseguimos abrir a reflexão de agora',
+        message:
+            'Tente novamente em instantes para retomar seu momento de oração.',
         onRetry: () => ref.invalidate(_homeQuoteProvider),
       ),
     );
@@ -501,7 +504,7 @@ class _MonthlyNovenasSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const IaculaSectionHeader(title: 'Novenas do mês'),
+        const IaculaSectionHeader(title: 'Novenas deste mês'),
         const SizedBox(height: 12),
         IaculaHorizontalCardRail(
           itemCount: items.length,

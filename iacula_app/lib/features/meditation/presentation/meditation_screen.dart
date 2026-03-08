@@ -73,7 +73,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
                     const IaculaLargeTitle('Meditações'),
                     const SizedBox(height: 4),
                     Text(
-                      'Escolha pelo seu momento',
+                      'Escolha um caminho para o seu momento de oração.',
                       style: context.textStyles.secondary,
                     ),
                   ],
@@ -126,7 +126,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
               SliverFillRemaining(
                 child: Center(
                   child: Text(
-                    'Não foi possível carregar as meditações.',
+                    'Não foi possível abrir as meditações agora. Tente novamente em instantes.',
                     style: context.textStyles.secondary,
                   ),
                 ),
@@ -188,7 +188,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
         SliverFillRemaining(
           child: Center(
             child: Text(
-              'Nenhuma meditação encontrada para este filtro.',
+              'Não encontramos meditações para este caminho. Tente outro filtro.',
               style: context.textStyles.secondary,
             ),
           ),
@@ -206,7 +206,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
           SliverFillRemaining(
             child: Center(
               child: Text(
-                'Nenhuma meditação encontrada para este filtro.',
+                'Não encontramos meditações para este caminho. Tente outro filtro.',
                 style: context.textStyles.secondary,
               ),
             ),

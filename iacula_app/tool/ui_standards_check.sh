@@ -9,18 +9,7 @@ status=0
 check_pattern() {
   local pattern="$1"
   local description="$2"
-  local paths=(
-    "lib/features/home/presentation"
-    "lib/features/settings/presentation"
-    "lib/features/profile/presentation"
-    "lib/features/plan_of_life/presentation"
-    "lib/features/premium/presentation"
-    "lib/features/liturgia_diaria/presentation"
-    "lib/features/search/presentation"
-    "lib/features/favorites/presentation"
-    "lib/features/auth/presentation"
-  )
-  if rg -n "$pattern" "${paths[@]}" --glob '*.dart' >/tmp/ui_std_check.out; then
+  if rg -n "$pattern" lib/features --glob '*.dart' >/tmp/ui_std_check.out; then
     echo "[FAIL] $description"
     cat /tmp/ui_std_check.out
     status=1

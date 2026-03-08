@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/providers.dart';
+import '../../../../core/presentation/design/iacula_modal.dart';
 import '../../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../premium/domain/entities/premium_feature.dart';
@@ -20,20 +21,11 @@ bool _isAuthorEnabled(AuthorModel author) {
 }
 
 void _showCuradoriaDialog(BuildContext context) {
-  showCupertinoDialog<void>(
+  IaculaModal.showAlert(
     context: context,
-    builder: (context) => CupertinoAlertDialog(
-      title: const Text('Em preparação'),
-      content: const Text(
-        'Esta obra está em curadoria e será adicionada em breve.',
-      ),
-      actions: [
-        CupertinoDialogAction(
-          child: const Text('Fechar'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ],
-    ),
+    title: 'Em preparação',
+    message: 'Esta obra está em curadoria e será adicionada em breve.',
+    actionLabel: 'Fechar',
   );
 }
 
