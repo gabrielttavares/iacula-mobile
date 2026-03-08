@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
+import '../../../core/presentation/widgets/iacula_buttons.dart';
 
 import '../../../core/presentation/widgets/iacula_horizontal_card_rail.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
@@ -330,8 +331,27 @@ class _HomeHeroSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final quoteAsync = ref.watch(_homeQuoteProvider);
     return quoteAsync.when(
-      data: (quote) =>
+      data: (quote) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Seu próximo passo de oração',
+            style: context.textStyles.sectionTitle,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Abra a reflexão de agora e comece seu momento de oração sem precisar procurar no app.',
+            style: context.textStyles.secondary,
+          ),
+          const SizedBox(height: IaculaSpacing.sm),
+          IaculaPrimaryPillButton(
+            label: 'Comece por aqui',
+            onPressed: () => onHeroTap(quote),
+          ),
+          const SizedBox(height: IaculaSpacing.sm),
           HomeHeroCard(quote: quote, isFallback: isFallback, onTap: onHeroTap),
+        ],
+      ),
       loading: () =>
           const SizedBox(height: 240, child: IaculaShimmerCard(height: 240)),
       error: (error, stackTrace) => IaculaErrorState(

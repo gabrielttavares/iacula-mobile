@@ -37,85 +37,40 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 const _BrandBlock(),
                 const SizedBox(height: IaculaSpacing.md),
                 Text(
-                  'Reze com constância em cada momento do dia.',
+                  'Volte a Deus ao longo do dia.',
                   textAlign: TextAlign.center,
                   style: context.textStyles.sectionTitle,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Orações, leituras e meditações para ajudar você a voltar a Deus ao longo do dia.',
+                  'Um caminho simples de oração, leitura e exame para recomeçar com constância.',
                   textAlign: TextAlign.center,
                   style: context.textStyles.secondary,
                 ),
                 const SizedBox(height: IaculaSpacing.xl),
-                const Row(
-                  children: [
-                    Expanded(
-                      child: _FeatureCard(
-                        icon: CupertinoIcons.bell_fill,
-                        title: 'Jaculatórias do dia',
-                        subtitle: 'Pequenas orações para recolher o coração.',
-                        minHeight: 120,
-                      ),
-                    ),
-                    SizedBox(width: IaculaSpacing.sm),
-                    Expanded(
-                      child: _FeatureCard(
-                        icon: CupertinoIcons.book,
-                        title: 'Liturgia de hoje',
-                        subtitle: 'Leituras e orações para acompanhar a Igreja.',
-                        minHeight: 120,
-                      ),
-                    ),
-                  ],
+                const _FeatureCard(
+                  icon: CupertinoIcons.bell_fill,
+                  title: 'Reze sem se perder',
+                  subtitle: 'Encontre rápido o melhor ponto de partida para agora.',
+                  minHeight: 104,
                 ),
                 const SizedBox(height: IaculaSpacing.sm),
-                const Row(
-                  children: [
-                    Expanded(
-                      child: _FeatureCard(
-                        icon: CupertinoIcons.rosette,
-                        title: 'Rosário guiado',
-                        subtitle: 'Mistérios e textos para rezar com calma.',
-                        minHeight: 120,
-                      ),
-                    ),
-                    SizedBox(width: IaculaSpacing.sm),
-                    Expanded(
-                      child: _FeatureCard(
-                        icon: CupertinoIcons.sparkles,
-                        title: 'Meditação',
-                        subtitle: 'Caminhos de recolhimento para rezar melhor.',
-                        minHeight: 120,
-                      ),
-                    ),
-                  ],
+                const _FeatureCard(
+                  icon: CupertinoIcons.arrow_clockwise_circle,
+                  title: 'Volte rápido ao essencial',
+                  subtitle: 'Jaculatórias, leituras e meditações para retomar o recolhimento.',
+                  minHeight: 104,
                 ),
                 const SizedBox(height: IaculaSpacing.sm),
-                const Row(
-                  children: [
-                    Expanded(
-                      child: _FeatureCard(
-                        icon: CupertinoIcons.check_mark_circled,
-                        title: 'Plano de vida',
-                        subtitle: 'Fidelidade nas pequenas práticas de cada dia.',
-                        minHeight: 120,
-                      ),
-                    ),
-                    SizedBox(width: IaculaSpacing.sm),
-                    Expanded(
-                      child: _FeatureCard(
-                        icon: CupertinoIcons.pencil_outline,
-                        title: 'Exame de consciência',
-                        subtitle: 'Prepare a confissão com serenidade.',
-                        minHeight: 120,
-                      ),
-                    ),
-                  ],
+                const _FeatureCard(
+                  icon: CupertinoIcons.check_mark_circled,
+                  title: 'Siga um ritmo de oração',
+                  subtitle: 'Liturgia, exame e práticas diárias para perseverar com paz.',
+                  minHeight: 104,
                 ),
                 const SizedBox(height: IaculaSpacing.xl),
                 IaculaPrimaryPillButton(
-                  label: _saving ? 'Entrando...' : 'Entrar e começar',
+                  label: _saving ? 'Entrando...' : 'Quero começar agora',
                   onPressed: _saving ? null : _completeOnboarding,
                 ),
                 const SizedBox(height: IaculaSpacing.sm),
