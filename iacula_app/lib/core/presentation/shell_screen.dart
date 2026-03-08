@@ -22,7 +22,7 @@ class ShellScreen extends ConsumerStatefulWidget {
 class _ShellScreenState extends ConsumerState<ShellScreen> {
   int _currentIndex = 0;
   final _tabController = CupertinoTabController();
-  static const _premiumIndexes = <int>{1, 2};
+  static const _premiumIndexes = <int>{2};
   late final List<GlobalKey<NavigatorState>> _navigatorKeys = List.generate(
     _screens.length,
     (_) => GlobalKey<NavigatorState>(),
@@ -55,9 +55,7 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
             final isPremium = asyncStatus.valueOrNull?.isPremium ?? false;
             if (!isPremium) {
               _tabController.index = _currentIndex;
-              final feature = index == 1
-                  ? PremiumFeature.meditation
-                  : PremiumFeature.planOfLife;
+              final feature = PremiumFeature.planOfLife;
               PremiumGate.showModal(context, feature: feature);
               return;
             }

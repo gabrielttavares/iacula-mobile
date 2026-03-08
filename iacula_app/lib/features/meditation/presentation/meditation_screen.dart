@@ -26,23 +26,11 @@ class MeditationScreen extends ConsumerStatefulWidget {
 }
 
 class _MeditationScreenState extends ConsumerState<MeditationScreen> {
-  String _selectedFilter = 'Todos';
-
-  static const _filters = [
-    'Todos',
-    'Reflexão guiada',
-    'Espiritual',
-    'Evangelho',
-    'Diário',
-    'Contemplação',
-  ];
+  _MeditationFilter _selectedFilter = _MeditationFilter.all;
 
   @override
   Widget build(BuildContext context) {
-    return PremiumGate(
-      feature: PremiumFeature.meditation,
-      child: _buildContent(context),
-    );
+    return _buildContent(context);
   }
 
   Widget _buildContent(BuildContext context) {
@@ -73,7 +61,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
                     const IaculaLargeTitle('Meditações'),
                     const SizedBox(height: 4),
                     Text(
-                      'Escolha um caminho para o seu momento de oração.',
+                      'Escolha um caminho mais concreto para rezar agora.',
                       style: context.textStyles.secondary,
                     ),
                   ],
@@ -87,7 +75,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
               child: Column(
                 children: [
                   _FilterChips(
-                    filters: _filters,
+                    filters: _MeditationFilter.values,
                     selected: _selectedFilter,
                     onSelected: (f) => setState(() => _selectedFilter = f),
                   ),
@@ -139,10 +127,13 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
   }
 
   List<MeditationItem> _applyFilter(List<MeditationItem> items) {
-    if (_selectedFilter == 'Todos') return items;
-    final tag = _selectedFilter.toLowerCase();
+    if (_selectedFilter == _MeditationFilter.all) return items;
+    final tags = _selectedFilter.tags;
     return items
-        .where((item) => item.categoryTags.contains(tag))
+        .where(
+          (item) =>
+              item.categoryTags.any((tag) => tags.contains(tag.toLowerCase())),
+        )
         .toList(growable: false);
   }
 
@@ -152,13 +143,13 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
   }) {
     final promptGroup = _buildPromptGroup(prompts);
 
-    if (_selectedFilter == 'Reflexão guiada') {
+    if (_selectedFilter == _MeditationFilter.guidedReflections) {
       return promptGroup == null
           ? const <MeditationFeedItem>[]
           : <MeditationFeedItem>[promptGroup];
     }
 
-    final includePrompts = _selectedFilter == 'Todos';
+    final includePrompts = _selectedFilter == _MeditationFilter.all;
 
     if (meditations.isEmpty) {
       return includePrompts
@@ -236,13 +227,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
         padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
         child: _MeditationHeroCard(
           item: hero.item,
-          onTap: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (_) => MeditationDetailScreen(item: hero.item),
-              ),
-            );
-          },
+          onTap: () => _openMeditationDetail(context, hero.item),
         ),
       ),
     );
@@ -299,13 +284,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
           final item = library[index].item;
           return _MeditationGridCard(
             item: item,
-            onTap: () {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (_) => MeditationDetailScreen(item: item),
-                ),
-              );
-            },
+            onTap: () => _openMeditationDetail(context, item),
           );
         }, childCount: library.length),
       ),
@@ -333,13 +312,60 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
     return JournalPromptGroupFeedItem(sections);
   }
 
-  void _openPromptDetail(BuildContext context, JournalPrompt prompt) {
+  Future<void> _openPromptDetail(
+    BuildContext context,
+    JournalPrompt prompt,
+  ) async {
+    final canOpen = await _canOpenMeditation();
+    if (!mounted || !context.mounted) return;
+    if (!canOpen) {
+      PremiumGate.showModal(context, feature: PremiumFeature.meditation);
+      return;
+    }
     Navigator.of(context).push(
       CupertinoPageRoute(
         builder: (_) => JournalPromptDetailScreen(prompt: prompt),
       ),
     );
   }
+
+  Future<bool> _canOpenMeditation() async {
+    final premiumStatus = await ref.read(premiumStatusProvider.future);
+    return premiumStatus.isPremium;
+  }
+
+  Future<void> _openMeditationDetail(
+    BuildContext context,
+    MeditationItem item,
+  ) async {
+    final canOpen = await _canOpenMeditation();
+    if (!mounted || !context.mounted) return;
+    if (!canOpen) {
+      PremiumGate.showModal(context, feature: PremiumFeature.meditation);
+      return;
+    }
+    Navigator.of(context).push(
+      CupertinoPageRoute(builder: (_) => MeditationDetailScreen(item: item)),
+    );
+  }
+}
+
+enum _MeditationFilter {
+  all('Todos', <String>[]),
+  guidedReflections('Reflexões guiadas', <String>[]),
+  silence('Silêncio e presença de Deus', <String>[
+    'espiritual',
+    'contemplacao',
+    'silencio',
+  ]),
+  gospel('Evangelho do dia', <String>['evangelho']),
+  examen('Exame e revisão do dia', <String>['diario', 'exame']),
+  dailyRhythm('Ritmo de oração diário', <String>['foco', 'manha', 'noite']);
+
+  const _MeditationFilter(this.label, this.tags);
+
+  final String label;
+  final List<String> tags;
 }
 
 class _FilterChips extends StatelessWidget {
@@ -349,9 +375,9 @@ class _FilterChips extends StatelessWidget {
     required this.onSelected,
   });
 
-  final List<String> filters;
-  final String selected;
-  final ValueChanged<String> onSelected;
+  final List<_MeditationFilter> filters;
+  final _MeditationFilter selected;
+  final ValueChanged<_MeditationFilter> onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -379,7 +405,7 @@ class _FilterChips extends StatelessWidget {
                     : Border.all(color: const Color(0xFFD1D1D6)),
               ),
               child: Text(
-                filter,
+                filter.label,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,

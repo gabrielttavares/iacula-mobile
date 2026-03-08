@@ -7,11 +7,30 @@ import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/domain/repositories/prayer_catalog_repository.dart';
 import '../../quotes/domain/repositories/quote_content_repository.dart';
 
+String _normalizeSearchValue(String value) {
+  final lower = value.trim().toLowerCase();
+  return lower
+      .replaceAll('á', 'a')
+      .replaceAll('à', 'a')
+      .replaceAll('â', 'a')
+      .replaceAll('ã', 'a')
+      .replaceAll('é', 'e')
+      .replaceAll('ê', 'e')
+      .replaceAll('í', 'i')
+      .replaceAll('ó', 'o')
+      .replaceAll('ô', 'o')
+      .replaceAll('õ', 'o')
+      .replaceAll('ú', 'u')
+      .replaceAll('ç', 'c');
+}
+
 enum AppSearchResultType { prayer, meditation, reading, quote }
 
 final class AppSearchResult {
   const AppSearchResult._({
     required this.type,
+    required this.sectionTitle,
+    required this.score,
     required this.title,
     required this.subtitle,
     required this.snippet,
@@ -22,6 +41,8 @@ final class AppSearchResult {
   });
 
   final AppSearchResultType type;
+  final String sectionTitle;
+  final int score;
   final String title;
   final String subtitle;
   final String snippet;
@@ -30,32 +51,62 @@ final class AppSearchResult {
   final BookModel? readingBook;
   final String? quoteText;
 
-  factory AppSearchResult.prayer(PrayerCatalogEntry entry) {
+  factory AppSearchResult.prayer({
+    required PrayerCatalogEntry entry,
+    required int score,
+    required String query,
+  }) {
     return AppSearchResult._(
       type: AppSearchResultType.prayer,
+      sectionTitle: 'Orações',
+      score: score,
       title: entry.title,
       subtitle: 'Oração',
-      snippet: entry.content,
+      snippet: _buildSnippet(
+        primary: entry.content,
+        query: query,
+        fallbacks: [...entry.themes, ...entry.saints],
+      ),
       prayerEntry: entry,
     );
   }
 
-  factory AppSearchResult.meditation(MeditationItem item) {
+  factory AppSearchResult.meditation({
+    required MeditationItem item,
+    required int score,
+    required String query,
+  }) {
     return AppSearchResult._(
       type: AppSearchResultType.meditation,
+      sectionTitle: 'Meditações',
+      score: score,
       title: item.title,
       subtitle: 'Meditação · ${item.sourceName}',
-      snippet: item.summary,
+      snippet: _buildSnippet(
+        primary: item.summary,
+        query: query,
+        fallbacks: [item.sourceName, ...item.categoryTags],
+      ),
       meditationItem: item,
     );
   }
 
-  factory AppSearchResult.reading(BookModel book) {
+  factory AppSearchResult.reading({
+    required BookModel book,
+    required int score,
+    required String query,
+  }) {
     return AppSearchResult._(
       type: AppSearchResultType.reading,
+      sectionTitle: 'Leituras',
+      score: score,
       title: book.title,
       subtitle: 'Leitura · ${book.author}',
-      snippet: book.description,
+      snippet: _buildSnippet(
+        primary: book.description,
+        query: query,
+        fallbacks: [book.author],
+      ),
       readingBook: book,
     );
   }
@@ -63,18 +114,61 @@ final class AppSearchResult {
   factory AppSearchResult.quote({
     required String theme,
     required String text,
+    required int score,
+    required String query,
   }) {
     return AppSearchResult._(
       type: AppSearchResultType.quote,
+      sectionTitle: 'Citações',
+      score: score,
       title: 'Citação · $theme',
       subtitle: 'Citação',
-      snippet: text,
+      snippet: _buildSnippet(primary: text, query: query, fallbacks: [theme]),
       quoteText: text,
     );
+  }
+
+  static String _buildSnippet({
+    required String primary,
+    required String query,
+    List<String> fallbacks = const [],
+  }) {
+    final trimmedPrimary = primary.trim();
+    if (trimmedPrimary.isEmpty) {
+      return fallbacks.isEmpty ? '' : fallbacks.first;
+    }
+
+    final normalizedPrimary = _normalizeSearchValue(trimmedPrimary);
+    final normalizedQuery = _normalizeSearchValue(query);
+    final matchIndex = normalizedPrimary.indexOf(normalizedQuery);
+
+    if (matchIndex == -1) {
+      if (trimmedPrimary.length <= 88) {
+        return trimmedPrimary;
+      }
+      return '${trimmedPrimary.substring(0, 85).trimRight()}...';
+    }
+
+    final start = (matchIndex - 26).clamp(0, trimmedPrimary.length);
+    final end = (matchIndex + normalizedQuery.length + 34).clamp(
+      0,
+      trimmedPrimary.length,
+    );
+    final prefix = start > 0 ? '...' : '';
+    final suffix = end < trimmedPrimary.length ? '...' : '';
+    return '$prefix${trimmedPrimary.substring(start, end).trim()}$suffix';
   }
 }
 
 final class AppSearchService {
+  static const int _maxResultsPerSection = 4;
+  static const Map<AppSearchResultType, int> _typeOrder = {
+    AppSearchResultType.prayer: 0,
+    AppSearchResultType.meditation: 1,
+    AppSearchResultType.reading: 2,
+    AppSearchResultType.quote: 3,
+  };
+
   AppSearchService({
     required this.prayerCatalogRepository,
     required this.meditationCatalogRepository,
@@ -96,47 +190,99 @@ final class AppSearchService {
       return const <AppSearchResult>[];
     }
 
-    final prayers = await prayerCatalogRepository.listCatalog(language: language);
+    final prayers = await prayerCatalogRepository.listCatalog(
+      language: language,
+    );
     final meditations = await meditationCatalogRepository.listAll();
     final books = await leituraRepository.listBooks();
 
     final results = <AppSearchResult>[
       ...prayers
-          .where((entry) => _matchesPrayer(entry, normalizedQuery))
-          .map(AppSearchResult.prayer),
+          .map(
+            (entry) =>
+                (entry: entry, score: _scorePrayer(entry, normalizedQuery)),
+          )
+          .where((candidate) => candidate.score > 0)
+          .map(
+            (candidate) => AppSearchResult.prayer(
+              entry: candidate.entry,
+              score: candidate.score,
+              query: normalizedQuery,
+            ),
+          ),
       ...meditations
-          .where((item) => _matchesMeditation(item, normalizedQuery))
-          .map(AppSearchResult.meditation),
+          .map(
+            (item) =>
+                (item: item, score: _scoreMeditation(item, normalizedQuery)),
+          )
+          .where((candidate) => candidate.score > 0)
+          .map(
+            (candidate) => AppSearchResult.meditation(
+              item: candidate.item,
+              score: candidate.score,
+              query: normalizedQuery,
+            ),
+          ),
       ...books
-          .where((book) => _matchesBook(book, normalizedQuery))
-          .map(AppSearchResult.reading),
+          .map((book) => (book: book, score: _scoreBook(book, normalizedQuery)))
+          .where((candidate) => candidate.score > 0)
+          .map(
+            (candidate) => AppSearchResult.reading(
+              book: candidate.book,
+              score: candidate.score,
+              query: normalizedQuery,
+            ),
+          ),
       ...await _searchQuotes(
         normalizedQuery: normalizedQuery,
         language: language,
       ),
     ];
 
-    return results.take(60).toList(growable: false);
+    results.sort((left, right) {
+      final byScore = right.score.compareTo(left.score);
+      if (byScore != 0) return byScore;
+      final byType = _typeOrder[left.type]!.compareTo(_typeOrder[right.type]!);
+      if (byType != 0) return byType;
+      return left.title.compareTo(right.title);
+    });
+
+    final sectionCounts = <String, int>{};
+    final limitedResults = <AppSearchResult>[];
+    for (final result in results) {
+      final count = sectionCounts[result.sectionTitle] ?? 0;
+      if (count >= _maxResultsPerSection) {
+        continue;
+      }
+      sectionCounts[result.sectionTitle] = count + 1;
+      limitedResults.add(result);
+    }
+
+    return limitedResults.take(60).toList(growable: false);
   }
 
-  bool _matchesPrayer(PrayerCatalogEntry entry, String query) {
-    return _contains(entry.title, query) ||
-        _contains(entry.content, query) ||
-        entry.themes.any((theme) => _contains(theme, query)) ||
-        entry.saints.any((saint) => _contains(saint, query));
+  int _scorePrayer(PrayerCatalogEntry entry, String query) {
+    return _scoreFields(
+      query: query,
+      title: entry.title,
+      secondary: [entry.content, ...entry.themes, ...entry.saints],
+    );
   }
 
-  bool _matchesMeditation(MeditationItem item, String query) {
-    return _contains(item.title, query) ||
-        _contains(item.summary, query) ||
-        _contains(item.sourceName, query) ||
-        item.categoryTags.any((tag) => _contains(tag, query));
+  int _scoreMeditation(MeditationItem item, String query) {
+    return _scoreFields(
+      query: query,
+      title: item.title,
+      secondary: [item.summary, item.sourceName, ...item.categoryTags],
+    );
   }
 
-  bool _matchesBook(BookModel book, String query) {
-    return _contains(book.title, query) ||
-        _contains(book.author, query) ||
-        _contains(book.description, query);
+  int _scoreBook(BookModel book, String query) {
+    return _scoreFields(
+      query: query,
+      title: book.title,
+      secondary: [book.author, book.description],
+    );
   }
 
   Future<List<AppSearchResult>> _searchQuotes({
@@ -154,12 +300,21 @@ final class AppSearchService {
           for (final text in entry.value.quotes) {
             if (_contains(text, normalizedQuery) ||
                 _contains(entry.value.theme, normalizedQuery)) {
-              results.add(
-                AppSearchResult.quote(
-                  theme: entry.value.theme,
-                  text: text,
-                ),
+              final score = _scoreFields(
+                query: normalizedQuery,
+                title: entry.value.theme,
+                secondary: [text],
               );
+              if (score > 0) {
+                results.add(
+                  AppSearchResult.quote(
+                    theme: entry.value.theme,
+                    text: text,
+                    score: score,
+                    query: normalizedQuery,
+                  ),
+                );
+              }
             }
           }
         }
@@ -174,20 +329,27 @@ final class AppSearchService {
     return _normalize(source).contains(query);
   }
 
+  int _scoreFields({
+    required String query,
+    required String title,
+    required List<String> secondary,
+  }) {
+    final normalizedTitle = _normalize(title);
+    if (normalizedTitle == query) return 120;
+    if (normalizedTitle.startsWith(query)) return 100;
+    if (normalizedTitle.contains(query)) return 80;
+
+    for (final field in secondary) {
+      final normalizedField = _normalize(field);
+      if (normalizedField == query) return 60;
+      if (normalizedField.startsWith(query)) return 48;
+      if (normalizedField.contains(query)) return 32;
+    }
+
+    return 0;
+  }
+
   String _normalize(String value) {
-    final lower = value.trim().toLowerCase();
-    return lower
-        .replaceAll('á', 'a')
-        .replaceAll('à', 'a')
-        .replaceAll('â', 'a')
-        .replaceAll('ã', 'a')
-        .replaceAll('é', 'e')
-        .replaceAll('ê', 'e')
-        .replaceAll('í', 'i')
-        .replaceAll('ó', 'o')
-        .replaceAll('ô', 'o')
-        .replaceAll('õ', 'o')
-        .replaceAll('ú', 'u')
-        .replaceAll('ç', 'c');
+    return _normalizeSearchValue(value);
   }
 }
