@@ -37,4 +37,16 @@ void main() {
       }
     }
   });
+
+  test('listAll keeps accented reflection prompts for imported novenas', () async {
+    final repository = AssetChallengeRepository();
+
+    final challenge = await repository.getById('novena_sao_jose');
+
+    expect(challenge, isNotNull);
+    expect(
+      challenge!.content.first.reflectionPrompt,
+      'Que graça desejo pedir por intercessão nesta novena a são josé?',
+    );
+  });
 }
