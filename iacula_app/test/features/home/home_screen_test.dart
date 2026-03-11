@@ -361,7 +361,7 @@ void main() {
     expect(greeting, contains('Bem vindo'));
     expect(find.text('Destaques'), findsNothing);
     await reveal('Minhas frases');
-    await reveal('Reze agora');
+    await reveal('Ação de Graças');
     await reveal('Encontre uma oração para este momento');
   });
 

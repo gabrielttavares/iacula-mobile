@@ -212,7 +212,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           },
                         ),
                         const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(title: 'Reze agora'),
+                        const IaculaSectionHeader(title: 'Ação de Graças'),
                         const SizedBox(height: IaculaSpacing.sm),
                         const _DailyPrayerList(),
                         const SizedBox(height: IaculaSpacing.xl),
