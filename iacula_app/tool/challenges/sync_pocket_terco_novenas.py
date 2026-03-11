@@ -87,6 +87,10 @@ _BC_DAY_1_RE = re.compile(
     r'<h[23][^>]*id="dia-1"[^>]*>.*?</h[23]>',
     re.IGNORECASE | re.DOTALL,
 )
+_PDF_DAY_HEADING_RE = re.compile(
+    r"^\s*(?:(?P<num>\d{1,2})\s*[º°o]?\s*dia|(?P<word>primeiro|segundo|terceiro|quarto|quinto|sexto|setimo|sétimo|oitavo|nono)\s+dia)\b(?P<suffix>.*)$",
+    re.IGNORECASE,
+)
 
 
 def strip_accents(value: str) -> str:
@@ -447,6 +451,20 @@ def _normalize_pdf_lines(text: str) -> list[str]:
     return lines
 
 
+def _detect_pdf_day_heading(value: str) -> tuple[int | None, str]:
+    match = _PDF_DAY_HEADING_RE.match(value)
+    if not match:
+        return None, value
+
+    if match.group("num"):
+        day_number = int(match.group("num"))
+    else:
+        day_number = _DAY_WORDS[match.group("word").lower()]
+
+    suffix = re.sub(r"^\s*[\.:;\-–—_]+\s*", "", match.group("suffix") or "")
+    return day_number, normalize_whitespace(suffix)
+
+
 def _is_pdf_section_label(value: str) -> bool:
     lowered = strip_accents(value).lower()
     return lowered in {
@@ -462,6 +480,20 @@ def _is_pdf_section_label(value: str) -> bool:
     }
 
 
+def _is_pdf_intro_label(value: str) -> bool:
+    lowered = strip_accents(value).lower()
+    return lowered in {
+        "apresentacao",
+        "introducao",
+        "instrucoes para fazer a novena",
+        "como fazer a novena",
+    }
+
+
+def _is_pdf_list_item_line(value: str) -> bool:
+    return bool(re.match(r"^\d+[.)]\s+", value))
+
+
 def _consume_pdf_paragraphs(lines: list[str], start_index: int, stop_at_day: bool = False) -> tuple[list[str], int]:
     paragraphs: list[str] = []
     current_lines: list[str] = []
@@ -470,7 +502,7 @@ def _consume_pdf_paragraphs(lines: list[str], start_index: int, stop_at_day: boo
     while index < len(lines):
         line = lines[index]
         if stop_at_day and line:
-            day_number, _ = detect_day_number(line)
+            day_number, _ = _detect_pdf_day_heading(line)
             if day_number is not None:
                 break
         if not line:
@@ -489,6 +521,13 @@ def _consume_pdf_paragraphs(lines: list[str], start_index: int, stop_at_day: boo
             paragraphs.append(line)
             index += 1
             continue
+        if _is_pdf_list_item_line(line):
+            if current_lines:
+                paragraphs.append(" ".join(current_lines).strip())
+                current_lines = []
+            paragraphs.append(line)
+            index += 1
+            continue
         current_lines.append(line)
         index += 1
 
@@ -497,50 +536,62 @@ def _consume_pdf_paragraphs(lines: list[str], start_index: int, stop_at_day: boo
     return [paragraph for paragraph in paragraphs if paragraph], index
 
 
+def _consume_pdf_title_lines(lines: list[str], start_index: int) -> tuple[str, int]:
+    title_lines: list[str] = []
+    index = start_index
+
+    while index < len(lines):
+        line = lines[index]
+        if not line:
+            if title_lines:
+                break
+            index += 1
+            continue
+        if _is_pdf_section_label(line):
+            break
+        day_number, _ = _detect_pdf_day_heading(line)
+        if day_number is not None:
+            break
+        if len(line) > 80 or len(line.split()) > 10:
+            break
+        if title_lines and line[:1].isupper():
+            break
+        title_lines.append(line)
+        index += 1
+
+    return " ".join(title_lines).strip(), index
+
+
 def parse_opusdei_pdf_text(text: str) -> dict[str, Any] | None:
     lines = _normalize_pdf_lines(text)
 
-    first_day_index: int | None = None
-    for index, line in enumerate(lines):
-        day_number, _ = detect_day_number(line)
-        if day_number == 1:
-            first_day_index = index
-            break
-    if first_day_index is None:
-        return None
-
-    description_parts, _ = _consume_pdf_paragraphs(lines, 0, stop_at_day=True)
-    description = "\n\n".join(
-        part
-        for part in description_parts
-        if not strip_accents(part).lower().startswith(("novena ", "a sao josemaria", "pe. "))
-    ).strip()
-
     day_entries: list[dict[str, Any]] = []
-    index = first_day_index
+    first_day_index: int | None = None
+    index = 0
     while index < len(lines):
         line = lines[index]
         if not line:
             index += 1
             continue
 
-        day_number, inline_title = detect_day_number(line)
+        day_number, inline_title = _detect_pdf_day_heading(line)
         if day_number is None:
             index += 1
             continue
 
+        start_index = index
         index += 1
         title = inline_title
         if not title:
-            while index < len(lines) and not lines[index]:
-                index += 1
-            if index < len(lines):
-                next_day_number, _ = detect_day_number(lines[index])
-                if next_day_number is None:
-                    title = lines[index]
-                    index += 1
+            title, index = _consume_pdf_title_lines(lines, index)
 
         body_parts, index = _consume_pdf_paragraphs(lines, index, stop_at_day=True)
+        if inline_title and body_parts and _is_pdf_intro_label(body_parts[0]):
+            continue
+        if not body_parts:
+            continue
+        if first_day_index is None:
+            first_day_index = start_index
         day_entries.append(
             {
                 "dayNumber": day_number,
@@ -550,8 +601,16 @@ def parse_opusdei_pdf_text(text: str) -> dict[str, Any] | None:
         )
 
     validated = ensure_nine_days(day_entries)
-    if validated is None:
+    if validated is None or first_day_index is None:
         return None
+
+    description_parts, _ = _consume_pdf_paragraphs(lines[:first_day_index], 0, stop_at_day=False)
+    description = "\n\n".join(
+        part
+        for part in description_parts
+        if not strip_accents(part).lower().startswith(("novena ", "a sao josemaria", "pe. "))
+        and _detect_pdf_day_heading(part)[0] is None
+    ).strip()
 
     return {
         "description": description,

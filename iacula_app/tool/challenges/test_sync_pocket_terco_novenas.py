@@ -186,24 +186,31 @@ Aceitar a vontade de Deus
 Texto do dia 2.
 
 3º DIA
+Confiar na providência
 Texto do dia 3.
 
 4º DIA
+Rezar com perseverança
 Texto do dia 4.
 
 5º DIA
+Oferecer a dor
 Texto do dia 5.
 
 6º DIA
+Buscar a paz de Cristo
 Texto do dia 6.
 
 7º DIA
+Aceitar a cruz
 Texto do dia 7.
 
 8º DIA
+Servir com esperança
 Texto do dia 8.
 
 9º DIA
+Viver com abandono
 Texto do dia 9.
 """
 
