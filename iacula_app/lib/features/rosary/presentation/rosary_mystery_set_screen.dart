@@ -111,38 +111,59 @@ class _RosaryMysterySetScreenState extends State<RosaryMysterySetScreen>
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 52),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${_currentPage + 1}o Misterio',
-                    style: context.textStyles.secondary.copyWith(
-                      color: const Color(0xCCFFFFFF),
-                      fontSize: 15,
+          SafeArea(
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${_currentPage + 1}º Mistério',
+                      style: context.textStyles.secondary.copyWith(
+                        color: const Color(0xCCFFFFFF),
+                        fontSize: 15,
+                        shadows: const [
+                          Shadow(color: Color(0x99000000), blurRadius: 8),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    mystery.name,
-                    style: context.textStyles.sectionTitle.copyWith(
-                      color: const Color(0xFFFFFFFF),
-                      fontSize: 22,
+                    const SizedBox(height: 4),
+                    Text(
+                      mystery.name,
+                      style: context.textStyles.sectionTitle.copyWith(
+                        color: const Color(0xFFFFFFFF),
+                        fontSize: 22,
+                        shadows: const [
+                          Shadow(color: Color(0x99000000), blurRadius: 16),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Fruto: ${mystery.fruit}',
-                    style: context.textStyles.secondary.copyWith(
-                      color: const Color(0xB3FFFFFF),
-                      fontSize: 15,
+                    const SizedBox(height: 4),
+                    Text(
+                      'Fruto: ${mystery.fruit}',
+                      style: context.textStyles.secondary.copyWith(
+                        color: const Color(0xB3FFFFFF),
+                        fontSize: 15,
+                        shadows: const [
+                          Shadow(color: Color(0x99000000), blurRadius: 8),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 32),
+                    Center(
+                      child: Text(
+                        'Toque para avançar',
+                        style: context.textStyles.secondary.copyWith(
+                          color: const Color(0x80FFFFFF),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

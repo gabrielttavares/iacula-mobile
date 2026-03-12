@@ -148,16 +148,19 @@ class IaculaTextScheme {
       largeTitle: GoogleFonts.lora(
         fontSize: scaler.scale(34),
         fontWeight: FontWeight.w700,
+        height: 1.25,
         color: colors.title,
       ),
       sectionTitle: GoogleFonts.lora(
         fontSize: scaler.scale(22),
         fontWeight: FontWeight.w600,
+        height: 1.25,
         color: colors.title,
       ),
       cardTitle: GoogleFonts.lora(
         fontSize: scaler.scale(17),
         fontWeight: FontWeight.w600,
+        height: 1.25,
         color: colors.title,
       ),
       secondary: GoogleFonts.lora(
@@ -183,16 +186,19 @@ class IaculaTextScheme {
         largeTitle: GoogleFonts.lora(
           fontSize: 34,
           fontWeight: FontWeight.w700,
+          height: 1.25,
           color: colors.title,
         ),
         sectionTitle: GoogleFonts.lora(
           fontSize: 22,
           fontWeight: FontWeight.w600,
+          height: 1.25,
           color: colors.title,
         ),
         cardTitle: GoogleFonts.lora(
           fontSize: 17,
           fontWeight: FontWeight.w600,
+          height: 1.25,
           color: colors.title,
         ),
         secondary: GoogleFonts.lora(
@@ -218,18 +224,21 @@ final class IaculaText {
   static final largeTitle = GoogleFonts.lora(
     fontSize: 34,
     fontWeight: FontWeight.w700,
+    height: 1.25,
     color: const Color(0xFFF7F5EC),
   );
 
   static final sectionTitle = GoogleFonts.lora(
     fontSize: 22,
     fontWeight: FontWeight.w600,
+    height: 1.25,
     color: const Color(0xFFF7F5EC),
   );
 
   static final cardTitle = GoogleFonts.lora(
     fontSize: 17,
     fontWeight: FontWeight.w600,
+    height: 1.25,
     color: const Color(0xFFF7F5EC),
   );
 

@@ -116,11 +116,11 @@ class _RosaryIntroView extends ConsumerWidget {
               ),
             ),
           ),
-          IgnorePointer(
+          SafeArea(
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 52),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -142,6 +142,22 @@ class _RosaryIntroView extends ConsumerWidget {
                       style: context.textStyles.secondary.copyWith(
                         color: const Color(0xCCFFFFFF),
                         fontSize: 15,
+                        shadows: const [
+                          Shadow(color: Color(0x99000000), blurRadius: 8),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 48),
+                    CupertinoButton.filled(
+                      onPressed: () => _openSet(context, mysterySet),
+                      borderRadius: BorderRadius.circular(999),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(CupertinoIcons.play_circle_fill),
+                          SizedBox(width: 8),
+                          Text('Começar a rezar'),
+                        ],
                       ),
                     ),
                   ],

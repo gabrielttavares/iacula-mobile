@@ -56,18 +56,31 @@ class _RosaryCompletionScreenState extends State<RosaryCompletionScreen> {
                     key: const Key('rosary-completion-salve'),
                     behavior: HitTestBehavior.opaque,
                     onTap: () => setState(() => _showSalve = false),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: Text(
-                          'Salve Rainha, Mae de Misericordia, vida, docura e esperanca nossa, salve!\n\nToque para continuar.',
-                          textAlign: TextAlign.center,
-                          style: context.textStyles.cardTitle.copyWith(
-                            color: const Color(0xFFFFFFFF),
-                            fontSize: 20,
-                            height: 1.5,
+                    child: SafeArea(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 28),
+                            child: Text(
+                              'Salve Rainha, Mãe de Misericórdia, vida, doçura e esperança nossa, salve!',
+                              textAlign: TextAlign.center,
+                              style: context.textStyles.cardTitle.copyWith(
+                                color: const Color(0xFFFFFFFF),
+                                fontSize: 20,
+                                height: 1.5,
+                              ),
+                            ),
                           ),
-                        ),
+                          const Spacer(),
+                          CupertinoButton.filled(
+                            onPressed: () => setState(() => _showSalve = false),
+                            borderRadius: BorderRadius.circular(999),
+                            child: const Text('Continuar'),
+                          ),
+                          const SizedBox(height: 32),
+                        ],
                       ),
                     ),
                   )
@@ -84,7 +97,7 @@ class _RosaryCompletionScreenState extends State<RosaryCompletionScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Rosario completo',
+                            'Rosário concluído',
                             style: context.textStyles.sectionTitle.copyWith(
                               color: const Color(0xFFFFFFFF),
                               fontSize: 22,
@@ -99,7 +112,7 @@ class _RosaryCompletionScreenState extends State<RosaryCompletionScreen> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'Sequencia: ${widget.streakCount}',
+                            'Sequência: ${widget.streakCount}',
                             style: context.textStyles.secondary.copyWith(
                               color: const Color(0xCCFFFFFF),
                             ),
@@ -108,7 +121,7 @@ class _RosaryCompletionScreenState extends State<RosaryCompletionScreen> {
                           CupertinoButton.filled(
                             onPressed: widget.onDone,
                             borderRadius: BorderRadius.circular(999),
-                            child: const Text('Concluido'),
+                            child: const Text('Concluído'),
                           ),
                         ],
                       ),

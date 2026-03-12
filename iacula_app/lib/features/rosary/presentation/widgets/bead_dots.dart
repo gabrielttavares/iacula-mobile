@@ -14,9 +14,9 @@ class BeadDots extends StatelessWidget {
         final isCompleted = index < currentBeadIndex;
         final isCurrent = index == currentBeadIndex;
         final size = switch (index) {
-          0 => 6.0,
-          11 => 5.0,
-          _ => 4.0,
+          0 => 8.0,
+          11 => 7.0,
+          _ => 6.0,
         };
 
         return Semantics(

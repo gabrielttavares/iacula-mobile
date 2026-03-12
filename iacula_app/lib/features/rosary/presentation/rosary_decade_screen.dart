@@ -95,11 +95,14 @@ class _RosaryDecadeScreenState extends ConsumerState<RosaryDecadeScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      '${widget.mysteryIndex + 1}o Misterio',
+                      '${widget.mysteryIndex + 1}º Mistério',
                       textAlign: TextAlign.center,
                       style: context.textStyles.secondary.copyWith(
                         color: const Color(0xFFFFFFFF),
                         fontSize: 15,
+                        shadows: const [
+                          Shadow(color: Color(0x99000000), blurRadius: 8),
+                        ],
                       ),
                     ),
                   ),
@@ -108,33 +111,41 @@ class _RosaryDecadeScreenState extends ConsumerState<RosaryDecadeScreen> {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 48),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    mystery.name,
-                    textAlign: TextAlign.center,
-                    style: context.textStyles.cardTitle.copyWith(
-                      color: const Color(0xFFFFFFFF),
-                      fontSize: 20,
+          SafeArea(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      mystery.name,
+                      textAlign: TextAlign.center,
+                      style: context.textStyles.cardTitle.copyWith(
+                        color: const Color(0xFFFFFFFF),
+                        fontSize: 20,
+                        shadows: const [
+                          Shadow(color: Color(0x99000000), blurRadius: 16),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Fruto: ${mystery.fruit}',
-                    textAlign: TextAlign.center,
-                    style: context.textStyles.secondary.copyWith(
-                      color: const Color(0xCCFFFFFF),
-                      fontSize: 14,
+                    const SizedBox(height: 6),
+                    Text(
+                      'Fruto: ${mystery.fruit}',
+                      textAlign: TextAlign.center,
+                      style: context.textStyles.secondary.copyWith(
+                        color: const Color(0xCCFFFFFF),
+                        fontSize: 14,
+                        shadows: const [
+                          Shadow(color: Color(0x99000000), blurRadius: 8),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  BeadDots(currentBeadIndex: session.currentBeadIndex),
-                ],
+                    const SizedBox(height: 24),
+                    BeadDots(currentBeadIndex: session.currentBeadIndex),
+                  ],
+                ),
               ),
             ),
           ),
