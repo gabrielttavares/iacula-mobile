@@ -63,7 +63,7 @@ class AuthorListPage extends ConsumerWidget {
                   Text('Leituras', style: context.textStyles.largeTitle),
                   const SizedBox(height: IaculaSpacing.sm),
                   Text(
-                    'A biblioteca reúne os melhores livros de autores e Santos renomados da espiritualidade meditativa e prática.',
+                    'Autores e Santos renomados da espiritualidade meditativa e prática.',
                     style: context.textStyles.secondary,
                   ),
                   const SizedBox(height: IaculaSpacing.lg),
