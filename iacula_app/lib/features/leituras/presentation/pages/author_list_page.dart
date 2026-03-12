@@ -59,6 +59,15 @@ class AuthorListPage extends ConsumerWidget {
             ),
             data: (authors) {
               final listItems = <Widget>[
+                if (showLeiturasIntro) ...[
+                  Text('Leituras', style: context.textStyles.largeTitle),
+                  const SizedBox(height: IaculaSpacing.sm),
+                  Text(
+                    'A biblioteca reúne os melhores livros de autores e Santos renomados da espiritualidade meditativa e prática.',
+                    style: context.textStyles.secondary,
+                  ),
+                  const SizedBox(height: IaculaSpacing.lg),
+                ],
                 Padding(
                   padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
                   child: CupertinoButton(
@@ -97,11 +106,7 @@ class AuthorListPage extends ConsumerWidget {
                                   featuredCompendiumTitle,
                                   style: context.textStyles.cardTitle,
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Leitura nativa em texto, formatada dentro do app.',
-                                  style: context.textStyles.secondary,
-                                ),
+                                const SizedBox(height: 4)
                               ],
                             ),
                           ),
@@ -116,15 +121,6 @@ class AuthorListPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-                if (showLeiturasIntro) ...[
-                  Text('Leituras', style: context.textStyles.largeTitle),
-                  const SizedBox(height: IaculaSpacing.sm),
-                  Text(
-                    'A biblioteca reúne os melhores livros de autores e Santos renomados da espiritualidade meditativa e prática.',
-                    style: context.textStyles.secondary,
-                  ),
-                  const SizedBox(height: IaculaSpacing.lg),
-                ],
                 ...List<Widget>.generate(authors.length, (index) {
                   final author = authors[index];
                   final isEnabled = _isAuthorEnabled(author);
