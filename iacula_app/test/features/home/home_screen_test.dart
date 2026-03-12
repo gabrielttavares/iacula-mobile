@@ -507,7 +507,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Orações'), findsOneWidget);
-    expect(find.text('Liturgia de hoje'), findsOneWidget);
+    expect(find.text('Liturgia diária'), findsOneWidget);
     expect(find.text('Intenções'), findsOneWidget);
     expect(find.text('Exame de consciência'), findsOneWidget);
     expect(find.text('Leituras'), findsOneWidget);
@@ -561,7 +561,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final liturgiaFinder = find.text('Liturgia de hoje');
+    final liturgiaFinder = find.text('Liturgia diária');
     await tester.dragUntilVisible(
       liturgiaFinder,
       find.byType(CustomScrollView),

@@ -384,6 +384,17 @@ class _FeatureRail extends StatelessWidget {
     final width = MediaQuery.of(context).size.width * 0.42;
 
     final cards = [
+            _RailCard(
+        key: const Key('home_feature_biblia_card'),
+        label: 'Bíblia',
+        isComingSoon: false,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          Navigator.of(
+            context,
+          ).push(CupertinoPageRoute(builder: (_) => const BibleBooksScreen()));
+        },
+      ),
       _RailCard(
         key: const Key('home_feature_rosario_card'),
         label: 'Rosário',
@@ -405,18 +416,7 @@ class _FeatureRail extends StatelessWidget {
             CupertinoPageRoute(builder: (_) => const ExaminationFlowScreen()),
           );
         },
-      ),
-      _RailCard(
-        key: const Key('home_feature_biblia_card'),
-        label: 'Bíblia',
-        isComingSoon: false,
-        onTap: () {
-          HapticFeedback.lightImpact();
-          Navigator.of(
-            context,
-          ).push(CupertinoPageRoute(builder: (_) => const BibleBooksScreen()));
-        },
-      ),
+      )
     ];
 
     return SizedBox(
