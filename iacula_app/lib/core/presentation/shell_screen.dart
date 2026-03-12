@@ -81,23 +81,38 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.house),
+            icon: Padding(
+              padding: EdgeInsets.only(top: 6.0),
+              child: Icon(CupertinoIcons.house),
+            ),
             label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.play_circle),
+            icon: Padding(
+              padding: EdgeInsets.only(top: 6.0),
+              child: Icon(CupertinoIcons.play_circle),
+            ),
             label: 'Meditação',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.check_mark_circled),
+            icon: Padding(
+              padding: EdgeInsets.only(top: 6.0),
+              child: Icon(CupertinoIcons.check_mark_circled),
+            ),
             label: 'Plano de vida',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.bookmark),
+            icon: Padding(
+              padding: EdgeInsets.only(top: 6.0),
+              child: Icon(CupertinoIcons.bookmark),
+            ),
             label: 'Favoritos',
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.person),
+            icon: Padding(
+              padding: EdgeInsets.only(top: 6.0),
+              child: Icon(CupertinoIcons.person),
+            ),
             label: 'Perfil',
           ),
         ],
