@@ -108,17 +108,25 @@
           "– Pelas necessidades da Igreja e do Estado: Pai Nosso, Ave Maria, Glória.",
           "– Pela pessoa e intenções do Sr. Bispo desta diocese: Pai Nosso, Ave Maria, Glória.",
           "– Pelas benditas almas do Purgatório: Pai Nosso, Ave Maria. Descansem em paz. Amém,",
-          "________________",
-          "Na Quinta-feira Santa, em vez do Glória, pode-se rezar:",
-          ". Cristo se fez por nós.",
-          ". Obediente até a morte.",
-          "E na Sexta-feira Santa:",
-          ". Cristo se fez por nós obediente até a morte.",
-          ". E morte de Cruz.",
-          "E no Sábado Santo:",
-          ". Cristo se fez por nós obediente até a morte e morte de cruz.",
-          ". Por isso Deus o exaltou e lhe deu um Nome que está acima de todo nome."
-        ]
+          "________________"
+        ],
+        "conditionalLines": {
+          "holy-thursday": [
+            "Na Quinta-feira Santa, em vez do Glória, pode-se rezar:",
+            ". Cristo se fez por nós.",
+            ". Obediente até a morte."
+          ],
+          "good-friday": [
+            "E na Sexta-feira Santa:",
+            ". Cristo se fez por nós obediente até a morte.",
+            ". E morte de Cruz."
+          ],
+          "easter-vigil": [
+            "E no Sábado Santo:",
+            ". Cristo se fez por nós obediente até a morte e morte de cruz.",
+            ". Por isso Deus o exaltou e lhe deu um Nome que está acima de todo nome."
+          ]
+        }
       }
     ]
   }

@@ -41,6 +41,9 @@ class _RosaryCompletionScreenState
     final completionPrayersAsync = ref.watch(
       rosaryCompletionPrayersProvider('pt-br'),
     );
+    final liturgicalContextAsync = ref.watch(liturgicalContextProvider(null));
+    final currentFeast = liturgicalContextAsync.valueOrNull?.feast;
+
     final completionPrayers = completionPrayersAsync.valueOrNull
             ?.pagesForLanguage('pt-br') ??
         const <RosaryCompletionPrayerPage>[];
@@ -79,10 +82,11 @@ class _RosaryCompletionScreenState
               return _buildPrayerPage(
                 context,
                 completionPrayers[index - 1],
+                currentFeast,
               );
             },
           ),
-          if (completionPrayersAsync.isLoading)
+          if (completionPrayersAsync.isLoading || liturgicalContextAsync.isLoading)
             SafeArea(
               child: Align(
                 alignment: Alignment.topCenter,
@@ -99,9 +103,9 @@ class _RosaryCompletionScreenState
                     ),
                     child: const CupertinoActivityIndicator(),
                   ),
-                  ),
                 ),
               ),
+            ),
         ],
       ),
     );
@@ -189,7 +193,14 @@ class _RosaryCompletionScreenState
   Widget _buildPrayerPage(
     BuildContext context,
     RosaryCompletionPrayerPage page,
+    String? currentFeast,
   ) {
+    final linesToShow = [
+      ...page.lines,
+      if (currentFeast != null && page.conditionalLines.containsKey(currentFeast))
+        ...page.conditionalLines[currentFeast]!,
+    ];
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
@@ -232,7 +243,7 @@ class _RosaryCompletionScreenState
                           ),
                         ),
                         const SizedBox(height: 12),
-                        ...page.lines.map(
+                        ...linesToShow.map(
                           (line) => Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Text(

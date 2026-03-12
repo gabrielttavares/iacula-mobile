@@ -24,6 +24,7 @@ import '../../features/liturgia_diaria/infrastructure/services/liturgia_api_serv
 import '../../features/liturgia_diaria/infrastructure/services/saint_api_service.dart';
 import '../../features/liturgia_diaria/infrastructure/services/saint_image_resolver.dart';
 import '../../features/liturgical/domain/repositories/liturgical_season_cache_repository.dart';
+import '../../features/liturgical/domain/liturgical_context.dart';
 import '../../features/liturgical/domain/services/liturgical_season_service.dart';
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
@@ -180,6 +181,11 @@ final liturgicalSeasonServiceProvider = Provider<LiturgicalSeasonService>((
   ref,
 ) {
   return const FallbackLiturgicalSeasonService();
+});
+
+final liturgicalContextProvider =
+    FutureProvider.family<LiturgicalContext, DateTime?>((ref, date) async {
+  return ref.watch(liturgicalSeasonServiceProvider).getCurrentContext(date: date);
 });
 
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {

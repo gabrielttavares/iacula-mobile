@@ -2,15 +2,27 @@ final class RosaryCompletionPrayerPage {
   const RosaryCompletionPrayerPage({
     required this.title,
     required this.lines,
+    this.conditionalLines = const {},
   });
 
   final String title;
   final List<String> lines;
+  final Map<String, List<String>> conditionalLines;
 
   factory RosaryCompletionPrayerPage.fromJson(Map<String, dynamic> json) {
+    final rawConditional = json['conditionalLines'] as Map<String, dynamic>?;
+    final parsedConditional = <String, List<String>>{};
+
+    if (rawConditional != null) {
+      for (final entry in rawConditional.entries) {
+        parsedConditional[entry.key] = _toStringList(entry.value);
+      }
+    }
+
     return RosaryCompletionPrayerPage(
       title: json['title']?.toString() ?? '',
       lines: _toStringList(json['lines']),
+      conditionalLines: parsedConditional,
     );
   }
 }
