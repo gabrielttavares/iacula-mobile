@@ -193,9 +193,7 @@ class ExaminationSectionView extends ConsumerWidget {
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
                         section.items[i],
-                        style: context.textStyles.secondary.copyWith(
-                          fontSize: 15,
-                          height: 1.4,
+                        style: context.textStyles.readingBody.copyWith(
                           color: checkedItems.contains(i)
                               ? context.colors.textPrimary
                               : context.colors.textSecondary,

@@ -314,10 +314,7 @@ class _DayCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               day.readingText,
-              style: context.textStyles.secondary.copyWith(
-                fontSize: 14,
-                height: 1.5,
-              ),
+              style: context.textStyles.readingBody,
             ),
             const SizedBox(height: 12),
             Container(

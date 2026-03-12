@@ -170,11 +170,7 @@ class _HourPrayerScreenState extends ConsumerState<HourPrayerScreen> {
                         const SizedBox(height: 16),
                         Text(
                           _current.content,
-                          style: context.textStyles.secondary.copyWith(
-                            color: context.colors.textPrimary,
-                            fontSize: 16,
-                            height: 1.8,
-                          ),
+                          style: context.textStyles.readingBody,
                         ),
                       ],
                     ),

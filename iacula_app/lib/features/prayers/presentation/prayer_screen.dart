@@ -93,9 +93,8 @@ class PrayerScreen extends ConsumerWidget {
                             if (index == prayer.verses.length) {
                               return Text(
                                 prayer.prayer,
-                                style: context.textStyles.secondary.copyWith(
+                                style: context.textStyles.readingBody.copyWith(
                                   color: context.colors.textSecondary,
-                                  height: 1.5,
                                   fontSize: fontSize,
                                 ),
                               );
@@ -107,9 +106,7 @@ class PrayerScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   verse.verse,
-                                  style: context.textStyles.secondary.copyWith(
-                                    color: context.colors.textPrimary,
-                                    height: 1.5,
+                                  style: context.textStyles.readingBody.copyWith(
                                     fontSize: fontSize,
                                   ),
                                 ),
@@ -117,12 +114,11 @@ class PrayerScreen extends ConsumerWidget {
                                   const SizedBox(height: 4),
                                   Text(
                                     verse.response,
-                                    style: context.textStyles.secondary.copyWith(
-                                      color: context.colors.textSecondary,
-                                      fontStyle: FontStyle.italic,
-                                      height: 1.45,
-                                      fontSize: fontSize,
-                                    ),
+                                      style: context.textStyles.readingBody.copyWith(
+                                        color: context.colors.textSecondary,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: fontSize,
+                                      ),
                                   ),
                                 ],
                               ],

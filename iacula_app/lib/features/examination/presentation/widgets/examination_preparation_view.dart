@@ -37,10 +37,7 @@ class ExaminationPreparationView extends ConsumerWidget {
               'Peça a luz do Espírito Santo para reconhecer '
               'suas faltas com sinceridade e confiança '
               'na misericórdia divina.',
-              style: context.textStyles.secondary.copyWith(
-                fontSize: 16,
-                height: 1.5,
-              ),
+              style: context.textStyles.readingBody,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),

@@ -55,11 +55,9 @@ class DoctrineDetailScreen extends ConsumerWidget {
                     const SizedBox(height: IaculaSpacing.lg),
                     Text(
                       entry.content,
-                      style: context.textStyles.secondary.copyWith(
-                        color: context.colors.textPrimary,
-                        height: 1.6,
-                        fontSize: fontSize,
-                      ),
+                        style: context.textStyles.readingBody.copyWith(
+                          fontSize: fontSize,
+                        ),
                     ),
                   ],
                 ),

@@ -62,11 +62,7 @@ class ExaminationConfessionView extends ConsumerWidget {
                   ),
                   child: Text(
                     confession,
-                    style: context.textStyles.secondary.copyWith(
-                      fontSize: 16,
-                      height: 1.6,
-                      color: context.colors.textPrimary,
-                    ),
+                    style: context.textStyles.readingBody,
                   ),
                 ),
                 const SizedBox(height: 20),

@@ -414,10 +414,8 @@ class _ReaderParagraph extends StatelessWidget {
         for (final paragraph in paragraphs) ...[
           Text(
             paragraph,
-            style: TextStyle(
+            style: context.textStyles.readingBody.copyWith(
               fontSize: fontSize,
-              height: 1.75,
-              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 14),

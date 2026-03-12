@@ -232,11 +232,7 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
               IaculaTextInput(
                 controller: _bodyController,
                 placeholder: 'Escreva sua reflexão...',
-                style: context.textStyles.secondary.copyWith(
-                  color: context.colors.textPrimary,
-                  fontSize: 16,
-                  height: 1.6,
-                ),
+                style: context.textStyles.readingBody,
                 padding: const EdgeInsets.all(16),
                 maxLines: null,
                 minLines: 10,

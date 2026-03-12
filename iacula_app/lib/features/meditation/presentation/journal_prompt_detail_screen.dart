@@ -43,9 +43,8 @@ class JournalPromptDetailScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       prompt.category.description,
-                      style: context.textStyles.secondary.copyWith(
-                        fontSize: 15,
-                        height: 1.5,
+                      style: context.textStyles.readingBody.copyWith(
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ],
@@ -55,9 +54,8 @@ class JournalPromptDetailScreen extends StatelessWidget {
               IaculaSoftCard(
                 child: Text(
                   'Use esta pergunta como ponto de partida. Escreva com liberdade, depois aprofunde nas Leituras ou na Bíblia se isso ajudar sua oração.',
-                  style: context.textStyles.secondary.copyWith(
-                    fontSize: 15,
-                    height: 1.5,
+                  style: context.textStyles.readingBody.copyWith(
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ),

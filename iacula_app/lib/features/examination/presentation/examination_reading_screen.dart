@@ -68,11 +68,7 @@ class _ExaminationReadingScreenState
                 const SizedBox(height: 8),
                 Text(
                   item.text,
-                  style: context.textStyles.secondary.copyWith(
-                    fontSize: 17,
-                    height: 1.5,
-                    color: context.colors.textPrimary,
-                  ),
+                  style: context.textStyles.readingBody,
                 ),
                 const SizedBox(height: 24),
               ],

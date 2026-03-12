@@ -104,7 +104,7 @@ class _ManagementItemCard extends ConsumerWidget {
                     const SizedBox(height: 8),
                     Text(
                       item.text,
-                      style: context.textStyles.secondary.copyWith(height: 1.4),
+                      style: context.textStyles.readingBody,
                     ),
                   ],
                 ),

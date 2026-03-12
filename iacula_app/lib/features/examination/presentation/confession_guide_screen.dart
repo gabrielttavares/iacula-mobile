@@ -146,7 +146,5 @@ class ConfessionGuideScreen extends StatelessWidget {
       ));
 
   Widget _prayerBody(BuildContext context, String text) =>
-      Text(text, style: context.textStyles.secondary.copyWith(
-        fontSize: 15, height: 1.6,
-      ));
+      Text(text, style: context.textStyles.readingBody);
 }

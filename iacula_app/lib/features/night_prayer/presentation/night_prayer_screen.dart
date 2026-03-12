@@ -299,10 +299,8 @@ class _NightCard extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             body,
-            style: const TextStyle(
-              color: Color(0xFFCCCCCC),
-              fontSize: 17,
-              height: 1.8,
+            style: context.textStyles.readingBody.copyWith(
+              color: const Color(0xFFCCCCCC),
             ),
           ),
         ],

@@ -146,9 +146,7 @@ class _PrayerCatalogDetailScreenState
                       itemBuilder: (context, index) {
                         return Text(
                           contentBlocks[index],
-                          style: context.textStyles.secondary.copyWith(
-                            color: context.colors.textPrimary,
-                            height: 1.6,
+                          style: context.textStyles.readingBody.copyWith(
                             fontSize: fontSize,
                           ),
                         );

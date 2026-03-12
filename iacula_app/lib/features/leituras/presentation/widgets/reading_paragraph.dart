@@ -32,9 +32,7 @@ class ReadingParagraph extends StatelessWidget {
         for (var i = 0; i < point.paragraphs.length; i++) ...[
           SelectableText(
             point.paragraphs[i],
-            style: context.textStyles.secondary.copyWith(
-              color: context.colors.textPrimary,
-              height: 1.6,
+            style: context.textStyles.readingBody.copyWith(
               fontSize: fontSize,
             ),
           ),

@@ -130,6 +130,7 @@ class IaculaTextScheme {
   final TextStyle sectionTitle;
   final TextStyle cardTitle;
   final TextStyle secondary;
+  final TextStyle readingBody;
   final TextStyle tabLabel;
 
   const IaculaTextScheme._({
@@ -137,6 +138,7 @@ class IaculaTextScheme {
     required this.sectionTitle,
     required this.cardTitle,
     required this.secondary,
+    required this.readingBody,
     required this.tabLabel,
   });
 
@@ -162,6 +164,12 @@ class IaculaTextScheme {
         fontSize: scaler.scale(15),
         fontWeight: FontWeight.w400,
         color: colors.textSecondary,
+      ),
+      readingBody: GoogleFonts.lora(
+        fontSize: scaler.scale(17),
+        fontWeight: FontWeight.w400,
+        height: 1.6,
+        color: colors.textPrimary,
       ),
       tabLabel: GoogleFonts.lora(
         fontSize: scaler.scale(11),
@@ -191,6 +199,12 @@ class IaculaTextScheme {
           fontSize: 15,
           fontWeight: FontWeight.w400,
           color: colors.textSecondary,
+        ),
+        readingBody: GoogleFonts.lora(
+          fontSize: 17,
+          fontWeight: FontWeight.w400,
+          height: 1.6,
+          color: colors.textPrimary,
         ),
         tabLabel: GoogleFonts.lora(fontSize: 11, fontWeight: FontWeight.w500),
       );
@@ -223,6 +237,13 @@ final class IaculaText {
     fontSize: 15,
     fontWeight: FontWeight.w400,
     color: IaculaColorScheme.dark.textSecondary,
+  );
+
+  static final readingBody = GoogleFonts.lora(
+    fontSize: 17,
+    fontWeight: FontWeight.w400,
+    height: 1.6,
+    color: IaculaColorScheme.dark.textPrimary,
   );
 
   static final tabLabel = GoogleFonts.lora(

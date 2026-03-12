@@ -358,11 +358,7 @@ class _SegmentedContent extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   reading.text,
-                  style: context.textStyles.secondary.copyWith(
-                    color: context.colors.textPrimary,
-                    height: 1.55,
-                    fontSize: 15,
-                  ),
+                  style: context.textStyles.readingBody,
                   textAlign: TextAlign.start,
                 ),
                 if (reading.response != null &&
@@ -448,11 +444,7 @@ class _LabeledBlock extends StatelessWidget {
   }
 
   static TextStyle _bodyStyle(BuildContext context) {
-    return context.textStyles.secondary.copyWith(
-      color: context.colors.textPrimary,
-      height: 1.55,
-      fontSize: 15,
-    );
+    return context.textStyles.readingBody;
   }
 
   @override
@@ -494,11 +486,9 @@ class _ResponseBlock extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             text,
-            style: context.textStyles.secondary.copyWith(
+            style: context.textStyles.readingBody.copyWith(
               color: context.colors.textSecondary,
               fontStyle: FontStyle.italic,
-              height: 1.45,
-              fontSize: 15,
             ),
             textAlign: TextAlign.start,
           ),
