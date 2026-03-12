@@ -625,9 +625,7 @@ void main() {
     expect(find.text('Coleta'), findsWidgets);
   });
 
-  testWidgets('home routes Exame Diário to the reading flow', (
-    tester,
-  ) async {
+  testWidgets('home routes Exame Diário to the reading flow', (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -650,38 +648,48 @@ void main() {
     expect(find.text('Como se confessar?'), findsNothing);
   });
 
-  testWidgets('home routes Sacramento da Confissão to the existing confession flow', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _buildApp(
-        settingsRepo: _defaultSettingsRepo(),
-        lastCardRepo: _defaultLastCardRepo(),
-      ),
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    'home routes Sacramento da Confissão to the existing confession flow',
+    (tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          settingsRepo: _defaultSettingsRepo(),
+          lastCardRepo: _defaultLastCardRepo(),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    final featureRailFinder = find.byKey(const Key('home_feature_rail'));
-    for (var i = 0; i < 20 && featureRailFinder.evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    expect(featureRailFinder, findsOneWidget);
-    await tester.ensureVisible(featureRailFinder);
-    await tester.pumpAndSettle();
+      final featureRailFinder = find.byKey(const Key('home_feature_rail'));
+      for (var i = 0; i < 20 && featureRailFinder.evaluate().isEmpty; i++) {
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+        await tester.pump(const Duration(milliseconds: 200));
+      }
+      expect(featureRailFinder, findsOneWidget);
+      await tester.ensureVisible(featureRailFinder);
+      await tester.pumpAndSettle();
 
-    final confessionFinder = find.text('Sacramento da Confissão');
-    for (var i = 0; i < 10 && confessionFinder.evaluate().isEmpty; i++) {
-      await tester.drag(featureRailFinder, const Offset(-180, 0));
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    expect(confessionFinder, findsOneWidget);
-    await tester.tap(confessionFinder);
-    await tester.pumpAndSettle();
+      final confessionFinder = find.byKey(
+        const Key('home_feature_confissao_card'),
+      );
+      final featureRailScrollable = find.descendant(
+        of: featureRailFinder,
+        matching: find.byType(Scrollable),
+      );
+      await tester.scrollUntilVisible(
+        confessionFinder,
+        180,
+        scrollable: featureRailScrollable,
+      );
+      await tester.ensureVisible(confessionFinder);
+      await tester.pumpAndSettle();
+      expect(confessionFinder, findsOneWidget);
+      await tester.tap(confessionFinder);
+      await tester.pumpAndSettle();
 
-    expect(find.text('Como se confessar?'), findsOneWidget);
-    expect(find.text('Diário para fazer no final do dia'), findsNothing);
-  });
+      expect(find.text('Como se confessar?'), findsOneWidget);
+      expect(find.text('Diário para fazer no final do dia'), findsNothing);
+    },
+  );
 
   testWidgets('home thematic and saint sections show grouped cards', (
     tester,

@@ -106,6 +106,11 @@ import '../../features/challenges/domain/repositories/challenge_repository.dart'
 import '../../features/challenges/domain/repositories/challenge_progress_repository.dart';
 import '../../features/challenges/infrastructure/repositories/asset_challenge_repository.dart';
 import '../../features/challenges/infrastructure/repositories/isar_challenge_progress_repository.dart';
+import '../../features/confession/domain/entities/confession_examination_item.dart';
+import '../../features/confession/domain/repositories/confession_examination_repository.dart';
+import '../../features/confession/domain/services/native_share_service.dart';
+import '../../features/confession/infrastructure/repositories/asset_confession_examination_repository.dart';
+import '../../features/confession/infrastructure/services/share_plus_native_share_service.dart';
 import '../../features/journal/domain/entities/journal_entry.dart';
 import '../../features/journal/domain/repositories/journal_repository.dart';
 import '../../features/journal/infrastructure/repositories/isar_journal_repository.dart';
@@ -186,8 +191,10 @@ final liturgicalSeasonServiceProvider = Provider<LiturgicalSeasonService>((
 
 final liturgicalContextProvider =
     FutureProvider.family<LiturgicalContext, DateTime?>((ref, date) async {
-  return ref.watch(liturgicalSeasonServiceProvider).getCurrentContext(date: date);
-});
+      return ref
+          .watch(liturgicalSeasonServiceProvider)
+          .getCurrentContext(date: date);
+    });
 
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   return InMemorySettingsRepository();
@@ -514,6 +521,20 @@ final prayerIntentionEntryRepositoryProvider =
       );
     });
 
+final confessionExaminationRepositoryProvider =
+    Provider<ConfessionExaminationRepository>((ref) {
+      return AssetConfessionExaminationRepository();
+    });
+
+final confessionExaminationItemsProvider =
+    FutureProvider<List<ConfessionExaminationItem>>((ref) {
+      return ref.watch(confessionExaminationRepositoryProvider).listAll();
+    });
+
+final nativeShareServiceProvider = Provider<NativeShareService>((ref) {
+  return const SharePlusNativeShareService();
+});
+
 final examinationReflectionRepositoryProvider =
     Provider<ExaminationReflectionRepository>((ref) {
       return IsarExaminationReflectionRepository(
@@ -710,18 +731,21 @@ final allRosaryMysterySetProvider = FutureProvider<List<RosaryMysterySet>>((
 });
 
 final rosaryCompletionPrayersProvider =
-    FutureProvider.family<RosaryCompletionPrayers, String>((ref, language) async {
-  return ref.watch(rosaryRepositoryProvider).getCompletionPrayers(
-        language: language,
-      );
-});
+    FutureProvider.family<RosaryCompletionPrayers, String>((
+      ref,
+      language,
+    ) async {
+      return ref
+          .watch(rosaryRepositoryProvider)
+          .getCompletionPrayers(language: language);
+    });
 
 final rosaryInitialPrayersProvider =
     FutureProvider.family<RosaryInitialPrayers, String>((ref, language) async {
-  return ref.watch(rosaryRepositoryProvider).getInitialPrayers(
-        language: language,
-      );
-});
+      return ref
+          .watch(rosaryRepositoryProvider)
+          .getInitialPrayers(language: language);
+    });
 
 // -- Bible Providers --
 

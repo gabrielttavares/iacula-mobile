@@ -36,6 +36,7 @@ dependencies:
   webview_flutter: ^4.13.1
   webview_flutter_android: ^4.10.13
   webview_flutter_wkwebview: ^3.23.8
+  share_plus: ^11.1.0
 
 dev_dependencies:
   flutter_test:
