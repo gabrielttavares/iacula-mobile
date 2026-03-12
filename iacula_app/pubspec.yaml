@@ -88,6 +88,7 @@ flutter:
     - assets/seed/doctrina/pt-br/
     - assets/seed/rosary/
     - assets/seed/challenges/
+    - assets/seed/examination/
     - assets/seed/journal_prompts/
     - assets/seed/night_prayer/
     - assets/seed/liturgy_hours/

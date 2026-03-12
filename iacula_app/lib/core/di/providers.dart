@@ -113,6 +113,9 @@ import '../../features/doctrina/application/use_cases/get_doctrine_catalog_use_c
 import '../../features/doctrina/domain/entities/doctrine_entry.dart';
 import '../../features/doctrina/domain/repositories/doctrine_repository.dart';
 import '../../features/doctrina/infrastructure/repositories/asset_doctrine_repository.dart';
+import '../../features/examination/domain/entities/examination_reflection_item.dart';
+import '../../features/examination/domain/repositories/examination_reflection_repository.dart';
+import '../../features/examination/infrastructure/repositories/isar_examination_reflection_repository.dart';
 import '../../features/leituras/data/repositories/leitura_repository.dart';
 import '../../features/leituras/data/sources/leitura_local_source.dart';
 import '../../features/spiritual_data/domain/entities/spiritual_entry.dart';
@@ -501,6 +504,18 @@ final prayerIntentionEntryRepositoryProvider =
       return IsarPrayerIntentionSpiritualEntryRepository(
         ref.watch(spiritualDataIsarStoreProvider),
       );
+    });
+
+final examinationReflectionRepositoryProvider =
+    Provider<ExaminationReflectionRepository>((ref) {
+      return IsarExaminationReflectionRepository(
+        store: ref.watch(spiritualDataIsarStoreProvider),
+      );
+    });
+
+final examinationReflectionItemsProvider =
+    StreamProvider<List<ExaminationReflectionItem>>((ref) {
+      return ref.watch(examinationReflectionRepositoryProvider).watchAll();
     });
 
 final planCompletionRepositoryProvider = Provider<PlanCompletionRepository>((

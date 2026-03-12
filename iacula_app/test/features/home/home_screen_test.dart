@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'dart:convert';
 import 'package:iacula_app/core/di/providers.dart';
+import 'package:iacula_app/features/examination/domain/entities/examination_reflection_item.dart';
+import 'package:iacula_app/features/examination/domain/repositories/examination_reflection_repository.dart';
+import 'package:iacula_app/features/examination/presentation/examination_reading_screen.dart';
 import 'package:iacula_app/features/home/presentation/home_screen.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/entities/daily_liturgy.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
@@ -218,6 +221,38 @@ final class _FakeChallengeProgressRepository
   Future<void> saveProgress(ChallengeProgress progress) async {}
 }
 
+final class _FakeExaminationReflectionRepository
+    implements ExaminationReflectionRepository {
+  _FakeExaminationReflectionRepository([List<ExaminationReflectionItem>? seed])
+    : _items = [...?seed];
+
+  final List<ExaminationReflectionItem> _items;
+
+  @override
+  Future<void> createItem({
+    required String sectionTitle,
+    required String text,
+  }) async {}
+
+  @override
+  Future<void> deleteItem(String id) async {}
+
+  @override
+  Future<List<ExaminationReflectionItem>> listAll() async =>
+      List<ExaminationReflectionItem>.from(_items);
+
+  @override
+  Future<void> seedDefaultsIfEmpty() async {}
+
+  @override
+  Future<void> updateItem(ExaminationReflectionItem item) async {}
+
+  @override
+  Stream<List<ExaminationReflectionItem>> watchAll() async* {
+    yield await listAll();
+  }
+}
+
 const _challenges = <Challenge>[
   Challenge(
     id: 'novena_sao_patricio',
@@ -260,6 +295,7 @@ Widget _buildApp({
   ChallengeProgressRepository challengeProgressRepository =
       _defaultChallengeProgressRepo,
   LiturgicalSeasonService? liturgicalSeasonService,
+  ExaminationReflectionRepository? examinationReflectionRepository,
   DateTime? now,
   Map<String, WidgetBuilder>? routes,
 }) {
@@ -278,6 +314,10 @@ Widget _buildApp({
       if (liturgicalSeasonService != null)
         liturgicalSeasonServiceProvider.overrideWithValue(
           liturgicalSeasonService,
+        ),
+      if (examinationReflectionRepository != null)
+        examinationReflectionRepositoryProvider.overrideWithValue(
+          examinationReflectionRepository,
         ),
       if (now != null) homeNowProvider.overrideWithValue(now),
     ],
@@ -418,6 +458,16 @@ void main() {
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
         lastCardRepo: _defaultLastCardRepo(),
+        examinationReflectionRepository: _FakeExaminationReflectionRepository([
+          ExaminationReflectionItem(
+            id: '1',
+            sectionTitle: 'Acto de Presença de Deus',
+            text: 'Meu Deus, dai-me luz para conhecer os pecados.',
+            sortOrder: 0,
+            createdAt: DateTime(2026, 3, 11),
+            updatedAt: DateTime(2026, 3, 11),
+          ),
+        ]),
       ),
     );
     await tester.pumpAndSettle();
@@ -575,6 +625,64 @@ void main() {
     expect(find.text('Coleta'), findsWidgets);
   });
 
+  testWidgets('home routes Exame de consciência to the reading flow', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final examinationFinder = find.text('Exame de consciência');
+    await tester.dragUntilVisible(
+      examinationFinder,
+      find.byType(CustomScrollView),
+      const Offset(0, -100),
+    );
+    await tester.tap(examinationFinder);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(find.byType(ExaminationReadingScreen), findsOneWidget);
+    expect(find.text('Como se confessar?'), findsNothing);
+  });
+
+  testWidgets('home routes Confissão to the existing confession flow', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        settingsRepo: _defaultSettingsRepo(),
+        lastCardRepo: _defaultLastCardRepo(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final featureRailFinder = find.byKey(const Key('home_feature_rail'));
+    for (var i = 0; i < 20 && featureRailFinder.evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    expect(featureRailFinder, findsOneWidget);
+    await tester.ensureVisible(featureRailFinder);
+    await tester.pumpAndSettle();
+
+    final confessionFinder = find.text('Confissão');
+    for (var i = 0; i < 10 && confessionFinder.evaluate().isEmpty; i++) {
+      await tester.drag(featureRailFinder, const Offset(-180, 0));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    expect(confessionFinder, findsOneWidget);
+    await tester.tap(confessionFinder);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Como se confessar?'), findsOneWidget);
+    expect(find.text('Diário para fazer no final do dia'), findsNothing);
+  });
+
   testWidgets('home thematic and saint sections show grouped cards', (
     tester,
   ) async {
@@ -705,20 +813,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final bibleCard = find.byKey(const Key('home_feature_biblia_card'));
-
-    await tester.scrollUntilVisible(
-      find.text('Rosário'),
-      220,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-
     final featureRail = find.byKey(const Key('home_feature_rail'));
-    await tester.fling(featureRail, const Offset(-400, 0), 1000);
+    for (var i = 0; i < 20 && featureRail.evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    expect(featureRail, findsOneWidget);
+    await tester.ensureVisible(featureRail);
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(bibleCard);
+    final bibleCard = find.text('Bíblia');
+    expect(bibleCard, findsOneWidget);
     await tester.pump();
     await tester.tap(bibleCard);
     await tester.pump();

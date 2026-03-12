@@ -6,27 +6,29 @@ import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/storage/isar/custom_phrase_doc.dart';
 import '../../../../core/storage/isar/examination_entry_doc.dart';
+import '../../../../core/storage/isar/examination_reflection_doc.dart';
 import '../../../../core/storage/isar/plan_completion_doc.dart';
 import '../../../../core/storage/isar/plan_of_life_entry_doc.dart';
 import '../../../../core/storage/isar/prayer_intention_entry_doc.dart';
 import '../../../../core/storage/isar/sync_state_doc.dart';
 import 'spiritual_data_encryption_key_provider.dart';
 
-typedef SpiritualIsarOpenFn = Future<Isar> Function({
-  required List<CollectionSchema<dynamic>> schemas,
-  required String directory,
-  required String name,
-  required List<int> encryptionKey,
-});
+typedef SpiritualIsarOpenFn =
+    Future<Isar> Function({
+      required List<CollectionSchema<dynamic>> schemas,
+      required String directory,
+      required String name,
+      required List<int> encryptionKey,
+    });
 
 final class SpiritualDataIsarStore {
   SpiritualDataIsarStore({
     required EncryptionKeyProvider keyProvider,
     Future<String> Function()? directoryProvider,
     SpiritualIsarOpenFn? openIsar,
-  })  : _keyProvider = keyProvider,
-        _directoryProvider = directoryProvider ?? _defaultDirectoryProvider,
-        _openIsar = openIsar ?? _defaultOpenIsar;
+  }) : _keyProvider = keyProvider,
+       _directoryProvider = directoryProvider ?? _defaultDirectoryProvider,
+       _openIsar = openIsar ?? _defaultOpenIsar;
 
   final EncryptionKeyProvider _keyProvider;
   final Future<String> Function() _directoryProvider;
@@ -46,6 +48,7 @@ final class SpiritualDataIsarStore {
         PlanOfLifeEntryDocSchema,
         PlanCompletionDocSchema,
         ExaminationEntryDocSchema,
+        ExaminationReflectionDocSchema,
         PrayerIntentionEntryDocSchema,
         SyncStateDocSchema,
         CustomPhraseDocSchema,
@@ -69,10 +72,6 @@ final class SpiritualDataIsarStore {
     required String name,
     required List<int> encryptionKey,
   }) {
-    return Isar.open(
-      schemas,
-      directory: directory,
-      name: name,
-    );
+    return Isar.open(schemas, directory: directory, name: name);
   }
 }

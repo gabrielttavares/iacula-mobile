@@ -1,0 +1,32 @@
+[
+  {
+    "id": "examination-reflection-1",
+    "section_title": "Acto de Presença de Deus",
+    "text": "Meu Deus, dai-me luz para conhecer os pecados que hoje cometi, as causas deles e os meios de os evitar.",
+    "sort_order": 0
+  },
+  {
+    "id": "examination-reflection-2",
+    "section_title": "Deveres para com Deus",
+    "text": "Lembrei-me de Deus durante o dia oferecendo-Lhe o meu trabalho, dando-Lhe graças, recorrendo a Ele com confiança de filho? Deixei-me vencer pelos respeitos humanos em algum momento? Fiz as minhas orações pausadamente com atenção e devoção?",
+    "sort_order": 1
+  },
+  {
+    "id": "examination-reflection-3",
+    "section_title": "Deveres para com o próximo",
+    "text": "Tratei com dureza ou desprezo os demais? Tive a preocupação de ajudar os que me rodeiam, fazendo-lhes, além disso, a vida mais agradável? Preocupa-me também a sua vida religiosa? Fiz algum apostolado? Caí na murmuração? Sei perdoar? Rezei pelas pessoas que de algum modo me preocupam?",
+    "sort_order": 2
+  },
+  {
+    "id": "examination-reflection-4",
+    "section_title": "Deveres para comigo mesmo",
+    "text": "Lutei pela minha própria santificação? Deixei-me levar por sentimentos de orgulho, vaidade, sensualidade? Esforcei-me por arrancar o meu defeito dominante? Recorri a Deus para que aumente em mim todas as virtudes e, especialmente, a fé, a esperança e a caridade?",
+    "sort_order": 3
+  },
+  {
+    "id": "examination-reflection-5",
+    "section_title": "Acto de contrição",
+    "text": "Meu Deus, porque sois tão bom, tenho muita pena de vos ter ofendido. Ajudai-me a não tornar a pecar.",
+    "sort_order": 4
+  }
+]

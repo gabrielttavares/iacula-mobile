@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
-import '../../../core/presentation/widgets/iacula_buttons.dart';
 
 import '../../../core/presentation/widgets/iacula_horizontal_card_rail.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
@@ -34,7 +33,8 @@ import '../../challenges/domain/entities/challenge.dart';
 import '../../challenges/presentation/challenge_detail_screen.dart';
 import '../../challenges/presentation/challenge_library_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
-import '../../examination/presentation/examination_flow_screen.dart';
+import '../../confession/presentation/confession_flow_screen.dart';
+import '../../examination/presentation/examination_reading_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../rosary/presentation/rosary_intro_screen.dart';
 import '../../bible/presentation/bible_books_screen.dart';
@@ -208,7 +208,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             HapticFeedback.lightImpact();
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (_) => const ExaminationFlowScreen(),
+                                builder: (_) =>
+                                    const ExaminationReadingScreen(),
                               ),
                             );
                           },
@@ -384,7 +385,7 @@ class _FeatureRail extends StatelessWidget {
     final width = MediaQuery.of(context).size.width * 0.42;
 
     final cards = [
-            _RailCard(
+      _RailCard(
         key: const Key('home_feature_biblia_card'),
         label: 'Bíblia',
         isComingSoon: false,
@@ -413,10 +414,10 @@ class _FeatureRail extends StatelessWidget {
         onTap: () {
           HapticFeedback.lightImpact();
           Navigator.of(context).push(
-            CupertinoPageRoute(builder: (_) => const ExaminationFlowScreen()),
+            CupertinoPageRoute(builder: (_) => const ConfessionFlowScreen()),
           );
         },
-      )
+      ),
     ];
 
     return SizedBox(
@@ -542,7 +543,7 @@ class _MonthlyNovenasSection extends ConsumerWidget {
         );
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
 }
