@@ -30,6 +30,8 @@ import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../../prayers/presentation/prayer_catalog_group_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
+import '../../challenges/domain/entities/challenge.dart';
+import '../../challenges/presentation/challenge_detail_screen.dart';
 import '../../challenges/presentation/challenge_library_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../../examination/presentation/examination_flow_screen.dart';
@@ -331,7 +333,8 @@ class _HomeHeroSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final quoteAsync = ref.watch(_homeQuoteProvider);
     return quoteAsync.when(
-      data: (quote) => HomeHeroCard(quote: quote, isFallback: isFallback, onTap: onHeroTap),
+      data: (quote) =>
+          HomeHeroCard(quote: quote, isFallback: isFallback, onTap: onHeroTap),
       loading: () =>
           const SizedBox(height: 240, child: IaculaShimmerCard(height: 240)),
       error: (error, stackTrace) => IaculaErrorState(
@@ -498,40 +501,48 @@ class _MonthlyNovenasSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final now = ref.watch(homeNowProvider);
-    final items = _monthlyNovenasFor(now);
-    if (items.isEmpty) return const SizedBox.shrink();
+    final catalogAsync = ref.watch(challengeCatalogProvider);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const IaculaSectionHeader(title: 'Novenas deste mês'),
-        const SizedBox(height: 12),
-        IaculaHorizontalCardRail(
-          itemCount: items.length,
-          itemBuilder: (context, index) =>
-              _MonthlyNovenaCard(item: items[index]),
-        ),
-        const SizedBox(height: 12),
-        Center(
-          child: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (_) => const ChallengeLibraryScreen(),
+    return catalogAsync.when(
+      data: (catalog) {
+        final items = _monthlyNovenasFor(now, catalog);
+        if (items.isEmpty) return const SizedBox.shrink();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const IaculaSectionHeader(title: 'Novenas deste mês'),
+            const SizedBox(height: 12),
+            IaculaHorizontalCardRail(
+              itemCount: items.length,
+              itemBuilder: (context, index) =>
+                  _MonthlyNovenaCard(item: items[index]),
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (_) => const ChallengeLibraryScreen(),
+                    ),
+                  );
+                },
+                child: Text(
+                  'Ver todas',
+                  style: context.textStyles.secondary.copyWith(
+                    color: context.colors.primaryButton,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              );
-            },
-            child: Text(
-              'Ver todas',
-              style: context.textStyles.secondary.copyWith(
-                color: context.colors.primaryButton,
-                fontWeight: FontWeight.w700,
               ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
@@ -539,66 +550,81 @@ class _MonthlyNovenasSection extends ConsumerWidget {
 class _MonthlyNovenaCard extends StatelessWidget {
   const _MonthlyNovenaCard({required this.item});
 
-  final _MonthlyNovenaItem item;
+  final _ResolvedMonthlyNovena item;
 
   @override
   Widget build(BuildContext context) {
-    return IaculaSoftCard(
-      showShadow: true,
+    return CupertinoButton(
       padding: EdgeInsets.zero,
-      radius: 24,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            child: SizedBox(
-              height: 84,
-              width: double.infinity,
-              child: Image.asset(
-                item.imageAsset,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          context.colors.primaryButton.withValues(alpha: 0.2),
-                          context.colors.primaryButton.withValues(alpha: 0.08),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+      onPressed: () {
+        HapticFeedback.lightImpact();
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (_) => ChallengeDetailScreen(challenge: item.challenge),
+          ),
+        );
+      },
+      child: IaculaSoftCard(
+        showShadow: true,
+        padding: EdgeInsets.zero,
+        radius: 24,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+              child: SizedBox(
+                height: 84,
+                width: double.infinity,
+                child: Image.asset(
+                  item.imageAsset,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            context.colors.primaryButton.withValues(alpha: 0.2),
+                            context.colors.primaryButton.withValues(
+                              alpha: 0.08,
+                            ),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                       ),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        CupertinoIcons.book,
-                        size: 28,
-                        color: context.colors.primaryButton,
+                      child: Center(
+                        child: Icon(
+                          CupertinoIcons.book,
+                          size: 28,
+                          color: context.colors.primaryButton,
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.cardTitle,
-                ),
-                const SizedBox(height: 8),
-                _NovenaDateBadge(text: item.dateLabel),
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.cardTitle,
+                  ),
+                  const SizedBox(height: 8),
+                  _NovenaDateBadge(text: item.dateLabel),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -710,184 +736,237 @@ final _homeThematicGroupsProvider = FutureProvider<List<HomePrayerGroup>>((
 
 final homeNowProvider = Provider<DateTime>((ref) => DateTime.now());
 
-List<_MonthlyNovenaItem> _monthlyNovenasFor(DateTime date) {
+List<_ResolvedMonthlyNovena> _monthlyNovenasFor(
+  DateTime date,
+  List<Challenge> catalog,
+) {
+  final challengeById = {
+    for (final challenge in catalog) challenge.id: challenge,
+  };
+
   return _monthlyNovenaCatalog
       .where((item) => item.month == date.month)
+      .map((item) {
+        final challenge = challengeById[item.challengeId];
+        if (challenge == null) return null;
+        return _ResolvedMonthlyNovena(item: item, challenge: challenge);
+      })
+      .whereType<_ResolvedMonthlyNovena>()
       .toList(growable: false);
 }
 
 final class _MonthlyNovenaItem {
   const _MonthlyNovenaItem({
+    required this.challengeId,
     required this.title,
     required this.dateLabel,
     required this.imageAsset,
     required this.month,
   });
 
+  final String challengeId;
   final String title;
   final String dateLabel;
   final String imageAsset;
   final int month;
 }
 
+final class _ResolvedMonthlyNovena {
+  const _ResolvedMonthlyNovena({required this.item, required this.challenge});
+
+  final _MonthlyNovenaItem item;
+  final Challenge challenge;
+
+  String get title => item.title;
+  String get dateLabel => item.dateLabel;
+  String get imageAsset => item.imageAsset;
+}
+
 const _monthlyNovenaCatalog = <_MonthlyNovenaItem>[
   _MonthlyNovenaItem(
+    challengeId: 'novena_da_familia',
     title: 'Novena à Sagrada Família',
     dateLabel: '20 a 28 de janeiro',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 1,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_nossa_senhora_lourdes',
     title: 'Novena a Nossa Senhora de Lourdes',
     dateLabel: '2 a 10 de fevereiro',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 2,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_sao_patricio',
     title: 'Novena a São Patrício',
     dateLabel: '8 a 16 de março',
     imageAsset: 'assets/placeholders/novenas/sao-jose.png',
     month: 3,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_sao_jose',
     title: 'Novena a São José',
     dateLabel: '10 a 18 de março',
     imageAsset: 'assets/placeholders/novenas/sao-jose.png',
     month: 3,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_anunciacao',
     title: 'Novena da Anunciação',
     dateLabel: '16 a 24 de março',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 3,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_santa_gemma_galgani',
     title: 'Novena a Santa Gemma Galgani',
     dateLabel: '2 a 10 de abril',
     imageAsset: 'assets/placeholders/novenas/sao-jose.png',
     month: 4,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_santa_bernadette',
     title: 'Novena a Santa Bernadette',
     dateLabel: '8 a 16 de abril',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 4,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_sao_jorge',
     title: 'Novena a São Jorge',
     dateLabel: '14 a 22 de abril',
     imageAsset: 'assets/placeholders/novenas/sao-jose.png',
     month: 4,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_santa_catarina_sena',
     title: 'Novena a Santa Catarina de Sena',
     dateLabel: '20 a 28 de abril',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 4,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_nossa_senhora_fatima',
     title: 'Novena a Nossa Senhora de Fátima',
     dateLabel: '4 a 12 de maio',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 5,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_espirito_santo',
     title: 'Novena ao Espírito Santo',
     dateLabel: 'móvel conforme Pentecostes',
     imageAsset: 'assets/placeholders/novenas/espirito-santo.png',
     month: 5,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_santa_rita_cassia',
     title: 'Novena a Santa Rita de Cássia',
     dateLabel: '14 a 22 de maio',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 5,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_santo_antonio',
     title: 'Novena a Santo Antônio',
     dateLabel: '4 a 12 de junho',
     imageAsset: 'assets/placeholders/novenas/santo-antonio.png',
     month: 6,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_sagrado_coracao',
     title: 'Novena ao Sagrado Coração de Jesus',
     dateLabel: 'móvel após Corpus Christi',
     imageAsset: 'assets/placeholders/novenas/sagrado-coracao.png',
     month: 6,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_sao_pedro',
     title: 'Novena a São Pedro',
     dateLabel: '20 a 28 de junho',
     imageAsset: 'assets/placeholders/novenas/sao-jose.png',
     month: 6,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_nossa_senhora_carmo',
     title: 'Novena a Nossa Senhora do Carmo',
     dateLabel: '7 a 15 de julho',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 7,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_santana',
     title: 'Novena a Sant\'Ana',
     dateLabel: '17 a 25 de julho',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 7,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_sao_joao_maria_vianney',
     title: 'Novena a São João Maria Vianney',
     dateLabel: '27 de julho a 4 de agosto',
     imageAsset: 'assets/placeholders/novenas/sao-jose.png',
     month: 8,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_assuncao_nossa_senhora',
     title: 'Novena da Assunção de Nossa Senhora',
     dateLabel: '6 a 14 de agosto',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 8,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_nossa_senhora_rainha',
     title: 'Novena a Nossa Senhora Rainha',
     dateLabel: '14 a 22 de agosto',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 8,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_sao_miguel',
     title: 'Novena a São Miguel Arcanjo',
     dateLabel: '20 a 28 de setembro',
     imageAsset: 'assets/placeholders/novenas/sao-miguel.png',
     month: 9,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_santa_teresa_avila',
     title: 'Novena a Santa Teresa de Ávila',
     dateLabel: '6 a 14 de outubro',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 10,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_sao_judas_tadeu',
     title: 'Novena a São Judas Tadeu',
     dateLabel: '20 a 28 de outubro',
     imageAsset: 'assets/placeholders/novenas/sao-jose.png',
     month: 10,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_sao_martinho_tours',
     title: 'Novena a São Martinho de Tours',
     dateLabel: '2 a 10 de novembro',
     imageAsset: 'assets/placeholders/novenas/sao-jose.png',
     month: 11,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_medalha_milagrosa',
     title: 'Novena da Medalha Milagrosa',
     dateLabel: '18 a 26 de novembro',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 11,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_imaculada_conceicao',
     title: 'Novena da Imaculada Conceição',
     dateLabel: '29 de novembro a 7 de dezembro',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
     month: 12,
   ),
   _MonthlyNovenaItem(
+    challengeId: 'novena_santa_luzia',
     title: 'Novena a Santa Luzia',
     dateLabel: '4 a 12 de dezembro',
     imageAsset: 'assets/placeholders/novenas/nossa-senhora.png',
