@@ -94,7 +94,6 @@ class _ExaminationList extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 8),
-        const Spacer(flex: 2),
         const SizedBox(height: 24),
         for (final item in items) ...[
           Text(item.text, style: context.textStyles.readingBody),
