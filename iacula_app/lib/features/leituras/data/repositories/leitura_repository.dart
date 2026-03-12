@@ -2,6 +2,7 @@ import '../models/author_model.dart';
 import '../models/book_model.dart';
 import '../models/chapter_model.dart';
 import '../sources/leitura_local_source.dart';
+import '../../leituras_featured_compendium.dart';
 
 final class LeituraRepository {
   LeituraRepository({LeituraLocalSource? localSource})
@@ -82,6 +83,30 @@ final class LeituraRepository {
   Future<BookModel?> getBook(String id) async {
     if (_bookCache.containsKey(id)) {
       return _bookCache[id];
+    }
+
+    if (id == featuredCompendiumBookId) {
+      final payload = await _localSource.loadBook(featuredCompendiumAssetPath);
+      final chapters =
+          (payload['chapters'] as List<dynamic>? ?? const <dynamic>[])
+              .whereType<Map<String, dynamic>>()
+              .map(ChapterModel.fromJson)
+              .toList(growable: false);
+
+      final hydrated = BookModel(
+        id: (payload['id'] as String? ?? featuredCompendiumBookId).trim(),
+        title: (payload['title'] as String? ?? featuredCompendiumTitle).trim(),
+        author: (payload['author'] as String? ?? featuredCompendiumAuthor)
+            .trim(),
+        language: (payload['language'] as String? ?? 'pt-br').trim(),
+        type: (payload['type'] as String? ?? 'chapters').trim(),
+        assetPath: featuredCompendiumAssetPath,
+        description: (payload['description'] as String? ?? '').trim(),
+        available: payload['available'] as bool? ?? true,
+        chapters: chapters,
+      );
+      _bookCache[id] = hydrated;
+      return hydrated;
     }
 
     final books = await listBooks();

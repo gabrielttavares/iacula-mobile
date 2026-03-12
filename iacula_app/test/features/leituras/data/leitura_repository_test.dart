@@ -101,11 +101,13 @@ void main() {
     expect(chapter.sections.first.number, 1);
   });
 
-  test('getBook returns the native compendium book when present in library', () async {
-    final source = _FakeLeituraLocalSource(
-      loadAsset: (path) async {
-        if (path == 'assets/books/library/index.json') {
-          return '''
+  test(
+    'getBook returns the native compendium book when present in library',
+    () async {
+      final source = _FakeLeituraLocalSource(
+        loadAsset: (path) async {
+          if (path == 'assets/books/library/index.json') {
+            return '''
 {
   "authors": [
     {
@@ -119,10 +121,11 @@ void main() {
   ]
 }
 ''';
-        }
+          }
 
-        if (path == 'assets/books/library/authors/catecismo-da-igreja-catolica.json') {
-          return '''
+          if (path ==
+              'assets/books/library/authors/catecismo-da-igreja-catolica.json') {
+            return '''
 {
   "id": "catecismo-da-igreja-catolica",
   "name": "Catecismo da Igreja Católica",
@@ -141,10 +144,11 @@ void main() {
   ]
 }
 ''';
-        }
+          }
 
-        if (path == 'assets/books/library/works/compendio-catecismo-da-igreja-catolica.json') {
-          return '''
+          if (path ==
+              'assets/books/library/works/compendio-catecismo-da-igreja-catolica.json') {
+            return '''
 {
   "id": "compendio-catecismo-da-igreja-catolica",
   "title": "Compêndio do Catecismo da Igreja Católica",
@@ -168,18 +172,21 @@ void main() {
   ]
 }
 ''';
-        }
+          }
 
-        throw StateError('unexpected path: $path');
-      },
-    );
-    final repository = LeituraRepository(localSource: source);
+          throw StateError('unexpected path: $path');
+        },
+      );
+      final repository = LeituraRepository(localSource: source);
 
-    final book = await repository.getBook('compendio-catecismo-da-igreja-catolica');
+      final book = await repository.getBook(
+        'compendio-catecismo-da-igreja-catolica',
+      );
 
-    expect(book, isNotNull);
-    expect(book!.title, 'Compêndio do Catecismo da Igreja Católica');
-    expect(book.chapters, hasLength(1));
-    expect(book.chapters.first.sections.first.number, 1);
-  });
+      expect(book, isNotNull);
+      expect(book!.title, 'Compêndio do Catecismo da Igreja Católica');
+      expect(book.chapters, hasLength(1));
+      expect(book.chapters.first.sections.first.number, 1);
+    },
+  );
 }

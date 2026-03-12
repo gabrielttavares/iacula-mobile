@@ -8,8 +8,9 @@ import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../premium/domain/entities/premium_feature.dart';
 import '../../../premium/presentation/premium_gate.dart';
 import '../../data/models/author_model.dart';
+import '../../leituras_featured_compendium.dart';
 import 'book_list_page.dart';
-import 'compendium_reader_page.dart';
+import 'book_reader_page.dart';
 
 final _authorsProvider = FutureProvider<List<AuthorModel>>((ref) async {
   return ref.watch(leituraRepositoryProvider).listAuthors();
@@ -33,12 +34,10 @@ class AuthorListPage extends ConsumerWidget {
     super.key,
     this.navigationTitle = 'Autores e Santos',
     this.showLeiturasIntro = false,
-    this.compendiumContentBuilder,
   });
 
   final String navigationTitle;
   final bool showLeiturasIntro;
-  final CompendiumContentBuilder? compendiumContentBuilder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,8 +66,8 @@ class AuthorListPage extends ConsumerWidget {
                     onPressed: () {
                       Navigator.of(context).push(
                         CupertinoPageRoute(
-                          builder: (_) => CompendiumReaderPage(
-                            contentBuilder: compendiumContentBuilder,
+                          builder: (_) => const BookReaderPage(
+                            bookId: featuredCompendiumBookId,
                           ),
                         ),
                       );
@@ -95,12 +94,12 @@ class AuthorListPage extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  CompendiumReaderPage.title,
+                                  featuredCompendiumTitle,
                                   style: context.textStyles.cardTitle,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Leitura doutrinal em PDF dentro do app.',
+                                  'Leitura nativa em texto, formatada dentro do app.',
                                   style: context.textStyles.secondary,
                                 ),
                               ],

@@ -7,15 +7,10 @@ import 'package:iacula_app/features/leituras/data/sources/leitura_local_source.d
 import 'package:iacula_app/features/leituras/presentation/pages/book_list_page.dart';
 import 'package:iacula_app/features/leituras/presentation/pages/book_reader_page.dart';
 import 'package:iacula_app/features/leituras/presentation/pages/author_list_page.dart';
-import 'package:iacula_app/features/leituras/presentation/pages/compendium_reader_page.dart';
 import 'package:iacula_app/features/leituras/presentation/pages/leituras_home_page.dart';
 import 'package:iacula_app/features/premium/domain/entities/premium_status.dart';
 
 void main() {
-  Widget _buildCompendiumStub(BuildContext context, String url, String title) {
-    return const SizedBox.shrink();
-  }
-
   LeituraRepository _buildLeiturasRepository() {
     return LeituraRepository(
       localSource: LeituraLocalSource(
@@ -128,11 +123,7 @@ void main() {
             _buildLeiturasRepository(),
           ),
         ],
-        child: CupertinoApp(
-          home: LeiturasHomePage(
-            compendiumContentBuilder: _buildCompendiumStub,
-          ),
-        ),
+        child: CupertinoApp(home: const LeiturasHomePage()),
       ),
     );
 
@@ -159,7 +150,7 @@ void main() {
     expect(compendiumTopLeft.dy, lessThan(authorTopLeft.dy));
   });
 
-  testWidgets('Leituras home opens compendium reader card', (
+  testWidgets('Leituras home opens compendium in the native book reader', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -174,11 +165,7 @@ void main() {
             _buildLeiturasRepository(),
           ),
         ],
-        child: CupertinoApp(
-          home: LeiturasHomePage(
-            compendiumContentBuilder: _buildCompendiumStub,
-          ),
-        ),
+        child: CupertinoApp(home: const LeiturasHomePage()),
       ),
     );
 
@@ -188,11 +175,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
-    expect(find.byType(CompendiumReaderPage), findsOneWidget);
-    expect(
-      find.text('Compêndio do Catecismo da Igreja Católica'),
-      findsAtLeastNWidgets(1),
-    );
+    expect(find.byType(BookReaderPage), findsOneWidget);
+    expect(find.text('A Profissão da Fé'), findsOneWidget);
   });
 
   testWidgets('Leituras home still opens books list from author card', (
@@ -210,11 +194,7 @@ void main() {
             _buildLeiturasRepository(),
           ),
         ],
-        child: CupertinoApp(
-          home: LeiturasHomePage(
-            compendiumContentBuilder: _buildCompendiumStub,
-          ),
-        ),
+        child: CupertinoApp(home: const LeiturasHomePage()),
       ),
     );
 
