@@ -909,15 +909,15 @@
   {
     "id": "oracao-sao-boaventura",
     "title": "Oração de São Boaventura",
-    "content": "Ó Deus, que iluminastes São Boaventura com a luz da sabedoria divina, concedei-me que, seguindo os seus ensinamentos, walk in vossos caminhos e alcance a glória eterna.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
+    "content": "Ó Deus, que iluminastes São Boaventura com a luz da sabedoria divina, concedei-me que, seguindo os seus ensinamentos, eu caminhe em vossos caminhos e alcance a glória eterna.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
     "languages": [
       "pt-br",
       "la"
     ],
     "theme": [
-      "missa-acao-de-gracas"
+      "devocoes"
     ],
     "saints": [
       "sao-boaventura"
@@ -989,14 +989,14 @@
   {
     "id": "oracao-sao-francisco",
     "title": "Oração de São Francisco",
-    "content": "Ó Deus, que fizestes de São Francisco um espejo de pobreza e humildade, concedei-me que, seguindo o seu exemplo, walk in vossa presença com coração puro e simples.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
+    "content": "Ó Deus, que fizestes de São Francisco um espelho de pobreza e humildade, concedei-me que, seguindo o seu exemplo, eu caminhe em vossa presença com coração puro e simples.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
     "languages": [
       "pt-br"
     ],
     "theme": [
-      "missa-acao-de-gracas"
+      "devocoes"
     ],
     "saints": [
       "sao-francisco"
@@ -1005,14 +1005,14 @@
   {
     "id": "oracao-a-sao-paulo",
     "title": "Oração a São Paulo",
-    "content": "São Paulo, apóstolo de Cristo, que tanto trabalhastes pela propagação da fé, rogai por mim para que eu possa ser um bom católico eSpread a boa doutrina.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
+    "content": "São Paulo, apóstolo de Cristo, que tanto trabalhastes pela propagação da fé, rogai por mim para que eu possa ser um bom católico e propagar a boa doutrina.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
     "languages": [
       "pt-br"
     ],
     "theme": [
-      "missa-acao-de-gracas"
+      "devocoes"
     ],
     "saints": [
       "sao-paulo"
@@ -1021,14 +1021,15 @@
   {
     "id": "oracao-aos-pastores-de-fatima",
     "title": "Oração aos Pastores de Fátima",
-    "content": "São Francisco e Santa Jacinta, pastorinhos de Fátima, que vissteis a Virgem Maria e spreads as suas mensagens, rogai por mim e por todos os fiéis.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
+    "content": "São Francisco e Santa Jacinta, pastorinhos de Fátima, que vistes a Virgem Maria e difundistes as suas mensagens, rogai por mim e por todos os fiéis.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
     "languages": [
       "pt-br"
     ],
     "theme": [
-      "missa-acao-de-gracas"
+      "devocoes",
+      "mariano"
     ],
     "saints": []
   },
@@ -2348,6 +2349,23 @@
     "theme": [
       "missa-acao-de-gracas",
       "devocoes"
+    ],
+    "saints": [
+      "padre-pio"
+    ]
+  },
+  {
+    "id": "fica-comigo-senhor",
+    "title": "Fica Comigo, Senhor",
+    "content": "Fica comigo, Senhor, porque preciso da vossa presença para não Vos esquecer.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "missa-acao-de-gracas",
+      "eucaristica"
     ],
     "saints": [
       "padre-pio"

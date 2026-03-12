@@ -58,15 +58,20 @@ class BibleChapterScreen extends ConsumerWidget {
                 final verse = verses[index];
                 return RichText(
                   text: TextSpan(
-                    style: context.textStyles.secondary.copyWith(
-                      fontSize: 16,
-                      color: context.colors.textPrimary,
-                    ),
+                    style: context.textStyles.readingBody,
                     children: [
-                      TextSpan(
-                        text: '${verse.number} ',
-                        style: context.textStyles.cardTitle.copyWith(
-                          fontSize: 15,
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.top,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 4.0, top: 5.0),
+                          child: Text(
+                            '${verse.number}',
+                            style: context.textStyles.secondary.copyWith(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: context.colors.primaryButton,
+                            ),
+                          ),
                         ),
                       ),
                       TextSpan(text: verse.text),

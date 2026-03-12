@@ -1,0 +1,12 @@
+{
+  "slug": "oracao-do-padre-pio",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração do Padre Pio"
+  },
+  "blocks": {
+    "pt-br": [
+      "Que a união de minha alma com Jesus Eucarístico seja a luz que dissipa as trevas, a força que me sustenta e a única alegria em meu coração."
+    ]
+  }
+}

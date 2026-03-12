@@ -1,0 +1,17 @@
+{
+  "slug": "oracao-de-sao-bento",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração de São Bento"
+  },
+  "blocks": {
+    "pt-br": [
+      "A Cruz Sagrada seja minha luz.",
+      "Não seja o dragão meu guia.",
+      "Retira-te, Satanás.",
+      "Nunca me aconselhes coisas vãs.",
+      "É mau o que me ofereces.",
+      "Bebe tu mesmo os teus venenos. Amém."
+    ]
+  }
+}
