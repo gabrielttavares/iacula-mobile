@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +26,7 @@ final _saintOfDayProvider = FutureProvider.family<SaintOfDay?, DateTime>((
   return ref.watch(saintRepositoryProvider).getSaintForDate(date);
 });
 
-enum _LiturgySegment { prayers, readings, antiphons }
+enum _LiturgySegment { prayers, readings, antiphons, saint }
 
 class LiturgiaScreen extends ConsumerStatefulWidget {
   const LiturgiaScreen({super.key});
@@ -188,6 +186,13 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                           ),
                           child: Text('Antífonas'),
                         ),
+                        _LiturgySegment.saint: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
+                          child: Text('Santo do dia'),
+                        ),
                       },
                       onValueChanged: (segment) {
                         if (segment != null) {
@@ -200,8 +205,6 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                       selected.title,
                       style: context.textStyles.sectionTitle,
                     ),
-                    const SizedBox(height: IaculaSpacing.sm),
-                    _SaintOfDaySection(asyncSaint: saintAsync),
                     const SizedBox(height: IaculaSpacing.md),
                     IaculaSoftCard(
                       child: AnimatedSwitcher(
@@ -210,6 +213,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                           key: ValueKey<_LiturgySegment>(_segment),
                           day: selected,
                           segment: _segment,
+                          asyncSaint: saintAsync,
                         ),
                       ),
                     ),
@@ -296,86 +300,17 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
   }
 }
 
-class _SaintOfDaySection extends StatelessWidget {
-  const _SaintOfDaySection({required this.asyncSaint});
-
-  final AsyncValue<SaintOfDay?> asyncSaint;
-
-  @override
-  Widget build(BuildContext context) {
-    return asyncSaint.when(
-      data: (saint) {
-        final displaySaint = saintOfDayOrFallback(saint);
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const IaculaSectionHeader(title: 'Santo do dia'),
-            const SizedBox(height: IaculaSpacing.sm),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(IaculaRadius.card),
-              child: SizedBox(
-                height: 220,
-                width: double.infinity,
-                child: _SaintImage(saint: displaySaint),
-              ),
-            ),
-            const SizedBox(height: IaculaSpacing.md),
-            Text(displaySaint.name, style: context.textStyles.sectionTitle),
-            const SizedBox(height: IaculaSpacing.sm),
-            for (final paragraph in displaySaint.biographyParagraphs) ...[
-              Text(
-                paragraph,
-                style: context.textStyles.secondary.copyWith(
-                  color: context.colors.textPrimary,
-                  height: 1.55,
-                ),
-                textAlign: TextAlign.start,
-              ),
-              const SizedBox(height: IaculaSpacing.sm),
-            ],
-          ],
-        );
-      },
-      loading: () => const IaculaShimmerCard(height: 280),
-      error: (_, _) => const SizedBox.shrink(),
-    );
-  }
-}
-
-class _SaintImage extends StatelessWidget {
-  const _SaintImage({required this.saint});
-
-  final SaintOfDay saint;
-
-  @override
-  Widget build(BuildContext context) {
-    if (saint.localImagePath != null) {
-      return Image.file(
-        File(saint.localImagePath!),
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _assetOrFallback(),
-      );
-    }
-    return _assetOrFallback();
-  }
-
-  Widget _assetOrFallback() {
-    return Image.asset(
-      saint.imageAssetPath ?? 'assets/placeholders/saint-placeholder.png',
-      fit: BoxFit.cover,
-    );
-  }
-}
-
 class _SegmentedContent extends StatelessWidget {
   const _SegmentedContent({
     super.key,
     required this.day,
     required this.segment,
+    required this.asyncSaint,
   });
 
   final LiturgyDay day;
   final _LiturgySegment segment;
+  final AsyncValue<SaintOfDay?> asyncSaint;
 
   @override
   Widget build(BuildContext context) {
@@ -474,6 +409,26 @@ class _SegmentedContent extends StatelessWidget {
                   _LabeledBlock(label: 'Extra', text: extra),
             ],
           ],
+        );
+      case _LiturgySegment.saint:
+        return asyncSaint.when(
+          data: (saint) {
+            final displaySaint = saintOfDayOrFallback(saint, date: day.date);
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const IaculaSectionHeader(title: 'Santo do dia'),
+                const SizedBox(height: IaculaSpacing.sm),
+                Text(displaySaint.name, style: context.textStyles.sectionTitle),
+                const SizedBox(height: IaculaSpacing.sm),
+                for (final paragraph in displaySaint.biographyParagraphs)
+                  if (paragraph.isNotEmpty)
+                    _LabeledBlock(label: 'Reflexão', text: paragraph),
+              ],
+            );
+          },
+          loading: () => const IaculaShimmerCard(height: 220),
+          error: (_, _) => const SizedBox.shrink(),
         );
     }
   }

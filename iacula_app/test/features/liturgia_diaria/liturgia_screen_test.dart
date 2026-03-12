@@ -120,6 +120,7 @@ void main() {
         ),
         findsOneWidget,
       );
+      expect(find.text('Santo do dia'), findsOneWidget);
     },
   );
 
@@ -187,6 +188,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Coleta'), findsAtLeast(1));
+    expect(find.text('Santa Rosa de Viterbo'), findsNothing);
 
     await tester.tap(find.text('Leituras'));
     await tester.pumpAndSettle();
@@ -196,6 +198,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Entrada'), findsOneWidget);
     expect(find.text('Antifona'), findsOneWidget);
+
+    await tester.tap(find.text('Santo do dia'));
+    await tester.pumpAndSettle();
+    expect(find.text('Santa Rosa de Viterbo'), findsOneWidget);
+    expect(find.text('Primeiro parágrafo'), findsOneWidget);
   });
 
   testWidgets('calendar confirm selects date inside current window', (
@@ -267,7 +274,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Santo do dia'), findsOneWidget);
+      await tester.tap(find.text('Santo do dia'));
+      await tester.pumpAndSettle();
+
       expect(find.text('Santa Rosa de Viterbo'), findsOneWidget);
       expect(find.text('Primeiro parágrafo'), findsOneWidget);
       expect(find.text('Segundo parágrafo'), findsOneWidget);
@@ -286,7 +295,9 @@ void main() {
       await tester.pumpWidget(_buildApp(repository));
       await tester.pumpAndSettle();
 
-      expect(find.text('Santo do dia'), findsOneWidget);
+      await tester.tap(find.text('Santo do dia'));
+      await tester.pumpAndSettle();
+
       expect(find.text('Comunhão dos santos'), findsOneWidget);
       expect(
         find.text(
