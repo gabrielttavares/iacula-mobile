@@ -32,7 +32,7 @@ class _ExaminationReadingScreenState
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('Exame de Consciência'),
+        middle: const Text('Exame de Consciência Diário'),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: () => Navigator.of(context).push(
@@ -49,14 +49,14 @@ class _ExaminationReadingScreenState
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
             children: [
               Text(
-                'Exame de Consciência',
+                'Exame de Consciência Diário',
                 style: context.textStyles.largeTitle.copyWith(
                   color: const Color(0xFF8F2830),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Diário para fazer no final do dia',
+                'Para fazer ao final do dia',
                 style: context.textStyles.secondary.copyWith(
                   fontSize: 18,
                   color: context.colors.textPrimary,

@@ -27,7 +27,7 @@ class SeedDefaultItemsUseCase {
       _createDefaultEntry('Terço', '18:00', now),
       _createDefaultEntry('Santa Missa', '19:00', now),
       _createDefaultEntry('3 Ave-Marias antes de deitar', '22:00', now),
-      _createDefaultEntry('Exame de consciência', '22:15', now),
+      _createDefaultEntry('Exame Diário', '22:15', now),
     ];
 
     await _repository.upsertMany(defaults);

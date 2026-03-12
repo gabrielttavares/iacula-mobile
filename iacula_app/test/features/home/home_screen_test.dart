@@ -559,7 +559,7 @@ void main() {
     expect(find.text('Orações'), findsOneWidget);
     expect(find.text('Liturgia diária'), findsOneWidget);
     expect(find.text('Intenções'), findsOneWidget);
-    expect(find.text('Exame de consciência'), findsOneWidget);
+    expect(find.text('Exame Diário'), findsOneWidget);
     expect(find.text('Leituras'), findsOneWidget);
     expect(find.text('Premium'), findsNothing);
   });
@@ -625,7 +625,7 @@ void main() {
     expect(find.text('Coleta'), findsWidgets);
   });
 
-  testWidgets('home routes Exame de consciência to the reading flow', (
+  testWidgets('home routes Exame Diário to the reading flow', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -636,7 +636,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final examinationFinder = find.text('Exame de consciência');
+    final examinationFinder = find.text('Exame Diário');
     await tester.dragUntilVisible(
       examinationFinder,
       find.byType(CustomScrollView),
@@ -650,7 +650,7 @@ void main() {
     expect(find.text('Como se confessar?'), findsNothing);
   });
 
-  testWidgets('home routes Confissão to the existing confession flow', (
+  testWidgets('home routes Sacramento da Confissão to the existing confession flow', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -670,7 +670,7 @@ void main() {
     await tester.ensureVisible(featureRailFinder);
     await tester.pumpAndSettle();
 
-    final confessionFinder = find.text('Confissão');
+    final confessionFinder = find.text('Sacramento da Confissão');
     for (var i = 0; i < 10 && confessionFinder.evaluate().isEmpty; i++) {
       await tester.drag(featureRailFinder, const Offset(-180, 0));
       await tester.pump(const Duration(milliseconds: 200));
@@ -1000,7 +1000,7 @@ void main() {
       matching: find.byType(PremiumTouchableCard),
     );
     final examinationCard = find.ancestor(
-      of: find.text('Exame de consciência'),
+      of: find.text('Exame Diário'),
       matching: find.byType(PremiumTouchableCard),
     );
 

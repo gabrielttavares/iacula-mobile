@@ -52,7 +52,7 @@ class HomeActionGrid extends StatelessWidget {
             const SizedBox(width: IaculaSpacing.sm),
             Expanded(
               child: _HorizontalFeatureCard(
-                label: 'Exame de consciência',
+                label: 'Exame Diário',
                 onTap: onOpenExamination,
               ),
             ),

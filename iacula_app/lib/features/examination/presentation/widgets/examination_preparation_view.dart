@@ -27,7 +27,7 @@ class ExaminationPreparationView extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Exame de Consciência',
+              'Exame de Consciência para Confissão',
               style: context.textStyles.largeTitle,
               textAlign: TextAlign.center,
             ),

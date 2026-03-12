@@ -409,7 +409,7 @@ class _FeatureRail extends StatelessWidget {
       ),
       _RailCard(
         key: const Key('home_feature_confissao_card'),
-        label: 'Confissão',
+        label: 'Sacramento da Confissão',
         isComingSoon: false,
         onTap: () {
           HapticFeedback.lightImpact();
