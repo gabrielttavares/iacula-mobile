@@ -43,11 +43,11 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
     final totalCells = ((leadingBlanks + daysInMonth + 6) ~/ 7) * 7;
     final rowCount = totalCells ~/ 7;
 
-    return SizedBox(
-      height: rowCount > 5 ? 510 : 460,
+    return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(IaculaSpacing.md),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
@@ -102,16 +102,16 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
               ],
             ),
             const SizedBox(height: 6),
-            Expanded(
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: totalCells,
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  childAspectRatio: 1.1,
-                ),
-                itemBuilder: (context, index) {
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: totalCells,
+              gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                childAspectRatio: 1.1,
+              ),
+              itemBuilder: (context, index) {
                   final dayNumber = index - leadingBlanks + 1;
                   if (dayNumber < 1 || dayNumber > daysInMonth) {
                     return const SizedBox.shrink();
@@ -154,8 +154,8 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
                     ),
                   );
                 },
-              ),
             ),
+            const SizedBox(height: IaculaSpacing.lg),
             CupertinoButton.filled(
               borderRadius: BorderRadius.circular(26),
               onPressed: () =>
