@@ -1,50 +1,34 @@
-// lib/features/examination/presentation/widgets/examination_section_view.dart
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/presentation/design/iacula_input.dart';
+import '../../../../core/di/providers.dart';
 import '../../../../core/presentation/widgets/iacula_spring_button.dart';
+import '../../../../core/presentation/widgets/iacula_toast.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
+import '../../../confession/domain/entities/confession_examination_item.dart';
 import '../../application/examination_flow_notifier.dart';
-import '../../domain/data/examination_checklist.dart';
 
 class ExaminationSectionView extends ConsumerWidget {
   const ExaminationSectionView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final flowState = ref.watch(examinationFlowProvider);
-    final notifier = ref.read(examinationFlowProvider.notifier);
-    final sectionIndex = flowState.currentSectionIndex;
-    
-    // We add one extra "page" for the free text entry
-    final totalPages = flowState.totalSections + 1;
+    final itemsAsync = ref.watch(confessionExaminationItemsProvider);
 
     return SafeArea(
       child: Column(
         children: [
-          // Top bar with back, progress, close
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
             child: Row(
               children: [
                 CupertinoButton(
                   padding: EdgeInsets.zero,
-                  onPressed: sectionIndex > 0
-                      ? () {
-                          HapticFeedback.selectionClick();
-                          if (sectionIndex == flowState.totalSections) {
-                            notifier.goToSection(flowState.totalSections - 1);
-                          } else {
-                            notifier.previousSection();
-                          }
-                        }
-                      : () {
-                          // Go back to preparation
-                          notifier.clearAll();
-                        },
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    ref.read(examinationFlowProvider.notifier).clearAll();
+                  },
                   child: Icon(
                     CupertinoIcons.chevron_back,
                     color: context.colors.textSecondary,
@@ -52,8 +36,8 @@ class ExaminationSectionView extends ConsumerWidget {
                 ),
                 Expanded(
                   child: Text(
-                    '${sectionIndex + 1} / $totalPages',
-                    style: context.textStyles.secondary,
+                    'Exame de Consciência',
+                    style: context.textStyles.cardTitle,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -61,6 +45,7 @@ class ExaminationSectionView extends ConsumerWidget {
                   padding: EdgeInsets.zero,
                   onPressed: () {
                     HapticFeedback.lightImpact();
+                    ref.read(examinationFlowProvider.notifier).clearAll();
                     Navigator.of(context).pop();
                   },
                   child: Icon(
@@ -71,171 +56,25 @@ class ExaminationSectionView extends ConsumerWidget {
               ],
             ),
           ),
-          // Progress bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                value: (sectionIndex + 1) / totalPages,
-                backgroundColor: context.colors.separator,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  context.colors.primaryButton,
-                ),
-                minHeight: 4,
-              ),
-            ),
-          ),
-          // Content
           Expanded(
-            child: sectionIndex < flowState.totalSections
-                ? _buildSectionContent(context, ref, flowState, sectionIndex)
-                : _buildFreeTextPage(context, ref, flowState),
-          ),
-          // Bottom navigation
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-            child: IaculaSpringButton(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                if (sectionIndex < flowState.totalSections - 1) {
-                  notifier.nextSection();
-                } else if (sectionIndex == flowState.totalSections - 1) {
-                  // Go to free text page
-                  notifier.goToSection(flowState.totalSections);
-                } else {
-                  // From free text page, go to review
-                  notifier.goToReview();
-                }
-              },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
-                  color: context.colors.primaryButton,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Text(
-                  sectionIndex >= flowState.totalSections
-                      ? 'Revisar'
-                      : 'Próximo',
-                  style: context.textStyles.cardTitle.copyWith(
-                    color: context.colors.background,
-                    fontSize: 17,
+            child: itemsAsync.when(
+              data: (items) => _ExaminationList(items: items),
+              loading: () => const Center(child: CupertinoActivityIndicator()),
+              error: (error, stackTrace) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    'Não foi possível carregar o exame de consciência.',
+                    style: context.textStyles.secondary,
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionContent(
-    BuildContext context,
-    WidgetRef ref,
-    ExaminationFlowState flowState,
-    int sectionIndex,
-  ) {
-    final section = kExaminationSections[sectionIndex];
-    final checkedItems = flowState.checkedItems[sectionIndex] ?? {};
-
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      physics: const BouncingScrollPhysics(),
-      children: [
-        Text(
-          section.title,
-          style: context.textStyles.sectionTitle,
-        ),
-        const SizedBox(height: 16),
-        for (int i = 0; i < section.items.length; i++)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.selectionClick();
-                ref
-                    .read(examinationFlowProvider.notifier)
-                    .toggleItem(sectionIndex, i);
-              },
-              behavior: HitTestBehavior.opaque,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      transitionBuilder: (child, animation) {
-                        return ScaleTransition(
-                          scale: animation,
-                          child: child,
-                        );
-                      },
-                      child: Icon(
-                        checkedItems.contains(i)
-                            ? CupertinoIcons.checkmark_square_fill
-                            : CupertinoIcons.square,
-                        key: ValueKey<bool>(checkedItems.contains(i)),
-                        color: checkedItems.contains(i)
-                            ? context.colors.primaryButton
-                            : context.colors.textSecondary,
-                        size: 22,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        section.items[i],
-                        style: context.textStyles.readingBody.copyWith(
-                          color: checkedItems.contains(i)
-                              ? context.colors.textPrimary
-                              : context.colors.textSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildFreeTextPage(
-    BuildContext context,
-    WidgetRef ref,
-    ExaminationFlowState flowState,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Outras faltas que desejo confessar',
-            style: context.textStyles.sectionTitle,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Opcional. Escreva livremente.',
-            style: context.textStyles.secondary,
-          ),
-          const SizedBox(height: 16),
-          IaculaTextInput(
-            placeholder: 'Escreva aqui...',
-            maxLines: 6,
-            textCapitalization: TextCapitalization.sentences,
-            onChanged: (text) {
-              ref.read(examinationFlowProvider.notifier).updateFreeText(text);
-            },
+          itemsAsync.maybeWhen(
+            data: (items) => _ShareBar(items: items),
+            orElse: SizedBox.shrink,
           ),
         ],
       ),
@@ -243,51 +82,146 @@ class ExaminationSectionView extends ConsumerWidget {
   }
 }
 
-// Temporary: Flutter doesn't have LinearProgressIndicator in Cupertino.
-// Use a simple custom one.
-class LinearProgressIndicator extends StatelessWidget {
-  const LinearProgressIndicator({
-    super.key,
-    required this.value,
-    required this.backgroundColor,
-    required this.valueColor,
-    this.minHeight = 4,
-  });
+class _ExaminationList extends ConsumerWidget {
+  const _ExaminationList({required this.items});
 
-  final double value;
-  final Color backgroundColor;
-  final Animation<Color> valueColor;
-  final double minHeight;
+  final List<ConfessionExaminationItem> items;
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: minHeight,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Stack(
-            children: [
-              Container(
-                width: constraints.maxWidth,
-                height: minHeight,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final flowState = ref.watch(examinationFlowProvider);
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+      physics: const BouncingScrollPhysics(),
+      children: [
+        Text(
+          'Selecione os itens que deseja levar para a confissão.',
+          style: context.textStyles.sectionTitle,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Os itens são baseados no exame de consciência para adultos do Opus Dei e foram adaptados para afirmações em primeira pessoa.',
+          style: context.textStyles.secondary,
+        ),
+        const SizedBox(height: 20),
+        for (final item in items)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                HapticFeedback.selectionClick();
+                ref.read(examinationFlowProvider.notifier).toggleItem(item.id);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: backgroundColor,
-                  borderRadius: BorderRadius.circular(minHeight / 2),
+                  color: context.colors.card,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: flowState.selectedItemIds.contains(item.id)
+                        ? context.colors.primaryButton
+                        : context.colors.separator,
+                  ),
+                  boxShadow: IaculaShadows.card,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 180),
+                        child: Icon(
+                          flowState.selectedItemIds.contains(item.id)
+                              ? CupertinoIcons.checkmark_square_fill
+                              : CupertinoIcons.square,
+                          key: ValueKey<bool>(
+                            flowState.selectedItemIds.contains(item.id),
+                          ),
+                          color: flowState.selectedItemIds.contains(item.id)
+                              ? context.colors.primaryButton
+                              : context.colors.textSecondary,
+                          size: 22,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        item.text,
+                        style: context.textStyles.readingBody.copyWith(
+                          color: flowState.selectedItemIds.contains(item.id)
+                              ? context.colors.textPrimary
+                              : context.colors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                width: constraints.maxWidth * value.clamp(0, 1),
-                height: minHeight,
-                decoration: BoxDecoration(
-                  color: valueColor.value,
-                  borderRadius: BorderRadius.circular(minHeight / 2),
-                ),
+            ),
+          ),
+        SizedBox(height: MediaQuery.paddingOf(context).bottom + 8),
+      ],
+    );
+  }
+}
+
+class _ShareBar extends ConsumerWidget {
+  const _ShareBar({required this.items});
+
+  final List<ConfessionExaminationItem> items;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final flowState = ref.watch(examinationFlowProvider);
+    final notifier = ref.read(examinationFlowProvider.notifier);
+    final shareService = ref.read(nativeShareServiceProvider);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            flowState.totalChecked == 0
+                ? 'Nenhum item selecionado.'
+                : '${flowState.totalChecked} ${flowState.totalChecked == 1 ? 'item selecionado' : 'itens selecionados'}.',
+            style: context.textStyles.secondary,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          IaculaSpringButton(
+            onTap: () async {
+              HapticFeedback.lightImpact();
+              if (flowState.totalChecked == 0) {
+                IaculaToast.show(context, 'Selecione ao menos um item.');
+                return;
+              }
+
+              final text = notifier.buildShareText(items);
+              await shareService.shareText(text);
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                color: context.colors.primaryButton,
+                borderRadius: BorderRadius.circular(14),
               ),
-            ],
-          );
-        },
+              child: Text(
+                'Compartilhar',
+                style: context.textStyles.cardTitle.copyWith(
+                  color: context.colors.background,
+                  fontSize: 17,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

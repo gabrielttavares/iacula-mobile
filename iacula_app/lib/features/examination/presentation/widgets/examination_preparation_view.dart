@@ -23,7 +23,7 @@ class ExaminationPreparationView extends ConsumerWidget {
             Icon(
               CupertinoIcons.heart,
               size: 56,
-              color: context.colors.textSecondary.withOpacity(0.5),
+              color: context.colors.textSecondary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 24),
             Text(
@@ -43,7 +43,7 @@ class ExaminationPreparationView extends ConsumerWidget {
             const SizedBox(height: 12),
             Text(
               'Este exame é pessoal e privado. Nada do que for '
-              'escrito aqui será armazenado.',
+              'selecionado aqui será armazenado.',
               style: context.textStyles.secondary.copyWith(
                 fontSize: 13,
                 fontStyle: FontStyle.italic,

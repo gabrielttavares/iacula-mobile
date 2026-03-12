@@ -7,8 +7,6 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../application/examination_flow_notifier.dart';
 import 'widgets/examination_preparation_view.dart';
 import 'widgets/examination_section_view.dart';
-import 'widgets/examination_review_view.dart';
-import 'widgets/examination_confession_view.dart';
 
 class ExaminationFlowScreen extends ConsumerStatefulWidget {
   const ExaminationFlowScreen({super.key});
@@ -50,8 +48,6 @@ class _ExaminationFlowScreenState extends ConsumerState<ExaminationFlowScreen>
       child: switch (flowState.step) {
         ExaminationStep.preparation => const ExaminationPreparationView(),
         ExaminationStep.examination => const ExaminationSectionView(),
-        ExaminationStep.review => const ExaminationReviewView(),
-        ExaminationStep.confession => const ExaminationConfessionView(),
       },
     );
   }
