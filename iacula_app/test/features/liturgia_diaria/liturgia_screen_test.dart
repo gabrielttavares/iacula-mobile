@@ -307,4 +307,53 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'today anchor around 2026-03-12 shows distinct chips and Thursday content',
+    (tester) async {
+      final marchRepository = _FakeLiturgiaRepository(
+        periodDays: const <LiturgyDay>[],
+        byDate: {
+          '2026-3-9': _day(
+            date: DateTime(2026, 3, 9),
+            title: '2a feira da 3a Semana da Quaresma',
+          ),
+          '2026-3-10': _day(
+            date: DateTime(2026, 3, 10),
+            title: '3a feira da 3a Semana da Quaresma',
+          ),
+          '2026-3-11': _day(
+            date: DateTime(2026, 3, 11),
+            title: '4a feira da 3a Semana da Quaresma',
+          ),
+          '2026-3-12': _day(
+            date: DateTime(2026, 3, 12),
+            title: '5a feira da 3a Semana da Quaresma',
+          ),
+          '2026-3-13': _day(
+            date: DateTime(2026, 3, 13),
+            title: '6a feira da 3a Semana da Quaresma',
+          ),
+          '2026-3-14': _day(
+            date: DateTime(2026, 3, 14),
+            title: 'Sabado da 3a Semana da Quaresma',
+          ),
+          '2026-3-15': _day(
+            date: DateTime(2026, 3, 15),
+            title: '4o Domingo da Quaresma',
+          ),
+        },
+      );
+
+      await tester.pumpWidget(_buildApp(marchRepository));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Seg 09/03'), findsOneWidget);
+      expect(find.text('Ter 10/03'), findsOneWidget);
+      expect(find.text('Qua 11/03'), findsOneWidget);
+      expect(find.text('Qui 12/03'), findsOneWidget);
+      expect(find.text('5a feira da 3a Semana da Quaresma'), findsOneWidget);
+      expect(find.text('2a feira da 3a Semana da Quaresma'), findsNothing);
+    },
+  );
 }

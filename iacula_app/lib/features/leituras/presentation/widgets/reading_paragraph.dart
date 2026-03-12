@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show SelectableText;
 
+import '../../../../core/presentation/widgets/biblical_reading_text.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../data/models/reading_point_model.dart';
 
@@ -30,8 +31,9 @@ class ReadingParagraph extends StatelessWidget {
             ),
           ),
         for (var i = 0; i < point.paragraphs.length; i++) ...[
-          SelectableText(
-            point.paragraphs[i],
+          BiblicalReadingText(
+            text: point.paragraphs[i],
+            selectable: true,
             style: context.textStyles.readingBody.copyWith(
               fontSize: fontSize,
             ),

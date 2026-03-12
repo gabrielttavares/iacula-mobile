@@ -96,6 +96,70 @@ void main() {
     expect(result[1].date, DateTime(2026, 2, 22));
   });
 
+  test('fetchPeriod parses dd/MM/yyyy dates from upstream payload', () async {
+    final client = MockClient((_) async {
+      return http.Response(
+        '[{"data":"12/03/2026","liturgia":"5a feira da 3a Semana da Quaresma","cor":"Roxo","oracoes":{"coleta":"C"},"leituras":[]}]',
+        200,
+      );
+    });
+
+    final service = LiturgiaApiService(
+      httpClient: client,
+      baseUrl: 'https://example.com/v2',
+    );
+
+    final result = await service.fetchPeriod(days: 1);
+
+    expect(result, hasLength(1));
+    expect(result.first.date, DateTime(2026, 3, 12));
+  });
+
+  test('fetchByDate keeps the requested date when upstream uses dd/MM/yyyy', () async {
+    final client = MockClient((request) async {
+      expect(request.url.queryParameters['dia'], '18');
+      expect(request.url.queryParameters['mes'], '03');
+      expect(request.url.queryParameters['ano'], '2026');
+
+      return http.Response(
+        '[{"data":"18/03/2026","liturgia":"4a feira da 4a Semana da Quaresma","cor":"Roxo","oracoes":{"coleta":"C"},"leituras":[]}]',
+        200,
+      );
+    });
+
+    final service = LiturgiaApiService(
+      httpClient: client,
+      baseUrl: 'https://example.com/v2',
+    );
+
+    final result = await service.fetchByDate(DateTime(2026, 3, 18));
+
+    expect(result, isNotNull);
+    expect(result!.date, DateTime(2026, 3, 18));
+  });
+
+  test(
+    'fetchByDate normalizes malformed upstream dates back to the requested day',
+    () async {
+      final client = MockClient((_) async {
+        return http.Response(
+          '[{"data":"not-a-date","liturgia":"Dia pedido","cor":"Verde","oracoes":{"coleta":"C"},"leituras":[]}]',
+          200,
+        );
+      });
+
+      final service = LiturgiaApiService(
+        httpClient: client,
+        baseUrl: 'https://example.com/v2',
+      );
+
+      final result = await service.fetchByDate(DateTime(2026, 3, 18));
+
+      expect(result, isNotNull);
+      expect(result!.date, DateTime(2026, 3, 18));
+    },
+  );
+
   test('parses map-shaped leituras with full set and canonical order', () async {
     final client = MockClient((_) async {
       return http.Response(

@@ -6,7 +6,9 @@ import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_calendar_modal.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
+import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/presentation/widgets/biblical_reading_text.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/daily_liturgy.dart';
 import '../domain/entities/saint_of_day.dart';
@@ -356,9 +358,8 @@ class _SegmentedContent extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 6),
-                Text(
-                  reading.text,
-                  style: context.textStyles.readingBody,
+                BiblicalReadingText(
+                  text: reading.text,
                   textAlign: TextAlign.start,
                 ),
                 if (reading.response != null &&

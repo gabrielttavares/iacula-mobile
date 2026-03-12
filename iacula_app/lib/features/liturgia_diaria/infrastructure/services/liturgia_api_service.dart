@@ -28,7 +28,19 @@ final class LiturgiaApiService {
     final uri = Uri.parse('$baseUrl/?dia=$day&mes=$month&ano=$year');
     final list = await _fetchMany(uri);
     if (list.isEmpty) return null;
-    return list.first;
+    final requestedDate = DateTime(date.year, date.month, date.day);
+    final result = list.first;
+    if (_sameDate(result.date, requestedDate)) {
+      return result;
+    }
+    return LiturgyDay(
+      date: requestedDate,
+      title: result.title,
+      color: result.color,
+      prayers: result.prayers,
+      readings: result.readings,
+      antiphons: result.antiphons,
+    );
   }
 
   Future<List<LiturgyDay>> _fetchMany(Uri uri) async {
@@ -107,9 +119,9 @@ final class LiturgiaApiService {
   }
 
   DateTime _parseDate(Map<String, dynamic> data, int index, DateTime baseDate) {
-    final fromIso = data['data']?.toString() ?? data['date']?.toString();
-    if (fromIso != null) {
-      final parsed = DateTime.tryParse(fromIso);
+    final rawDate = _dateText(data['data']) ?? _dateText(data['date']);
+    if (rawDate != null) {
+      final parsed = _tryParseDate(rawDate);
       if (parsed != null) {
         return DateTime(parsed.year, parsed.month, parsed.day);
       }
@@ -128,6 +140,36 @@ final class LiturgiaApiService {
       baseDate.day,
     );
     return normalizedBase.add(Duration(days: index));
+  }
+
+  DateTime? _tryParseDate(String raw) {
+    final normalized = raw.trim();
+    if (normalized.isEmpty) return null;
+
+    final iso = DateTime.tryParse(normalized);
+    if (iso != null) return iso;
+
+    final slashMatch = RegExp(r'^(\d{2})\/(\d{2})\/(\d{4})$').firstMatch(
+      normalized,
+    );
+    if (slashMatch != null) {
+      final day = int.parse(slashMatch.group(1)!);
+      final month = int.parse(slashMatch.group(2)!);
+      final year = int.parse(slashMatch.group(3)!);
+      return DateTime(year, month, day);
+    }
+
+    return null;
+  }
+
+  String? _dateText(Object? raw) {
+    final text = raw?.toString().trim();
+    if (text == null || text.isEmpty) return null;
+    return text;
+  }
+
+  bool _sameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   LiturgyColor _parseColor(String? raw) {

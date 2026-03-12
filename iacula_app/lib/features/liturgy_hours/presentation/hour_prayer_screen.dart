@@ -6,6 +6,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_progress_bar.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/presentation/widgets/biblical_reading_text.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../prayer_activity/domain/entities/prayer_activity_entry.dart';
 import '../domain/entities/liturgical_hour.dart';
@@ -168,9 +169,8 @@ class _HourPrayerScreenState extends ConsumerState<HourPrayerScreen> {
                           ),
                         ],
                         const SizedBox(height: 16),
-                        Text(
-                          _current.content,
-                          style: context.textStyles.readingBody,
+                        BiblicalReadingText(
+                          text: _current.content,
                         ),
                       ],
                     ),
