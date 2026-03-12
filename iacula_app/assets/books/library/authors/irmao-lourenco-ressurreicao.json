@@ -14,14 +14,24 @@
       "available": true,
       "chapters": [
         {
-          "slug": "texto-integral",
-          "title": "Texto integral",
+          "slug": "introdu-o",
+          "title": "Introdução",
+          "kind": "chapter"
+        },
+        {
+          "slug": "conversa-es",
+          "title": "Conversações",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cartas",
+          "title": "Cartas",
           "kind": "chapter"
         }
       ],
-      "source_rank": "C",
+      "source_rank": "A",
       "public_domain_verified": true,
-      "source_pdf_url": "https://www.centroculturalcampogrande.pt/pdfs/a.pratica.da.presenca.de.deus.pdf"
+      "source_text_url": "https://pocketterco.com.br/livro/a-pratica-da-presenca-de-deus"
     }
   ]
 }

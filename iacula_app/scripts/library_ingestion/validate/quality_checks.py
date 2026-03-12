@@ -10,6 +10,10 @@ VALID_RANKS = {"A", "B", "C"}
 ALLOWED_SOURCE_HOST_SUFFIXES = (
     "archive.org",
     "centroculturalcampogrande.pt",
+    "pocketterco.com.br",
+    "padrefaus.org",
+    "sumateologica.wordpress.com",
+    "onedrive.live.com",
 )
 
 
@@ -79,7 +83,15 @@ def validate_work(work: dict[str, Any]) -> list[str]:
         asset_path = str(work.get("assetPath", "")).strip()
         source_text_url = str(work.get("source_text_url", "")).strip()
         source_pdf_url = str(work.get("source_pdf_url", "")).strip()
-        if not (asset_path or source_text_url or source_pdf_url):
+        source_onedrive_share_url = str(
+            work.get("source_onedrive_share_url", "")
+        ).strip()
+        if not (
+            asset_path
+            or source_text_url
+            or source_pdf_url
+            or source_onedrive_share_url
+        ):
             errors.append(
                 f"available work missing content source: {work.get('id', '<unknown>')}"
             )
@@ -87,8 +99,9 @@ def validate_work(work: dict[str, Any]) -> list[str]:
     source_item_id = str(work.get("source_item_id", "")).strip()
     source_text_url = str(work.get("source_text_url", "")).strip()
     source_pdf_url = str(work.get("source_pdf_url", "")).strip()
+    source_onedrive_share_url = str(work.get("source_onedrive_share_url", "")).strip()
 
-    for source_url in (source_text_url, source_pdf_url):
+    for source_url in (source_text_url, source_pdf_url, source_onedrive_share_url):
         if not source_url:
             continue
         host = (urlparse(source_url).hostname or "").lower()

@@ -7,6 +7,7 @@
       "description": "Espiritualidade no cotidiano.",
       "language": "pt-br",
       "worksCount": 8,
+      "availableWorksCount": 8,
       "assetPath": "assets/books/library/authors/sao-josemaria-escriva.json",
       "sourceRank": "A"
     },
@@ -15,17 +16,9 @@
       "name": "Tomás de Kempis",
       "description": "Vida interior e seguimento de Cristo.",
       "language": "pt-br",
-      "worksCount": 3,
+      "worksCount": 1,
+      "availableWorksCount": 1,
       "assetPath": "assets/books/library/authors/tomas-de-kempis.json",
-      "sourceRank": "A"
-    },
-    {
-      "id": "dom-chautard",
-      "name": "Dom Jean-Baptiste Chautard",
-      "description": "Vida interior e apostolado.",
-      "language": "pt-br",
-      "worksCount": 2,
-      "assetPath": "assets/books/library/authors/dom-chautard.json",
       "sourceRank": "A"
     },
     {
@@ -33,63 +26,20 @@
       "name": "Santo Agostinho",
       "description": "Patrística e conversão.",
       "language": "pt-br",
-      "worksCount": 3,
+      "worksCount": 1,
+      "availableWorksCount": 1,
       "assetPath": "assets/books/library/authors/santo-agostinho.json",
       "sourceRank": "A"
-    },
-    {
-      "id": "santa-teresa-avila",
-      "name": "Santa Teresa de Ávila",
-      "description": "Mística carmelita.",
-      "language": "pt-br",
-      "worksCount": 3,
-      "assetPath": "assets/books/library/authors/santa-teresa-avila.json",
-      "sourceRank": "A"
-    },
-    {
-      "id": "santa-teresinha-lisieux",
-      "name": "Santa Teresinha do Menino Jesus",
-      "description": "Pequena via.",
-      "language": "pt-br",
-      "worksCount": 2,
-      "assetPath": "assets/books/library/authors/santa-teresinha-lisieux.json",
-      "sourceRank": "A"
-    },
-    {
-      "id": "sao-bento-nursia",
-      "name": "São Bento de Núrsia",
-      "description": "Regra monástica.",
-      "language": "pt-br",
-      "worksCount": 2,
-      "assetPath": "assets/books/library/authors/sao-bento-nursia.json",
-      "sourceRank": "A"
-    },
-    {
-      "id": "john-henry-newman",
-      "name": "São John Henry Newman",
-      "description": "Sermões e meditações.",
-      "language": "pt-br",
-      "worksCount": 4,
-      "assetPath": "assets/books/library/authors/john-henry-newman.json",
-      "sourceRank": "B"
     },
     {
       "id": "sao-francisco-sales",
       "name": "São Francisco de Sales",
       "description": "Vida devota.",
       "language": "pt-br",
-      "worksCount": 3,
+      "worksCount": 1,
+      "availableWorksCount": 1,
       "assetPath": "assets/books/library/authors/sao-francisco-sales.json",
       "sourceRank": "A"
-    },
-    {
-      "id": "alfonso-rodriguez",
-      "name": "Alfonso Rodríguez",
-      "description": "Virtudes cristãs.",
-      "language": "pt-br",
-      "worksCount": 2,
-      "assetPath": "assets/books/library/authors/alfonso-rodriguez.json",
-      "sourceRank": "B"
     },
     {
       "id": "irmao-lourenco-ressurreicao",
@@ -97,18 +47,85 @@
       "description": "Vida espiritual e presença de Deus.",
       "language": "pt-br",
       "worksCount": 1,
+      "availableWorksCount": 1,
       "assetPath": "assets/books/library/authors/irmao-lourenco-ressurreicao.json",
       "sourceRank": "C"
+    },
+    {
+      "id": "santo-afonso-maria-ligorio",
+      "name": "Santo Afonso Maria de Ligório",
+      "description": "Ascese, oração e conformidade com Deus.",
+      "language": "pt-br",
+      "worksCount": 4,
+      "availableWorksCount": 4,
+      "assetPath": "assets/books/library/authors/santo-afonso-maria-ligorio.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "jean-pierre-de-caussade",
+      "name": "Jean-Pierre de Caussade",
+      "description": "Abandono à providência divina.",
+      "language": "pt-br",
+      "worksCount": 1,
+      "availableWorksCount": 1,
+      "assetPath": "assets/books/library/authors/jean-pierre-de-caussade.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "santa-catarina-sena",
+      "name": "Santa Catarina de Sena",
+      "description": "Mística e diálogo com Deus.",
+      "language": "pt-br",
+      "worksCount": 1,
+      "availableWorksCount": 1,
+      "assetPath": "assets/books/library/authors/santa-catarina-sena.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "sao-luis-maria-grignion-de-montfort",
+      "name": "São Luís Maria Grignion de Montfort",
+      "description": "Devoção mariana.",
+      "language": "pt-br",
+      "worksCount": 1,
+      "availableWorksCount": 1,
+      "assetPath": "assets/books/library/authors/sao-luis-maria-grignion-de-montfort.json",
+      "sourceRank": "A"
+    },
+    {
+      "id": "francisco-faus",
+      "name": "Francisco Faus",
+      "description": "Virtudes cristãs para a vida cotidiana.",
+      "language": "pt-br",
+      "worksCount": 2,
+      "availableWorksCount": 2,
+      "assetPath": "assets/books/library/authors/francisco-faus.json",
+      "sourceRank": "B"
+    },
+    {
+      "id": "santo-tomas-de-aquino",
+      "name": "Santo Tomás de Aquino",
+      "description": "Doutrina cristã e fé.",
+      "language": "pt-br",
+      "worksCount": 1,
+      "availableWorksCount": 1,
+      "assetPath": "assets/books/library/authors/santo-tomas-de-aquino.json",
+      "sourceRank": "A"
     }
   ],
   "generatedWorks": [
+    "a-oracao",
     "a-pratica-da-presenca-de-deus",
-    "caminho-de-perfeicao",
-    "castelo-interior",
+    "a-pratica-do-amor-a-jesus-cristo",
     "confissoes",
-    "historia-de-uma-alma",
+    "conquista-das-virtudes",
+    "credo",
     "imitacao-de-cristo",
     "introducao-a-vida-devota",
-    "regra-de-sao-bento"
+    "o-abandono",
+    "o-dialogo",
+    "preparacao-para-a-morte",
+    "prudencia",
+    "tratado-conformidade-vontade-de-deus",
+    "tratado-da-verdadeira-devocao"
   ]
 }

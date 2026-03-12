@@ -6,8 +6,11 @@ import subprocess
 import tempfile
 import time
 import urllib.request
+from base64 import urlsafe_b64encode
+from html import unescape
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 from urllib.error import HTTPError, URLError
 
 
@@ -71,9 +74,17 @@ def _fetch_text(url: str) -> str:
     return payload
 
 
+def _fetch_json(url: str) -> dict[str, Any]:
+    payload = _fetch_url_bytes(url).decode("utf-8", "ignore")
+    return json.loads(payload)
+
+
 def _fetch_pdf_text(url: str) -> str:
     payload = _fetch_url_bytes(url)
+    return _extract_pdf_text(payload)
 
+
+def _extract_pdf_text(payload: bytes) -> str:
     with tempfile.TemporaryDirectory() as tmpdir:
         pdf_path = Path(tmpdir) / "source.pdf"
         text_path = Path(tmpdir) / "source.txt"
@@ -83,6 +94,113 @@ def _fetch_pdf_text(url: str) -> str:
             check=True,
         )
         return text_path.read_text(encoding="utf-8", errors="ignore")
+
+
+def _resolve_onedrive_download_url(share_url: str) -> str:
+    encoded = urlsafe_b64encode(share_url.encode("utf-8")).decode("ascii").rstrip("=")
+    payload = _fetch_json(f"https://api.onedrive.com/v1.0/shares/u!{encoded}/root")
+    download_url = str(payload.get("@content.downloadUrl", "")).strip()
+    if not download_url:
+        raise RuntimeError(f"OneDrive share missing download URL: {share_url}")
+    return download_url
+
+
+def _fetch_onedrive_pdf_text(share_url: str) -> str:
+    download_url = _resolve_onedrive_download_url(share_url)
+    payload = _fetch_url_bytes(download_url)
+    return _extract_pdf_text(payload)
+
+
+def _strip_html(value: str) -> str:
+    text = re.sub(r"<br\s*/?>", "\n", value, flags=re.IGNORECASE)
+    text = re.sub(r"</p>", "\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"<[^>]+>", "", text)
+    return unescape(text).replace("\xa0", " ").strip()
+
+
+def _slugify(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+
+
+def _parse_pocket_terco_html(html: str) -> list[dict[str, object]]:
+    content_match = re.search(
+        r'<div class="single-page-livro_text">(.*)</div>\s*</div>\s*</main>',
+        html,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    content = content_match.group(1) if content_match else html
+    token_pattern = re.compile(
+        r'<div class="parte">(.*?)</div>'
+        r'|<div class="capitulo">(.*?)</div>'
+        r'|<div class="row-fluid numero">\s*<div class="row">\s*<div[^>]*>(.*?)</div>\s*</div>\s*</div>',
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+
+    chapters: list[dict[str, object]] = []
+    current_chapter: dict[str, object] | None = None
+    current_section: dict[str, object] | None = None
+    chapter_index = 0
+
+    def ensure_chapter(title: str) -> dict[str, object]:
+        nonlocal chapter_index, current_chapter
+        chapter_index += 1
+        current_chapter = {
+            "slug": _slugify(title) or f"capitulo-{chapter_index}",
+            "title": title,
+            "kind": "chapter",
+            "sections": [],
+        }
+        chapters.append(current_chapter)
+        return current_chapter
+
+    for match in token_pattern.finditer(content):
+        part_title = _strip_html(match.group(1) or "")
+        section_title = _strip_html(match.group(2) or "")
+        paragraph_text = _strip_html(match.group(3) or "")
+
+        if part_title:
+            current_chapter = ensure_chapter(part_title)
+            current_section = None
+            continue
+
+        if section_title:
+            if current_chapter is None:
+                current_chapter = ensure_chapter(section_title)
+            current_section = {
+                "number": len(current_chapter["sections"]) + 1,
+                "title": section_title,
+                "paragraphs": [],
+            }
+            current_chapter["sections"].append(current_section)
+            continue
+
+        if paragraph_text:
+            if current_chapter is None:
+                current_chapter = ensure_chapter("Texto integral")
+            if current_section is None:
+                current_section = {
+                    "number": 1,
+                    "title": current_chapter["title"],
+                    "paragraphs": [],
+                }
+                current_chapter["sections"].append(current_section)
+            current_section["paragraphs"].append(paragraph_text)
+
+    return [
+        {
+            **chapter,
+            "sections": [
+                {
+                    **section,
+                    "paragraphs": _clean_paragraphs(list(section.get("paragraphs", []))),
+                }
+                for section in chapter.get("sections", [])
+                if _clean_paragraphs(list(section.get("paragraphs", [])))
+            ],
+        }
+        for chapter in chapters
+        if chapter.get("sections")
+    ]
 
 
 def _split_plain_text_into_chapters(text: str) -> list[dict[str, object]]:
@@ -189,10 +307,26 @@ def export_catalog_assets(
         mutable_work = dict(work)
         source_text_url = str(mutable_work.get("source_text_url", "")).strip()
         source_pdf_url = str(mutable_work.get("source_pdf_url", "")).strip()
-        if (source_text_url or source_pdf_url) and mutable_work.get("available") is True:
+        source_onedrive_share_url = str(
+            mutable_work.get("source_onedrive_share_url", "")
+        ).strip()
+        if (
+            source_text_url or source_pdf_url or source_onedrive_share_url
+        ) and mutable_work.get("available") is True:
             generated_path = f"assets/books/library/works/{mutable_work.get('id')}.json"
-            text = _fetch_text(source_text_url) if source_text_url else _fetch_pdf_text(source_pdf_url)
-            chapters = _split_plain_text_into_chapters(text)
+            if source_text_url:
+                raw_text = _fetch_text(source_text_url)
+                host = (urlparse(source_text_url).hostname or "").lower()
+                if host.endswith("pocketterco.com.br"):
+                    chapters = _parse_pocket_terco_html(raw_text)
+                else:
+                    chapters = _split_plain_text_into_chapters(raw_text)
+            elif source_pdf_url:
+                text = _fetch_pdf_text(source_pdf_url)
+                chapters = _split_plain_text_into_chapters(text)
+            else:
+                text = _fetch_onedrive_pdf_text(source_onedrive_share_url)
+                chapters = _split_plain_text_into_chapters(text)
             generated_work_payload = {
                 "id": mutable_work.get("id", ""),
                 "title": mutable_work.get("title", ""),
@@ -235,6 +369,9 @@ def export_catalog_assets(
                 "description": author.get("description", ""),
                 "language": author.get("language", "pt-br"),
                 "worksCount": len(books),
+                "availableWorksCount": sum(
+                    1 for book in books if book.get("available") is True
+                ),
                 "assetPath": author_asset,
                 "sourceRank": author.get("source_rank", "B"),
             }

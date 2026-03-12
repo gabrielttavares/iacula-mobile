@@ -1,0 +1,48 @@
+{
+  "id": "francisco-faus",
+  "name": "Francisco Faus",
+  "books": [
+    {
+      "id": "conquista-das-virtudes",
+      "title": "A Conquista das Virtudes",
+      "author": "Francisco Faus",
+      "author_id": "francisco-faus",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/conquista-das-virtudes.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "texto-integral",
+          "title": "Texto integral",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "B",
+      "public_domain_verified": true,
+      "source_pdf_url": "https://www.padrefaus.org/storage/2017/11/CONQUISTA-DAS-VIRTUDES.pdf"
+    },
+    {
+      "id": "prudencia",
+      "title": "A virtude da prudência",
+      "author": "Francisco Faus",
+      "author_id": "francisco-faus",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/prudencia.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "texto-integral",
+          "title": "Texto integral",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "B",
+      "public_domain_verified": true,
+      "source_pdf_url": "https://www.padrefaus.org/storage/2017/12/PRUD%C3%8ANCIA.pdf"
+    }
+  ]
+}

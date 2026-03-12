@@ -13,7 +13,7 @@ import 'package:iacula_app/features/premium/domain/entities/premium_status.dart'
 
 void main() {
   Widget _buildCompendiumStub(BuildContext context, String url, String title) {
-    return Center(child: Text(title));
+    return const SizedBox.shrink();
   }
 
   LeituraRepository _buildLeiturasRepository() {
@@ -24,6 +24,14 @@ void main() {
             return '''
 {
   "authors": [
+    {
+      "id": "catecismo-da-igreja-catolica",
+      "name": "Catecismo da Igreja Católica",
+      "description": "Doutrina católica em perguntas e respostas.",
+      "worksCount": 1,
+      "availableWorksCount": 1,
+      "assetPath": "assets/books/library/authors/catecismo-da-igreja-catolica.json"
+    },
     {
       "id": "sao-josemaria-escriva",
       "name": "São Josemaría Escrivá",
@@ -38,12 +46,63 @@ void main() {
           }
 
           if (path ==
+              'assets/books/library/authors/catecismo-da-igreja-catolica.json') {
+            return '''
+{
+  "id": "catecismo-da-igreja-catolica",
+  "name": "Catecismo da Igreja Católica",
+  "books": [
+    {
+      "id": "compendio-catecismo-da-igreja-catolica",
+      "title": "Compêndio do Catecismo da Igreja Católica",
+      "author": "Catecismo da Igreja Católica",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/compendio-catecismo-da-igreja-catolica.json",
+      "available": true,
+      "chapters": [
+        {"slug": "profissao-da-fe", "title": "A Profissão da Fé", "kind": "chapter"}
+      ]
+    }
+  ]
+}
+''';
+          }
+
+          if (path ==
               'assets/books/library/authors/sao-josemaria-escriva.json') {
             return '''
 {
   "id": "sao-josemaria-escriva",
   "name": "São Josemaría Escrivá",
   "books": []
+}
+''';
+          }
+
+          if (path ==
+              'assets/books/library/works/compendio-catecismo-da-igreja-catolica.json') {
+            return '''
+{
+  "id": "compendio-catecismo-da-igreja-catolica",
+  "title": "Compêndio do Catecismo da Igreja Católica",
+  "author": "Catecismo da Igreja Católica",
+  "type": "chapters",
+  "chapters": [
+    {
+      "slug": "profissao-da-fe",
+      "title": "A Profissão da Fé",
+      "kind": "chapter",
+      "sections": [
+        {
+          "number": 1,
+          "title": "Qual é o desígnio de Deus acerca do homem?",
+          "paragraphs": [
+            "Deus, infinitamente perfeito e bem-aventurado em si mesmo, criou livremente o homem para o tornar participante da sua vida bem-aventurada."
+          ]
+        }
+      ]
+    }
+  ]
 }
 ''';
           }
@@ -100,7 +159,7 @@ void main() {
     expect(compendiumTopLeft.dy, lessThan(authorTopLeft.dy));
   });
 
-  testWidgets('Leituras home opens compendium reader from featured card', (
+  testWidgets('Leituras home opens compendium reader card', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -130,6 +189,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.byType(CompendiumReaderPage), findsOneWidget);
+    expect(
+      find.text('Compêndio do Catecismo da Igreja Católica'),
+      findsAtLeastNWidgets(1),
+    );
   });
 
   testWidgets('Leituras home still opens books list from author card', (

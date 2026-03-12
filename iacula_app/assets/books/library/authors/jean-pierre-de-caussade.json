@@ -1,0 +1,37 @@
+{
+  "id": "jean-pierre-de-caussade",
+  "name": "Jean-Pierre de Caussade",
+  "books": [
+    {
+      "id": "o-abandono",
+      "title": "O Abandono à Providência Divina",
+      "author": "Jean-Pierre de Caussade",
+      "author_id": "jean-pierre-de-caussade",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/o-abandono.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "livro-primeiro-natureza-e-excel-ncia-da-virtude-do-abandono",
+          "title": "Livro Primeiro: Natureza e excelência da virtude do abandono",
+          "kind": "chapter"
+        },
+        {
+          "slug": "livro-segundo-da-a-o-divina-e-da-maneira-como-ela-trabalha-sem-cessar-na-santifica-o-da-alma",
+          "title": "Livro Segundo: Da ação Divina e da maneira como ela trabalha sem cessar na santificação da alma",
+          "kind": "chapter"
+        },
+        {
+          "slug": "livro-terceiro-da-assist-ncia-paternal-com-que-deus-envolve-as-almas-que-se-abandonam-inteiramente-a-ele",
+          "title": "Livro Terceiro: Da assistência paternal com que Deus envolve as almas que se abandonam inteiramente a ele",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_text_url": "https://pocketterco.com.br/livro/o-abandono"
+    }
+  ]
+}

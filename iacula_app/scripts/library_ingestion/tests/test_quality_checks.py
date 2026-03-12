@@ -141,6 +141,34 @@ class QualityChecksTest(unittest.TestCase):
         )
         self.assertEqual(errors, [])
 
+    def test_allows_pocket_terco_html_source(self) -> None:
+        errors = validate_work(
+            {
+                "id": "imitacao-de-cristo",
+                "title": "Imitação de Cristo",
+                "language": "pt-br",
+                "source_rank": "A",
+                "public_domain_verified": True,
+                "available": True,
+                "source_text_url": "https://pocketterco.com.br/livro/imitacao-de-cristo",
+            }
+        )
+        self.assertEqual(errors, [])
+
+    def test_allows_onedrive_share_source(self) -> None:
+        errors = validate_work(
+            {
+                "id": "confissoes",
+                "title": "Confissões",
+                "language": "pt-br",
+                "source_rank": "A",
+                "public_domain_verified": True,
+                "available": True,
+                "source_onedrive_share_url": "https://onedrive.live.com/?authkey=%21abc&id=1&cid=1&o=OneUp",
+            }
+        )
+        self.assertEqual(errors, [])
+
 
 if __name__ == "__main__":
     unittest.main()

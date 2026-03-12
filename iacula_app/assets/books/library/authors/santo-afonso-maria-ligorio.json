@@ -1,0 +1,380 @@
+{
+  "id": "santo-afonso-maria-ligorio",
+  "name": "Santo Afonso Maria de Ligório",
+  "books": [
+    {
+      "id": "a-oracao",
+      "title": "A Oração",
+      "author": "Santo Afonso Maria de Ligório",
+      "author_id": "santo-afonso-maria-ligorio",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/a-oracao.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "apresenta-o",
+          "title": "APRESENTAÇÃO",
+          "kind": "chapter"
+        },
+        {
+          "slug": "necessidade-da-ora-o",
+          "title": "NECESSIDADE DA ORAÇÃO",
+          "kind": "chapter"
+        },
+        {
+          "slug": "o-valor-da-ora-o",
+          "title": "O VALOR DA ORAÇÃO",
+          "kind": "chapter"
+        },
+        {
+          "slug": "as-condi-es-da-ora-o",
+          "title": "AS CONDIÇÕES DA ORAÇÃO",
+          "kind": "chapter"
+        },
+        {
+          "slug": "conclus-o",
+          "title": "CONCLUSÃO",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-es-finais",
+          "title": "CONSIDERAÇÕES FINAIS",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_text_url": "https://pocketterco.com.br/livro/a-oracao"
+    },
+    {
+      "id": "a-pratica-do-amor-a-jesus-cristo",
+      "title": "A prática do amor a Jesus Cristo",
+      "author": "Santo Afonso Maria de Ligório",
+      "author_id": "santo-afonso-maria-ligorio",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/a-pratica-do-amor-a-jesus-cristo.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "cap-tulo-i",
+          "title": "Capítulo I",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-ii",
+          "title": "Capítulo II",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-iii",
+          "title": "Capítulo III",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-iv",
+          "title": "Capítulo IV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-v",
+          "title": "Capítulo V",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-vi",
+          "title": "Capítulo VI",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-vii",
+          "title": "Capítulo VII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-viii",
+          "title": "Capítulo VIII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-ix",
+          "title": "Capítulo IX",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-x",
+          "title": "Capítulo X",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-xi",
+          "title": "Capítulo XI",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-xii",
+          "title": "Capítulo XII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-xiii",
+          "title": "Capítulo XIII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-xiv",
+          "title": "Capítulo XIV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-xv",
+          "title": "Capítulo XV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-xvi",
+          "title": "Capítulo XVI",
+          "kind": "chapter"
+        },
+        {
+          "slug": "cap-tulo-xvii",
+          "title": "Capítulo XVII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "resumo-das-virtudes",
+          "title": "Resumo das virtudes",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_text_url": "https://pocketterco.com.br/livro/a-pratica-do-amor-a-jesus-cristo"
+    },
+    {
+      "id": "preparacao-para-a-morte",
+      "title": "Preparação para a Morte",
+      "author": "Santo Afonso Maria de Ligório",
+      "author_id": "santo-afonso-maria-ligorio",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/preparacao-para-a-morte.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "introdu-o",
+          "title": "Introdução",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-i",
+          "title": "Consideração I",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-ii",
+          "title": "Consideração II",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-iii",
+          "title": "Consideração III",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-iv",
+          "title": "Consideração IV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-v",
+          "title": "Consideração V",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-vi",
+          "title": "Consideração VI",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-vii",
+          "title": "Consideração VII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-viii",
+          "title": "Consideração VIII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-ix",
+          "title": "Consideração IX",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-x",
+          "title": "Consideração X",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xi",
+          "title": "Consideração XI",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xii",
+          "title": "Consideração XII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xiii",
+          "title": "Consideração XIII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xiv",
+          "title": "Consideração XIV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xv",
+          "title": "Consideração XV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xvi",
+          "title": "Consideração XVI",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xvii",
+          "title": "Consideração XVII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xviii",
+          "title": "Consideração XVIII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xix",
+          "title": "Consideração XIX",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xx",
+          "title": "Consideração XX",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxi",
+          "title": "Consideração XXI",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxii",
+          "title": "Consideração XXII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxiii",
+          "title": "Consideração XXIII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxiv",
+          "title": "Consideração XXIV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxv",
+          "title": "Consideração XXV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxvi",
+          "title": "Consideração XXVI",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxvii",
+          "title": "Consideração XXVII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxviii",
+          "title": "Consideração XXVIII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxix",
+          "title": "Consideração XXIX",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxx",
+          "title": "Consideração XXX",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxxi",
+          "title": "Consideração XXXI",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxxii",
+          "title": "Consideração XXXII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxxiii",
+          "title": "Consideração XXXIII",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxxiv",
+          "title": "Consideração XXXIV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxxv",
+          "title": "Consideração XXXV",
+          "kind": "chapter"
+        },
+        {
+          "slug": "considera-o-xxxvi",
+          "title": "Consideração XXXVI",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_text_url": "https://pocketterco.com.br/livro/preparacao-para-a-morte"
+    },
+    {
+      "id": "tratado-conformidade-vontade-de-deus",
+      "title": "Tratado da Conformidade com a Vontade de Deus",
+      "author": "Santo Afonso Maria de Ligório",
+      "author_id": "santo-afonso-maria-ligorio",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/tratado-conformidade-vontade-de-deus.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "composto-por-santo-afonso-maria-de-lig-rio",
+          "title": "Composto por Santo Afonso Maria de Ligório",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_text_url": "https://pocketterco.com.br/livro/tratado-conformidade-vontade-de-deus"
+    }
+  ]
+}

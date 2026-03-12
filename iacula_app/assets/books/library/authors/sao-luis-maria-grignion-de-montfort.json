@@ -1,0 +1,27 @@
+{
+  "id": "sao-luis-maria-grignion-de-montfort",
+  "name": "São Luís Maria Grignion de Montfort",
+  "books": [
+    {
+      "id": "tratado-da-verdadeira-devocao",
+      "title": "Tratado da verdadeira devoção à Santíssima Virgem",
+      "author": "São Luís Maria Grignion de Montfort",
+      "author_id": "sao-luis-maria-grignion-de-montfort",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/tratado-da-verdadeira-devocao.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "introdu-o",
+          "title": "Introdução",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_text_url": "https://pocketterco.com.br/livro/tratado-da-verdadeira-devocao"
+    }
+  ]
+}

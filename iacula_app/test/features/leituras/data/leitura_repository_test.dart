@@ -100,4 +100,86 @@ void main() {
     expect(chapter!.sections, hasLength(1));
     expect(chapter.sections.first.number, 1);
   });
+
+  test('getBook returns the native compendium book when present in library', () async {
+    final source = _FakeLeituraLocalSource(
+      loadAsset: (path) async {
+        if (path == 'assets/books/library/index.json') {
+          return '''
+{
+  "authors": [
+    {
+      "id": "catecismo-da-igreja-catolica",
+      "name": "Catecismo da Igreja Católica",
+      "description": "Doutrina católica em perguntas e respostas.",
+      "worksCount": 1,
+      "availableWorksCount": 1,
+      "assetPath": "assets/books/library/authors/catecismo-da-igreja-catolica.json"
+    }
+  ]
+}
+''';
+        }
+
+        if (path == 'assets/books/library/authors/catecismo-da-igreja-catolica.json') {
+          return '''
+{
+  "id": "catecismo-da-igreja-catolica",
+  "name": "Catecismo da Igreja Católica",
+  "books": [
+    {
+      "id": "compendio-catecismo-da-igreja-catolica",
+      "title": "Compêndio do Catecismo da Igreja Católica",
+      "author": "Catecismo da Igreja Católica",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/compendio-catecismo-da-igreja-catolica.json",
+      "available": true,
+      "chapters": [
+        {"slug": "profissao-da-fe", "title": "A Profissão da Fé", "kind": "chapter"}
+      ]
+    }
+  ]
+}
+''';
+        }
+
+        if (path == 'assets/books/library/works/compendio-catecismo-da-igreja-catolica.json') {
+          return '''
+{
+  "id": "compendio-catecismo-da-igreja-catolica",
+  "title": "Compêndio do Catecismo da Igreja Católica",
+  "author": "Catecismo da Igreja Católica",
+  "type": "chapters",
+  "chapters": [
+    {
+      "slug": "profissao-da-fe",
+      "title": "A Profissão da Fé",
+      "kind": "chapter",
+      "sections": [
+        {
+          "number": 1,
+          "title": "Qual é o desígnio de Deus acerca do homem?",
+          "paragraphs": [
+            "Deus, infinitamente perfeito e bem-aventurado em si mesmo, criou livremente o homem para o tornar participante da sua vida bem-aventurada."
+          ]
+        }
+      ]
+    }
+  ]
+}
+''';
+        }
+
+        throw StateError('unexpected path: $path');
+      },
+    );
+    final repository = LeituraRepository(localSource: source);
+
+    final book = await repository.getBook('compendio-catecismo-da-igreja-catolica');
+
+    expect(book, isNotNull);
+    expect(book!.title, 'Compêndio do Catecismo da Igreja Católica');
+    expect(book.chapters, hasLength(1));
+    expect(book.chapters.first.sections.first.number, 1);
+  });
 }

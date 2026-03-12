@@ -1,0 +1,27 @@
+{
+  "id": "santo-tomas-de-aquino",
+  "name": "Santo Tomás de Aquino",
+  "books": [
+    {
+      "id": "credo",
+      "title": "Sermão sobre o Credo",
+      "author": "Santo Tomás de Aquino",
+      "author_id": "santo-tomas-de-aquino",
+      "language": "pt-br",
+      "type": "chapters",
+      "assetPath": "assets/books/library/works/credo.json",
+      "description": "",
+      "available": true,
+      "chapters": [
+        {
+          "slug": "texto-integral",
+          "title": "Texto integral",
+          "kind": "chapter"
+        }
+      ],
+      "source_rank": "A",
+      "public_domain_verified": true,
+      "source_pdf_url": "https://sumateologica.wordpress.com/wp-content/uploads/2009/07/credo.pdf"
+    }
+  ]
+}

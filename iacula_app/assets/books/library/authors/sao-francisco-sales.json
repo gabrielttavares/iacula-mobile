@@ -3,22 +3,8 @@
   "name": "São Francisco de Sales",
   "books": [
     {
-      "id": "cartas-espirituais-sales",
-      "title": "Cartas Espirituais",
-      "author": "São Francisco de Sales",
-      "author_id": "sao-francisco-sales",
-      "language": "pt-br",
-      "type": "chapters",
-      "assetPath": "",
-      "description": "",
-      "available": false,
-      "chapters": [],
-      "source_rank": "B",
-      "public_domain_verified": true
-    },
-    {
       "id": "introducao-a-vida-devota",
-      "title": "Introdução à Vida Devota",
+      "title": "Filotéia ou Introdução à Vida Devota",
       "author": "São Francisco de Sales",
       "author_id": "sao-francisco-sales",
       "language": "pt-br",
@@ -28,31 +14,39 @@
       "available": true,
       "chapters": [
         {
-          "slug": "texto-integral",
-          "title": "Texto integral",
+          "slug": "in-cio",
+          "title": "INÍCIO",
+          "kind": "chapter"
+        },
+        {
+          "slug": "parte-i-avisos-e-exerc-cios-necess-rios-para-conduzir-a-alma-que-come-a-a-sentir-os-primeiros-desejos-da-vida-devota-at-possuir-uma-vontade-resoluta-e-sincera-de-abra-la",
+          "title": "PARTE I - Avisos e exercícios necessários para conduzir a alma que começa a sentir os primeiros desejos da vida devota, até possuir uma vontade resoluta e sincera de abraçá-la",
+          "kind": "chapter"
+        },
+        {
+          "slug": "parte-ii-diversos-avisos-para-elevar-a-alma-a-deus-por-meio-da-ora-o-e-da-recep-o-dos-sacramentos",
+          "title": "PARTE II - Diversos avisos para elevar a alma a Deus por meio da oração e da recepção dos sacramentos",
+          "kind": "chapter"
+        },
+        {
+          "slug": "parte-iii-avisos-necess-rios-para-a-pr-tica-das-virtudes",
+          "title": "PARTE III - Avisos necessários para a prática das virtudes",
+          "kind": "chapter"
+        },
+        {
+          "slug": "parte-iv-avisos-necess-rios-contra-as-tenta-es-mais-comuns",
+          "title": "PARTE IV - Avisos necessários contra as tentações mais comuns",
+          "kind": "chapter"
+        },
+        {
+          "slug": "parte-v-avisos-e-exerc-cios-necess-rios-para-renovar-e-conservar-a-alma-na-devo-o",
+          "title": "PARTE V - Avisos e exercícios necessários para renovar e conservar a alma na devoção",
           "kind": "chapter"
         }
       ],
       "source_rank": "A",
       "public_domain_verified": true,
-      "source_item_id": "introducaoavidadevotaa5",
-      "source_expected_title": "introdução à vida devota",
-      "source_expected_author": "francisco de sales",
-      "source_pdf_url": "https://archive.org/download/introducaoavidadevotaa5/Introdu%C3%A7%C3%A3o%20%C3%A0%20vida%20devota%20-%20A5.pdf"
-    },
-    {
-      "id": "tratado-do-amor-de-deus",
-      "title": "Tratado do Amor de Deus",
-      "author": "São Francisco de Sales",
-      "author_id": "sao-francisco-sales",
-      "language": "pt-br",
-      "type": "chapters",
-      "assetPath": "",
-      "description": "",
-      "available": false,
-      "chapters": [],
-      "source_rank": "A",
-      "public_domain_verified": true
+      "source_text_url": "https://pocketterco.com.br/livro/filoteia"
     }
   ]
 }
