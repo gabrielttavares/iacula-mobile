@@ -9,15 +9,14 @@ import '../../../premium/domain/entities/premium_feature.dart';
 import '../../../premium/presentation/premium_gate.dart';
 import '../../data/models/author_model.dart';
 import 'book_list_page.dart';
+import 'compendium_reader_page.dart';
 
 final _authorsProvider = FutureProvider<List<AuthorModel>>((ref) async {
   return ref.watch(leituraRepositoryProvider).listAuthors();
 });
 
-const _enabledAuthorId = 'sao-josemaria-escriva';
-
 bool _isAuthorEnabled(AuthorModel author) {
-  return author.id == _enabledAuthorId;
+  return author.availableWorksCount > 0;
 }
 
 void _showCuradoriaDialog(BuildContext context) {
@@ -34,10 +33,12 @@ class AuthorListPage extends ConsumerWidget {
     super.key,
     this.navigationTitle = 'Autores e Santos',
     this.showLeiturasIntro = false,
+    this.compendiumContentBuilder,
   });
 
   final String navigationTitle;
   final bool showLeiturasIntro;
+  final CompendiumContentBuilder? compendiumContentBuilder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,9 +46,7 @@ class AuthorListPage extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(navigationTitle),
-      ),
+      navigationBar: CupertinoNavigationBar(middle: Text(navigationTitle)),
       child: PremiumGate(
         feature: PremiumFeature.leituras,
         child: SafeArea(
@@ -61,6 +60,63 @@ class AuthorListPage extends ConsumerWidget {
             ),
             data: (authors) {
               final listItems = <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+                  child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (_) => CompendiumReaderPage(
+                            contentBuilder: compendiumContentBuilder,
+                          ),
+                        ),
+                      );
+                    },
+                    child: IaculaSoftCard(
+                      radius: 16,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: context.colors.secondaryButton,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              CupertinoIcons.book,
+                              color: context.colors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(width: IaculaSpacing.md),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  CompendiumReaderPage.title,
+                                  style: context.textStyles.cardTitle,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Leitura doutrinal em PDF dentro do app.',
+                                  style: context.textStyles.secondary,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: IaculaSpacing.sm),
+                          Icon(
+                            CupertinoIcons.chevron_right,
+                            color: context.colors.textSecondary,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 if (showLeiturasIntro) ...[
                   Text('Leituras', style: context.textStyles.largeTitle),
                   const SizedBox(height: IaculaSpacing.sm),
@@ -114,7 +170,9 @@ class AuthorListPage extends ConsumerWidget {
                                         'Em breve',
                                         style: context.textStyles.secondary,
                                       ),
-                                    ] else if (author.description.isNotEmpty) ...[
+                                    ] else if (author
+                                        .description
+                                        .isNotEmpty) ...[
                                       const SizedBox(height: 4),
                                       Text(
                                         author.description,

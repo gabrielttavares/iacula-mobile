@@ -19,6 +19,7 @@ void main() {
       "name": "São Josemaría Escrivá",
       "description": "Espiritualidade no cotidiano.",
       "worksCount": 8,
+      "availableWorksCount": 8,
       "assetPath": "assets/books/library/authors/sao-josemaria-escriva.json"
     }
   ]
@@ -35,6 +36,7 @@ void main() {
     expect(authors, hasLength(1));
     expect(authors.first.id, 'sao-josemaria-escriva');
     expect(authors.first.name, 'São Josemaría Escrivá');
+    expect(authors.first.availableWorksCount, 8);
   });
 
   test('listBooksByAuthor reads author works list', () async {
