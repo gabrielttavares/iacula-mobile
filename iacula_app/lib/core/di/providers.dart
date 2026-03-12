@@ -92,6 +92,7 @@ import '../../features/prayer_activity/domain/repositories/prayer_activity_repos
 import '../../features/prayer_activity/infrastructure/repositories/isar_prayer_activity_repository.dart';
 import '../../features/rosary/domain/entities/rosary_mystery_set.dart';
 import '../../features/rosary/domain/entities/rosary_final_prayers.dart';
+import '../../features/rosary/domain/entities/rosary_initial_prayers.dart';
 import '../../features/rosary/infrastructure/repositories/asset_rosary_repository.dart';
 import '../../features/rosary/domain/repositories/rosary_repository.dart';
 import '../../features/search/application/app_search_service.dart';
@@ -711,6 +712,13 @@ final allRosaryMysterySetProvider = FutureProvider<List<RosaryMysterySet>>((
 final rosaryCompletionPrayersProvider =
     FutureProvider.family<RosaryCompletionPrayers, String>((ref, language) async {
   return ref.watch(rosaryRepositoryProvider).getCompletionPrayers(
+        language: language,
+      );
+});
+
+final rosaryInitialPrayersProvider =
+    FutureProvider.family<RosaryInitialPrayers, String>((ref, language) async {
+  return ref.watch(rosaryRepositoryProvider).getInitialPrayers(
         language: language,
       );
 });

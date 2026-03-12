@@ -8,6 +8,7 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/rosary_mystery_set.dart';
 import 'rosary_mystery_set_screen.dart';
 import 'widgets/ken_burns_image.dart';
+import 'widgets/rosary_initial_prayers_modal.dart';
 
 class RosaryIntroScreen extends ConsumerWidget {
   const RosaryIntroScreen({super.key, this.mysterySet, this.allMysterySets});
@@ -160,6 +161,13 @@ class _RosaryIntroView extends ConsumerWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 12),
+                    CupertinoButton(
+                      onPressed: () => _showInitialPrayers(context),
+                      color: const Color(0x1AFFFFFF),
+                      borderRadius: BorderRadius.circular(999),
+                      child: const Text('Introdução'),
+                    ),
                   ],
                 ),
               ),
@@ -167,6 +175,14 @@ class _RosaryIntroView extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showInitialPrayers(BuildContext context) {
+    IaculaModal.showSheet<void>(
+      context: context,
+      maxHeightFraction: 0.8,
+      builder: (context) => const RosaryInitialPrayersModal(),
     );
   }
 
