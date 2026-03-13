@@ -484,7 +484,7 @@ void main() {
     expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
     await reveal('Minhas frases');
     await reveal('Ação de Graças');
-    await reveal('Explore');
+    await reveal('Bíblia');
   });
 
   testWidgets('home renders hero card before quick actions', (tester) async {
