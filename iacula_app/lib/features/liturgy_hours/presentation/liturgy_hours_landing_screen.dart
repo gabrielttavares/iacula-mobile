@@ -78,10 +78,9 @@ class LiturgyHoursLandingScreen extends ConsumerWidget {
 
               // Available hours
               ...LiturgicalHourType.values.map((hourType) {
-                final isFree = hourType == LiturgicalHourType.laudes;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-                  child: _HourCard(hourType: hourType, isFree: isFree),
+                  child: _HourCard(hourType: hourType),
                 );
               }),
             ],
@@ -124,26 +123,23 @@ String _seasonLabel(LiturgicalSeason season) {
 }
 
 class _HourCard extends ConsumerWidget {
-  const _HourCard({required this.hourType, required this.isFree});
+  const _HourCard({required this.hourType});
 
   final LiturgicalHourType hourType;
-  final bool isFree;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       onPressed: () async {
-        if (!isFree) {
-          final isPremium =
-              ref.read(premiumStatusProvider).valueOrNull?.isPremium ?? false;
-          if (!isPremium) {
-            PremiumGate.showModal(
-              context,
-              feature: PremiumFeature.liturgyOfHours,
-            );
-            return;
-          }
+        final isPremium =
+            ref.read(premiumStatusProvider).valueOrNull?.isPremium ?? true;
+        if (!isPremium) {
+          PremiumGate.showModal(
+            context,
+            feature: PremiumFeature.liturgyOfHours,
+          );
+          return;
         }
 
         HapticFeedback.lightImpact();
@@ -194,21 +190,6 @@ class _HourCard extends ConsumerWidget {
                 ],
               ),
             ),
-            if (!isFree)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: context.colors.primaryButton.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  'Premium',
-                  style: context.textStyles.secondary.copyWith(
-                    fontSize: 11,
-                    color: context.colors.primaryButton,
-                  ),
-                ),
-              ),
             const SizedBox(width: 8),
             Icon(
               CupertinoIcons.chevron_right,

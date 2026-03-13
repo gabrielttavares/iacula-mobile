@@ -96,7 +96,7 @@ void main() {
   });
 
   testWidgets(
-    'free user tapping Perfil tab navigates directly without premium gate',
+    'free user tapping Mais tab navigates directly without premium gate',
     (tester) async {
       final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
       final purchaseService = _FakePurchaseService();

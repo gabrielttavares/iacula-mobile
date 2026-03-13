@@ -160,7 +160,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     .read(premiumStatusProvider)
                                     .valueOrNull
                                     ?.isPremium ??
-                                false;
+                                true;
                             if (!isPremium) {
                               PremiumGate.showModal(
                                 context,
@@ -389,9 +389,7 @@ class _FeatureCardsList extends StatelessWidget {
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (_) => const RosaryIntroScreen(),
-                ),
+                CupertinoPageRoute(builder: (_) => const RosaryIntroScreen()),
               );
             },
             height: 120,
@@ -403,9 +401,7 @@ class _FeatureCardsList extends StatelessWidget {
           onTap: () {
             HapticFeedback.lightImpact();
             Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (_) => const ConfessionFlowScreen(),
-              ),
+              CupertinoPageRoute(builder: (_) => const ConfessionFlowScreen()),
             );
           },
           height: 120,
@@ -416,11 +412,7 @@ class _FeatureCardsList extends StatelessWidget {
 }
 
 class _RailCard extends StatelessWidget {
-  const _RailCard({
-    super.key,
-    required this.label,
-    this.onTap,
-  });
+  const _RailCard({super.key, required this.label, this.onTap});
 
   final String label;
   final VoidCallback? onTap;

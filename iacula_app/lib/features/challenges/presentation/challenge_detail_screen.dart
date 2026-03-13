@@ -16,8 +16,10 @@ import '../domain/entities/challenge_progress.dart';
 
 final _challengeProgressProvider =
     FutureProvider.family<ChallengeProgress?, String>((ref, challengeId) async {
-  return ref.watch(challengeProgressRepositoryProvider).getProgress(challengeId);
-});
+      return ref
+          .watch(challengeProgressRepositoryProvider)
+          .getProgress(challengeId);
+    });
 
 class ChallengeDetailScreen extends ConsumerWidget {
   const ChallengeDetailScreen({super.key, required this.challenge});
@@ -42,14 +44,11 @@ class ChallengeDetailScreen extends ConsumerWidget {
       ),
       child: SafeArea(
         child: progressAsync.when(
-          data: (progress) => _DetailContent(
-            challenge: challenge,
-            progress: progress,
-          ),
+          data: (progress) =>
+              _DetailContent(challenge: challenge, progress: progress),
           loading: () => const Center(child: CupertinoActivityIndicator()),
-          error: (_, __) => Center(
-            child: Text('Erro', style: context.textStyles.secondary),
-          ),
+          error: (_, __) =>
+              Center(child: Text('Erro', style: context.textStyles.secondary)),
         ),
       ),
     );
@@ -85,7 +84,9 @@ class _DetailContent extends ConsumerWidget {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: context.colors.primaryButton.withValues(alpha: 0.1),
+                        color: context.colors.primaryButton.withValues(
+                          alpha: 0.1,
+                        ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -109,7 +110,9 @@ class _DetailContent extends ConsumerWidget {
                       ),
                       child: Text(
                         challenge.category.label,
-                        style: context.textStyles.secondary.copyWith(fontSize: 13),
+                        style: context.textStyles.secondary.copyWith(
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                   ],
@@ -130,7 +133,8 @@ class _DetailContent extends ConsumerWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4),
                     child: IaculaProgressBar(
-                      value: progress!.completedDays.length /
+                      value:
+                          progress!.completedDays.length /
                           challenge.durationDays,
                       backgroundColor: context.colors.systemGray6,
                       color: context.colors.success,
@@ -154,17 +158,13 @@ class _DetailContent extends ConsumerWidget {
               day: challenge.content[i],
               isCompleted:
                   progress?.isDayCompleted(challenge.content[i].dayNumber) ??
-                      false,
+                  false,
               isCurrentDay:
                   isActive && challenge.content[i].dayNumber == currentDay,
-              isFuture:
-                  isActive && challenge.content[i].dayNumber > currentDay,
+              isFuture: isActive && challenge.content[i].dayNumber > currentDay,
               isActive: isActive,
-              onComplete: () => _completeDay(
-                ref,
-                context,
-                challenge.content[i].dayNumber,
-              ),
+              onComplete: () =>
+                  _completeDay(ref, context, challenge.content[i].dayNumber),
             ),
             if (i < challenge.content.length - 1)
               const SizedBox(height: IaculaSpacing.sm),
@@ -176,7 +176,7 @@ class _DetailContent extends ConsumerWidget {
 
   Future<void> _startChallenge(WidgetRef ref, BuildContext context) async {
     final isPremium =
-        ref.read(premiumStatusProvider).valueOrNull?.isPremium ?? false;
+        ref.read(premiumStatusProvider).valueOrNull?.isPremium ?? true;
     if (!isPremium) {
       PremiumGate.showModal(context, feature: PremiumFeature.challenges);
       return;
@@ -214,7 +214,9 @@ class _DetailContent extends ConsumerWidget {
     await ref.read(challengeProgressRepositoryProvider).saveProgress(updated);
 
     // Log activity
-    ref.read(prayerActivityLoggerProvider).logActivity(
+    ref
+        .read(prayerActivityLoggerProvider)
+        .logActivity(
           type: PrayerActivityType.challenge,
           durationSeconds: 300, // ~5 min estimated
           featureSlug: 'challenge_${challenge.id}_day$dayNumber',
@@ -273,8 +275,8 @@ class _DayCard extends StatelessWidget {
                   color: isCompleted
                       ? context.colors.success
                       : isCurrentDay
-                          ? context.colors.primaryButton
-                          : context.colors.systemGray6,
+                      ? context.colors.primaryButton
+                      : context.colors.systemGray6,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -312,10 +314,7 @@ class _DayCard extends StatelessWidget {
           ),
           if (!isLocked) ...[
             const SizedBox(height: 12),
-            Text(
-              day.readingText,
-              style: context.textStyles.readingBody,
-            ),
+            Text(day.readingText, style: context.textStyles.readingBody),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),

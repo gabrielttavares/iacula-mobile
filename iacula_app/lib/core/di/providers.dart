@@ -35,6 +35,7 @@ import '../../features/notifications/infrastructure/repositories/in_memory_notif
 import '../../features/premium/application/premium_bloc.dart';
 import '../../features/premium/domain/entities/premium_status.dart';
 import '../../features/premium/domain/repositories/premium_repository.dart';
+import '../../features/premium/infrastructure/always_unlocked_premium_repository.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/premium/infrastructure/purchase_service.dart';
 import '../../features/prayers/application/use_cases/get_prayer_use_case.dart';
@@ -335,7 +336,8 @@ final authStateProvider = StreamProvider<AuthUser?>((ref) {
 });
 
 final premiumRepositoryProvider = Provider<PremiumRepository>((ref) {
-  return IsarPremiumRepository(store: IsarStore.instance);
+  // TODO(gabrielttav): swap back to IsarPremiumRepository when paid premium returns.
+  return AlwaysUnlockedPremiumRepository();
 });
 
 final purchaseServiceProvider = Provider<PurchaseService>((ref) {

@@ -52,7 +52,7 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
         onTap: (index) async {
           if (_premiumIndexes.contains(index)) {
             final asyncStatus = ref.read(premiumStatusProvider);
-            final isPremium = asyncStatus.valueOrNull?.isPremium ?? false;
+            final isPremium = asyncStatus.valueOrNull?.isPremium ?? true;
             if (!isPremium) {
               _tabController.index = _currentIndex;
               final feature = PremiumFeature.planOfLife;
@@ -83,20 +83,14 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 4.0),
-              child: SizedBox(
-                width: 30,
-                child: Icon(CupertinoIcons.house),
-              ),
+              child: SizedBox(width: 30, child: Icon(CupertinoIcons.house)),
             ),
             label: 'Início',
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 4.0),
-              child: SizedBox(
-                width: 30,
-                child: Icon(CupertinoIcons.book),
-              ),
+              child: SizedBox(width: 30, child: Icon(CupertinoIcons.book)),
             ),
             label: 'Meditação',
           ),
@@ -113,20 +107,14 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 4.0),
-              child: SizedBox(
-                width: 30,
-                child: Icon(CupertinoIcons.bookmark),
-              ),
+              child: SizedBox(width: 30, child: Icon(CupertinoIcons.bookmark)),
             ),
             label: 'Favoritos',
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 4.0),
-              child: SizedBox(
-                width: 30,
-                child: Icon(CupertinoIcons.person),
-              ),
+              child: SizedBox(width: 30, child: Icon(CupertinoIcons.person)),
             ),
             label: 'Perfil',
           ),
