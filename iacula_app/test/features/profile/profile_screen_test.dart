@@ -1,31 +1,47 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:iacula_app/core/di/providers.dart';
+import 'package:iacula_app/features/auth/domain/entities/auth_user.dart';
 import 'package:iacula_app/features/profile/presentation/profile_screen.dart';
 import 'package:iacula_app/features/settings/presentation/settings_screen.dart';
 
 void main() {
-  testWidgets('profile renders sections and opens settings subroute', (
+  testWidgets('profile renders sections when logged in', (
     tester,
   ) async {
     await tester.pumpWidget(
-      const ProviderScope(child: CupertinoApp(home: ProfileScreen())),
+      ProviderScope(
+        overrides: [
+          authStateProvider.overrideWith(
+            (ref) => Stream.value(
+              const AuthUser(id: '1', email: 'test@example.com', displayName: 'Test User'),
+            ),
+          ),
+        ],
+        child: const CupertinoApp(home: ProfileScreen()),
+      ),
     );
     await tester.pumpAndSettle();
 
     expect(find.text('Perfil'), findsOneWidget);
-    expect(find.text('Conta'), findsWidgets);
-    expect(find.text('Privacidade e segurança'), findsOneWidget);
-    final settingsRow = find.textContaining('Configura');
-    for (var i = 0; i < 10 && settingsRow.evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-      await tester.pumpAndSettle();
-    }
-    expect(settingsRow, findsOneWidget);
+    expect(find.text('Dados da conta'), findsOneWidget);
+    expect(find.text('Segurança'), findsOneWidget);
+    expect(find.text('Nome'), findsOneWidget);
+    expect(find.text('E-mail'), findsOneWidget);
+  });
 
-    await tester.tap(settingsRow);
+  testWidgets('profile shows empty state when not logged in', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: CupertinoApp(home: ProfileScreen()),
+      ),
+    );
     await tester.pumpAndSettle();
 
-    expect(find.byType(SettingsScreen), findsOneWidget);
+    expect(find.text('Faça login para ver seu perfil.'), findsOneWidget);
+    expect(find.text('Dados da conta'), findsNothing);
   });
 }

@@ -6,7 +6,7 @@ class IaculaSoftCard extends StatelessWidget {
   const IaculaSoftCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(IaculaSpacing.md),
+    this.padding = const EdgeInsets.all(IaculaRadius.innerPadding),
     this.radius = IaculaRadius.card,
     this.showShadow = true,
   });

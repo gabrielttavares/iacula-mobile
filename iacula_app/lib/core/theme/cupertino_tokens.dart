@@ -57,7 +57,7 @@ class IaculaColorScheme {
     card: Color(0xFF1C1C1E), // secondarySystemGroupedBackground dark
     title: Color(0xFFFFFFFF), // label
     textPrimary: Color(0xFFFFFFFF),
-    textSecondary: Color(0xFF8E8E93), // secondaryLabel dark
+    textSecondary: Color(0xFFA0A0A0), // Adjusted for better contrast as requested
     primaryButton: Color(0xFF0A84FF), // activeBlue dark
     success: Color(0xFF30D158), // systemGreen dark
     warning: Color(0xFFFF9F0A), // systemOrange dark
@@ -152,13 +152,13 @@ class IaculaTextScheme {
         color: colors.title,
       ),
       sectionTitle: GoogleFonts.lora(
-        fontSize: scaler.scale(22),
+        fontSize: scaler.scale(20), // Adjusted to 20-22 as requested
         fontWeight: FontWeight.w600,
         height: 1.25,
         color: colors.title,
       ),
       cardTitle: GoogleFonts.lora(
-        fontSize: scaler.scale(17),
+        fontSize: scaler.scale(16), // Adjusted to 15-16 as requested
         fontWeight: FontWeight.w600,
         height: 1.25,
         color: colors.title,
@@ -190,13 +190,13 @@ class IaculaTextScheme {
           color: colors.title,
         ),
         sectionTitle: GoogleFonts.lora(
-          fontSize: 22,
+          fontSize: 20, // Adjusted
           fontWeight: FontWeight.w600,
           height: 1.25,
           color: colors.title,
         ),
         cardTitle: GoogleFonts.lora(
-          fontSize: 17,
+          fontSize: 16, // Adjusted
           fontWeight: FontWeight.w600,
           height: 1.25,
           color: colors.title,
@@ -229,14 +229,14 @@ final class IaculaText {
   );
 
   static final sectionTitle = GoogleFonts.lora(
-    fontSize: 22,
+    fontSize: 20, // Adjusted
     fontWeight: FontWeight.w600,
     height: 1.25,
     color: const Color(0xFFF7F5EC),
   );
 
   static final cardTitle = GoogleFonts.lora(
-    fontSize: 17,
+    fontSize: 16, // Adjusted
     fontWeight: FontWeight.w600,
     height: 1.25,
     color: const Color(0xFFF7F5EC),
@@ -311,6 +311,9 @@ final class IaculaRadius {
   static const small = 12.0;
   static const card = 24.0;
   static const banner = 24.0;
+  static const innerPadding = 24.0; // Added for internal card padding
+  static const cardSpacing = 24.0; // Added for spacing between cards
+  static const elementSpacing = 16.0; // Added for spacing between elements inside card
 }
 
 final class IaculaMetrics {

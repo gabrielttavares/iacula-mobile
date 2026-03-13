@@ -122,15 +122,15 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100)); // wait for provider
 
-      // Tap on the Perfil tab
-      await tester.tap(find.text('Perfil'));
+      // Tap on the Mais tab
+      await tester.tap(find.text('Mais'));
       await tester.pump();
 
       // Verify premium modal is NOT shown
       expect(find.text('Continue com o Premium'), findsNothing);
       expect(find.text('Conhecer o Premium'), findsNothing);
 
-      // Verify tab bar state updated to profile index (4)
+      // Verify tab bar state updated to more index (4)
       final tabBar = tester.widget<CupertinoTabBar>(
         find.byType(CupertinoTabBar),
       );

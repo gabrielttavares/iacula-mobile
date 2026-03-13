@@ -103,18 +103,25 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
             const SizedBox(height: IaculaSpacing.md),
           ],
           if (isSignedIn) ...[
-            Text(
-              'Conectado como ${widget.signedInEmail}',
-              textAlign: TextAlign.center,
-              style: context.textStyles.secondary,
+            const Icon(
+              CupertinoIcons.checkmark_circle_fill,
+              color: CupertinoColors.systemGreen,
+              size: 48,
             ),
             const SizedBox(height: IaculaSpacing.md),
-            _buildButton(
-              context: context,
-              label: 'Sair da conta',
-              provider: _AuthProvider.signout,
-              onPressed: widget.onSignOut,
-              primary: false,
+            const Text(
+              'Sincronização ativa',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Conta conectada: ${widget.signedInEmail}',
+              textAlign: TextAlign.center,
+              style: context.textStyles.secondary,
             ),
           ] else ...[
             if (showApple && platform == TargetPlatform.iOS) ...[

@@ -62,13 +62,13 @@ void main() {
       expect(find.text('Continuar com Apple'), findsNothing);
     });
 
-    testWidgets('Signed-in state hides provider buttons and shows sign-out', (
+    testWidgets('Signed-in state hides provider buttons and shows sync active', (
       tester,
     ) async {
       await tester.pumpWidget(buildSheet(signedInEmail: 'test@example.com'));
 
-      expect(find.text('Conectado como test@example.com'), findsOneWidget);
-      expect(find.text('Sair da conta'), findsOneWidget);
+      expect(find.text('Sincronização ativa'), findsOneWidget);
+      expect(find.textContaining('test@example.com'), findsOneWidget);
       expect(find.text('Continuar com Google'), findsNothing);
       expect(find.text('Continuar com Microsoft'), findsNothing);
       expect(find.text('Continuar com Apple'), findsNothing);

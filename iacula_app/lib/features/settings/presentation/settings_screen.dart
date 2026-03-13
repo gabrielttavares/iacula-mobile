@@ -95,46 +95,99 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       children: [
                         _fieldLabel(context, 'Tema'),
                         const SizedBox(height: 8),
-                        CupertinoSlidingSegmentedControl<String>(
-                          groupValue: _themeMode,
-                          children: const {
-                            'light': Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 6,
+                        SizedBox(
+                          width: double.infinity,
+                          child: CupertinoSlidingSegmentedControl<String>(
+                            groupValue: _themeMode,
+                            padding: const EdgeInsets.all(4),
+                            children: const {
+                              'light': Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                child: Text('Claro'),
                               ),
-                              child: Text('Claro'),
-                            ),
-                            'dark': Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 6,
+                              'dark': Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                child: Text('Escuro'),
                               ),
-                              child: Text('Escuro'),
-                            ),
-                            'system': Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 6,
+                              'system': Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                child: Text('Sistema'),
                               ),
-                              child: Text('Sistema'),
+                            },
+                            onValueChanged: (value) {
+                              if (value != null) {
+                                HapticFeedback.selectionClick();
+                                setState(() => _themeMode = value);
+                                ref.read(themeModeProvider.notifier).state =
+                                    value;
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: IaculaRadius.elementSpacing),
+                        _fieldLabel(context, 'Tamanho da fonte'),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(CupertinoIcons.textformat_size, size: 14),
+                            Expanded(
+                              child: CupertinoSlider(
+                                value: _loadedSettings.prayerFontSize,
+                                min: 12,
+                                max: 24,
+                                divisions: 12,
+                                activeColor: context.colors.primaryButton,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _loadedSettings = _loadedSettings.copyWith(
+                                      prayerFontSize: value,
+                                    );
+                                  });
+                                },
+                              ),
                             ),
-                          },
-                          onValueChanged: (value) {
-                            if (value != null) {
-                              HapticFeedback.selectionClick();
-                              setState(() => _themeMode = value);
-                              ref.read(themeModeProvider.notifier).state =
-                                  value;
-                            }
-                          },
+                            const Icon(CupertinoIcons.textformat_size, size: 22),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 20,
+                          ),
+                          decoration: BoxDecoration(
+                            color: context.colors.background,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: context.colors.separator,
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            'Exemplo de oração nesta escala',
+                            textAlign: TextAlign.center,
+                            style: context.textStyles.readingBody.copyWith(
+                              fontSize: _loadedSettings.prayerFontSize,
+                              color: context.colors.textPrimary,
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
 
                   // ── NOTIFICAÇÕES ──
-                  const SizedBox(height: IaculaSpacing.lg),
+                  const SizedBox(height: IaculaRadius.cardSpacing),
                   const IaculaSectionHeader(title: 'Notificações'),
                   const SizedBox(height: IaculaSpacing.sm),
                   IaculaSoftCard(
@@ -145,6 +198,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           context,
                           'Intervalo das jaculatórias (minutos)',
                         ),
+                        const SizedBox(height: 8),
                         IaculaTextInput(
                           controller: _intervalController,
                           placeholder: '1..60',
@@ -155,15 +209,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
 
                   // ── PERSONALIZAÇÃO ──
-                  const SizedBox(height: IaculaSpacing.lg),
+                  const SizedBox(height: IaculaRadius.cardSpacing),
                   const IaculaSectionHeader(title: 'Personalização'),
                   const SizedBox(height: IaculaSpacing.sm),
                   IaculaSoftCard(
                     padding: EdgeInsets.zero,
                     child: CupertinoButton(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                        horizontal: IaculaRadius.innerPadding,
+                        vertical: 16,
                       ),
                       onPressed: () {
                         final isPremium =
@@ -205,7 +259,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
 
                   // ── CONTA ──
-                  const SizedBox(height: IaculaSpacing.lg),
+                  const SizedBox(height: IaculaRadius.cardSpacing),
                   const IaculaSectionHeader(title: 'Conta'),
                   const SizedBox(height: IaculaSpacing.sm),
                   _buildAuthSyncSection(),

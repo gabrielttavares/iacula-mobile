@@ -9,7 +9,7 @@ import '../../features/home/presentation/home_screen.dart';
 import '../../features/meditation/presentation/meditation_screen.dart';
 import '../../features/plan_of_life/presentation/plan_of_life_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
-import '../../features/profile/presentation/profile_screen.dart';
+import '../../features/more/presentation/more_screen.dart';
 import '../theme/cupertino_tokens.dart';
 
 class ShellScreen extends ConsumerStatefulWidget {
@@ -33,7 +33,7 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
     MeditationScreen(),
     PlanOfLifeScreen(),
     FavoritesScreen(),
-    ProfileScreen(),
+    MoreScreen(),
   ];
 
   @override
@@ -108,7 +108,7 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
                 child: Icon(CupertinoIcons.check_mark_circled),
               ),
             ),
-            label: 'Plano de vida',
+            label: 'Plano',
           ),
           BottomNavigationBarItem(
             icon: Padding(
@@ -125,10 +125,10 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
               padding: EdgeInsets.only(top: 4.0),
               child: SizedBox(
                 width: 30,
-                child: Icon(CupertinoIcons.person),
+                child: Icon(CupertinoIcons.ellipsis),
               ),
             ),
-            label: 'Perfil',
+            label: 'Mais',
           ),
         ],
       ),

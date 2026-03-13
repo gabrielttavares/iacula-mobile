@@ -25,12 +25,12 @@ void main() {
     expect(find.byType(CupertinoTabScaffold), findsOneWidget);
     expect(find.text('Início'), findsOneWidget);
     expect(find.text('Meditação'), findsOneWidget);
-    expect(find.text('Plano de vida'), findsOneWidget);
+    expect(find.text('Plano'), findsOneWidget);
     expect(find.text('Favoritos'), findsOneWidget);
-    expect(find.text('Perfil'), findsOneWidget);
+    expect(find.text('Mais'), findsOneWidget);
   });
 
-  testWidgets('shell switches to profile tab', (tester) async {
+  testWidgets('shell switches to more tab', (tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: CupertinoApp(
@@ -46,12 +46,13 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 350));
 
-    await tester.tap(find.text('Perfil'));
+    await tester.tap(find.text('Mais'));
     await tester.pump(const Duration(milliseconds: 350));
 
     final tabBar = tester.widget<CupertinoTabBar>(find.byType(CupertinoTabBar));
     expect(tabBar.currentIndex, 4);
-    expect(find.text('Privacidade e segurança'), findsOneWidget);
+    expect(find.text('Perfil'), findsOneWidget);
+    expect(find.text('Configurações'), findsOneWidget);
   });
 
   testWidgets('retapping the active Home tab pops its nested stack', (
