@@ -225,7 +225,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 .read(premiumStatusProvider)
                                 .valueOrNull
                                 ?.isPremium ??
-                            false;
+                            true;
                         if (!isPremium) {
                           PremiumGate.showModal(
                             context,

@@ -22,6 +22,7 @@ import '../../features/quotes/application/use_cases/get_next_escriva_points_quot
 import '../../features/plan_of_life/application/use_cases/seed_default_items_use_case.dart';
 import '../../features/premium/domain/entities/premium_status.dart';
 import '../../features/premium/domain/repositories/premium_repository.dart';
+import '../../features/premium/infrastructure/always_unlocked_premium_repository.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/premium/infrastructure/supabase_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
@@ -137,7 +138,8 @@ final class AppBootstrap {
     }
 
     AuthRepository authRepository = InMemoryAuthRepository();
-    PremiumRepository premiumRepository = localPremiumRepo;
+    // TODO(gabrielttav): restore local/synced premium repositories when paid access returns.
+    PremiumRepository premiumRepository = AlwaysUnlockedPremiumRepository();
     SyncOrchestrator syncOrchestrator = const NoopSyncOrchestrator();
     var bootstrapStatus = const BootstrapStatus();
     SupabaseClient? supabaseClient;
@@ -156,11 +158,16 @@ final class AppBootstrap {
 
         supabaseClient = Supabase.instance.client;
         authRepository = SupabaseAuthRepository(supabaseClient);
-        premiumRepository = SyncedPremiumRepository(
+        final _legacyPremiumRepository = SyncedPremiumRepository(
           localRepository: localPremiumRepo,
           authRepository: authRepository,
           remoteGateway: SupabasePremiumGateway(supabaseClient),
         );
+        developer.log(
+          'Premium runtime is in free-access mode; synced premium repository kept dormant for later restoration.',
+          name: 'AppBootstrap',
+        );
+        assert(_legacyPremiumRepository is PremiumRepository);
 
         final gateway = SupabaseSpiritualSyncGateway(supabaseClient);
 
@@ -217,7 +224,7 @@ final class AppBootstrap {
           stackTrace: st,
         );
         authRepository = InMemoryAuthRepository();
-        premiumRepository = localPremiumRepo;
+        premiumRepository = AlwaysUnlockedPremiumRepository();
         syncOrchestrator = const NoopSyncOrchestrator();
         bootstrapStatus = BootstrapStatus(
           errorMessage: 'Supabase initialization failed: $error',
