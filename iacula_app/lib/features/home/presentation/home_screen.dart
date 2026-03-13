@@ -86,6 +86,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 largeTitle: Text(greeting),
+                middle: const SizedBox.shrink(),
                 alwaysShowMiddle: false,
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
