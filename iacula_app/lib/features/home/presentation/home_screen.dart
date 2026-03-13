@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
-import '../../../core/presentation/design/iacula_modal.dart';
 
 import '../../../core/presentation/widgets/iacula_horizontal_card_rail.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
@@ -27,7 +26,6 @@ import '../../notifications/presentation/notifications_screen.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
-import '../../prayers/presentation/prayer_catalog_group_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../challenges/domain/entities/challenge.dart';
 import '../../challenges/presentation/challenge_detail_screen.dart';
@@ -40,8 +38,6 @@ import '../../rosary/presentation/rosary_intro_screen.dart';
 import '../../bible/presentation/bible_books_screen.dart';
 import '../../leituras/presentation/pages/leituras_home_page.dart';
 import 'hero_reflection_sheet.dart';
-import 'home_prayer_groups.dart';
-import 'widgets/home_action_grid.dart';
 import 'widgets/home_hero_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -127,7 +123,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   HapticFeedback.lightImpact();
                   ref.invalidate(_homeQuoteProvider);
                   ref.invalidate(_suggestionProvider);
-                  ref.invalidate(_homeThematicGroupsProvider);
+
                   await Future.delayed(const Duration(milliseconds: 500));
                 },
               ),
@@ -147,8 +143,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           onHeroTap: (quote) =>
                               HeroReflectionSheet.show(context, quote: quote),
                         ),
-                        const SizedBox(height: IaculaSpacing.sm),
-                        _HomeTopShortcutsRow(
+                        const SizedBox(height: IaculaSpacing.lg),
+                        _HomeShortcutsRail(
                           onOpenCustomPhrases: () {
                             final isPremium =
                                 ref
@@ -177,9 +173,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                             );
                           },
-                        ),
-                        const SizedBox(height: IaculaSpacing.lg),
-                        HomeActionGrid(
                           onOpenPrayers: () {
                             HapticFeedback.lightImpact();
                             Navigator.of(context).push(
@@ -219,15 +212,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const SizedBox(height: IaculaSpacing.sm),
                         const _DailyPrayerList(),
                         const SizedBox(height: IaculaSpacing.xl),
-                        const _FeatureRail(),
-                        const SizedBox(height: IaculaSpacing.xl),
                         const _MonthlyNovenasSection(),
                         const SizedBox(height: IaculaSpacing.xl),
-                        const IaculaSectionHeader(
-                          title: 'Encontre uma oração para este momento',
-                        ),
+                        const IaculaSectionHeader(title: 'Explore'),
                         const SizedBox(height: IaculaSpacing.sm),
-                        const _ThematicPrayerList(),
+                        const _FeatureCardsList(),
                       ],
                     ),
                   ]),
@@ -241,84 +230,70 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class _HomeTopShortcutsRow extends StatelessWidget {
-  const _HomeTopShortcutsRow({
+class _HomeShortcutsRail extends StatelessWidget {
+  const _HomeShortcutsRail({
     required this.onOpenCustomPhrases,
     required this.onOpenLeituras,
+    required this.onOpenPrayers,
+    required this.onOpenLiturgy,
+    required this.onOpenIntentions,
+    required this.onOpenExamination,
   });
 
   final VoidCallback onOpenCustomPhrases;
   final VoidCallback onOpenLeituras;
+  final VoidCallback onOpenPrayers;
+  final VoidCallback onOpenLiturgy;
+  final VoidCallback onOpenIntentions;
+  final VoidCallback onOpenExamination;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _TopShortcutCard(
-            key: const Key('home_custom_phrases_card'),
-            crossAxisAlignment: CrossAxisAlignment.center,
-            label: 'Minhas frases',
-            icon: CupertinoIcons.quote_bubble,
-            onTap: onOpenCustomPhrases,
-          ),
-        ),
-        const SizedBox(width: IaculaSpacing.sm),
-        Expanded(
-          child: _TopShortcutCard(
-            key: const Key('home_leituras_chip'),
-            label: 'Leituras',
-            crossAxisAlignment: CrossAxisAlignment.center,
-            icon: CupertinoIcons.book,
-            onTap: onOpenLeituras,
-          ),
-        ),
-      ],
-    );
-  }
-}
+    final width = MediaQuery.of(context).size.width * 0.42;
 
-class _TopShortcutCard extends StatelessWidget {
-  const _TopShortcutCard({
-    super.key,
-    required this.label,
-    required this.crossAxisAlignment,
-    required this.icon,
-    required this.onTap,
-  });
+    final cards = [
+      _RailCard(
+        key: const Key('home_action_oracoes'),
+        label: 'Orações',
+        onTap: onOpenPrayers,
+      ),
+      _RailCard(
+        key: const Key('home_action_liturgia'),
+        label: 'Liturgia diária',
+        onTap: onOpenLiturgy,
+      ),
+      _RailCard(
+        key: const Key('home_action_intencoes'),
+        label: 'Intenções',
+        onTap: onOpenIntentions,
+      ),
+      _RailCard(
+        key: const Key('home_action_exame'),
+        label: 'Exame Diário',
+        onTap: onOpenExamination,
+      ),
+      _RailCard(
+        key: const Key('home_custom_phrases_card'),
+        label: 'Minhas frases',
+        onTap: onOpenCustomPhrases,
+      ),
+      _RailCard(
+        key: const Key('home_leituras_chip'),
+        label: 'Leituras',
+        onTap: onOpenLeituras,
+      ),
+    ];
 
-  final String label;
-  final CrossAxisAlignment crossAxisAlignment;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return IaculaSoftCard(
-      padding: EdgeInsets.zero,
-      child: CupertinoButton(
-        minimumSize: Size.zero,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        onPressed: onTap,
-        child: Center(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: crossAxisAlignment,
-              children: [
-                Icon(icon, color: context.colors.primaryButton, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.cardTitle.copyWith(fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-        ),
+    return SizedBox(
+      height: 100,
+      child: ListView.separated(
+        key: const Key('home_shortcuts_rail'),
+        scrollDirection: Axis.horizontal,
+        itemCount: cards.length,
+        separatorBuilder: (context, index) =>
+            const SizedBox(width: IaculaSpacing.sm),
+        itemBuilder: (context, index) =>
+            SizedBox(width: width, child: cards[index]),
       ),
     );
   }
@@ -377,60 +352,58 @@ class _DailyPrayerList extends ConsumerWidget {
   }
 }
 
-class _FeatureRail extends StatelessWidget {
-  const _FeatureRail();
+class _FeatureCardsList extends StatelessWidget {
+  const _FeatureCardsList();
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width * 0.42;
-
-    final cards = [
-      _RailCard(
-        key: const Key('home_feature_biblia_card'),
-        label: 'Bíblia',
-        isComingSoon: false,
-        onTap: () {
-          HapticFeedback.lightImpact();
-          Navigator.of(
-            context,
-          ).push(CupertinoPageRoute(builder: (_) => const BibleBooksScreen()));
-        },
-      ),
-      _RailCard(
-        key: const Key('home_feature_rosario_card'),
-        label: 'Rosário',
-        isComingSoon: false,
-        onTap: () {
-          HapticFeedback.lightImpact();
-          Navigator.of(
-            context,
-          ).push(CupertinoPageRoute(builder: (_) => const RosaryIntroScreen()));
-        },
-      ),
-      _RailCard(
-        key: const Key('home_feature_confissao_card'),
-        label: 'Sacramento da Confissão',
-        isComingSoon: false,
-        onTap: () {
-          HapticFeedback.lightImpact();
-          Navigator.of(context).push(
-            CupertinoPageRoute(builder: (_) => const ConfessionFlowScreen()),
-          );
-        },
-      ),
-    ];
-
-    return SizedBox(
-      height: 100,
-      child: ListView.separated(
-        key: const Key('home_feature_rail'),
-        scrollDirection: Axis.horizontal,
-        itemCount: cards.length,
-        separatorBuilder: (context, index) =>
-            const SizedBox(width: IaculaSpacing.sm),
-        itemBuilder: (context, index) =>
-            SizedBox(width: width, child: cards[index]),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+          child: ImageBackgroundCard(
+            key: const Key('home_feature_biblia_card'),
+            title: 'Bíblia',
+            onTap: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).push(
+                CupertinoPageRoute(builder: (_) => const BibleBooksScreen()),
+              );
+            },
+            height: 120,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+          child: ImageBackgroundCard(
+            key: const Key('home_feature_rosario_card'),
+            title: 'Rosário',
+            onTap: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (_) => const RosaryIntroScreen(),
+                ),
+              );
+            },
+            height: 120,
+          ),
+        ),
+        ImageBackgroundCard(
+          key: const Key('home_feature_confissao_card'),
+          title: 'Sacramento da Confissão',
+          onTap: () {
+            HapticFeedback.lightImpact();
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (_) => const ConfessionFlowScreen(),
+              ),
+            );
+          },
+          height: 120,
+        ),
+      ],
     );
   }
 }
@@ -439,57 +412,25 @@ class _RailCard extends StatelessWidget {
   const _RailCard({
     super.key,
     required this.label,
-    this.isComingSoon = false,
     this.onTap,
   });
 
   final String label;
-  final bool isComingSoon;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return PremiumTouchableCard(
-      onTap: isComingSoon
-          ? () => IaculaModal.showAlert(
-              context: context,
-              title: label,
-              message: 'Em breve',
-              actionLabel: 'Fechar',
-            )
-          : onTap,
+      onTap: onTap,
       child: IaculaSoftCard(
         radius: 16,
         padding: const EdgeInsets.all(IaculaSpacing.md),
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                label,
-                style: context.textStyles.cardTitle.copyWith(fontSize: 16),
-              ),
-            ),
-            if (isComingSoon)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: context.colors.secondaryButton,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    'Em breve',
-                    style: context.textStyles.secondary.copyWith(fontSize: 10),
-                  ),
-                ),
-              ),
-          ],
+        child: Align(
+          alignment: Alignment.bottomLeft,
+          child: Text(
+            label,
+            style: context.textStyles.cardTitle.copyWith(fontSize: 16),
+          ),
         ),
       ),
     );
@@ -670,69 +611,12 @@ class _NovenaDateBadge extends StatelessWidget {
   }
 }
 
-class _ThematicPrayerList extends ConsumerWidget {
-  const _ThematicPrayerList();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final groupsAsync = ref.watch(_homeThematicGroupsProvider);
-
-    return groupsAsync.when(
-      data: (groups) {
-        if (groups.isEmpty) return const SizedBox.shrink();
-        return Column(
-          children: [
-            for (final group in groups)
-              Padding(
-                padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
-                child: Hero(
-                  tag: 'group_${group.key}',
-                  child: ImageBackgroundCard(
-                    title: group.label,
-                    subtitle: prayerCountLabel(group.itemCount),
-                    onTap: () => _openPrayerGroup(context, group),
-                    height: 120,
-                    imageAsset: kHomeThematicImages[group.key],
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-      loading: () => const SizedBox.shrink(),
-      error: (error, stackTrace) => const SizedBox.shrink(),
-    );
-  }
-}
-
-void _openPrayerGroup(BuildContext context, HomePrayerGroup group) {
-  Navigator.of(context).push(
-    CupertinoPageRoute(
-      builder: (_) => PrayerCatalogGroupScreen(
-        type: group.type,
-        groupKey: group.key,
-        title: group.label,
-      ),
-    ),
-  );
-}
-
 final _suggestionProvider = FutureProvider<PrayerCatalogEntry?>((ref) async {
   final now = ref.watch(homeNowProvider);
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
   return ref
       .watch(getPrayerCatalogUseCaseProvider)
       .suggestionOfDay(language: settings.language, date: now);
-});
-
-final _homeThematicGroupsProvider = FutureProvider<List<HomePrayerGroup>>((
-  ref,
-) async {
-  final settings = await ref.watch(getSettingsUseCaseProvider).call();
-  final catalog = await ref
-      .watch(getPrayerCatalogUseCaseProvider)
-      .listAll(language: settings.language);
-  return buildHomeThematicGroups(catalog);
 });
 
 final homeNowProvider = Provider<DateTime>((ref) => DateTime.now());

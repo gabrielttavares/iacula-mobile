@@ -20,51 +20,32 @@ class HomeActionGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      key: const Key('home_action_grid'),
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _HorizontalFeatureCard(
-                label: 'Orações',
-                onTap: onOpenPrayers,
-              ),
-            ),
+    final width = MediaQuery.of(context).size.width * 0.42;
+
+    final cards = [
+      _ActionCard(label: 'Orações', onTap: onOpenPrayers),
+      _ActionCard(label: 'Liturgia diária', onTap: onOpenLiturgy),
+      _ActionCard(label: 'Intenções', onTap: onOpenIntentions),
+      _ActionCard(label: 'Exame Diário', onTap: onOpenExamination),
+    ];
+
+    return SizedBox(
+      height: _ActionCard._cardHeight,
+      child: ListView.separated(
+        key: const Key('home_action_grid'),
+        scrollDirection: Axis.horizontal,
+        itemCount: cards.length,
+        separatorBuilder: (context, index) =>
             const SizedBox(width: IaculaSpacing.sm),
-            Expanded(
-              child: _HorizontalFeatureCard(
-                label: 'Liturgia diária',
-                onTap: onOpenLiturgy,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: IaculaSpacing.sm),
-        Row(
-          children: [
-            Expanded(
-              child: _HorizontalFeatureCard(
-                label: 'Intenções',
-                onTap: onOpenIntentions,
-              ),
-            ),
-            const SizedBox(width: IaculaSpacing.sm),
-            Expanded(
-              child: _HorizontalFeatureCard(
-                label: 'Exame Diário',
-                onTap: onOpenExamination,
-              ),
-            ),
-          ],
-        ),
-      ],
+        itemBuilder: (context, index) =>
+            SizedBox(width: width, child: cards[index]),
+      ),
     );
   }
 }
 
-class _HorizontalFeatureCard extends StatelessWidget {
-  const _HorizontalFeatureCard({required this.label, required this.onTap});
+class _ActionCard extends StatelessWidget {
+  const _ActionCard({required this.label, required this.onTap});
 
   static const double _cardHeight = 65;
 
