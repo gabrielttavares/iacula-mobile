@@ -10,6 +10,7 @@ import 'package:iacula_app/features/journal_prompts/domain/repositories/journal_
 import 'package:iacula_app/features/leituras/presentation/pages/leituras_home_page.dart';
 import 'package:iacula_app/features/meditation/domain/entities/meditation_item.dart';
 import 'package:iacula_app/features/meditation/domain/repositories/meditation_catalog_repository.dart';
+import 'package:iacula_app/features/meditation/presentation/meditation_reader_screen.dart';
 import 'package:iacula_app/features/meditation/presentation/meditation_screen.dart';
 import 'package:iacula_app/features/premium/domain/entities/premium_status.dart';
 import 'package:iacula_app/features/bible/presentation/bible_books_screen.dart';
@@ -253,6 +254,21 @@ void main() {
     expect(find.text('Reflexões'), findsOneWidget);
     expect(find.text('Pelo que sou grato a Deus hoje?'), findsOneWidget);
     expect(find.text('Meditação do dia'), findsNothing);
+  });
+
+  testWidgets('tapping a meditation card opens the reader directly', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_buildMeditationTestApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Meditação do dia'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MeditationReaderScreen), findsOneWidget);
+    expect(find.text('Corpo'), findsOneWidget);
+    expect(find.text('A-'), findsOneWidget);
+    expect(find.text('A+'), findsOneWidget);
   });
 
   testWidgets('free user can browse Meditação and gets premium gate on open', (

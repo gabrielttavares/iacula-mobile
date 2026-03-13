@@ -15,7 +15,7 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../../journal_prompts/domain/entities/journal_prompt.dart';
 import '../domain/entities/meditation_item.dart';
 import 'journal_prompt_detail_screen.dart';
-import 'meditation_detail_screen.dart';
+import 'meditation_reader_screen.dart';
 import 'models/meditation_feed_item.dart';
 
 class MeditationScreen extends ConsumerStatefulWidget {
@@ -86,12 +86,15 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
           ),
           ...catalogAsync.when(
             data: (items) {
+              final textItems = items
+                  .where((item) => item.type == MeditationType.text)
+                  .toList(growable: false);
               final prompts =
                   promptsAsync.valueOrNull ?? const <JournalPrompt>[];
               return _buildSliverFeed(
                 context,
                 _buildFeedItems(
-                  meditations: _applyFilter(items),
+                  meditations: _applyFilter(textItems),
                   prompts: prompts,
                 ),
               );
@@ -345,7 +348,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
       return;
     }
     Navigator.of(context).push(
-      CupertinoPageRoute(builder: (_) => MeditationDetailScreen(item: item)),
+      CupertinoPageRoute(builder: (_) => MeditationReaderScreen(item: item)),
     );
   }
 }

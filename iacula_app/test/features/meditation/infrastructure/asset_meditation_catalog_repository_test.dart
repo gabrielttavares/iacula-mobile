@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -179,5 +180,14 @@ void main() {
     final items = await repo.listAll();
 
     expect(items, isEmpty);
+  });
+
+  test('bundled catalog contains only text meditations', () async {
+    final raw = File('assets/seed/meditations/catalog.json').readAsStringSync();
+    final list = (jsonDecode(raw) as List<dynamic>)
+        .cast<Map<String, dynamic>>();
+
+    expect(list, isNotEmpty);
+    expect(list.every((item) => item['type'] == 'text'), isTrue);
   });
 }

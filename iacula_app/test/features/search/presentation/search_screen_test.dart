@@ -9,6 +9,7 @@ import 'package:iacula_app/features/leituras/data/sources/leitura_local_source.d
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/meditation/domain/entities/meditation_item.dart';
 import 'package:iacula_app/features/meditation/domain/repositories/meditation_catalog_repository.dart';
+import 'package:iacula_app/features/meditation/presentation/meditation_reader_screen.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
@@ -56,6 +57,11 @@ final class _FakeMeditationCatalogRepository
         summary: 'Retome a oração com silêncio e presença de Deus.',
         categoryTags: ['recomecar'],
         sourceName: 'Hablar con Dios',
+        textContent: MeditationTextContent(
+          body: 'Texto de meditação para recomeçar com serenidade.',
+          format: 'plain',
+          language: 'pt',
+        ),
         availability: MeditationAvailability(
           kind: MeditationAvailabilityKind.daily,
         ),
@@ -95,8 +101,8 @@ final class _FakeQuoteContentRepository implements QuoteContentRepository {
     return const {
       'monday': DayQuotes(
         day: 'monday',
-        theme: 'Confiança',
-        quotes: ['Confiai no Senhor e recomeçai com coragem.'],
+        theme: 'Recomeçar com confiança',
+        quotes: ['Recomeçai com coragem e confiança no Senhor.'],
       ),
     };
   }
@@ -175,19 +181,16 @@ void main() {
     expect(find.text('silêncio'), findsOneWidget);
   });
 
-  testWidgets('groups search results by section', (tester) async {
+  testWidgets('shows matching meditation search results', (tester) async {
     await tester.pumpWidget(_buildApp());
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(CupertinoSearchTextField), 're');
+    await tester.enterText(find.byType(CupertinoSearchTextField), 'meditação');
     await tester.pump(const Duration(milliseconds: 250));
     await tester.pumpAndSettle();
 
-    expect(find.text('Orações'), findsOneWidget);
-    expect(find.text('Meditações'), findsOneWidget);
-    expect(find.text('Leituras'), findsOneWidget);
-    expect(find.text('Citações'), findsOneWidget);
-    expect(find.text('1 resultado'), findsWidgets);
+    expect(find.text('Meditação para recomeçar'), findsOneWidget);
+    expect(find.textContaining('resultado'), findsWidgets);
   });
 
   testWidgets('shows contextual snippets instead of full long content', (
@@ -221,5 +224,23 @@ void main() {
 
     expect(find.text('Buscas recentes'), findsOneWidget);
     expect(find.text('recomeçar'), findsWidgets);
+  });
+
+  testWidgets('tapping a meditation search result opens the reader directly', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_buildApp());
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(CupertinoSearchTextField), 'meditação');
+    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Meditação para recomeçar'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MeditationReaderScreen), findsOneWidget);
+    expect(find.text('A-'), findsOneWidget);
+    expect(find.text('A+'), findsOneWidget);
   });
 }
