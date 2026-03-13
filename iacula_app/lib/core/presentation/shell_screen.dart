@@ -82,36 +82,51 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
         items: const [
           BottomNavigationBarItem(
             icon: Padding(
-              padding: EdgeInsets.only(top: 6.0),
-              child: Icon(CupertinoIcons.house),
+              padding: EdgeInsets.only(top: 4.0),
+              child: SizedBox(
+                width: 30,
+                child: Icon(CupertinoIcons.house),
+              ),
             ),
             label: 'Início',
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: EdgeInsets.only(top: 6.0),
-              child: Icon(CupertinoIcons.play_circle),
+              padding: EdgeInsets.only(top: 4.0),
+              child: SizedBox(
+                width: 30,
+                child: Icon(CupertinoIcons.book),
+              ),
             ),
             label: 'Meditação',
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: EdgeInsets.only(top: 6.0),
-              child: Icon(CupertinoIcons.check_mark_circled),
+              padding: EdgeInsets.only(top: 4.0),
+              child: SizedBox(
+                width: 30,
+                child: Icon(CupertinoIcons.check_mark_circled),
+              ),
             ),
             label: 'Plano de vida',
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: EdgeInsets.only(top: 6.0),
-              child: Icon(CupertinoIcons.bookmark),
+              padding: EdgeInsets.only(top: 4.0),
+              child: SizedBox(
+                width: 30,
+                child: Icon(CupertinoIcons.bookmark),
+              ),
             ),
             label: 'Favoritos',
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: EdgeInsets.only(top: 6.0),
-              child: Icon(CupertinoIcons.person),
+              padding: EdgeInsets.only(top: 4.0),
+              child: SizedBox(
+                width: 30,
+                child: Icon(CupertinoIcons.person),
+              ),
             ),
             label: 'Perfil',
           ),

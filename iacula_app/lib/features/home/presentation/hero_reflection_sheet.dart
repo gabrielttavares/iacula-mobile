@@ -31,8 +31,8 @@ final class HeroReflectionSheet {
       'das tarefas normais do dia. Uma jaculatória, um versículo, um lembrete discreto '
       'e o coração volta a Deus sem romper o ritmo do dever.\n\n'
       'Inspirado na espiritualidade do trabalho santificado, o app procura acompanhar você '
-      'nos momentos certos. Como escreveu São João Crisóstomo: '
-      '«Ergue um altar a Deus no meio de teus trabalhos, e oferece ali a oração do coração.»';
+      'nos momentos certos. Como escreveu São Josemaria Escrivá: '
+      '"Transforma os deveres do teu estado em oração e em encontro com Deus."';
 
   static Future<void> show(BuildContext context, {required Quote quote}) {
     return IaculaModal.showSheet<void>(
