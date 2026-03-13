@@ -174,7 +174,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ),
                           ),
                           child: Text(
-                            'Exemplo de oração nesta escala',
+                            'Pelo sinal da santa cruz, livrai-nos, Deus, nosso Senhor, dos nossos inimigos.',
                             textAlign: TextAlign.center,
                             style: context.textStyles.readingBody.copyWith(
                               fontSize: _loadedSettings.prayerFontSize,
