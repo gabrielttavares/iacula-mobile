@@ -49,6 +49,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/images/
     - assets/seed/quotes/en/
     - assets/seed/quotes/la/
     - assets/seed/quotes/pt-br/

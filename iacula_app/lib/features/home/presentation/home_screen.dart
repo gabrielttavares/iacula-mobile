@@ -77,8 +77,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               CupertinoSliverNavigationBar(
                 backgroundColor: context.colors.background,
                 border: null,
-                middle: Text('Iacula', style: context.textStyles.cardTitle),
+                leading: Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Image.asset(
+                    'assets/images/icon.png',
+                    height: 28,
+                    width: 28,
+                  ),
+                ),
                 largeTitle: Text(greeting),
+                alwaysShowMiddle: false,
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

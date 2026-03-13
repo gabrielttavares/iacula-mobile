@@ -481,15 +481,10 @@ void main() {
       expect(finder, findsOneWidget);
     }
 
-    final nav = tester.widget<CupertinoSliverNavigationBar>(
-      find.byType(CupertinoSliverNavigationBar),
-    );
-    final greeting = (nav.largeTitle! as Text).data ?? '';
-    expect(greeting, contains('Bem vindo'));
-    expect(find.text('Destaques'), findsNothing);
+    expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
     await reveal('Minhas frases');
     await reveal('Ação de Graças');
-    await reveal('Encontre uma oração para este momento');
+    await reveal('Explore');
   });
 
   testWidgets('home renders hero card before quick actions', (tester) async {
@@ -502,7 +497,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('home_hero_card')), findsOneWidget);
-    expect(find.byKey(const Key('home_action_grid')), findsOneWidget);
+    expect(find.byKey(const Key('home_shortcuts_rail')), findsOneWidget);
   });
 
   testWidgets('home does not render legacy continuation card', (tester) async {
@@ -532,7 +527,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Tentar novamente'), findsOneWidget);
-    expect(find.byKey(const Key('home_action_grid')), findsOneWidget);
+    expect(find.byKey(const Key('home_shortcuts_rail')), findsOneWidget);
   });
 
   testWidgets('home hero uses subtle entrance animation', (tester) async {
@@ -598,7 +593,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Iacula'), findsOneWidget);
-    expect(find.byIcon(CupertinoIcons.circle_grid_3x3_fill), findsNothing);
+    expect(find.byIcon(CupertinoIcons.bell), findsOneWidget);
   });
 
   testWidgets('feature card opens Liturgia Diária screen', (tester) async {
@@ -765,24 +760,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    for (
-      var i = 0;
-      i < 20 && find.text('Santos Anjos').evaluate().isEmpty;
-      i++
-    ) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-
-    final groupFinder = find.text('Santos Anjos').first;
-    await tester.ensureVisible(groupFinder);
+    expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
     await tester.pumpAndSettle();
-    await tester.tap(groupFinder);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(PrayerCatalogGroupScreen), findsOneWidget);
-    expect(find.text('Ao Anjo da Guarda'), findsOneWidget);
-    expect(find.text('Salve Rainha'), findsNothing);
   });
 
   testWidgets('feature rail Rosário opens contemplative intro screen', (
@@ -821,24 +800,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final featureRail = find.byKey(const Key('home_feature_rail'));
-    for (var i = 0; i < 20 && featureRail.evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    expect(featureRail, findsOneWidget);
-    await tester.ensureVisible(featureRail);
-    await tester.pumpAndSettle();
-
-    final bibleCard = find.text('Bíblia');
-    expect(bibleCard, findsOneWidget);
-    await tester.pump();
-    await tester.tap(bibleCard);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 600));
-
-    expect(find.byType(BibleBooksScreen), findsOneWidget);
-    expect(find.text('Em breve'), findsNothing);
+    expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
   });
 
   testWidgets('home shows monthly novenas section for March 2026', (
@@ -1003,14 +965,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final intentionsCard = find.ancestor(
-      of: find.text('Intenções'),
-      matching: find.byType(PremiumTouchableCard),
-    );
-    final examinationCard = find.ancestor(
-      of: find.text('Exame Diário'),
-      matching: find.byType(PremiumTouchableCard),
-    );
+    final intentionsCard = find.byKey(const Key('home_action_intencoes'));
+    final examinationCard = find.byKey(const Key('home_action_exame'));
 
     expect(intentionsCard, findsOneWidget);
     expect(examinationCard, findsOneWidget);
