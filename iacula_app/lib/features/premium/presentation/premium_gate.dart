@@ -47,7 +47,6 @@ class PremiumGate extends ConsumerWidget {
       PremiumFeature.streakDashboard ||
       PremiumFeature.rosary ||
       PremiumFeature.leituras ||
-      PremiumFeature.challenges ||
       PremiumFeature.journal ||
       PremiumFeature.nightPrayer ||
       PremiumFeature.liturgyOfHours ||

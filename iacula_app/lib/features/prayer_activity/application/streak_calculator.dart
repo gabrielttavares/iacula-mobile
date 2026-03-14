@@ -67,7 +67,6 @@ final class StreakCalculator {
     int totalMeditations = 0;
     int totalExaminations = 0;
     int totalRosaries = 0;
-    int totalChallenges = 0;
     int totalSeconds = 0;
     final activityByDate = <String, int>{};
 
@@ -82,7 +81,6 @@ final class StreakCalculator {
         case PrayerActivityType.rosary:
           totalRosaries++;
         case PrayerActivityType.challenge:
-          totalChallenges++;
         case PrayerActivityType.nightPrayer:
         case PrayerActivityType.liturgyOfHours:
         case PrayerActivityType.journal:
@@ -99,7 +97,6 @@ final class StreakCalculator {
       totalMeditations: totalMeditations,
       totalExaminations: totalExaminations,
       totalRosaries: totalRosaries,
-      totalChallenges: totalChallenges,
       totalMinutes: (totalSeconds / 60).ceil(),
       currentStreak: streak.currentStreak,
       longestStreak: streak.longestStreak,

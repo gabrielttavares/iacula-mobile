@@ -2,8 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
-import 'package:iacula_app/features/liturgia_diaria/domain/entities/saint_of_day.dart';
-import 'package:iacula_app/features/liturgia_diaria/domain/repositories/saint_repository.dart';
 import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_content_repository.dart';
 import 'package:iacula_app/features/widgets/widget_data_provider.dart';
@@ -22,22 +20,6 @@ final class _FakeLiturgicalSeasonService implements LiturgicalSeasonService {
   @override
   Future<LiturgicalSeason> getCurrentSeason({DateTime? date}) async =>
       context.season;
-}
-
-final class _FakeSaintRepository implements SaintRepository {
-  @override
-  Future<SaintOfDay?> getSaintForDate(DateTime date) async {
-    return SaintOfDay(
-      date: date,
-      name: 'São José',
-      biographyParagraphs: const ['Guardião fiel da Sagrada Família.'],
-    );
-  }
-}
-
-final class _NoSaintRepository implements SaintRepository {
-  @override
-  Future<SaintOfDay?> getSaintForDate(DateTime date) async => null;
 }
 
 final class _UnusedQuoteContentRepository implements QuoteContentRepository {
@@ -62,7 +44,7 @@ final class _UnusedQuoteContentRepository implements QuoteContentRepository {
 
 void main() {
   test(
-    'refresh stores liturgical color and saint of day instead of placeholders',
+    'refresh stores liturgical color',
     () async {
       SharedPreferences.setMockInitialValues({});
 
@@ -76,7 +58,6 @@ void main() {
             apiQuotes: <String>[],
           ),
         ),
-        saintRepository: _FakeSaintRepository(),
       );
 
       await service.refresh(
@@ -88,38 +69,6 @@ void main() {
 
       expect(data['dailyReflection'], 'Permanecei em mim.');
       expect(data['liturgicalColor'], 'purple');
-      expect(data['saintName'], 'São José');
-      expect(data['saintDescription'], 'Guardião fiel da Sagrada Família.');
-    },
-  );
-
-  test(
-    'refresh falls back to deterministic devotional saint copy when saint data is unavailable',
-    () async {
-      SharedPreferences.setMockInitialValues({});
-
-      final service = WidgetUpdateService(
-        widgetDataProvider: WidgetDataProvider(),
-        quoteContentRepository: _UnusedQuoteContentRepository(),
-        liturgicalSeasonService: const _FakeLiturgicalSeasonService(
-          LiturgicalContext(
-            season: LiturgicalSeason.advent,
-            rank: LiturgicalRank.weekday,
-            apiQuotes: <String>[],
-          ),
-        ),
-        saintRepository: _NoSaintRepository(),
-      );
-
-      await service.refresh(dailyReflection: 'Vigiai e orai.');
-
-      final data = await WidgetDataProvider().readWidgetData();
-
-      expect(data['saintName'], 'Comunhão dos santos');
-      expect(
-        data['saintDescription'],
-        'Hoje a Igreja convida você a rezar em sintonia com o tempo litúrgico.',
-      );
     },
   );
 }

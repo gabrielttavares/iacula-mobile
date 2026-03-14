@@ -11,8 +11,6 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/biblical_reading_text.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/daily_liturgy.dart';
-import '../domain/entities/saint_of_day.dart';
-import '../domain/entities/saint_of_day_fallback.dart';
 
 final _liturgyPeriodProvider =
     FutureProvider.family<List<LiturgyDay>, DateTime>((ref, anchorDate) {
@@ -21,14 +19,7 @@ final _liturgyPeriodProvider =
           .call(days: 7, anchorDate: anchorDate);
     });
 
-final _saintOfDayProvider = FutureProvider.family<SaintOfDay?, DateTime>((
-  ref,
-  date,
-) {
-  return ref.watch(saintRepositoryProvider).getSaintForDate(date);
-});
-
-enum _LiturgySegment { prayers, readings, antiphons, saint }
+enum _LiturgySegment { prayers, readings, antiphons }
 
 class LiturgiaScreen extends ConsumerStatefulWidget {
   const LiturgiaScreen({super.key});
@@ -81,7 +72,6 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
             if (selectedIndex < 0) {
               _selectedDate = selected.date;
             }
-            final saintAsync = ref.watch(_saintOfDayProvider(selected.date));
             final accent = _accentColor(selected.color);
 
             return Padding(
@@ -188,13 +178,6 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                           ),
                           child: Text('Antífonas'),
                         ),
-                        _LiturgySegment.saint: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 6,
-                          ),
-                          child: Text('Santo do dia'),
-                        ),
                       },
                       onValueChanged: (segment) {
                         if (segment != null) {
@@ -215,7 +198,6 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
                           key: ValueKey<_LiturgySegment>(_segment),
                           day: selected,
                           segment: _segment,
-                          asyncSaint: saintAsync,
                         ),
                       ),
                     ),
@@ -307,12 +289,10 @@ class _SegmentedContent extends StatelessWidget {
     super.key,
     required this.day,
     required this.segment,
-    required this.asyncSaint,
   });
 
   final LiturgyDay day;
   final _LiturgySegment segment;
-  final AsyncValue<SaintOfDay?> asyncSaint;
 
   @override
   Widget build(BuildContext context) {
@@ -406,26 +386,6 @@ class _SegmentedContent extends StatelessWidget {
                   _LabeledBlock(label: 'Extra', text: extra),
             ],
           ],
-        );
-      case _LiturgySegment.saint:
-        return asyncSaint.when(
-          data: (saint) {
-            final displaySaint = saintOfDayOrFallback(saint, date: day.date);
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const IaculaSectionHeader(title: 'Santo do dia'),
-                const SizedBox(height: IaculaSpacing.sm),
-                Text(displaySaint.name, style: context.textStyles.sectionTitle),
-                const SizedBox(height: IaculaSpacing.sm),
-                for (final paragraph in displaySaint.biographyParagraphs)
-                  if (paragraph.isNotEmpty)
-                    _LabeledBlock(label: 'Reflexão', text: paragraph),
-              ],
-            );
-          },
-          loading: () => const IaculaShimmerCard(height: 220),
-          error: (_, _) => const SizedBox.shrink(),
         );
     }
   }

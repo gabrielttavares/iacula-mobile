@@ -4,7 +4,6 @@ final class DashboardStats {
     required this.totalMeditations,
     required this.totalExaminations,
     required this.totalRosaries,
-    required this.totalChallenges,
     required this.totalMinutes,
     required this.currentStreak,
     required this.longestStreak,
@@ -17,7 +16,6 @@ final class DashboardStats {
     totalMeditations: 0,
     totalExaminations: 0,
     totalRosaries: 0,
-    totalChallenges: 0,
     totalMinutes: 0,
     currentStreak: 0,
     longestStreak: 0,
@@ -29,7 +27,6 @@ final class DashboardStats {
   final int totalMeditations;
   final int totalExaminations;
   final int totalRosaries;
-  final int totalChallenges;
   final int totalMinutes;
   final int currentStreak;
   final int longestStreak;

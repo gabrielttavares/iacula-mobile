@@ -165,13 +165,7 @@ class _DashboardBody extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: IaculaSpacing.sm),
-                Expanded(
-                  child: StatsCard(
-                    icon: CupertinoIcons.flag,
-                    value: '${stats.totalChallenges}',
-                    label: 'Desafios',
-                  ),
-                ),
+                const Expanded(child: SizedBox.shrink()),
               ],
             ),
           ],

@@ -4,7 +4,6 @@ enum PremiumFeature {
   streakDashboard,
   rosary,
   leituras,
-  challenges,
   journal,
   nightPrayer,
   liturgyOfHours,

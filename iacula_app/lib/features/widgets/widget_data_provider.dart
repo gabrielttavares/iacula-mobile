@@ -12,8 +12,6 @@ final class WidgetDataProvider {
     required String dailyReflection,
     required String liturgicalColor,
     required int streakCount,
-    required String saintOfDay,
-    required String saintDescription,
   }) async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -30,14 +28,6 @@ final class WidgetDataProvider {
       streakCount,
     );
     await prefs.setString(
-      '${_prefix}saint_name',
-      saintOfDay,
-    );
-    await prefs.setString(
-      '${_prefix}saint_description',
-      saintDescription,
-    );
-    await prefs.setString(
       '${_prefix}last_updated',
       DateTime.now().toIso8601String(),
     );
@@ -50,8 +40,6 @@ final class WidgetDataProvider {
       'dailyReflection': prefs.getString('${_prefix}daily_reflection'),
       'liturgicalColor': prefs.getString('${_prefix}liturgical_color'),
       'streakCount': prefs.getInt('${_prefix}streak_count'),
-      'saintName': prefs.getString('${_prefix}saint_name'),
-      'saintDescription': prefs.getString('${_prefix}saint_description'),
       'lastUpdated': prefs.getString('${_prefix}last_updated'),
     };
   }

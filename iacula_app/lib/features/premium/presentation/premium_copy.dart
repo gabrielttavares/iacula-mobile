@@ -37,11 +37,6 @@ PremiumCopy premiumCopyFor(PremiumFeature feature) {
       gateMessage:
           'Acesse leituras espirituais completas para prolongar sua oração ao longo do dia.',
     ),
-    PremiumFeature.challenges => const PremiumCopy(
-      featureTitle: 'Desafios e novenas',
-      gateMessage:
-          'Siga itinerários de oração e novenas com continuidade e acompanhamento.',
-    ),
     PremiumFeature.journal => const PremiumCopy(
       featureTitle: 'Diário espiritual',
       gateMessage:

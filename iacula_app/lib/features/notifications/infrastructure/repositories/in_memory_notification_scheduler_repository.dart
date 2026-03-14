@@ -21,7 +21,6 @@ final class InMemoryNotificationSchedulerRepository
       ReminderEventType.customMeditationAlarm => 400,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
-      ReminderEventType.challengeDaily => 600,
     };
   }
 

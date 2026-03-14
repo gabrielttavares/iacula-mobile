@@ -10,7 +10,6 @@ import 'package:iacula_app/features/home/presentation/home_screen.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/entities/daily_liturgy.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
-import 'package:iacula_app/core/presentation/widgets/premium_touchable_card.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
@@ -21,14 +20,6 @@ import 'package:iacula_app/features/notifications/domain/entities/last_delivered
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
-import 'package:iacula_app/features/prayers/presentation/prayer_catalog_group_screen.dart';
-import 'package:iacula_app/features/challenges/domain/entities/challenge.dart';
-import 'package:iacula_app/features/challenges/domain/entities/challenge_progress.dart';
-import 'package:iacula_app/features/challenges/domain/repositories/challenge_progress_repository.dart';
-import 'package:iacula_app/features/challenges/domain/repositories/challenge_repository.dart';
-import 'package:iacula_app/features/challenges/presentation/challenge_library_screen.dart';
-import 'package:iacula_app/features/challenges/presentation/challenge_detail_screen.dart';
-import 'package:iacula_app/features/bible/presentation/bible_books_screen.dart';
 import 'package:iacula_app/features/rosary/presentation/rosary_intro_screen.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
@@ -192,35 +183,6 @@ final class _FakeLiturgicalSeasonService implements LiturgicalSeasonService {
   }
 }
 
-final class _FakeChallengeRepository implements ChallengeRepository {
-  const _FakeChallengeRepository();
-
-  @override
-  Future<Challenge?> getById(String id) async {
-    return _challenges.where((challenge) => challenge.id == id).firstOrNull;
-  }
-
-  @override
-  Future<List<Challenge>> listAll() async => _challenges;
-}
-
-final class _FakeChallengeProgressRepository
-    implements ChallengeProgressRepository {
-  const _FakeChallengeProgressRepository();
-
-  @override
-  Future<void> deleteProgress(String challengeId) async {}
-
-  @override
-  Future<ChallengeProgress?> getProgress(String challengeId) async => null;
-
-  @override
-  Future<List<ChallengeProgress>> listActive() async => const [];
-
-  @override
-  Future<void> saveProgress(ChallengeProgress progress) async {}
-}
-
 final class _FakeExaminationReflectionRepository
     implements ExaminationReflectionRepository {
   _FakeExaminationReflectionRepository([List<ExaminationReflectionItem>? seed])
@@ -253,47 +215,11 @@ final class _FakeExaminationReflectionRepository
   }
 }
 
-const _challenges = <Challenge>[
-  Challenge(
-    id: 'novena_sao_patricio',
-    title: 'Novena a São Patrício',
-    description: 'Descrição São Patrício',
-    durationDays: 9,
-    category: ChallengeCategory.novena,
-    content: [
-      ChallengeDay(
-        dayNumber: 1,
-        title: 'Primeiro Dia',
-        readingText: 'Texto São Patrício',
-        reflectionPrompt: 'Reflexão São Patrício',
-      ),
-    ],
-  ),
-  Challenge(
-    id: 'novena_sao_jose',
-    title: 'Novena a São José',
-    description: 'Descrição São José',
-    durationDays: 9,
-    category: ChallengeCategory.novena,
-    content: [
-      ChallengeDay(
-        dayNumber: 1,
-        title: 'São José, Pai Nutrício de Jesus',
-        readingText: 'Conteúdo de São José',
-        reflectionPrompt: 'Reflexão São José',
-      ),
-    ],
-  ),
-];
-
 Widget _buildApp({
   required _FakeSettingsRepository settingsRepo,
   required _FakeLastDeliveredCardRepository lastCardRepo,
   _FakeLiturgiaRepository? liturgiaRepo,
   PrayerCatalogRepository? prayerCatalogRepo,
-  ChallengeRepository challengeRepository = _defaultChallengeRepo,
-  ChallengeProgressRepository challengeProgressRepository =
-      _defaultChallengeProgressRepo,
   LiturgicalSeasonService? liturgicalSeasonService,
   ExaminationReflectionRepository? examinationReflectionRepository,
   DateTime? now,
@@ -307,10 +233,6 @@ Widget _buildApp({
         liturgiaCacheRepositoryProvider.overrideWithValue(liturgiaRepo),
       if (prayerCatalogRepo != null)
         prayerCatalogRepositoryProvider.overrideWithValue(prayerCatalogRepo),
-      challengeRepositoryProvider.overrideWithValue(challengeRepository),
-      challengeProgressRepositoryProvider.overrideWithValue(
-        challengeProgressRepository,
-      ),
       if (liturgicalSeasonService != null)
         liturgicalSeasonServiceProvider.overrideWithValue(
           liturgicalSeasonService,
@@ -337,9 +259,6 @@ _FakeLastDeliveredCardRepository _defaultLastCardRepo() =>
         deliveredAt: DateTime(2026, 2, 21, 11, 0),
       ),
     );
-
-const _defaultChallengeRepo = _FakeChallengeRepository();
-const _defaultChallengeProgressRepo = _FakeChallengeProgressRepository();
 
 void main() {
   testWidgets('home hero keeps long quote visible without truncation', (
@@ -802,118 +721,6 @@ void main() {
 
     expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
   });
-
-  testWidgets('home shows monthly novenas section for March 2026', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _buildApp(
-        settingsRepo: _defaultSettingsRepo(),
-        lastCardRepo: _defaultLastCardRepo(),
-        now: DateTime(2026, 3, 6),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    await tester.scrollUntilVisible(
-      find.text('Novenas deste mês'),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('Novenas deste mês'), findsOneWidget);
-    expect(find.text('Novena a São Patrício'), findsOneWidget);
-    expect(find.text('8 a 16 de março'), findsOneWidget);
-    expect(find.text('Ver todas'), findsOneWidget);
-    expect(find.text('Em breve'), findsNothing);
-
-    final horizontalRails = find.byWidgetPredicate(
-      (widget) =>
-          widget is ListView && widget.scrollDirection == Axis.horizontal,
-    );
-    await tester.drag(horizontalRails.last, const Offset(-250, 0));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Novena a São José'), findsOneWidget);
-    expect(find.text('10 a 18 de março'), findsOneWidget);
-    expect(find.text('Novena da Anunciação'), findsNothing);
-  });
-
-  testWidgets('home monthly novena card opens seeded challenge detail', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _buildApp(
-        settingsRepo: _defaultSettingsRepo(),
-        lastCardRepo: _defaultLastCardRepo(),
-        now: DateTime(2026, 3, 6),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    await tester.scrollUntilVisible(
-      find.text('Novenas deste mês'),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-
-    final horizontalRails = find.byWidgetPredicate(
-      (widget) =>
-          widget is ListView && widget.scrollDirection == Axis.horizontal,
-    );
-    await tester.drag(horizontalRails.last, const Offset(-250, 0));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Novena a São José'));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(ChallengeDetailScreen), findsOneWidget);
-    expect(find.text('Descrição São José'), findsOneWidget);
-  });
-
-  testWidgets('home novenas CTA opens challenge library screen', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _buildApp(
-        settingsRepo: _defaultSettingsRepo(),
-        lastCardRepo: _defaultLastCardRepo(),
-        now: DateTime(2026, 3, 6),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    await tester.scrollUntilVisible(
-      find.text('Ver todas'),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Ver todas'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-
-    expect(find.byType(ChallengeLibraryScreen), findsOneWidget);
-  });
-
-  testWidgets(
-    'home hides monthly novenas section when month has no seeded matches',
-    (tester) async {
-      await tester.pumpWidget(
-        _buildApp(
-          settingsRepo: _defaultSettingsRepo(),
-          lastCardRepo: _defaultLastCardRepo(),
-          now: DateTime(2026, 9, 6),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Novenas deste mês'), findsNothing);
-      expect(find.text('Novena a São Miguel Arcanjo'), findsNothing);
-    },
-  );
 
   testWidgets('home quick action Leituras opens Leituras home', (tester) async {
     await tester.pumpWidget(

@@ -89,7 +89,6 @@ flutter:
     - assets/seed/meditations/
     - assets/seed/doctrina/pt-br/
     - assets/seed/rosary/
-    - assets/seed/challenges/
     - assets/seed/examination/
     - assets/seed/journal_prompts/
     - assets/seed/night_prayer/
@@ -97,7 +96,6 @@ flutter:
     - assets/seed/bible/
     - assets/seed/bible/antigotestamento/
     - assets/seed/bible/novotestamento/
-    - assets/placeholders/novenas/
     - assets/books/escriva/
     - assets/books/library/
     - assets/books/library/authors/

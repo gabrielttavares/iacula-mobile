@@ -4,8 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/entities/daily_liturgy.dart';
 import 'package:iacula_app/features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
-import 'package:iacula_app/features/liturgia_diaria/domain/entities/saint_of_day.dart';
-import 'package:iacula_app/features/liturgia_diaria/domain/repositories/saint_repository.dart';
 import 'package:iacula_app/features/liturgia_diaria/presentation/liturgia_screen.dart';
 
 final class _FakeLiturgiaRepository implements LiturgiaRepository {
@@ -33,32 +31,12 @@ final class _FakeLiturgiaRepository implements LiturgiaRepository {
   }
 }
 
-final class _FakeSaintRepository implements SaintRepository {
-  _FakeSaintRepository(this._items);
-
-  final Map<String, SaintOfDay> _items;
-
-  @override
-  Future<SaintOfDay?> getSaintForDate(DateTime date) async {
-    return _items[_dateKey(date)];
-  }
-
-  String _dateKey(DateTime date) {
-    final d = DateTime(date.year, date.month, date.day);
-    return '${d.year}-${d.month}-${d.day}';
-  }
-}
-
 Widget _buildApp(
-  _FakeLiturgiaRepository repository, {
-  _FakeSaintRepository? saintRepository,
-}) {
+  _FakeLiturgiaRepository repository,
+) {
   return ProviderScope(
     overrides: [
       liturgiaCacheRepositoryProvider.overrideWithValue(repository),
-      saintRepositoryProvider.overrideWithValue(
-        saintRepository ?? _FakeSaintRepository(<String, SaintOfDay>{}),
-      ),
     ],
     child: const CupertinoApp(home: LiturgiaScreen()),
   );
@@ -88,26 +66,12 @@ void main() {
       _day(date: DateTime(2026, 2, 23), title: '2a Feira da Semana'),
     ],
   );
-  final saintRepository = _FakeSaintRepository({
-    '2026-2-22': SaintOfDay(
-      date: DateTime(2026, 2, 22),
-      name: 'Santa Rosa de Viterbo',
-      biographyParagraphs: const ['Primeiro parágrafo', 'Segundo parágrafo'],
-      imageAssetPath: 'assets/placeholders/saint-placeholder.png',
-    ),
-    '2026-2-23': SaintOfDay(
-      date: DateTime(2026, 2, 23),
-      name: 'São Policarpo',
-      biographyParagraphs: const ['Texto de São Policarpo'],
-      imageAssetPath: 'assets/placeholders/saint-placeholder.png',
-    ),
-  });
 
   testWidgets(
     'renders Cupertino large title, day selector and segmented control',
     (tester) async {
       await tester.pumpWidget(
-        _buildApp(repository, saintRepository: saintRepository),
+        _buildApp(repository),
       );
       await tester.pumpAndSettle();
 
@@ -120,7 +84,6 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text('Santo do dia'), findsOneWidget);
     },
   );
 
@@ -131,7 +94,6 @@ void main() {
       ProviderScope(
         overrides: [
           liturgiaCacheRepositoryProvider.overrideWithValue(repository),
-          saintRepositoryProvider.overrideWithValue(saintRepository),
         ],
         child: CupertinoApp(
           home: Builder(
@@ -170,7 +132,7 @@ void main() {
 
   testWidgets('switches day when tapping date selector', (tester) async {
     await tester.pumpWidget(
-      _buildApp(repository, saintRepository: saintRepository),
+      _buildApp(repository),
     );
     await tester.pumpAndSettle();
 
@@ -183,12 +145,11 @@ void main() {
 
   testWidgets('switches content with segmented control', (tester) async {
     await tester.pumpWidget(
-      _buildApp(repository, saintRepository: saintRepository),
+      _buildApp(repository),
     );
     await tester.pumpAndSettle();
 
     expect(find.text('Coleta'), findsAtLeast(1));
-    expect(find.text('Santa Rosa de Viterbo'), findsNothing);
 
     await tester.tap(find.text('Leituras'));
     await tester.pumpAndSettle();
@@ -198,18 +159,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Entrada'), findsOneWidget);
     expect(find.text('Antifona'), findsOneWidget);
-
-    await tester.tap(find.text('Santo do dia'));
-    await tester.pumpAndSettle();
-    expect(find.text('Santa Rosa de Viterbo'), findsOneWidget);
-    expect(find.text('Primeiro parágrafo'), findsOneWidget);
   });
 
   testWidgets('calendar confirm selects date inside current window', (
     tester,
   ) async {
     await tester.pumpWidget(
-      _buildApp(repository, saintRepository: saintRepository),
+      _buildApp(repository),
     );
     await tester.pumpAndSettle();
 
@@ -240,17 +196,8 @@ void main() {
         ),
       },
     );
-    final reanchorSaintRepository = _FakeSaintRepository({
-      '2026-2-25': SaintOfDay(
-        date: DateTime(2026, 2, 25),
-        name: 'São Cesário',
-        biographyParagraphs: const ['Texto especial'],
-        imageAssetPath: 'assets/placeholders/saint-placeholder.png',
-      ),
-    });
-
     await tester.pumpWidget(
-      _buildApp(reanchorRepository, saintRepository: reanchorSaintRepository),
+      _buildApp(reanchorRepository),
     );
     await tester.pumpAndSettle();
 
@@ -265,48 +212,6 @@ void main() {
 
     expect(find.text('Quarta Especial'), findsOneWidget);
   });
-
-  testWidgets(
-    'renders santo do dia section and updates when selected date changes',
-    (tester) async {
-      await tester.pumpWidget(
-        _buildApp(repository, saintRepository: saintRepository),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Santo do dia'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Santa Rosa de Viterbo'), findsOneWidget);
-      expect(find.text('Primeiro parágrafo'), findsOneWidget);
-      expect(find.text('Segundo parágrafo'), findsOneWidget);
-
-      await tester.tap(find.text('Seg 23/02'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('São Policarpo'), findsOneWidget);
-      expect(find.text('Texto de São Policarpo'), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'renders a devotional santo do dia fallback when no saint is available',
-    (tester) async {
-      await tester.pumpWidget(_buildApp(repository));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Santo do dia'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Comunhão dos santos'), findsOneWidget);
-      expect(
-        find.text(
-          'Hoje a Igreja convida você a rezar em sintonia com o tempo litúrgico.',
-        ),
-        findsOneWidget,
-      );
-    },
-  );
 
   testWidgets(
     'today anchor around 2026-03-12 shows distinct chips and Thursday content',

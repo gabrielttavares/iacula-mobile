@@ -8,7 +8,6 @@ enum ReminderEventType {
   customMeditationAlarm,
   customPhrase,
   prayerIntentionReminder,
-  challengeDaily,
 }
 
 enum NotificationRouteTarget {
@@ -18,7 +17,6 @@ enum NotificationRouteTarget {
   prayerIntention,
   nightPrayer,
   liturgyHours,
-  challenges,
   rosary,
   journal,
 }
@@ -138,7 +136,6 @@ final class ReminderEvent {
       ReminderEventType.customMeditationAlarm ||
       ReminderEventType.customPhrase => NotificationRouteTarget.home,
       ReminderEventType.prayerIntentionReminder => NotificationRouteTarget.prayerIntention,
-      ReminderEventType.challengeDaily => NotificationRouteTarget.challenges,
     };
   }
 }
