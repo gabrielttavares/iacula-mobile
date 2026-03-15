@@ -108,10 +108,6 @@ import '../../features/journal/infrastructure/repositories/isar_journal_reposito
 import '../../features/journal_prompts/domain/entities/journal_prompt.dart';
 import '../../features/journal_prompts/domain/repositories/journal_prompt_repository.dart';
 import '../../features/journal_prompts/infrastructure/repositories/asset_journal_prompt_repository.dart';
-import '../../features/doctrina/application/use_cases/get_doctrine_catalog_use_case.dart';
-import '../../features/doctrina/domain/entities/doctrine_entry.dart';
-import '../../features/doctrina/domain/repositories/doctrine_repository.dart';
-import '../../features/doctrina/infrastructure/repositories/asset_doctrine_repository.dart';
 import '../../features/examination/domain/entities/examination_reflection_item.dart';
 import '../../features/examination/domain/repositories/examination_reflection_repository.dart';
 import '../../features/examination/infrastructure/repositories/isar_examination_reflection_repository.dart';
