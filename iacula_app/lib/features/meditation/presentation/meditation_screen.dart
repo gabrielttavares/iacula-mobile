@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
+import '../../leituras/presentation/pages/leituras_home_page.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
@@ -58,6 +59,16 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
                     Text(
                       'Escolha um caminho mais concreto para rezar agora.',
                       style: context.textStyles.secondary,
+                    ),
+                    const SizedBox(height: IaculaSpacing.md),
+                    _LeiturasEntryCard(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const LeiturasHomePage(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -325,6 +336,58 @@ class _MeditationGridCard extends StatelessWidget {
                 if (item.availability.kind == MeditationAvailabilityKind.daily)
                   const _Badge(text: 'Diário'),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LeiturasEntryCard extends StatelessWidget {
+  const _LeiturasEntryCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return IaculaTouchableCard(
+      onTap: onTap,
+      child: IaculaSoftCard(
+        showShadow: true,
+        child: Row(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF9500).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(
+                CupertinoIcons.book_solid,
+                color: Color(0xFFFF9500),
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: IaculaSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Leituras', style: context.textStyles.cardTitle),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Aprofunde a oração com autores e santos.',
+                    style: context.textStyles.secondary,
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              CupertinoIcons.chevron_right,
+              color: context.colors.textSecondary,
+              size: 18,
             ),
           ],
         ),

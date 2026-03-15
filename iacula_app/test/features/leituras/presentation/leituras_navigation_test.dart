@@ -132,7 +132,7 @@ void main() {
     expect(find.text('Leituras'), findsAtLeastNWidgets(1));
     expect(
       find.text(
-        'A biblioteca reúne os melhores livros de autores e Santos renomados da espiritualidade meditativa e prática.',
+        'Autores e Santos renomados da espiritualidade meditativa e prática.',
       ),
       findsOneWidget,
     );

@@ -6,7 +6,7 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../../bible/presentation/bible_books_screen.dart';
 import '../../journal/presentation/journal_editor_screen.dart';
 import '../../journal_prompts/domain/entities/journal_prompt.dart';
-import '../../leituras/presentation/pages/leituras_home_page.dart';
+import 'meditation_screen.dart';
 
 class JournalPromptDetailScreen extends StatelessWidget {
   const JournalPromptDetailScreen({super.key, required this.prompt});
@@ -77,7 +77,7 @@ class JournalPromptDetailScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(
-                      builder: (_) => const LeiturasHomePage(),
+                      builder: (_) => const MeditationScreen(),
                     ),
                   );
                 },

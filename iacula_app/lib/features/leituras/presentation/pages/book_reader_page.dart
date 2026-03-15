@@ -5,10 +5,11 @@ import '../../../../core/di/providers.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../premium/domain/entities/premium_feature.dart';
 import '../../../premium/presentation/premium_gate.dart';
+import '../../../reading/application/leituras_reading_document_mapper.dart';
+import '../../../reading/domain/entities/reading_text_block.dart';
+import '../../../reading/presentation/widgets/reading_document_view.dart';
 import '../../data/models/book_model.dart';
 import '../../data/models/chapter_model.dart';
-import '../../data/models/reading_point_model.dart';
-import '../widgets/reading_paragraph.dart';
 
 final _bookProvider = FutureProvider.family<BookModel?, String>((
   ref,
@@ -51,35 +52,6 @@ class _BookReaderPageState extends ConsumerState<BookReaderPage> {
       backgroundColor: context.colors.background,
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.chapterSlug == null ? 'Capítulos' : readingTitle),
-        trailing: widget.chapterSlug == null
-            ? null
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(28, 28),
-                    onPressed: () {
-                      setState(() {
-                        _fontSize = ((_fontSize - 1).clamp(14, 24) as num)
-                            .toDouble();
-                      });
-                    },
-                    child: const Text('A-'),
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(28, 28),
-                    onPressed: () {
-                      setState(() {
-                        _fontSize = ((_fontSize + 1).clamp(14, 24) as num)
-                            .toDouble();
-                      });
-                    },
-                    child: const Text('A+'),
-                  ),
-                ],
-              ),
       ),
       child: PremiumGate(
         feature: PremiumFeature.leituras,
@@ -87,6 +59,16 @@ class _BookReaderPageState extends ConsumerState<BookReaderPage> {
           bookId: widget.bookId,
           chapterSlug: widget.chapterSlug,
           fontSize: _fontSize,
+          onDecreaseFont: () {
+            setState(() {
+              _fontSize = (_fontSize - 1).clamp(14, 24).toDouble();
+            });
+          },
+          onIncreaseFont: () {
+            setState(() {
+              _fontSize = (_fontSize + 1).clamp(14, 24).toDouble();
+            });
+          },
         ),
       ),
     );
@@ -98,11 +80,15 @@ class _UnlockedBookReaderBody extends ConsumerWidget {
     required this.bookId,
     required this.chapterSlug,
     required this.fontSize,
+    required this.onDecreaseFont,
+    required this.onIncreaseFont,
   });
 
   final String bookId;
   final String? chapterSlug;
   final double fontSize;
+  final VoidCallback onDecreaseFont;
+  final VoidCallback onIncreaseFont;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -113,6 +99,8 @@ class _UnlockedBookReaderBody extends ConsumerWidget {
               bookId: bookId,
               chapterSlug: chapterSlug!,
               fontSize: fontSize,
+              onDecreaseFont: onDecreaseFont,
+              onIncreaseFont: onIncreaseFont,
             ),
     );
   }
@@ -205,11 +193,15 @@ class _ReaderView extends ConsumerWidget {
     required this.bookId,
     required this.chapterSlug,
     required this.fontSize,
+    required this.onDecreaseFont,
+    required this.onIncreaseFont,
   });
 
   final String bookId;
   final String chapterSlug;
   final double fontSize;
+  final VoidCallback onDecreaseFont;
+  final VoidCallback onIncreaseFont;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -235,45 +227,27 @@ class _ReaderView extends ConsumerWidget {
           );
         }
 
-        final readingBlocks = _toReadingBlocks(chapter);
-        return ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(
-            IaculaSpacing.md,
-            IaculaSpacing.md,
-            IaculaSpacing.md,
-            IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+        return ReadingDocumentView(
+          document: mapLeiturasChapterToReadingDocument(
+            bookId: bookId,
+            chapter: chapter,
           ),
-          itemCount: readingBlocks.length + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: IaculaSpacing.lg),
-                child: Text(
-                  chapter.title,
-                  style: context.textStyles.sectionTitle,
-                ),
-              );
-            }
-
-            final point = readingBlocks[index - 1];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: IaculaSpacing.lg),
-              child: ReadingParagraph(point: point, fontSize: fontSize),
-            );
+          fontSize: fontSize,
+          onDecreaseFont: onDecreaseFont,
+          onIncreaseFont: onIncreaseFont,
+          styleBuilder: (context, block, fontSize) {
+            return switch (block.type) {
+              ReadingTextBlockType.title => context.textStyles.sectionTitle
+                  .copyWith(fontSize: fontSize + 6),
+              ReadingTextBlockType.heading => context.textStyles.cardTitle
+                  .copyWith(fontSize: fontSize + 1),
+              _ => context.textStyles.readingBody.copyWith(
+                fontSize: fontSize,
+              ),
+            };
           },
         );
       },
     );
-  }
-
-  List<ReadingPointModel> _toReadingBlocks(ChapterModel chapter) {
-    if (chapter.sections.isNotEmpty) {
-      return chapter.sections;
-    }
-    if (chapter.paragraphs.isEmpty) {
-      return const <ReadingPointModel>[];
-    }
-    return [ReadingPointModel(paragraphs: chapter.paragraphs)];
   }
 }

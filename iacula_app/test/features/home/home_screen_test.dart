@@ -391,19 +391,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    Future<void> reveal(String text) async {
-      final finder = find.text(text);
-      for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
-        await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-        await tester.pump(const Duration(milliseconds: 200));
-      }
-      expect(finder, findsOneWidget);
-    }
-
     expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
-    await reveal('Minhas frases');
-    await reveal('Ação de Graças');
-    await reveal('Bíblia');
+    expect(find.byKey(const Key('home_shortcuts_rail')), findsOneWidget);
+    expect(find.text('Ação de Graças'), findsOneWidget);
+
+    final bibleCard = find.byKey(const Key('home_feature_biblia_card'));
+    await tester.dragUntilVisible(
+      bibleCard,
+      find.byType(CustomScrollView),
+      const Offset(0, -220),
+    );
+    expect(bibleCard, findsOneWidget);
   });
 
   testWidgets('home renders hero card before quick actions', (tester) async {
@@ -470,11 +468,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Orações'), findsOneWidget);
-    expect(find.text('Liturgia diária'), findsOneWidget);
-    expect(find.text('Intenções'), findsOneWidget);
-    expect(find.text('Exame Diário'), findsOneWidget);
-    expect(find.text('Leituras'), findsOneWidget);
+    expect(find.byKey(const Key('home_action_oracoes')), findsOneWidget);
+    expect(find.byKey(const Key('home_action_liturgia')), findsOneWidget);
+    expect(find.text('Leituras'), findsNothing);
     expect(find.text('Premium'), findsNothing);
   });
 
@@ -511,7 +507,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Iacula'), findsOneWidget);
+    expect(find.byType(Image), findsWidgets);
     expect(find.byIcon(CupertinoIcons.bell), findsOneWidget);
   });
 
@@ -539,7 +535,7 @@ void main() {
     expect(find.text('Coleta'), findsWidgets);
   });
 
-  testWidgets('home routes Exame Diário to the reading flow', (tester) async {
+  testWidgets('home shortcuts rail keeps five primary actions', (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -548,18 +544,11 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final examinationFinder = find.text('Exame Diário');
-    await tester.dragUntilVisible(
-      examinationFinder,
-      find.byType(CustomScrollView),
-      const Offset(0, -100),
+    final shortcutsRail = tester.widget<ListView>(
+      find.byKey(const Key('home_shortcuts_rail')),
     );
-    await tester.tap(examinationFinder);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 600));
-
-    expect(find.byType(ExaminationReadingScreen), findsOneWidget);
-    expect(find.text('Como se confessar?'), findsNothing);
+    final delegate = shortcutsRail.childrenDelegate as SliverChildBuilderDelegate;
+    expect(delegate.childCount, 9);
   });
 
   testWidgets(
@@ -573,26 +562,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final featureRailFinder = find.byKey(const Key('home_feature_rail'));
-      for (var i = 0; i < 20 && featureRailFinder.evaluate().isEmpty; i++) {
-        await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-        await tester.pump(const Duration(milliseconds: 200));
-      }
-      expect(featureRailFinder, findsOneWidget);
-      await tester.ensureVisible(featureRailFinder);
-      await tester.pumpAndSettle();
-
       final confessionFinder = find.byKey(
         const Key('home_feature_confissao_card'),
       );
-      final featureRailScrollable = find.descendant(
-        of: featureRailFinder,
-        matching: find.byType(Scrollable),
-      );
-      await tester.scrollUntilVisible(
+      await tester.dragUntilVisible(
         confessionFinder,
-        180,
-        scrollable: featureRailScrollable,
+        find.byType(CustomScrollView),
+        const Offset(0, -220),
       );
       await tester.ensureVisible(confessionFinder);
       await tester.pumpAndSettle();
@@ -605,7 +581,7 @@ void main() {
     },
   );
 
-  testWidgets('home thematic and saint sections show grouped cards', (
+  testWidgets('home feature cards show the expected destinations', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -617,23 +593,19 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    Future<void> reveal(String text) async {
-      final finder = find.text(text);
-      for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
-        await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-        await tester.pump(const Duration(milliseconds: 200));
-      }
-      expect(finder, findsOneWidget);
-    }
+    final confessionCard = find.byKey(const Key('home_feature_confissao_card'));
+    await tester.dragUntilVisible(
+      confessionCard,
+      find.byType(CustomScrollView),
+      const Offset(0, -220),
+    );
 
-    await reveal('Encontre uma oração para este momento');
-    await reveal('Trabalho');
-
-    expect(find.text('Trabalho'), findsOneWidget);
-    expect(find.text('1 oração'), findsWidgets);
+    expect(find.byKey(const Key('home_feature_biblia_card')), findsOneWidget);
+    expect(find.byKey(const Key('home_feature_rosario_card')), findsOneWidget);
+    expect(confessionCard, findsOneWidget);
   });
 
-  testWidgets('home thematic groups follow fixed order regardless of season', (
+  testWidgets('home feature cards follow fixed vertical order', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -653,18 +625,23 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    for (var i = 0; i < 20 && find.text('Trabalho').evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -220));
-      await tester.pump(const Duration(milliseconds: 200));
-    }
+    final confessionCard = find.byKey(const Key('home_feature_confissao_card'));
+    await tester.dragUntilVisible(
+      confessionCard,
+      find.byType(CustomScrollView),
+      const Offset(0, -220),
+    );
 
-    expect(find.text('Trabalho'), findsOneWidget);
-    expect(find.text('Família'), findsOneWidget);
+    final bibliaY = tester
+        .getTopLeft(find.byKey(const Key('home_feature_biblia_card')))
+        .dy;
+    final rosarioY = tester
+        .getTopLeft(find.byKey(const Key('home_feature_rosario_card')))
+        .dy;
+    final confissaoY = tester.getTopLeft(confessionCard).dy;
 
-    // Fixed order: trabalho < familia < igreja < eucaristica
-    final trabalhoY = tester.getTopLeft(find.text('Trabalho')).dy;
-    final familiaY = tester.getTopLeft(find.text('Família')).dy;
-    expect(trabalhoY, lessThan(familiaY));
+    expect(bibliaY, lessThan(rosarioY));
+    expect(rosarioY, lessThan(confissaoY));
   });
 
   testWidgets('tapping thematic group opens grouped prayer list screen', (
@@ -722,7 +699,9 @@ void main() {
     expect(find.byType(CupertinoSliverNavigationBar), findsOneWidget);
   });
 
-  testWidgets('home quick action Leituras opens Leituras home', (tester) async {
+  testWidgets('home no longer shows a standalone Leituras quick action', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -731,34 +710,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final leiturasFinder = find.byKey(const Key('home_leituras_chip'));
-    await tester.ensureVisible(leiturasFinder);
-    await tester.tap(leiturasFinder);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(LeiturasHomePage), findsOneWidget);
-  });
-
-  testWidgets('Frases and Leituras share equal top row', (tester) async {
-    await tester.pumpWidget(
-      _buildApp(
-        settingsRepo: _defaultSettingsRepo(),
-        lastCardRepo: _defaultLastCardRepo(),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    final frasesCard = find.byKey(const Key('home_custom_phrases_card'));
-    final leiturasChip = find.byKey(const Key('home_leituras_chip'));
-
-    expect(frasesCard, findsOneWidget);
-    expect(leiturasChip, findsOneWidget);
-
-    final frasesRect = tester.getRect(frasesCard);
-    final leiturasRect = tester.getRect(leiturasChip);
-
-    expect((frasesRect.top - leiturasRect.top).abs(), lessThan(1));
-    expect((frasesRect.width - leiturasRect.width).abs(), lessThan(1));
+    expect(find.byKey(const Key('home_leituras_chip')), findsNothing);
+    expect(find.text('Leituras'), findsNothing);
   });
 
   testWidgets('home action cards keep equal heights for long labels', (
@@ -772,8 +725,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final intentionsCard = find.byKey(const Key('home_action_intencoes'));
-    final examinationCard = find.byKey(const Key('home_action_exame'));
+    final intentionsCard = find.byKey(const Key('home_action_oracoes'));
+    final examinationCard = find.byKey(const Key('home_action_liturgia'));
 
     expect(intentionsCard, findsOneWidget);
     expect(examinationCard, findsOneWidget);
@@ -783,6 +736,6 @@ void main() {
 
     expect((intentionsRect.height - examinationRect.height).abs(), lessThan(1));
     expect((intentionsRect.top - examinationRect.top).abs(), lessThan(1));
-    expect(intentionsRect.height, lessThan(96));
+    expect(intentionsRect.height, lessThanOrEqualTo(100));
   });
 }

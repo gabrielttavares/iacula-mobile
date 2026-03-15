@@ -67,8 +67,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Editar').first);
-    await tester.pumpAndSettle();
-    expect(find.text('Seu nome'), findsOneWidget);
+    expect(find.text('Faça login para ver seu perfil.'), findsOneWidget);
+    expect(find.text('Editar'), findsNothing);
   });
 }

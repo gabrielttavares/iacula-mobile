@@ -22,9 +22,11 @@ final _liturgyPeriodProvider =
 enum _LiturgySegment { prayers, readings, antiphons }
 
 class LiturgiaScreen extends ConsumerStatefulWidget {
-  const LiturgiaScreen({super.key});
+  const LiturgiaScreen({super.key, this.initialDate});
 
   static const routeName = '/liturgia-diaria';
+
+  final DateTime? initialDate;
 
   @override
   ConsumerState<LiturgiaScreen> createState() => _LiturgiaScreenState();
@@ -38,7 +40,7 @@ class _LiturgiaScreenState extends ConsumerState<LiturgiaScreen> {
   @override
   void initState() {
     super.initState();
-    final today = DateTime.now();
+    final today = widget.initialDate ?? DateTime.now();
     _selectedDate = DateTime(today.year, today.month, today.day);
     _anchorDate = _selectedDate;
   }

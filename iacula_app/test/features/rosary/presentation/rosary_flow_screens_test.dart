@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/rosary/domain/entities/rosary_mystery_set.dart';
 import 'package:iacula_app/features/rosary/presentation/rosary_completion_screen.dart';
@@ -95,32 +96,28 @@ void main() {
     expect(find.text('Mistérios Luminosos'), findsOneWidget);
   });
 
-  testWidgets('completion reveals stats after salve text tap', (tester) async {
+  testWidgets('completion can finish from the decision screen', (tester) async {
     var doneTapped = false;
 
     await tester.pumpWidget(
-      CupertinoApp(
-        home: RosaryCompletionScreen(
-          mysteryImagePath:
-              'assets/seed/rosary/images/joyful_5_finding_temple.jpg',
-          elapsed: const Duration(minutes: 18),
-          streakCount: 7,
-          onDone: () {
-            doneTapped = true;
-          },
+      ProviderScope(
+        child: CupertinoApp(
+          home: RosaryCompletionScreen(
+            mysteryImagePath:
+                'assets/seed/rosary/images/joyful_5_finding_temple.jpg',
+            elapsed: const Duration(minutes: 18),
+            streakCount: 7,
+            onDone: () {
+              doneTapped = true;
+            },
+          ),
         ),
       ),
     );
 
-    expect(find.textContaining('Salve Rainha'), findsOneWidget);
+    expect(find.text('5º mistério concluído'), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('rosary-completion-salve')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
-
-    expect(find.text('Rosario completo'), findsOneWidget);
-
-    await tester.tap(find.text('Concluido'));
+    await tester.tap(find.text('Encerrar rosário'));
     await tester.pump();
     expect(doneTapped, isTrue);
   });

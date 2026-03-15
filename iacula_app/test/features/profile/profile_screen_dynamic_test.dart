@@ -16,7 +16,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Sem conta'), findsOneWidget);
+    expect(find.text('Faça login para ver seu perfil.'), findsOneWidget);
     expect(find.text('Pedro Gabriel'), findsNothing);
   });
 
