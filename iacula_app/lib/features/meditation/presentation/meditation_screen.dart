@@ -9,7 +9,6 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_large_title.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
-import '../../../core/presentation/widgets/iacula_spring_button.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/meditation_item.dart';
@@ -23,8 +22,6 @@ class MeditationScreen extends ConsumerStatefulWidget {
 }
 
 class _MeditationScreenState extends ConsumerState<MeditationScreen> {
-  _MeditationFilter _selectedFilter = _MeditationFilter.all;
-
   @override
   Widget build(BuildContext context) {
     return _buildContent(context);
@@ -75,21 +72,6 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
               ),
             ),
           ),
-          /* SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
-              child: Column(
-                children: [
-                  _FilterChips(
-                    filters: _MeditationFilter.values,
-                    selected: _selectedFilter,
-                    onSelected: (f) => setState(() => _selectedFilter = f),
-                  ),
-                  const SizedBox(height: IaculaSpacing.md),
-                ],
-              ),
-            ),
-          ), */
           ...catalogAsync.when(
             data: (items) {
               final textItems = items
@@ -98,14 +80,12 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
               return _buildSliverFeed(context, textItems);
             },
             loading: () => [
-              SliverPadding(
-                padding: const EdgeInsets.all(IaculaSpacing.md),
+              const SliverPadding(
+                padding: EdgeInsets.all(IaculaSpacing.md),
                 sliver: SliverToBoxAdapter(
                   child: Column(
-                    children: const [
-                      IaculaShimmerCard(height: 280),
-                      SizedBox(height: IaculaSpacing.md),
-                      IaculaShimmerList(itemCount: 3),
+                    children: [
+                      IaculaShimmerList(itemCount: 5),
                     ],
                   ),
                 ),
@@ -127,17 +107,6 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
     );
   }
 
-  List<MeditationItem> _applyFilter(List<MeditationItem> items) {
-    if (_selectedFilter == _MeditationFilter.all) return items;
-    final tags = _selectedFilter.tags;
-    return items
-        .where(
-          (item) =>
-              item.categoryTags.any((tag) => tags.contains(tag.toLowerCase())),
-        )
-        .toList(growable: false);
-  }
-
   List<Widget> _buildSliverFeed(
     BuildContext context,
     List<MeditationItem> items,
@@ -147,7 +116,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
         SliverFillRemaining(
           child: Center(
             child: Text(
-              'Não encontramos meditações para este caminho. Tente outro filtro.',
+              'Não encontramos meditações para este caminho.',
               style: context.textStyles.secondary,
             ),
           ),
@@ -155,51 +124,30 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
       ];
     }
 
-    final heroAdapter = SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
-        child: _MeditationHeroCard(
-          item: items.first,
-          onTap: () => _openMeditationDetail(context, items.first),
+    return [
+      SliverPadding(
+        padding: EdgeInsets.only(
+          left: IaculaSpacing.md,
+          right: IaculaSpacing.md,
+          bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+        ),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final item = items[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _MeditationListCard(
+                  item: item,
+                  onTap: () => _openMeditationDetail(context, item),
+                ),
+              );
+            },
+            childCount: items.length,
+          ),
         ),
       ),
-    );
-
-    final library = items.skip(1).toList(growable: false);
-
-    final slivers = <Widget>[heroAdapter];
-    if (items.length == 1) return slivers;
-
-    if (library.isEmpty) {
-      return slivers;
-    }
-
-    final librarySliverPadding = SliverPadding(
-      padding: EdgeInsets.only(
-        top: 16,
-        left: IaculaSpacing.md,
-        right: IaculaSpacing.md,
-        bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
-      ),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 0.8,
-        ),
-        delegate: SliverChildBuilderDelegate((context, index) {
-          final item = library[index];
-          return _MeditationGridCard(
-            item: item,
-            onTap: () => _openMeditationDetail(context, item),
-          );
-        }, childCount: library.length),
-      ),
-    );
-
-    slivers.add(librarySliverPadding);
-    return slivers;
+    ];
   }
 
   Future<bool> _canOpenMeditation() async {
@@ -223,79 +171,8 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
   }
 }
 
-enum _MeditationFilter {
-  all('Todos', <String>[]),
-  silence('Silêncio e presença de Deus', <String>[
-    'espiritual',
-    'contemplacao',
-    'silencio',
-  ]),
-  gospel('Evangelho do dia', <String>['evangelho']),
-  examen('Exame e revisão do dia', <String>['diario', 'exame']),
-  dailyRhythm('Ritmo de oração diário', <String>['foco', 'manha', 'noite']);
-
-  const _MeditationFilter(this.label, this.tags);
-
-  final String label;
-  final List<String> tags;
-}
-
-class _FilterChips extends StatelessWidget {
-  const _FilterChips({
-    required this.filters,
-    required this.selected,
-    required this.onSelected,
-  });
-
-  final List<_MeditationFilter> filters;
-  final _MeditationFilter selected;
-  final ValueChanged<_MeditationFilter> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 36,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: filters.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final filter = filters[index];
-          final isSelected = filter == selected;
-          return IaculaSpringButton(
-            scaleFactor: 0.92,
-            onTap: () => onSelected(filter),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? context.colors.primaryButton
-                    : context.colors.card,
-                borderRadius: BorderRadius.circular(18),
-                border: isSelected
-                    ? null
-                    : Border.all(color: const Color(0xFFD1D1D6)),
-              ),
-              child: Text(
-                filter.label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected
-                      ? context.colors.background
-                      : context.colors.textPrimary,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _MeditationGridCard extends StatelessWidget {
-  const _MeditationGridCard({required this.item, required this.onTap});
+class _MeditationListCard extends StatelessWidget {
+  const _MeditationListCard({required this.item, required this.onTap});
 
   final MeditationItem item;
   final VoidCallback onTap;
@@ -306,36 +183,35 @@ class _MeditationGridCard extends StatelessWidget {
       onTap: onTap,
       child: IaculaSoftCard(
         showShadow: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            _TypeGlyph(type: item.type, size: 32, iconSize: 16),
-            const SizedBox(height: 12),
-            Text(
-              item.title,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: context.textStyles.cardTitle,
-            ),
-            const SizedBox(height: 4),
+            _TypeGlyph(type: item.type, size: 52, iconSize: 24),
+            const SizedBox(width: IaculaSpacing.md),
             Expanded(
-              child: Text(
-                item.summary,
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
-                style: context.textStyles.secondary,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    style: context.textStyles.cardTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    item.summary,
+                    style: context.textStyles.secondary,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                if (item.durationLabel != null)
-                  _Badge(text: item.durationLabel!),
-                if (item.availability.kind == MeditationAvailabilityKind.daily)
-                  const _Badge(text: 'Diário'),
-              ],
+            const SizedBox(width: 8),
+            Icon(
+              CupertinoIcons.chevron_right,
+              color: context.colors.textSecondary,
+              size: 18,
             ),
           ],
         ),
@@ -422,166 +298,9 @@ class _TypeGlyph extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Icon(icon, color: color, size: iconSize),
-    );
-  }
-}
-
-BoxDecoration _getGradientForType(MeditationType type, BuildContext context) {
-  final LinearGradient gradient = switch (type) {
-    MeditationType.video => const LinearGradient(
-      colors: [Color(0xFF673AB7), Color(0xFFE91E63)], // Deep Purple to Magenta
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    MeditationType.audio => const LinearGradient(
-      colors: [Color(0xFF0D47A1), Color(0xFF00BCD4)], // Deep Blue to Cyan
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    MeditationType.text => const LinearGradient(
-      colors: [Color(0xFFE64A19), Color(0xFFFFEB3B)], // Deep Orange to Yellow
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-  };
-
-  return BoxDecoration(gradient: gradient);
-}
-
-class _Badge extends StatelessWidget {
-  const _Badge({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: context.colors.textPrimary,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: context.colors.background,
-        ),
-      ),
-    );
-  }
-}
-
-class _MeditationHeroCard extends StatelessWidget {
-  const _MeditationHeroCard({required this.item, required this.onTap});
-
-  final MeditationItem item;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final icon = switch (item.type) {
-      MeditationType.video => CupertinoIcons.play_circle_fill,
-      MeditationType.audio => CupertinoIcons.waveform,
-      MeditationType.text => CupertinoIcons.doc_text_fill,
-    };
-
-    return IaculaTouchableCard(
-      onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Container(
-          height: 280,
-          decoration: _getGradientForType(
-            item.type,
-            context,
-          ).copyWith(borderRadius: BorderRadius.circular(24)),
-          child: Stack(
-            children: [
-              Positioned(
-                bottom: -20,
-                right: -20,
-                child: Icon(
-                  icon,
-                  color: const Color(0xFFFFFFFF).withValues(alpha: 0.1),
-                  size: 160,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        _HeroBadge(text: item.sourceName),
-                        if (item.durationLabel != null)
-                          _HeroBadge(text: item.durationLabel!),
-                        if (item.availability.kind ==
-                            MeditationAvailabilityKind.daily)
-                          const _HeroBadge(text: 'Diário'),
-                      ],
-                    ),
-                    const Spacer(),
-                    Text(
-                      item.title,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color(0xFFFFFFFF),
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        height: 1.1,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      item.summary,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: const Color(0xFFFFFFFF).withValues(alpha: 0.7),
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _HeroBadge extends StatelessWidget {
-  const _HeroBadge({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF000000),
-        ),
-      ),
     );
   }
 }
