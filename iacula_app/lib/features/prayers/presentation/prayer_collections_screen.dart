@@ -7,7 +7,6 @@ import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../doctrina/presentation/doctrine_collections_screen.dart';
 import '../../home/presentation/home_prayer_groups.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
 import 'prayer_catalog_group_screen.dart';
@@ -33,13 +32,11 @@ const _sectionOrder = [
   'oracoes-diversas',
   'outras-devocoes',
   'oracoes-pelos-defuntos',
-  'formulas-doutrina-catolica',
   'homilia-rumo-santidade',
 ];
 
 // Seções que fazem parte de "Recursos Adicionais"
 const _recursosAdicionaisSections = [
-  'formulas-doutrina-catolica',
   'homilia-rumo-santidade',
 ];
 
@@ -80,18 +77,6 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                       ),
                     );
                   }
-                },
-              ),
-              const SizedBox(height: IaculaSpacing.sm),
-              _PrayerCategoryCard(
-                title: 'Doutrina Católica',
-                icon: CupertinoIcons.lightbulb,
-                onTap: () {
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (_) => const DoctrineCollectionsScreen(),
-                    ),
-                  );
                 },
               ),
               const SizedBox(height: IaculaSpacing.lg),

@@ -243,10 +243,6 @@ final remoteMeditationReaderServiceProvider =
       );
     });
 
-final doctrineRepositoryProvider = Provider<DoctrineRepository>((ref) {
-  return AssetDoctrineRepository();
-});
-
 final leituraLocalSourceProvider = Provider<LeituraLocalSource>((ref) {
   return LeituraLocalSource();
 });
@@ -261,18 +257,6 @@ final appSearchServiceProvider = Provider<AppSearchService>((ref) {
     meditationCatalogRepository: ref.watch(meditationCatalogRepositoryProvider),
     leituraRepository: ref.watch(leituraRepositoryProvider),
     quoteContentRepository: ref.watch(quoteContentRepositoryProvider),
-  );
-});
-
-final doctrineCatalogProvider = FutureProvider<List<DoctrineEntry>>((ref) {
-  return ref.watch(doctrineRepositoryProvider).listCatalog(language: 'pt-br');
-});
-
-final getDoctrineCatalogUseCaseProvider = Provider<GetDoctrineCatalogUseCase>((
-  ref,
-) {
-  return GetDoctrineCatalogUseCase(
-    repository: ref.watch(doctrineRepositoryProvider),
   );
 });
 
