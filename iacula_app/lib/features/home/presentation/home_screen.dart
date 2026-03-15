@@ -445,9 +445,6 @@ class _DailyPrayerList extends ConsumerWidget {
         if (entry == null) return const SizedBox.shrink();
         return ImageBackgroundCard(
           title: entry.title,
-          subtitle: entry.content.length > 60
-              ? '${entry.content.substring(0, 60)}...'
-              : entry.content,
           onTap: () => Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (_) => PrayerCatalogDetailScreen(entry: entry),
