@@ -75,7 +75,7 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
               ),
             ),
           ),
-          SliverToBoxAdapter(
+          /* SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: IaculaSpacing.md),
               child: Column(
@@ -89,13 +89,13 @@ class _MeditationScreenState extends ConsumerState<MeditationScreen> {
                 ],
               ),
             ),
-          ),
+          ), */
           ...catalogAsync.when(
             data: (items) {
               final textItems = items
                   .where((item) => item.type == MeditationType.text)
                   .toList(growable: false);
-              return _buildSliverFeed(context, _applyFilter(textItems));
+              return _buildSliverFeed(context, textItems);
             },
             loading: () => [
               SliverPadding(
