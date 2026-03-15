@@ -203,6 +203,8 @@ final notificationSchedulerRepositoryProvider =
       return InMemoryNotificationSchedulerRepository();
     });
 
+final notificationPermissionProvider = StateProvider<bool>((ref) => true);
+
 final lastDeliveredCardRepositoryProvider =
     Provider<LastDeliveredCardRepository>((ref) {
       return InMemoryLastDeliveredCardRepository();

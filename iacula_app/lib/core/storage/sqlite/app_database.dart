@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 7,
+      version: 8,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -43,7 +43,8 @@ final class AppDatabase {
             display_name TEXT,
             prayer_font_size REAL NOT NULL DEFAULT 15.0,
             theme_mode TEXT NOT NULL DEFAULT 'dark',
-            escriva_points_feed_enabled INTEGER NOT NULL DEFAULT 0
+            escriva_points_feed_enabled INTEGER NOT NULL DEFAULT 0,
+            notifications_enabled INTEGER NOT NULL DEFAULT 1
           )
         ''');
 
@@ -71,7 +72,9 @@ final class AppDatabase {
             image_path TEXT,
             feast TEXT,
             feast_name TEXT,
-            delivered_at TEXT NOT NULL
+            delivered_at TEXT NOT NULL,
+            source TEXT,
+            reference_label TEXT
           )
         ''');
       },
@@ -114,6 +117,17 @@ final class AppDatabase {
         if (oldVersion < 7) {
           await db.execute(
             'ALTER TABLE settings ADD COLUMN escriva_points_feed_enabled INTEGER NOT NULL DEFAULT 0',
+          );
+        }
+        if (oldVersion < 8) {
+          await db.execute(
+            'ALTER TABLE settings ADD COLUMN notifications_enabled INTEGER NOT NULL DEFAULT 1',
+          );
+          await db.execute(
+            'ALTER TABLE last_delivered_card ADD COLUMN source TEXT',
+          );
+          await db.execute(
+            'ALTER TABLE last_delivered_card ADD COLUMN reference_label TEXT',
           );
         }
       },

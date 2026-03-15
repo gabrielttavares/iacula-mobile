@@ -44,7 +44,7 @@ final class ScheduleCoreRemindersUseCase {
         quoteScheduleIdBase + i,
         ReminderEvent(
           type: ReminderEventType.quoteInterval,
-          title: '',
+          title: 'Iacula',
           body: quote.text,
           scheduledAt: quoteAt,
           withVibration: true,

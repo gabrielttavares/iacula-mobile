@@ -10,6 +10,8 @@ final class LastDeliveredCard {
     this.imagePath,
     this.feast,
     this.feastName,
+    this.source,
+    this.referenceLabel,
   });
 
   final String quoteText;
@@ -19,6 +21,8 @@ final class LastDeliveredCard {
   final String? imagePath;
   final String? feast;
   final String? feastName;
+  final String? source;
+  final String? referenceLabel;
 
   Quote toQuote() {
     return Quote(
@@ -29,6 +33,8 @@ final class LastDeliveredCard {
       imagePath: imagePath,
       feast: feast,
       feastName: feastName,
+      source: _parseSource(source),
+      referenceLabel: referenceLabel,
     );
   }
 
@@ -41,6 +47,8 @@ final class LastDeliveredCard {
       imagePath: quote.imagePath,
       feast: quote.feast,
       feastName: quote.feastName,
+      source: quote.resolvedSource.name,
+      referenceLabel: quote.referenceLabel,
     );
   }
 
@@ -48,6 +56,14 @@ final class LastDeliveredCard {
     return LiturgicalSeason.values.firstWhere(
       (season) => season.name == value,
       orElse: () => LiturgicalSeason.ordinary,
+    );
+  }
+
+  static QuoteSource _parseSource(String? value) {
+    if (value == null) return QuoteSource.liturgical;
+    return QuoteSource.values.firstWhere(
+      (s) => s.name == value,
+      orElse: () => QuoteSource.liturgical,
     );
   }
 }

@@ -30,7 +30,11 @@ final class LocalNotificationSchedulerRepository
   @override
   Stream<NotificationActionEvent> get actions => _controller.stream;
 
-  Future<void> initialize() async {
+  bool _permissionGranted = false;
+
+  bool get permissionGranted => _permissionGranted;
+
+  Future<bool> initialize() async {
     _singleton = this;
     tzdata.initializeTimeZones();
 
@@ -48,13 +52,67 @@ final class LocalNotificationSchedulerRepository
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >();
-    await androidImpl?.requestNotificationsPermission();
+    final androidGranted =
+        await androidImpl?.requestNotificationsPermission() ?? true;
 
     final iosImpl = _plugin
         .resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin
         >();
-    await iosImpl?.requestPermissions(alert: true, badge: true, sound: true);
+    final iosGranted =
+        await iosImpl?.requestPermissions(alert: true, badge: true, sound: true) ?? true;
+
+    _permissionGranted = androidGranted && iosGranted;
+    return _permissionGranted;
+  }
+
+  Future<bool> checkPermission() async {
+    final androidImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (androidImpl != null) {
+      _permissionGranted =
+          await androidImpl.areNotificationsEnabled() ?? false;
+      return _permissionGranted;
+    }
+
+    // iOS: re-check by attempting request (returns current state if already decided)
+    final iosImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
+    if (iosImpl != null) {
+      _permissionGranted =
+          await iosImpl.requestPermissions(alert: true, badge: true, sound: true) ?? false;
+      return _permissionGranted;
+    }
+
+    return _permissionGranted;
+  }
+
+  Future<bool> requestPermission() async {
+    final androidImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (androidImpl != null) {
+      _permissionGranted =
+          await androidImpl.requestNotificationsPermission() ?? false;
+      return _permissionGranted;
+    }
+
+    final iosImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
+    if (iosImpl != null) {
+      _permissionGranted =
+          await iosImpl.requestPermissions(alert: true, badge: true, sound: true) ?? false;
+      return _permissionGranted;
+    }
+
+    return _permissionGranted;
   }
 
   static void handleNotificationResponse(NotificationResponse response) {

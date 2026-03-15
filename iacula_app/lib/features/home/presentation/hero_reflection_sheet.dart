@@ -26,6 +26,12 @@ final class HeroReflectionSheet {
         'Ajudam a prolongar no dia a dia a alegria do Deus que se fez próximo.',
   };
 
+  static const _notificationExplainer =
+      'O Iacula envia-te este conteúdo como notificação, no intervalo que escolheste. '
+      'A cada notificação recebes uma jaculatória diferente, para que voltes a Deus '
+      'durante o dia sem interromper o que estás a fazer.\n\n'
+      'Podes alterar a frequência em Configurações > Notificações.';
+
   static const _exclusivityBody =
       'O Iacula foi pensado para ajudar você a manter viva a oração breve no meio '
       'das tarefas normais do dia. Uma jaculatória, um versículo, um lembrete discreto '
@@ -64,6 +70,16 @@ class _HeroReflectionContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Text(
+            'Como funcionam as notificações',
+            style: context.textStyles.sectionTitle,
+          ),
+          const SizedBox(height: IaculaSpacing.sm),
+          Text(
+            HeroReflectionSheet._notificationExplainer,
+            style: context.textStyles.secondary,
+          ),
+          const SizedBox(height: IaculaSpacing.xl),
           Text(
             'Os cards e o tempo litúrgico',
             style: context.textStyles.sectionTitle,

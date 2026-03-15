@@ -19,6 +19,7 @@ final class Settings {
     this.prayerFontSize = 15.0,
     this.themeMode = 'dark',
     this.escrivaPointsFeedEnabled = false,
+    this.notificationsEnabled = true,
   });
 
   final int intervalMinutes;
@@ -40,6 +41,7 @@ final class Settings {
   final double prayerFontSize;
   final String themeMode;
   final bool escrivaPointsFeedEnabled;
+  final bool notificationsEnabled;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -59,6 +61,7 @@ final class Settings {
     onboardingCompleted: false,
     prayerFontSize: 15.0,
     escrivaPointsFeedEnabled: false,
+    notificationsEnabled: true,
   );
 
   Settings copyWith({
@@ -81,6 +84,7 @@ final class Settings {
     double? prayerFontSize,
     String? themeMode,
     bool? escrivaPointsFeedEnabled,
+    bool? notificationsEnabled,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
@@ -105,6 +109,7 @@ final class Settings {
       themeMode: themeMode ?? this.themeMode,
       escrivaPointsFeedEnabled:
           escrivaPointsFeedEnabled ?? this.escrivaPointsFeedEnabled,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
     );
   }
 }

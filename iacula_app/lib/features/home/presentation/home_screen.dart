@@ -97,9 +97,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         );
                       },
-                      child: Icon(
-                        CupertinoIcons.bell,
-                        color: context.colors.textSecondary,
+                      child: _BellIcon(
+                        hasNotifications: ref.watch(
+                          _heroSettingsProvider.select(
+                            (s) => s.valueOrNull?.notificationsEnabled ?? true,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -142,6 +145,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   delegate: SliverChildListDelegate([
                     IaculaStaggerEntrance(
                       children: [
+                        _PermissionBanner(),
                         _HomeHeroSection(
                           isFallback: isFallback,
                           onHeroTap: (quote) =>
@@ -293,17 +297,138 @@ class _HomeHeroSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final quoteAsync = ref.watch(_homeQuoteProvider);
-    return quoteAsync.when(
-      data: (quote) =>
-          HomeHeroCard(quote: quote, isFallback: isFallback, onTap: onHeroTap),
-      loading: () =>
-          const SizedBox(height: 240, child: IaculaShimmerCard(height: 240)),
-      error: (error, stackTrace) => IaculaErrorState(
-        title: 'Não conseguimos abrir a reflexão de agora',
-        message:
-            'Tente novamente em instantes para retomar seu momento de oração.',
-        onRetry: () => ref.invalidate(_homeQuoteProvider),
+    final settingsAsync = ref.watch(_heroSettingsProvider);
+    final intervalMinutes = settingsAsync.valueOrNull?.intervalMinutes ?? 15;
+    final notificationsEnabled =
+        settingsAsync.valueOrNull?.notificationsEnabled ?? true;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        quoteAsync.when(
+          data: (quote) => HomeHeroCard(
+            quote: quote,
+            isFallback: isFallback,
+            onTap: onHeroTap,
+          ),
+          loading: () => const SizedBox(
+            height: 240,
+            child: IaculaShimmerCard(height: 240),
+          ),
+          error: (error, stackTrace) => IaculaErrorState(
+            title: 'Não conseguimos abrir a reflexão de agora',
+            message:
+                'Tente novamente em instantes para retomar seu momento de oração.',
+            onRetry: () => ref.invalidate(_homeQuoteProvider),
+          ),
+        ),
+        if (notificationsEnabled) ...[
+          const SizedBox(height: 8),
+          _NotificationContextLabel(intervalMinutes: intervalMinutes),
+        ],
+      ],
+    );
+  }
+}
+
+class _PermissionBanner extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final permissionGranted = ref.watch(notificationPermissionProvider);
+    final notificationsEnabled = ref.watch(
+      _heroSettingsProvider.select(
+        (s) => s.valueOrNull?.notificationsEnabled ?? true,
       ),
+    );
+
+    if (permissionGranted || !notificationsEnabled) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.all(IaculaSpacing.sm),
+        decoration: BoxDecoration(
+          color: context.colors.warning.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(IaculaRadius.small),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              CupertinoIcons.exclamationmark_triangle_fill,
+              color: context.colors.warning,
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Notificações bloqueadas. Ativa nas Definições do sistema para receberes jaculatórias.',
+                style: context.textStyles.secondary.copyWith(
+                  color: context.colors.textPrimary,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BellIcon extends StatelessWidget {
+  const _BellIcon({required this.hasNotifications});
+
+  final bool hasNotifications;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Icon(
+          CupertinoIcons.bell,
+          color: context.colors.textSecondary,
+        ),
+        if (hasNotifications)
+          Positioned(
+            top: -2,
+            right: -2,
+            child: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: context.colors.primaryButton,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _NotificationContextLabel extends StatelessWidget {
+  const _NotificationContextLabel({required this.intervalMinutes});
+
+  final int intervalMinutes;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(
+          CupertinoIcons.bell,
+          size: 13,
+          color: context.colors.textSecondary,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          'Notificações ativas \u00B7 a cada ${intervalMinutes}min',
+          style: context.textStyles.secondary.copyWith(fontSize: 12),
+        ),
+      ],
     );
   }
 }
@@ -413,6 +538,10 @@ class _RailCard extends StatelessWidget {
     );
   }
 }
+
+final _heroSettingsProvider = FutureProvider((ref) {
+  return ref.watch(getSettingsUseCaseProvider).call();
+});
 
 final _suggestionProvider = FutureProvider<PrayerCatalogEntry?>((ref) async {
   final now = ref.watch(homeNowProvider);

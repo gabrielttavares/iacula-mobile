@@ -16,6 +16,7 @@ import '../../features/liturgical/infrastructure/services/remote_liturgical_seas
 import '../../features/leituras/data/repositories/leitura_repository.dart';
 import '../../features/leituras/data/sources/leitura_local_source.dart';
 import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
+import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
@@ -104,41 +105,44 @@ final class AppBootstrap {
     await _seedMediaCatalog(mediaRepo);
 
     final scheduler = LocalNotificationSchedulerRepository();
-    await scheduler.initialize();
+    final permissionGranted = await scheduler.initialize();
 
     final currentSettings = await settingsRepo.load();
     await scheduler.cancelAll();
 
-    try {
-      await ScheduleCoreRemindersUseCase(
-        scheduler,
-        quoteFetcher: ({required String language, required DateTime now}) {
-          if (currentSettings.escrivaPointsFeedEnabled) {
-            return escrivaPointsUseCase.call(language: language, now: now);
-          }
+    if (currentSettings.notificationsEnabled && permissionGranted) {
+      try {
+        await ScheduleCoreRemindersUseCase(
+          scheduler,
+          quoteFetcher: ({required String language, required DateTime now}) {
+            if (currentSettings.escrivaPointsFeedEnabled) {
+              return escrivaPointsUseCase.call(language: language, now: now);
+            }
 
-          return quoteUseCase.call(language: language, now: now);
-        },
-        lastDeliveredCardRepository: lastDeliveredCardRepo,
-      ).call(currentSettings);
-      await SchedulePhraseNotificationsUseCase(
-        scheduler,
-        localCustomPhraseRepo,
-      ).call();
-    } on PlatformException catch (e, st) {
-      developer.log(
-        'Notification scheduling skipped: ${e.code} ${e.message}',
-        name: 'AppBootstrap',
-        error: e,
-        stackTrace: st,
-      );
-    } catch (e, st) {
-      developer.log(
-        'Notification scheduling failed during bootstrap.',
-        name: 'AppBootstrap',
-        error: e,
-        stackTrace: st,
-      );
+            return quoteUseCase.call(language: language, now: now);
+          },
+          lastDeliveredCardRepository: lastDeliveredCardRepo,
+        ).call(currentSettings);
+        await SchedulePhraseNotificationsUseCase(
+          scheduler,
+          localCustomPhraseRepo,
+        ).call();
+        await ScheduleLiturgyRemindersUseCase(scheduler).call(currentSettings);
+      } on PlatformException catch (e, st) {
+        developer.log(
+          'Notification scheduling skipped: ${e.code} ${e.message}',
+          name: 'AppBootstrap',
+          error: e,
+          stackTrace: st,
+        );
+      } catch (e, st) {
+        developer.log(
+          'Notification scheduling failed during bootstrap.',
+          name: 'AppBootstrap',
+          error: e,
+          stackTrace: st,
+        );
+      }
     }
 
     AuthRepository authRepository = InMemoryAuthRepository();
@@ -253,6 +257,7 @@ final class AppBootstrap {
         liturgicalCacheRepo,
       ),
       notificationSchedulerRepositoryProvider.overrideWithValue(scheduler),
+      notificationPermissionProvider.overrideWith((ref) => permissionGranted),
       httpClientProvider.overrideWithValue(httpClient),
       authRepositoryProvider.overrideWithValue(authRepository),
       syncOrchestratorProvider.overrideWithValue(syncOrchestrator),

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
-import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
@@ -12,6 +11,8 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../../auth/presentation/auth_action_sheet.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
+import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
+import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../premium/domain/entities/premium_feature.dart';
 import '../../premium/presentation/premium_gate.dart';
 import '../domain/entities/settings.dart';
@@ -24,43 +25,44 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  late TextEditingController _intervalController;
-
   String _language = 'pt-br';
   bool _onboardingCompleted = false;
   String _themeMode = 'dark';
+  bool _notificationsEnabled = true;
+  int _intervalMinutes = 15;
+  bool _permissionGranted = true;
 
   bool _loading = true;
   bool _saving = false;
   String? _validationMessage;
 
-  // Kept for backward compat — always use defaults when saving
   late Settings _loadedSettings;
+
+  static const _intervalOptions = [5, 10, 15, 30, 60];
 
   @override
   void initState() {
     super.initState();
-    _intervalController = TextEditingController();
     _load();
   }
 
   Future<void> _load() async {
     final settings = await ref.read(getSettingsUseCaseProvider).call();
     _loadedSettings = settings;
-    _intervalController.text = settings.intervalMinutes.toString();
     _language = settings.language;
     _onboardingCompleted = settings.onboardingCompleted;
     _themeMode = settings.themeMode;
+    _notificationsEnabled = settings.notificationsEnabled;
+    _intervalMinutes = settings.intervalMinutes;
+
+    final scheduler = ref.read(notificationSchedulerRepositoryProvider);
+    if (scheduler is LocalNotificationSchedulerRepository) {
+      _permissionGranted = await scheduler.checkPermission();
+    }
 
     if (mounted) {
       setState(() => _loading = false);
     }
-  }
-
-  @override
-  void dispose() {
-    _intervalController.dispose();
-    super.dispose();
   }
 
   @override
@@ -86,7 +88,84 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               padding: const EdgeInsets.all(IaculaSpacing.md),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  // ── APARÊNCIA ──
+                  // -- NOTIFICAÇÕES --
+                  const IaculaSectionHeader(title: 'Notificações'),
+                  const SizedBox(height: IaculaSpacing.sm),
+                  IaculaSoftCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Notificações ativas',
+                                style: context.textStyles.cardTitle.copyWith(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            CupertinoSwitch(
+                              value: _notificationsEnabled,
+                              activeTrackColor: context.colors.primaryButton,
+                              onChanged: (value) {
+                                HapticFeedback.selectionClick();
+                                setState(() => _notificationsEnabled = value);
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _notificationsEnabled
+                              ? 'Recebes uma jaculatória a cada $_intervalMinutes minutos.'
+                              : 'As notificações estão desativadas.',
+                          style: context.textStyles.secondary,
+                        ),
+                        if (!_permissionGranted) ...[
+                          const SizedBox(height: IaculaSpacing.sm),
+                          _buildPermissionWarning(context),
+                        ],
+                        if (_notificationsEnabled) ...[
+                          const SizedBox(height: IaculaRadius.elementSpacing),
+                          _fieldLabel(context, 'Intervalo (minutos)'),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            width: double.infinity,
+                            child: CupertinoSlidingSegmentedControl<int>(
+                              groupValue: _intervalOptions.contains(
+                                      _intervalMinutes)
+                                  ? _intervalMinutes
+                                  : 15,
+                              padding: const EdgeInsets.all(4),
+                              children: {
+                                for (final opt in _intervalOptions)
+                                  opt: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 10,
+                                    ),
+                                    child: Text('$opt'),
+                                  ),
+                              },
+                              onValueChanged: (value) {
+                                if (value != null) {
+                                  HapticFeedback.selectionClick();
+                                  setState(() => _intervalMinutes = value);
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: IaculaSpacing.sm),
+                          _buildNextNotificationEstimate(context),
+                        ],
+                      ],
+                    ),
+                  ),
+
+                  // -- APARÊNCIA --
+                  const SizedBox(height: IaculaRadius.cardSpacing),
                   const IaculaSectionHeader(title: 'Aparência'),
                   const SizedBox(height: IaculaSpacing.sm),
                   IaculaSoftCard(
@@ -138,7 +217,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            const Icon(CupertinoIcons.textformat_size, size: 14),
+                            const Icon(CupertinoIcons.textformat_size,
+                                size: 14),
                             Expanded(
                               child: CupertinoSlider(
                                 value: _loadedSettings.prayerFontSize,
@@ -155,7 +235,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 },
                               ),
                             ),
-                            const Icon(CupertinoIcons.textformat_size, size: 22),
+                            const Icon(CupertinoIcons.textformat_size,
+                                size: 22),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -186,29 +267,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
 
-                  // ── NOTIFICAÇÕES ──
-                  const SizedBox(height: IaculaRadius.cardSpacing),
-                  const IaculaSectionHeader(title: 'Notificações'),
-                  const SizedBox(height: IaculaSpacing.sm),
-                  IaculaSoftCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _fieldLabel(
-                          context,
-                          'Intervalo das jaculatórias (minutos)',
-                        ),
-                        const SizedBox(height: 8),
-                        IaculaTextInput(
-                          controller: _intervalController,
-                          placeholder: '1..60',
-                          keyboardType: TextInputType.number,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // ── PERSONALIZAÇÃO ──
+                  // -- PERSONALIZAÇÃO --
                   const SizedBox(height: IaculaRadius.cardSpacing),
                   const IaculaSectionHeader(title: 'Personalização'),
                   const SizedBox(height: IaculaSpacing.sm),
@@ -258,7 +317,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
 
-                  // ── CONTA ──
+                  // -- CONTA --
                   const SizedBox(height: IaculaRadius.cardSpacing),
                   const IaculaSectionHeader(title: 'Conta'),
                   const SizedBox(height: IaculaSpacing.sm),
@@ -288,7 +347,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             SliverPadding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+                bottom:
+                    MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
               ),
             ),
           ],
@@ -301,6 +361,56 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(label, style: context.textStyles.secondary),
+    );
+  }
+
+  Widget _buildPermissionWarning(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(IaculaSpacing.sm),
+      decoration: BoxDecoration(
+        color: context.colors.warning.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(IaculaRadius.small),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            CupertinoIcons.exclamationmark_triangle_fill,
+            color: context.colors.warning,
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Permissão de notificação negada. Ativa nas Definições do sistema.',
+              style: context.textStyles.secondary.copyWith(
+                color: context.colors.textPrimary,
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNextNotificationEstimate(BuildContext context) {
+    final nextAt = DateTime.now().add(Duration(minutes: _intervalMinutes));
+    final hh = nextAt.hour.toString().padLeft(2, '0');
+    final mm = nextAt.minute.toString().padLeft(2, '0');
+
+    return Row(
+      children: [
+        Icon(
+          CupertinoIcons.clock,
+          size: 14,
+          color: context.colors.textSecondary,
+        ),
+        const SizedBox(width: 6),
+        Text(
+          'Proxima estimada: $hh:$mm',
+          style: context.textStyles.secondary.copyWith(fontSize: 13),
+        ),
+      ],
     );
   }
 
@@ -322,46 +432,47 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _save() async {
-    setState(() => _validationMessage = null);
-    final interval = int.tryParse(_intervalController.text);
-    if (interval == null || interval < 1 || interval > 60) {
-      setState(
-        () => _validationMessage = 'O intervalo deve ser entre 1 e 60 minutos.',
-      );
-      return;
-    }
+    setState(() {
+      _validationMessage = null;
+      _saving = true;
+    });
 
-    setState(() => _saving = true);
-
-    // Preserve liturgy fields at their loaded values for backward compat
     final settings = _loadedSettings.copyWith(
-      intervalMinutes: interval,
+      intervalMinutes: _intervalMinutes,
       language: _language,
       onboardingCompleted: _onboardingCompleted,
       themeMode: _themeMode,
+      notificationsEnabled: _notificationsEnabled,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);
 
     final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
     await schedulerRepo.cancelAll();
-    await ScheduleCoreRemindersUseCase(
-      schedulerRepo,
-      quoteFetcher: ({required String language, required DateTime now}) {
-        if (settings.escrivaPointsFeedEnabled) {
-          return ref
-              .read(getNextEscrivaPointsQuoteUseCaseProvider)
-              .call(language: language, now: now);
-        }
 
-        return ref
-            .read(getNextQuoteUseCaseProvider)
-            .call(language: language, now: now);
-      },
-      lastDeliveredCardRepository: ref.read(
-        lastDeliveredCardRepositoryProvider,
-      ),
-    ).call(settings);
+    if (_notificationsEnabled) {
+      await ScheduleCoreRemindersUseCase(
+        schedulerRepo,
+        quoteFetcher: ({required String language, required DateTime now}) {
+          if (settings.escrivaPointsFeedEnabled) {
+            return ref
+                .read(getNextEscrivaPointsQuoteUseCaseProvider)
+                .call(language: language, now: now);
+          }
+
+          return ref
+              .read(getNextQuoteUseCaseProvider)
+              .call(language: language, now: now);
+        },
+        lastDeliveredCardRepository: ref.read(
+          lastDeliveredCardRepositoryProvider,
+        ),
+      ).call(settings);
+      await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(settings);
+    }
+
+    ref.read(notificationPermissionProvider.notifier).state =
+        _permissionGranted;
 
     if (mounted) {
       setState(() => _saving = false);
