@@ -7,6 +7,7 @@ import '../../../core/presentation/shell_screen.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
@@ -111,6 +112,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
     await schedulerRepo.cancelAll();
+    final season = await ref
+        .read(liturgicalSeasonServiceProvider)
+        .getCurrentSeason();
     await ScheduleCoreRemindersUseCase(
       schedulerRepo,
       quoteFetcher: ({required String language, required DateTime now}) {
@@ -126,7 +130,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       lastDeliveredCardRepository: ref.read(
         lastDeliveredCardRepositoryProvider,
       ),
-    ).call(updated);
+    ).call(updated, isEasterSeason: season == LiturgicalSeason.easter);
     await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(updated);
 
     if (!mounted) return;
@@ -359,6 +363,25 @@ class _NotificationSetupPage extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+
+            const SizedBox(height: IaculaSpacing.md),
+
+            Row(
+              children: [
+                Icon(
+                  CupertinoIcons.time,
+                  size: 14,
+                  color: context.colors.textSecondary,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Todos os dias ao meio-dia, você também recebe um lembrete para rezar o Angelus.',
+                    style: context.textStyles.secondary.copyWith(fontSize: 13),
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: IaculaSpacing.xl),

@@ -11,6 +11,7 @@ import '../../features/auth/infrastructure/repositories/in_memory_auth_repositor
 import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
 import '../../features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import '../../features/custom_phrases/infrastructure/repositories/isar_custom_phrase_repository.dart';
+import '../../features/liturgical/domain/liturgical_season.dart';
 import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/remote_liturgical_season_service.dart';
 import '../../features/leituras/data/repositories/leitura_repository.dart';
@@ -112,6 +113,7 @@ final class AppBootstrap {
 
     if (currentSettings.notificationsEnabled && permissionGranted) {
       try {
+        final currentSeason = await liturgicalSeasonService.getCurrentSeason();
         await ScheduleCoreRemindersUseCase(
           scheduler,
           quoteFetcher: ({required String language, required DateTime now}) {
@@ -122,7 +124,10 @@ final class AppBootstrap {
             return quoteUseCase.call(language: language, now: now);
           },
           lastDeliveredCardRepository: lastDeliveredCardRepo,
-        ).call(currentSettings);
+        ).call(
+          currentSettings,
+          isEasterSeason: currentSeason == LiturgicalSeason.easter,
+        );
         await SchedulePhraseNotificationsUseCase(
           scheduler,
           localCustomPhraseRepo,

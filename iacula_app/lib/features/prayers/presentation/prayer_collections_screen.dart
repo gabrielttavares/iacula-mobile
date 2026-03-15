@@ -10,7 +10,6 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../../home/presentation/home_prayer_groups.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
 import 'prayer_catalog_group_screen.dart';
-import 'prayer_screen.dart';
 
 final _catalogProvider = FutureProvider<List<PrayerCatalogEntry>>((ref) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
@@ -105,7 +104,6 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                                 ],
                                 _PrayerCategoryCard(
                                   title: group.sectionTitle,
-                                  icon: CupertinoIcons.book,
                                   onTap: () {
                                     Navigator.of(context).push(
                                       CupertinoPageRoute(
@@ -145,12 +143,10 @@ class PrayerCollectionsScreen extends ConsumerWidget {
 class _PrayerCategoryCard extends StatelessWidget {
   const _PrayerCategoryCard({
     required this.title,
-    required this.icon,
     required this.onTap,
   });
 
   final String title;
-  final IconData icon;
   final VoidCallback onTap;
 
   @override
@@ -159,23 +155,20 @@ class _PrayerCategoryCard extends StatelessWidget {
       onTap: onTap,
       child: IaculaSoftCard(
         radius: 16,
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0x1AFFFFFF),
-                borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: IaculaSpacing.md,
+            vertical: IaculaSpacing.sm,
+          ),
+          child: Row(
+            children: [
+              Expanded(child: Text(title, style: context.textStyles.cardTitle)),
+              Icon(
+                CupertinoIcons.chevron_right,
+                color: context.colors.textSecondary,
               ),
-              child: Icon(icon, color: context.colors.primaryButton),
-            ),
-            const SizedBox(width: 16),
-            Expanded(child: Text(title, style: context.textStyles.cardTitle)),
-            Icon(
-              CupertinoIcons.chevron_right,
-              color: context.colors.textSecondary,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

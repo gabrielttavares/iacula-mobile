@@ -24,7 +24,11 @@ final class ScheduleCoreRemindersUseCase {
   final QuoteFetcher _quoteFetcher;
   final LastDeliveredCardRepository _lastDeliveredCardRepository;
 
-  Future<void> call(Settings settings, {DateTime? now}) async {
+  Future<void> call(
+    Settings settings, {
+    DateTime? now,
+    bool isEasterSeason = false,
+  }) async {
     final current = now ?? DateTime.now();
     Quote? firstQuote;
     DateTime? firstQuoteAt;
@@ -61,12 +65,17 @@ final class ScheduleCoreRemindersUseCase {
       );
     }
 
+    final noonTitle = isEasterSeason ? 'Regina Caeli' : 'Angelus';
+    final noonBody = isEasterSeason
+        ? 'Hora de rezar a Regina Caeli.'
+        : 'Hora de rezar o Angelus.';
+
     final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
     await _scheduler.schedule(
       ReminderEvent(
         type: ReminderEventType.angelusNoon,
-        title: 'Angelus',
-        body: '',
+        title: noonTitle,
+        body: noonBody,
         scheduledAt: noon,
         withVibration: true,
         isAlarm: true,

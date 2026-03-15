@@ -425,7 +425,7 @@ class _NotificationContextLabel extends StatelessWidget {
         ),
         const SizedBox(width: 5),
         Text(
-          'Notificações ativas \u00B7 a cada ${intervalMinutes}min',
+          'Jaculatórias a cada ${intervalMinutes}min \u00B7 Angelus ao meio-dia',
           style: context.textStyles.secondary.copyWith(fontSize: 12),
         ),
       ],

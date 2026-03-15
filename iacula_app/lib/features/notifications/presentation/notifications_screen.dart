@@ -6,6 +6,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../liturgical/domain/liturgical_season.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../application/use_cases/schedule_core_reminders_use_case.dart';
 import '../application/use_cases/schedule_liturgy_reminders_use_case.dart';
@@ -61,6 +62,9 @@ class NotificationsScreen extends ConsumerWidget {
                     await schedulerRepo.cancelAll();
 
                     if (value) {
+                      final season = await ref
+                          .read(liturgicalSeasonServiceProvider)
+                          .getCurrentSeason();
                       await ScheduleCoreRemindersUseCase(
                         schedulerRepo,
                         quoteFetcher: ({
@@ -79,7 +83,10 @@ class NotificationsScreen extends ConsumerWidget {
                         lastDeliveredCardRepository: ref.read(
                           lastDeliveredCardRepositoryProvider,
                         ),
-                      ).call(updated);
+                      ).call(
+                        updated,
+                        isEasterSeason: season == LiturgicalSeason.easter,
+                      );
                       await ScheduleLiturgyRemindersUseCase(schedulerRepo)
                           .call(updated);
                     }
@@ -214,7 +221,7 @@ class _NotificationStatusCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       enabled
-                          ? 'Jaculatória a cada $intervalMinutes min'
+                          ? 'Jaculatória a cada $intervalMinutes min \u00B7 Angelus ao meio-dia'
                           : 'Nenhuma notificação será enviada',
                       style: context.textStyles.secondary,
                     ),
@@ -286,15 +293,34 @@ class _UpcomingNotificationsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    final upcoming = List.generate(5, (i) {
+
+    final entries = <_UpcomingEntry>[];
+
+    for (var i = 0; i < 5; i++) {
       final at = now.add(Duration(minutes: intervalMinutes * (i + 1)));
-      return at;
-    });
+      entries.add(_UpcomingEntry(
+        time: at,
+        label: 'Jaculatória',
+        icon: CupertinoIcons.bell,
+      ));
+    }
+
+    final nextNoon = _nextNoon(now);
+    entries.add(_UpcomingEntry(
+      time: nextNoon,
+      label: 'Angelus',
+      icon: CupertinoIcons.time,
+      isAngelus: true,
+    ));
+
+    entries.sort((a, b) => a.time.compareTo(b.time));
+
+    final visible = entries.take(6).toList();
 
     return IaculaSoftCard(
       child: Column(
         children: [
-          for (var i = 0; i < upcoming.length; i++) ...[
+          for (var i = 0; i < visible.length; i++) ...[
             if (i > 0)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -308,18 +334,25 @@ class _UpcomingNotificationsCard extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    CupertinoIcons.bell,
+                    visible[i].icon,
                     size: 16,
-                    color: context.colors.textSecondary,
+                    color: visible[i].isAngelus
+                        ? context.colors.primaryButton
+                        : context.colors.textSecondary,
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    _formatTime(upcoming[i]),
+                    _formatTime(visible[i].time),
                     style: context.textStyles.cardTitle.copyWith(fontSize: 15),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    visible[i].label,
+                    style: context.textStyles.secondary.copyWith(fontSize: 13),
                   ),
                   const Spacer(),
                   Text(
-                    _relativeTime(upcoming[i], DateTime.now()),
+                    _relativeTime(visible[i].time, now),
                     style: context.textStyles.secondary.copyWith(fontSize: 13),
                   ),
                 ],
@@ -329,6 +362,12 @@ class _UpcomingNotificationsCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  static DateTime _nextNoon(DateTime now) {
+    final todayNoon = DateTime(now.year, now.month, now.day, 12);
+    if (todayNoon.isAfter(now)) return todayNoon;
+    return todayNoon.add(const Duration(days: 1));
   }
 
   static String _formatTime(DateTime dt) {
@@ -343,4 +382,18 @@ class _UpcomingNotificationsCard extends StatelessWidget {
     if (mins == 0) return 'em ${hours}h';
     return 'em ${hours}h ${mins}min';
   }
+}
+
+class _UpcomingEntry {
+  const _UpcomingEntry({
+    required this.time,
+    required this.label,
+    required this.icon,
+    this.isAngelus = false,
+  });
+
+  final DateTime time;
+  final String label;
+  final IconData icon;
+  final bool isAngelus;
 }

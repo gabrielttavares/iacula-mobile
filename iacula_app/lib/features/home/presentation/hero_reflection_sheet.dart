@@ -30,6 +30,8 @@ final class HeroReflectionSheet {
       'O Iacula te envia esse conteúdo como notificação, no intervalo que você escolheu. '
       'A cada notificação você recebe uma jaculatória diferente, para voltar a Deus '
       'durante o dia sem interromper o que está fazendo.\n\n'
+      'Todos os dias ao meio-dia, você também recebe um lembrete para rezar o Angelus '
+      '(ou Regina Caeli, no Tempo Pascal).\n\n'
       'Você pode alterar a frequência em Configurações > Notificações.';
 
   static const _exclusivityBody =

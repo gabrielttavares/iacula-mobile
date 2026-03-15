@@ -9,6 +9,7 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
+import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
@@ -118,7 +119,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         const SizedBox(height: 8),
                         Text(
                           _notificationsEnabled
-                              ? 'Você recebe uma jaculatória a cada $_intervalMinutes minutos.'
+                              ? 'Jaculatória a cada $_intervalMinutes minutos e Angelus ao meio-dia.'
                               : 'As notificações estão desativadas.',
                           style: context.textStyles.secondary,
                         ),
@@ -427,6 +428,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await schedulerRepo.cancelAll();
 
     if (_notificationsEnabled) {
+      final season = await ref
+          .read(liturgicalSeasonServiceProvider)
+          .getCurrentSeason();
       await ScheduleCoreRemindersUseCase(
         schedulerRepo,
         quoteFetcher: ({required String language, required DateTime now}) {
@@ -443,7 +447,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         lastDeliveredCardRepository: ref.read(
           lastDeliveredCardRepositoryProvider,
         ),
-      ).call(settings);
+      ).call(settings, isEasterSeason: season == LiturgicalSeason.easter);
       await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(settings);
     }
 
