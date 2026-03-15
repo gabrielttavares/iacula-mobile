@@ -86,6 +86,15 @@ void main() {
       sectionId: 'acao-de-gracas-santa-missa',
       sectionTitle: 'Ação de Graças depois da Santa Missa',
     ),
+    PrayerCatalogEntry(
+      slug: 'fica-comigo-senhor',
+      title: 'Fica Comigo, Senhor',
+      content: 'Fica Senhor comigo...',
+      themes: ['missa-acao-de-gracas'],
+      saints: ['padre-pio'],
+      sectionId: 'acao-de-gracas-santa-missa',
+      sectionTitle: 'Ação de Graças depois da Santa Missa',
+    ),
   ];
 
   test('listAll returns all entries', () async {
@@ -192,7 +201,7 @@ void main() {
     expect(result!.slug, 'simbolo-atanasiano');
   });
 
-  test('suggestionOfDay returns cântico on non-3rd Sunday', () async {
+  test('suggestionOfDay returns fica-comigo-senhor on non-3rd Sunday', () async {
     final repository = _FakePrayerCatalogRepository(suggestionEntries);
     final useCase = GetPrayerCatalogUseCase(repository: repository);
     // 2026-03-08 is the 2nd Sunday of March 2026
@@ -202,7 +211,7 @@ void main() {
     );
 
     expect(result, isNotNull);
-    expect(result!.slug, 'cântico-dos-três-jovens');
+    expect(result!.slug, 'fica-comigo-senhor');
   });
 
   test('suggestionOfDay returns cântico on other weekdays', () async {

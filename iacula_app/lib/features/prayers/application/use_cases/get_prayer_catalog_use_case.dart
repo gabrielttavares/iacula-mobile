@@ -67,6 +67,7 @@ final class GetPrayerCatalogUseCase {
       if (sundayIndex == 3) {
         return 'simbolo-atanasiano';
       }
+      return 'fica-comigo-senhor';
     }
 
     return switch (date.weekday) {
