@@ -8,7 +8,6 @@ import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../auth/presentation/auth_action_sheet.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
@@ -317,12 +316,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
 
-                  // -- CONTA --
-                  const SizedBox(height: IaculaRadius.cardSpacing),
-                  const IaculaSectionHeader(title: 'Conta'),
-                  const SizedBox(height: IaculaSpacing.sm),
-                  _buildAuthSyncSection(),
-
                   if (_validationMessage != null) ...[
                     const SizedBox(height: IaculaSpacing.md),
                     IaculaInlineMessage(
@@ -411,23 +404,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           style: context.textStyles.secondary.copyWith(fontSize: 13),
         ),
       ],
-    );
-  }
-
-  Widget _buildAuthSyncSection() {
-    final authState = ref.watch(authStateProvider);
-    final authRepo = ref.read(authRepositoryProvider);
-    final user = authState.valueOrNull;
-
-    return AuthActionSheet(
-      title: 'Sincronização entre dispositivos',
-      subtitle:
-          'Faça login para manter seus dados espirituais sincronizados entre dispositivos. A sincronização acontece automaticamente.',
-      signedInEmail: user?.email,
-      onGoogle: () => authRepo.signInWithGoogle(),
-      onMicrosoft: () => authRepo.signInWithMicrosoft(),
-      onApple: () => authRepo.signInWithApple(),
-      onSignOut: () => authRepo.signOut(),
     );
   }
 

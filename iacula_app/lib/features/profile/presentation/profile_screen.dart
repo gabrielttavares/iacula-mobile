@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
-import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../auth/presentation/auth_action_sheet.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -17,9 +17,9 @@ class ProfileScreen extends ConsumerWidget {
     final user = authState.valueOrNull;
     final isConnected = user != null;
     
-    // If not connected, show a simple message or empty state as per rule
-    // "sem conta, é desnecessário"
+    // If not connected, show login options
     if (!isConnected) {
+      final authRepo = ref.read(authRepositoryProvider);
       return CupertinoPageScaffold(
         backgroundColor: context.colors.background,
         navigationBar: CupertinoNavigationBar(
@@ -27,8 +27,22 @@ class ProfileScreen extends ConsumerWidget {
           backgroundColor: context.colors.background,
           border: null,
         ),
-        child: const Center(
-          child: Text('Faça login para ver seu perfil.'),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(IaculaSpacing.md),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: AuthActionSheet(
+                title: 'Sincronização entre dispositivos',
+                subtitle:
+                    'Faça login para manter seus dados espirituais sincronizados entre dispositivos. A sincronização acontece automaticamente.',
+                onGoogle: () => authRepo.signInWithGoogle(),
+                onMicrosoft: () => authRepo.signInWithMicrosoft(),
+                onApple: () => authRepo.signInWithApple(),
+                onSignOut: () => authRepo.signOut(),
+              ),
+            ),
+          ),
         ),
       );
     }

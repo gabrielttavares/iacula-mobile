@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/presentation/design/iacula_feedback.dart';
-import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/presentation/widgets/iacula_spring_button.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import 'apple_sign_in_visibility.dart';
 
@@ -180,27 +181,91 @@ class _AuthActionSheetState extends State<AuthActionSheet> {
   }) {
     final isBusy = _busyProvider == provider;
     final isDisabled = _busyProvider != null && !isBusy;
-    final action = isDisabled ? null : () => _handleAction(provider, onPressed);
+    final action =
+        isDisabled ? null : () => _handleAction(provider, onPressed);
+
+    final height = IaculaMetrics.inputHeight + IaculaSpacing.xs;
+
+    Widget? icon;
+    switch (provider) {
+      case _AuthProvider.google:
+        icon = SvgPicture.asset(
+          'assets/images/auth/google_logo.svg',
+          width: 20,
+          height: 20,
+        );
+        break;
+      case _AuthProvider.microsoft:
+        icon = SvgPicture.asset(
+          'assets/images/auth/microsoft_logo.svg',
+          width: 20,
+          height: 20,
+        );
+        break;
+      case _AuthProvider.apple:
+        icon = SvgPicture.asset(
+          'assets/images/auth/apple_logo.svg',
+          width: 20,
+          height: 20,
+          colorFilter: ColorFilter.mode(
+            context.colors.textPrimary,
+            BlendMode.srcIn,
+          ),
+        );
+        break;
+      default:
+        break;
+    }
 
     if (isBusy) {
       return SizedBox(
-        height: 52,
+        height: height,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: primary
-                ? context.colors.primaryButton
-                : const Color(0x33000000),
-            borderRadius: BorderRadius.circular(26),
+            color: context.colors.secondaryButton,
+            borderRadius: BorderRadius.circular(height / 2),
           ),
           child: const Center(child: CupertinoActivityIndicator()),
         ),
       );
     }
 
-    if (primary) {
-      return IaculaPrimaryPillButton(label: label, onPressed: action);
-    }
-
-    return IaculaSecondaryPillButton(label: label, onPressed: action);
+    return IaculaSpringButton(
+      onTap: action,
+      child: Container(
+        height: height,
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        decoration: BoxDecoration(
+          color: action != null
+              ? context.colors.secondaryButton
+              : context.colors.secondaryButton.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(height / 2),
+        ),
+        child: Row(
+          children: [
+            if (icon != null) ...[
+              icon,
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.only(right: icon != null ? 32 : 0),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: context.colors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

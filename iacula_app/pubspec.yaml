@@ -51,6 +51,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/images/auth/
     - assets/seed/quotes/en/
     - assets/seed/quotes/la/
     - assets/seed/quotes/pt-br/
