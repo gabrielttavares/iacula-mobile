@@ -44,126 +44,130 @@ class _IaculaCalendarModalState extends State<IaculaCalendarModal> {
     final rowCount = totalCells ~/ 7;
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(IaculaSpacing.md),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Escolha a data',
-              style: context.textStyles.cardTitle,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: IaculaSpacing.md),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    setState(() {
-                      _visibleMonth = DateTime(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(IaculaSpacing.md),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Escolha a data',
+                    style: context.textStyles.cardTitle,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: IaculaSpacing.md),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          setState(() {
+                            _visibleMonth = DateTime(
+                              _visibleMonth.year,
+                              _visibleMonth.month - 1,
+                            );
+                          });
+                        },
+                        child: const Icon(CupertinoIcons.chevron_left),
+                      ),
+                      Text(
+                        '${_monthName(_visibleMonth.month)} ${_visibleMonth.year}',
+                        style: context.textStyles.cardTitle,
+                      ),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          setState(() {
+                            _visibleMonth = DateTime(
+                              _visibleMonth.year,
+                              _visibleMonth.month + 1,
+                            );
+                          });
+                        },
+                        child: const Icon(CupertinoIcons.chevron_right),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: IaculaSpacing.sm),
+                  const Row(
+                    children: [
+                      _WeekdayHeader('S'),
+                      _WeekdayHeader('T'),
+                      _WeekdayHeader('Q'),
+                      _WeekdayHeader('Q'),
+                      _WeekdayHeader('S'),
+                      _WeekdayHeader('S'),
+                      _WeekdayHeader('D'),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: totalCells,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 7,
+                      childAspectRatio: 1.1,
+                    ),
+                    itemBuilder: (context, index) {
+                      final dayNumber = index - leadingBlanks + 1;
+                      if (dayNumber < 1 || dayNumber > daysInMonth) {
+                        return const SizedBox.shrink();
+                      }
+                      final cellDate = DateTime(
                         _visibleMonth.year,
-                        _visibleMonth.month - 1,
+                        _visibleMonth.month,
+                        dayNumber,
                       );
-                    });
-                  },
-                  child: const Icon(CupertinoIcons.chevron_left),
-                ),
-                Text(
-                  '${_monthName(_visibleMonth.month)} ${_visibleMonth.year}',
-                  style: context.textStyles.cardTitle,
-                ),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    setState(() {
-                      _visibleMonth = DateTime(
-                        _visibleMonth.year,
-                        _visibleMonth.month + 1,
-                      );
-                    });
-                  },
-                  child: const Icon(CupertinoIcons.chevron_right),
-                ),
-              ],
-            ),
-            const SizedBox(height: IaculaSpacing.sm),
-            const Row(
-              children: [
-                _WeekdayHeader('S'),
-                _WeekdayHeader('T'),
-                _WeekdayHeader('Q'),
-                _WeekdayHeader('Q'),
-                _WeekdayHeader('S'),
-                _WeekdayHeader('S'),
-                _WeekdayHeader('D'),
-              ],
-            ),
-            const SizedBox(height: 6),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: totalCells,
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                childAspectRatio: 1.1,
-              ),
-              itemBuilder: (context, index) {
-                  final dayNumber = index - leadingBlanks + 1;
-                  if (dayNumber < 1 || dayNumber > daysInMonth) {
-                    return const SizedBox.shrink();
-                  }
-                  final cellDate = DateTime(
-                    _visibleMonth.year,
-                    _visibleMonth.month,
-                    dayNumber,
-                  );
-                  final isSelected = _sameDate(cellDate, _selectedDate);
+                      final isSelected = _sameDate(cellDate, _selectedDate);
 
-                  return GestureDetector(
-                    onTap: () =>
-                        setState(() => _selectedDate = cellDate),
-                    child: Center(
-                      child: Container(
-                        key: ValueKey<String>(
-                            'calendar-day-$dayNumber'),
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isSelected
-                              ? context.colors.primaryButton
-                              : CupertinoColors.transparent,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '$dayNumber',
-                          style: TextStyle(
-                            color: isSelected
-                                ? context.colors.background
-                                : context.colors.textPrimary,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w400,
+                      return GestureDetector(
+                        onTap: () => setState(() => _selectedDate = cellDate),
+                        child: Center(
+                          child: Container(
+                            key: ValueKey<String>('calendar-day-$dayNumber'),
+                            width: 34,
+                            height: 34,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isSelected
+                                  ? context.colors.primaryButton
+                                  : CupertinoColors.transparent,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              '$dayNumber',
+                              style: TextStyle(
+                                color: isSelected
+                                    ? context.colors.background
+                                    : context.colors.textPrimary,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: IaculaSpacing.lg),
+                  CupertinoButton.filled(
+                    borderRadius: BorderRadius.circular(26),
+                    onPressed: () => Navigator.of(context).pop(_selectedDate),
+                    child: const Text('Aplicar'),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: IaculaSpacing.lg),
-            CupertinoButton.filled(
-              borderRadius: BorderRadius.circular(26),
-              onPressed: () =>
-                  Navigator.of(context).pop(_selectedDate),
-              child: const Text('Aplicar'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

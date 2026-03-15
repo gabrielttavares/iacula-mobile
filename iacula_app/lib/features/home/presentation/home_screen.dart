@@ -32,7 +32,6 @@ import '../../examination/presentation/examination_reading_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../rosary/presentation/rosary_intro_screen.dart';
 import '../../bible/presentation/bible_books_screen.dart';
-import '../../leituras/presentation/pages/leituras_home_page.dart';
 import 'hero_reflection_sheet.dart';
 import 'widgets/home_hero_card.dart';
 
@@ -170,14 +169,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                             );
                           },
-                          onOpenLeituras: () {
-                            HapticFeedback.lightImpact();
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) => const LeiturasHomePage(),
-                              ),
-                            );
-                          },
                           onOpenPrayers: () {
                             HapticFeedback.lightImpact();
                             Navigator.of(context).push(
@@ -234,7 +225,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 class _HomeShortcutsRail extends StatelessWidget {
   const _HomeShortcutsRail({
     required this.onOpenCustomPhrases,
-    required this.onOpenLeituras,
     required this.onOpenPrayers,
     required this.onOpenLiturgy,
     required this.onOpenIntentions,
@@ -242,7 +232,6 @@ class _HomeShortcutsRail extends StatelessWidget {
   });
 
   final VoidCallback onOpenCustomPhrases;
-  final VoidCallback onOpenLeituras;
   final VoidCallback onOpenPrayers;
   final VoidCallback onOpenLiturgy;
   final VoidCallback onOpenIntentions;
@@ -277,11 +266,6 @@ class _HomeShortcutsRail extends StatelessWidget {
         key: const Key('home_custom_phrases_card'),
         label: 'Minhas frases',
         onTap: onOpenCustomPhrases,
-      ),
-      _RailCard(
-        key: const Key('home_leituras_chip'),
-        label: 'Leituras',
-        onTap: onOpenLeituras,
       ),
     ];
 

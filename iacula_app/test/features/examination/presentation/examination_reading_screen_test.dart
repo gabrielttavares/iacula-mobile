@@ -75,7 +75,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Diário para fazer no final do dia'), findsOneWidget);
+    expect(find.text('Exame de Consciência Diário'), findsAtLeast(1));
+    expect(find.text('Para fazer ao final do dia'), findsOneWidget);
     expect(find.text('Acto de Presença de Deus'), findsOneWidget);
     expect(find.text('Deveres para com Deus'), findsOneWidget);
     expect(find.byType(CupertinoTextField), findsNothing);

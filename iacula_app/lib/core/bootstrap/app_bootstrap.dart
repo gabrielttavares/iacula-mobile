@@ -28,6 +28,7 @@ import '../../features/premium/infrastructure/supabase_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_quote_indices_repository.dart';
+import '../../features/reading/infrastructure/repositories/isar_reading_annotation_repository.dart';
 import '../../features/settings/infrastructure/repositories/sqlite_settings_repository.dart';
 import '../../features/spiritual_data/domain/entities/spiritual_entry.dart';
 import '../../features/spiritual_data/infrastructure/repositories/isar_spiritual_entry_repositories.dart';
@@ -69,6 +70,9 @@ final class AppBootstrap {
     final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
     final favoriteRepo = IsarFavoriteRepository(store: isarStore);
+    final readingAnnotationRepo = IsarReadingAnnotationRepository(
+      store: isarStore,
+    );
     final localPremiumRepo = IsarPremiumRepository(store: isarStore);
     final localCustomPhraseRepo = IsarCustomPhraseRepository(spiritualStore);
     const devPremiumOverride =
@@ -158,7 +162,7 @@ final class AppBootstrap {
 
         supabaseClient = Supabase.instance.client;
         authRepository = SupabaseAuthRepository(supabaseClient);
-        final _legacyPremiumRepository = SyncedPremiumRepository(
+        SyncedPremiumRepository(
           localRepository: localPremiumRepo,
           authRepository: authRepository,
           remoteGateway: SupabasePremiumGateway(supabaseClient),
@@ -167,7 +171,6 @@ final class AppBootstrap {
           'Premium runtime is in free-access mode; synced premium repository kept dormant for later restoration.',
           name: 'AppBootstrap',
         );
-        assert(_legacyPremiumRepository is PremiumRepository);
 
         final gateway = SupabaseSpiritualSyncGateway(supabaseClient);
 
@@ -241,6 +244,9 @@ final class AppBootstrap {
       ),
       mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
       favoriteRepositoryProvider.overrideWithValue(favoriteRepo),
+      readingAnnotationRepositoryProvider.overrideWithValue(
+        readingAnnotationRepo,
+      ),
       premiumRepositoryProvider.overrideWithValue(premiumRepository),
       customPhraseRepositoryProvider.overrideWithValue(localCustomPhraseRepo),
       liturgicalSeasonCacheRepositoryProvider.overrideWithValue(

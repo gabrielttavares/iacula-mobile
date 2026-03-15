@@ -32,7 +32,6 @@ import '../../features/premium/application/premium_bloc.dart';
 import '../../features/premium/domain/entities/premium_status.dart';
 import '../../features/premium/domain/repositories/premium_repository.dart';
 import '../../features/premium/infrastructure/always_unlocked_premium_repository.dart';
-import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/premium/infrastructure/purchase_service.dart';
 import '../../features/prayers/application/use_cases/get_prayer_use_case.dart';
 import '../../features/prayers/application/use_cases/get_prayer_catalog_use_case.dart';
@@ -118,6 +117,8 @@ import '../../features/examination/domain/repositories/examination_reflection_re
 import '../../features/examination/infrastructure/repositories/isar_examination_reflection_repository.dart';
 import '../../features/leituras/data/repositories/leitura_repository.dart';
 import '../../features/leituras/data/sources/leitura_local_source.dart';
+import '../../features/reading/domain/repositories/reading_annotation_repository.dart';
+import '../../features/reading/infrastructure/repositories/in_memory_reading_annotation_repository.dart';
 import '../../features/spiritual_data/domain/entities/spiritual_entry.dart';
 import '../../features/sync/domain/repositories/sync_orchestrator.dart';
 import '../../features/sync/domain/repositories/sync_state_repository.dart';
@@ -280,6 +281,11 @@ final mediaCatalogRepositoryProvider = Provider<MediaCatalogRepository>((ref) {
 final favoriteRepositoryProvider = Provider<FavoriteRepository>((ref) {
   return InMemoryFavoriteRepository();
 });
+
+final readingAnnotationRepositoryProvider =
+    Provider<ReadingAnnotationRepository>((ref) {
+      return InMemoryReadingAnnotationRepository();
+    });
 
 final favoritesProvider = StreamProvider<List<FavoriteItem>>((ref) {
   return ref.watch(favoriteRepositoryProvider).watchAll();

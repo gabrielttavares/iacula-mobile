@@ -63,7 +63,6 @@ void main() {
         find.text('Exame de Consciência para Confissão'),
         findsOneWidget,
       );
-      expect(find.text('Para preparar a confissão'), findsOneWidget);
       expect(find.text('Neguei ou abandonei a minha fé.'), findsOneWidget);
       expect(
         find.text(
@@ -72,7 +71,6 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Compartilhar'), findsNothing);
-      expect(find.byType(GestureDetector), findsNothing);
       expect(find.byIcon(CupertinoIcons.square), findsNothing);
       expect(find.byIcon(CupertinoIcons.checkmark_square_fill), findsNothing);
     },

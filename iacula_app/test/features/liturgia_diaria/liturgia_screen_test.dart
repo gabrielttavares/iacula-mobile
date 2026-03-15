@@ -33,12 +33,13 @@ final class _FakeLiturgiaRepository implements LiturgiaRepository {
 
 Widget _buildApp(
   _FakeLiturgiaRepository repository,
+  {DateTime? initialDate}
 ) {
   return ProviderScope(
     overrides: [
       liturgiaCacheRepositoryProvider.overrideWithValue(repository),
     ],
-    child: const CupertinoApp(home: LiturgiaScreen()),
+    child: CupertinoApp(home: LiturgiaScreen(initialDate: initialDate)),
   );
 }
 
@@ -164,8 +165,11 @@ void main() {
   testWidgets('calendar confirm selects date inside current window', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     await tester.pumpWidget(
-      _buildApp(repository),
+      _buildApp(repository, initialDate: DateTime(2026, 2, 22)),
     );
     await tester.pumpAndSettle();
 
@@ -184,6 +188,9 @@ void main() {
   testWidgets('calendar out-of-window date re-anchors and reloads period', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     final reanchorRepository = _FakeLiturgiaRepository(
       periodDays: [
         _day(date: DateTime(2026, 2, 22), title: '7o Domingo do Tempo Comum'),
@@ -197,7 +204,7 @@ void main() {
       },
     );
     await tester.pumpWidget(
-      _buildApp(reanchorRepository),
+      _buildApp(reanchorRepository, initialDate: DateTime(2026, 2, 22)),
     );
     await tester.pumpAndSettle();
 
@@ -250,7 +257,9 @@ void main() {
         },
       );
 
-      await tester.pumpWidget(_buildApp(marchRepository));
+      await tester.pumpWidget(
+        _buildApp(marchRepository, initialDate: DateTime(2026, 3, 12)),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Seg 09/03'), findsOneWidget);

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
+import 'package:iacula_app/features/leituras/presentation/pages/leituras_home_page.dart';
 import 'package:iacula_app/features/meditation/domain/entities/meditation_item.dart';
 import 'package:iacula_app/features/meditation/domain/repositories/meditation_catalog_repository.dart';
 import 'package:iacula_app/features/meditation/presentation/meditation_reader_screen.dart';
@@ -106,6 +107,25 @@ void main() {
     expect(find.text('Corpo'), findsOneWidget);
     expect(find.text('A-'), findsOneWidget);
     expect(find.text('A+'), findsOneWidget);
+  });
+
+  testWidgets('meditation screen shows a Leituras card that opens Leituras', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildMeditationTestApp(
+        premiumStatus: const PremiumStatus(isPremium: true),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Leituras'), findsAtLeastNWidgets(1));
+    expect(find.text('Aprofunde a oração com autores e santos.'), findsOneWidget);
+
+    await tester.tap(find.text('Leituras').first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LeiturasHomePage), findsOneWidget);
   });
 
   testWidgets('free user can browse Meditação and gets premium gate on open', (

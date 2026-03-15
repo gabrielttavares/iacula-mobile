@@ -31,9 +31,18 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify initial preview text
-    expect(find.text('Exemplo de oração nesta escala'), findsOneWidget);
+    expect(
+      find.text(
+        'Pelo sinal da santa cruz, livrai-nos, Deus, nosso Senhor, dos nossos inimigos.',
+      ),
+      findsOneWidget,
+    );
     
-    final textWidget = tester.widget<Text>(find.text('Exemplo de oração nesta escala'));
+    final textWidget = tester.widget<Text>(
+      find.text(
+        'Pelo sinal da santa cruz, livrai-nos, Deus, nosso Senhor, dos nossos inimigos.',
+      ),
+    );
     expect(textWidget.style?.fontSize, 15.0);
   });
 }
