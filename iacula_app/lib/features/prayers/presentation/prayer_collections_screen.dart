@@ -60,26 +60,6 @@ class PrayerCollectionsScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _PrayerCategoryCard(
-                title: 'Angelus / Regina Caeli',
-                icon: CupertinoIcons.bell,
-                onTap: () async {
-                  final settings = await ref
-                      .read(getSettingsUseCaseProvider)
-                      .call();
-                  final prayer = await ref
-                      .read(getPrayerUseCaseProvider)
-                      .call(language: settings.language);
-                  if (context.mounted) {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => PrayerScreen(prayer: prayer),
-                      ),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: IaculaSpacing.lg),
               catalogAsync.when(
                 data: (entries) {
                   final grouped = _groupBySection(entries);
