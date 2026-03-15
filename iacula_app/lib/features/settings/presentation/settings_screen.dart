@@ -119,7 +119,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         const SizedBox(height: 8),
                         Text(
                           _notificationsEnabled
-                              ? 'Recebes uma jaculatória a cada $_intervalMinutes minutos.'
+                              ? 'Você recebe uma jaculatória a cada $_intervalMinutes minutos.'
                               : 'As notificações estão desativadas.',
                           style: context.textStyles.secondary,
                         ),
@@ -381,7 +381,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Permissão de notificação negada. Ativa nas Definições do sistema.',
+              'Permissão de notificação negada. Ative nas Configurações do sistema.',
               style: context.textStyles.secondary.copyWith(
                 color: context.colors.textPrimary,
                 fontSize: 13,
@@ -407,7 +407,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
         const SizedBox(width: 6),
         Text(
-          'Proxima estimada: $hh:$mm',
+          'Próxima estimada: $hh:$mm',
           style: context.textStyles.secondary.copyWith(fontSize: 13),
         ),
       ],

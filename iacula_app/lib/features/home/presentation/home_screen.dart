@@ -363,7 +363,7 @@ class _PermissionBanner extends ConsumerWidget {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'Notificações bloqueadas. Ativa nas Definições do sistema para receberes jaculatórias.',
+                'Notificações bloqueadas. Ative nas Configurações do sistema para receber jaculatórias.',
                 style: context.textStyles.secondary.copyWith(
                   color: context.colors.textPrimary,
                   fontSize: 13,

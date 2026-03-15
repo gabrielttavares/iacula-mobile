@@ -262,14 +262,14 @@ class _NotificationSetupPage extends StatelessWidget {
             ),
             const SizedBox(height: IaculaSpacing.md),
             Text(
-              'Jaculatórias no teu dia',
+              'Jaculatórias no seu dia',
               textAlign: TextAlign.center,
               style: context.textStyles.sectionTitle,
             ),
             const SizedBox(height: IaculaSpacing.sm),
             Text(
-              'O Iacula envia-te uma breve oração via notificação, '
-              'para que voltes a Deus durante o dia sem interromper o que estás a fazer.',
+              'O Iacula te envia uma breve oração via notificação, '
+              'para você voltar a Deus durante o dia sem interromper o que está fazendo.',
               textAlign: TextAlign.center,
               style: context.textStyles.secondary,
             ),
@@ -284,7 +284,7 @@ class _NotificationSetupPage extends StatelessWidget {
                   ),
                   const SizedBox(height: IaculaSpacing.sm),
                   Text(
-                    'Receberás uma notificação ${_intervalDescription(selectedInterval)} com uma jaculatória diferente.',
+                    'Você vai receber uma notificação ${_intervalDescription(selectedInterval)} com uma jaculatória diferente.',
                     textAlign: TextAlign.center,
                     style: context.textStyles.secondary,
                   ),

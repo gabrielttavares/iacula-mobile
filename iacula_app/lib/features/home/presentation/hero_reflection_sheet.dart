@@ -27,10 +27,10 @@ final class HeroReflectionSheet {
   };
 
   static const _notificationExplainer =
-      'O Iacula envia-te este conteúdo como notificação, no intervalo que escolheste. '
-      'A cada notificação recebes uma jaculatória diferente, para que voltes a Deus '
-      'durante o dia sem interromper o que estás a fazer.\n\n'
-      'Podes alterar a frequência em Configurações > Notificações.';
+      'O Iacula te envia esse conteúdo como notificação, no intervalo que você escolheu. '
+      'A cada notificação você recebe uma jaculatória diferente, para voltar a Deus '
+      'durante o dia sem interromper o que está fazendo.\n\n'
+      'Você pode alterar a frequência em Configurações > Notificações.';
 
   static const _exclusivityBody =
       'O Iacula foi pensado para ajudar você a manter viva a oração breve no meio '

@@ -246,7 +246,7 @@ class _NotificationStatusCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Permissão negada. Ativa nas Definições do sistema.',
+                      'Permissão negada. Ative nas Configurações do sistema.',
                       style: context.textStyles.secondary.copyWith(
                         color: context.colors.textPrimary,
                         fontSize: 13,
