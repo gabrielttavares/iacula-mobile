@@ -22,26 +22,6 @@
       "sourceRank": "A"
     },
     {
-      "id": "santo-agostinho",
-      "name": "Santo Agostinho",
-      "description": "Patrística e conversão.",
-      "language": "pt-br",
-      "worksCount": 1,
-      "availableWorksCount": 1,
-      "assetPath": "assets/books/library/authors/santo-agostinho.json",
-      "sourceRank": "A"
-    },
-    {
-      "id": "sao-francisco-sales",
-      "name": "São Francisco de Sales",
-      "description": "Vida devota.",
-      "language": "pt-br",
-      "worksCount": 1,
-      "availableWorksCount": 1,
-      "assetPath": "assets/books/library/authors/sao-francisco-sales.json",
-      "sourceRank": "A"
-    },
-    {
       "id": "irmao-lourenco-ressurreicao",
       "name": "Irmão Lourenço da Ressurreição",
       "description": "Vida espiritual e presença de Deus.",
@@ -70,62 +50,15 @@
       "availableWorksCount": 1,
       "assetPath": "assets/books/library/authors/jean-pierre-de-caussade.json",
       "sourceRank": "A"
-    },
-    {
-      "id": "santa-catarina-sena",
-      "name": "Santa Catarina de Sena",
-      "description": "Mística e diálogo com Deus.",
-      "language": "pt-br",
-      "worksCount": 1,
-      "availableWorksCount": 1,
-      "assetPath": "assets/books/library/authors/santa-catarina-sena.json",
-      "sourceRank": "A"
-    },
-    {
-      "id": "sao-luis-maria-grignion-de-montfort",
-      "name": "São Luís Maria Grignion de Montfort",
-      "description": "Devoção mariana.",
-      "language": "pt-br",
-      "worksCount": 1,
-      "availableWorksCount": 1,
-      "assetPath": "assets/books/library/authors/sao-luis-maria-grignion-de-montfort.json",
-      "sourceRank": "A"
-    },
-    {
-      "id": "francisco-faus",
-      "name": "Francisco Faus",
-      "description": "Virtudes cristãs para a vida cotidiana.",
-      "language": "pt-br",
-      "worksCount": 2,
-      "availableWorksCount": 2,
-      "assetPath": "assets/books/library/authors/francisco-faus.json",
-      "sourceRank": "B"
-    },
-    {
-      "id": "santo-tomas-de-aquino",
-      "name": "Santo Tomás de Aquino",
-      "description": "Doutrina cristã e fé.",
-      "language": "pt-br",
-      "worksCount": 1,
-      "availableWorksCount": 1,
-      "assetPath": "assets/books/library/authors/santo-tomas-de-aquino.json",
-      "sourceRank": "A"
     }
   ],
   "generatedWorks": [
     "a-oracao",
     "a-pratica-da-presenca-de-deus",
     "a-pratica-do-amor-a-jesus-cristo",
-    "confissoes",
-    "conquista-das-virtudes",
-    "credo",
     "imitacao-de-cristo",
-    "introducao-a-vida-devota",
     "o-abandono",
-    "o-dialogo",
     "preparacao-para-a-morte",
-    "prudencia",
-    "tratado-conformidade-vontade-de-deus",
-    "tratado-da-verdadeira-devocao"
+    "tratado-conformidade-vontade-de-deus"
   ]
 }
