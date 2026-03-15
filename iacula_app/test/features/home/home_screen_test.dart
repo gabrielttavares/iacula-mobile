@@ -469,7 +469,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('home_action_oracoes')), findsOneWidget);
-    expect(find.byKey(const Key('home_action_liturgia')), findsOneWidget);
+    expect(find.byKey(const Key('home_action_intencoes')), findsOneWidget);
     expect(find.text('Leituras'), findsNothing);
     expect(find.text('Premium'), findsNothing);
   });
@@ -511,7 +511,7 @@ void main() {
     expect(find.byIcon(CupertinoIcons.bell), findsOneWidget);
   });
 
-  testWidgets('feature card opens Liturgia Diária screen', (tester) async {
+  testWidgets('Liturgia diária shortcut opens Liturgia screen', (tester) async {
     await tester.pumpWidget(
       _buildApp(
         settingsRepo: _defaultSettingsRepo(),
@@ -521,13 +521,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final liturgiaFinder = find.text('Liturgia diária');
-    await tester.dragUntilVisible(
-      liturgiaFinder,
-      find.byType(CustomScrollView),
-      const Offset(0, -100),
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('home_action_liturgia')),
+      120,
+      scrollable: find.descendant(
+        of: find.byKey(const Key('home_shortcuts_rail')),
+        matching: find.byType(Scrollable),
+      ),
     );
-    await tester.tap(liturgiaFinder);
+    await tester.ensureVisible(find.byKey(const Key('home_action_liturgia')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('home_action_liturgia')));
     await tester.pumpAndSettle();
 
     expect(find.byType(LiturgiaScreen), findsOneWidget);
@@ -725,7 +729,19 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final intentionsCard = find.byKey(const Key('home_action_oracoes'));
+    for (
+      var i = 0;
+      i < 5 && find.byKey(const Key('home_action_liturgia')).evaluate().isEmpty;
+      i++
+    ) {
+      await tester.drag(
+        find.byKey(const Key('home_shortcuts_rail')),
+        const Offset(-120, 0),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    final intentionsCard = find.byKey(const Key('home_action_intencoes'));
     final examinationCard = find.byKey(const Key('home_action_liturgia'));
 
     expect(intentionsCard, findsOneWidget);

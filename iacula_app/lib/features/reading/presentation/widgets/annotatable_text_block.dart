@@ -14,7 +14,22 @@ typedef HighlightSelectionCallback =
       required int startOffset,
       required int endOffset,
       required String selectedText,
+      required ReadingHighlight? existingHighlight,
     });
+
+ReadingHighlight? findExactMatchingHighlight(
+  List<ReadingHighlight> highlights, {
+  required int startOffset,
+  required int endOffset,
+}) {
+  for (final highlight in highlights) {
+    if (highlight.startOffset == startOffset &&
+        highlight.endOffset == endOffset) {
+      return highlight;
+    }
+  }
+  return null;
+}
 
 class AnnotatableTextBlock extends StatelessWidget {
   const AnnotatableTextBlock({
@@ -52,15 +67,23 @@ class AnnotatableTextBlock extends StatelessWidget {
         selection.start < selection.end;
 
     if (isValidSelection) {
+      final existingHighlight = findExactMatchingHighlight(
+        highlights,
+        startOffset: selection.start,
+        endOffset: selection.end,
+      );
       buttonItems.insert(
         0,
         ContextMenuButtonItem(
-          label: 'Destacar',
+          label: existingHighlight == null
+              ? 'Destacar'
+              : 'Remover destaque',
           onPressed: () {
             onHighlightSelected(
               startOffset: selection.start,
               endOffset: selection.end,
               selectedText: text.substring(selection.start, selection.end),
+              existingHighlight: existingHighlight,
             );
             state.hideToolbar();
           },

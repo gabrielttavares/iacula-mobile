@@ -123,7 +123,12 @@ class _ReadingDocumentViewState extends ConsumerState<ReadingDocumentView> {
                       required startOffset,
                       required endOffset,
                       required selectedText,
+                      required existingHighlight,
                     }) {
+                      if (existingHighlight != null) {
+                        unawaited(_deleteHighlight(existingHighlight));
+                        return;
+                      }
                       unawaited(
                         _saveHighlight(
                           blockId: block.id,
@@ -240,6 +245,23 @@ class _ReadingDocumentViewState extends ConsumerState<ReadingDocumentView> {
       _highlightsByBlock
           .putIfAbsent(blockId, () => <ReadingHighlight>[])
           .add(highlight);
+    });
+  }
+
+  Future<void> _deleteHighlight(ReadingHighlight highlight) async {
+    await ref
+        .read(readingAnnotationRepositoryProvider)
+        .deleteHighlight(highlight.id);
+    if (!mounted) return;
+    setState(() {
+      final updated = List<ReadingHighlight>.from(
+        _highlightsByBlock[highlight.blockId] ?? const <ReadingHighlight>[],
+      )..removeWhere((entry) => entry.id == highlight.id);
+      if (updated.isEmpty) {
+        _highlightsByBlock.remove(highlight.blockId);
+      } else {
+        _highlightsByBlock[highlight.blockId] = updated;
+      }
     });
   }
 
