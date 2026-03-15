@@ -86,98 +86,98 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
         child: SafeArea(
           child: Column(
             children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const IaculaLargeTitle('Plano de vida'),
-                  Row(
-                    children: [
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          HapticFeedback.lightImpact();
-                          _showEditItemModal(context, null);
-                        },
-                        child: const Icon(CupertinoIcons.add),
-                      ),
-                      const SizedBox(width: 10),
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () async {
-                          HapticFeedback.lightImpact();
-                          final picked = await _showCalendarSheet(
-                            context,
-                            state.selectedDate,
-                          );
-                          if (picked != null) {
-                            notifier.selectDate(picked);
-                          }
-                        },
-                        child: const Icon(CupertinoIcons.calendar),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            _buildDateStrip(state.selectedDate, notifier),
-            Expanded(
-              child: state.isLoading && state.items.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.all(IaculaSpacing.md),
-                      child: IaculaShimmerList(itemCount: 5),
-                    )
-                  : state.items.isEmpty
-                      ? Center(
-                          child: Text(
-                            'Ainda não há itens para este dia.',
-                            style: context.textStyles.secondary,
-                          ),
-                        )
-                      : ListView(
-                          padding: EdgeInsets.only(
-                            bottom: 80.0 + MediaQuery.paddingOf(context).bottom,
-                            top: 8.0,
-                          ),
-                          physics: const BouncingScrollPhysics(),
-                          children: [
-                            if (morningItems.isNotEmpty)
-                              _buildSection(
-                                'Manhã',
-                                CupertinoIcons.sun_max,
-                                morningItems,
-                                notifier,
-                              ),
-                            if (afternoonItems.isNotEmpty)
-                              _buildSection(
-                                'Tarde',
-                                CupertinoIcons.cloud,
-                                afternoonItems,
-                                notifier,
-                              ),
-                            if (nightItems.isNotEmpty)
-                              _buildSection(
-                                'Noite',
-                                CupertinoIcons.moon_stars,
-                                nightItems,
-                                notifier,
-                              ),
-                            if (unscheduledItems.isNotEmpty)
-                              _buildSection(
-                                'Outros',
-                                CupertinoIcons.check_mark_circled,
-                                unscheduledItems,
-                                notifier,
-                              ),
-                          ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const IaculaLargeTitle('Plano de vida'),
+                    Row(
+                      children: [
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            HapticFeedback.lightImpact();
+                            _showEditItemModal(context, null);
+                          },
+                          child: const Icon(CupertinoIcons.add),
                         ),
-            ),
-          ],
+                        const SizedBox(width: 10),
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () async {
+                            HapticFeedback.lightImpact();
+                            final picked = await _showCalendarSheet(
+                              context,
+                              state.selectedDate,
+                            );
+                            if (picked != null) {
+                              notifier.selectDate(picked);
+                            }
+                          },
+                          child: const Icon(CupertinoIcons.calendar),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              _buildDateStrip(state.selectedDate, notifier),
+              Expanded(
+                child: state.isLoading && state.items.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.all(IaculaSpacing.md),
+                        child: IaculaShimmerList(itemCount: 5),
+                      )
+                    : state.items.isEmpty
+                    ? Center(
+                        child: Text(
+                          'Ainda não há itens para este dia.',
+                          style: context.textStyles.secondary,
+                        ),
+                      )
+                    : ListView(
+                        padding: EdgeInsets.only(
+                          bottom: 80.0 + MediaQuery.paddingOf(context).bottom,
+                          top: 8.0,
+                        ),
+                        physics: const BouncingScrollPhysics(),
+                        children: [
+                          if (morningItems.isNotEmpty)
+                            _buildSection(
+                              'Manhã',
+                              CupertinoIcons.sun_max,
+                              morningItems,
+                              notifier,
+                            ),
+                          if (afternoonItems.isNotEmpty)
+                            _buildSection(
+                              'Tarde',
+                              CupertinoIcons.cloud,
+                              afternoonItems,
+                              notifier,
+                            ),
+                          if (nightItems.isNotEmpty)
+                            _buildSection(
+                              'Noite',
+                              CupertinoIcons.moon_stars,
+                              nightItems,
+                              notifier,
+                            ),
+                          if (unscheduledItems.isNotEmpty)
+                            _buildSection(
+                              'Outros',
+                              CupertinoIcons.check_mark_circled,
+                              unscheduledItems,
+                              notifier,
+                            ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 
@@ -359,7 +359,7 @@ class _PlanOfLifeScreenState extends ConsumerState<PlanOfLifeScreen> {
   void _showEditItemModal(BuildContext context, PlanItem? item) {
     IaculaModal.showSheet<void>(
       context: context,
-      maxHeightFraction: 0.85,
+      maxHeightFraction: 0.62,
       builder: (ctx) => _EditItemForm(item: item),
     );
   }
@@ -420,166 +420,154 @@ class _EditItemFormState extends ConsumerState<_EditItemForm> {
     final notifier = ref.read(planOfLifeNotifierProvider.notifier);
     final isDefault = widget.item?.schedule.isDefault ?? false;
 
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-        decoration: BoxDecoration(
-          color: context.colors.card,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
         ),
-        child: SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              widget.item == null ? 'Novo Item' : 'Editar Item',
+              style: context.textStyles.sectionTitle,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            const SizedBox(height: 16),
+            if (!isDefault) ...[
+              IaculaTextInput(
+                controller: _titleController,
+                placeholder: 'Título',
+              ),
+              const SizedBox(height: 16),
+            ],
+            IaculaTimeInput(
+              controller: _timeController,
+              placeholder: 'Horário (HH:MM)',
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.item == null ? 'Novo Item' : 'Editar Item',
-                  style: context.textStyles.sectionTitle,
+                  'Lembrete (Notificação)',
+                  style: context.textStyles.secondary,
                 ),
-                const SizedBox(height: 16),
-                if (!isDefault) ...[
-                  IaculaTextInput(
-                    controller: _titleController,
-                    placeholder: 'Título',
-                  ),
-                  const SizedBox(height: 16),
-                ],
-                IaculaTimeInput(
-                  controller: _timeController,
-                  placeholder: 'Horário (HH:MM)',
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Lembrete (Notificação)',
-                      style: context.textStyles.secondary,
-                    ),
-                    CupertinoSwitch(
-                      value: _notify,
-                      onChanged: (v) {
-                        HapticFeedback.selectionClick();
-                        setState(() => _notify = v);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text('Dias da semana:', style: context.textStyles.secondary),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  children: List.generate(7, (index) {
-                    final dayName = const [
-                      'S',
-                      'T',
-                      'Q',
-                      'Q',
-                      'S',
-                      'S',
-                      'D',
-                    ][index];
-                    final selected = _days[index];
-                    return GestureDetector(
-                      onTap: () {
-                        HapticFeedback.selectionClick();
-                        setState(() => _days[index] = !selected);
-                      },
-                      child: Container(
-                        width: 32,
-                        height: 32,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: selected
-                              ? context.colors.primaryButton
-                              : CupertinoColors.systemGrey5,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          dayName,
-                          style: TextStyle(
-                            color: selected
-                                ? context.colors.background
-                                : context.colors.textSecondary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-                const SizedBox(height: 24),
-                CupertinoButton.filled(
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    final title = isDefault
-                        ? (widget.item?.title ?? '')
-                        : _titleController.text.trim();
-                    if (title.isEmpty) return;
-
-                    final selectedDays = <int>[];
-                    for (int i = 0; i < 7; i++) {
-                      if (_days[i]) selectedDays.add(i + 1);
-                    }
-                    if (selectedDays.length == 7) selectedDays.clear();
-
-                    final timeText = _timeController.text.trim();
-                    final timeStr = _isValidTime(timeText) ? timeText : null;
-
-                    final schedule = PlanItemSchedule(
-                      time: timeStr,
-                      daysOfWeek: selectedDays,
-                      notify: _notify,
-                      isDefault: widget.item?.schedule.isDefault ?? false,
-                    );
-
-                    if (widget.item == null) {
-                      notifier.addItem(title, schedule);
-                    } else {
-                      notifier.updateItem(widget.item!.id, title, schedule);
-                    }
-
-                    Navigator.pop(context);
+                CupertinoSwitch(
+                  value: _notify,
+                  onChanged: (v) {
+                    HapticFeedback.selectionClick();
+                    setState(() => _notify = v);
                   },
-                  child: const Text('Salvar'),
                 ),
-                if (widget.item != null) ...[
-                  const SizedBox(height: 12),
-                  CupertinoButton(
-                    onPressed: () async {
-                      HapticFeedback.lightImpact();
-                      final confirmed = await IaculaModal.showConfirm(
-                        context: context,
-                        title: 'Remover item',
-                        message: 'Tem certeza que deseja remover este item?',
-                        confirmLabel: 'Remover',
-                        cancelLabel: 'Cancelar',
-                        destructive: true,
-                      );
-                      if (confirmed && context.mounted) {
-                        HapticFeedback.mediumImpact();
-                        notifier.deleteItem(widget.item!.id);
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: Text(
-                      'Remover',
-                      style: TextStyle(
-                        color: CupertinoColors.destructiveRed,
-                      ),
-                    ),
-                  ),
-                ],
               ],
             ),
-          ),
+            const SizedBox(height: 12),
+            Text('Dias da semana:', style: context.textStyles.secondary),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: List.generate(7, (index) {
+                final dayName = const [
+                  'S',
+                  'T',
+                  'Q',
+                  'Q',
+                  'S',
+                  'S',
+                  'D',
+                ][index];
+                final selected = _days[index];
+                return GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _days[index] = !selected);
+                  },
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? context.colors.primaryButton
+                          : CupertinoColors.systemGrey5,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      dayName,
+                      style: TextStyle(
+                        color: selected
+                            ? context.colors.background
+                            : context.colors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: 24),
+            CupertinoButton.filled(
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                final title = isDefault
+                    ? (widget.item?.title ?? '')
+                    : _titleController.text.trim();
+                if (title.isEmpty) return;
+
+                final selectedDays = <int>[];
+                for (int i = 0; i < 7; i++) {
+                  if (_days[i]) selectedDays.add(i + 1);
+                }
+                if (selectedDays.length == 7) selectedDays.clear();
+
+                final timeText = _timeController.text.trim();
+                final timeStr = _isValidTime(timeText) ? timeText : null;
+
+                final schedule = PlanItemSchedule(
+                  time: timeStr,
+                  daysOfWeek: selectedDays,
+                  notify: _notify,
+                  isDefault: widget.item?.schedule.isDefault ?? false,
+                );
+
+                if (widget.item == null) {
+                  notifier.addItem(title, schedule);
+                } else {
+                  notifier.updateItem(widget.item!.id, title, schedule);
+                }
+
+                Navigator.pop(context);
+              },
+              child: const Text('Salvar'),
+            ),
+            if (widget.item != null) ...[
+              const SizedBox(height: 12),
+              CupertinoButton(
+                onPressed: () async {
+                  HapticFeedback.lightImpact();
+                  final confirmed = await IaculaModal.showConfirm(
+                    context: context,
+                    title: 'Remover item',
+                    message: 'Tem certeza que deseja remover este item?',
+                    confirmLabel: 'Remover',
+                    cancelLabel: 'Cancelar',
+                    destructive: true,
+                  );
+                  if (confirmed && context.mounted) {
+                    HapticFeedback.mediumImpact();
+                    notifier.deleteItem(widget.item!.id);
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text(
+                  'Remover',
+                  style: TextStyle(color: CupertinoColors.destructiveRed),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

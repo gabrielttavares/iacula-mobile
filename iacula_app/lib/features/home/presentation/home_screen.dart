@@ -258,15 +258,15 @@ class _HomeShortcutsRail extends StatelessWidget {
         label: 'Orações',
         onTap: onOpenPrayers,
       ),
+            _RailCard(
+        key: const Key('home_action_intencoes'),
+        label: 'Intenções',
+        onTap: onOpenIntentions,
+      ),
       _RailCard(
         key: const Key('home_action_liturgia'),
         label: 'Liturgia diária',
         onTap: onOpenLiturgy,
-      ),
-      _RailCard(
-        key: const Key('home_action_intencoes'),
-        label: 'Intenções',
-        onTap: onOpenIntentions,
       ),
       _RailCard(
         key: const Key('home_action_exame'),

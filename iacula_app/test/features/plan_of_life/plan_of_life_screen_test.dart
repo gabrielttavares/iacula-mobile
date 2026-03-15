@@ -157,4 +157,57 @@ void main() {
     expect(find.text('Lembrete (Notificação)'), findsOneWidget);
     expect(find.text('Título'), findsNothing);
   });
+
+  testWidgets('three-dot edit sheet stays content-sized near the bottom', (
+    tester,
+  ) async {
+    final now = DateTime.now();
+    final entryRepository = _FakeSpiritualEntryRepository([
+      SpiritualEntry(
+        id: 'default-item',
+        module: SpiritualModule.planOfLife,
+        title: 'Oferecimento de obras',
+        body: '',
+        scheduleJson:
+            '{"time":"07:00","daysOfWeek":[],"notify":false,"isDefault":true}',
+        createdAt: now,
+        updatedAt: now,
+        isDirty: true,
+      ),
+    ]);
+    final completionRepository = _FakePlanCompletionRepository();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          premiumStatusProvider.overrideWith(
+            (ref) => Stream.value(const PremiumStatus(isPremium: true)),
+          ),
+          planOfLifeNotifierProvider.overrideWith(
+            (ref) => PlanOfLifeNotifier(
+              getDailyPlan: GetDailyPlanUseCase(
+                entryRepository,
+                completionRepository,
+              ),
+              toggleItem: ToggleItemUseCase(completionRepository),
+              addItem: AddPlanItemUseCase(entryRepository),
+              updateItem: UpdatePlanItemUseCase(entryRepository),
+              deleteItem: DeletePlanItemUseCase(entryRepository),
+            ),
+          ),
+        ],
+        child: const CupertinoApp(home: PlanOfLifeScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(CupertinoIcons.ellipsis_circle).first);
+    await tester.pumpAndSettle();
+
+    final titleRect = tester.getRect(find.text('Editar Item'));
+    final saveRect = tester.getRect(find.text('Salvar'));
+
+    expect(titleRect.top, greaterThan(220));
+    expect(saveRect.bottom, lessThan(760));
+  });
 }
