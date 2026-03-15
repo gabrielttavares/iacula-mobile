@@ -2,8 +2,8 @@
   {
     "id": "text-hablar-con-dios",
     "type": "text",
-    "title": "Meditação do Dia — Hablar con Dios",
-    "summary": "Meditação diária baseada nas leituras litúrgicas, com reflexões para a vida cotidiana.",
+    "title": "Meditação do Dia — Falar com Deus",
+    "summary": "Baseada nas leituras litúrgicas, com reflexões para a vida cotidiana.",
     "categoryTags": ["espiritual", "evangelho", "diário"],
     "sourceName": "Hablar con Dios",
     "sourceUrl": "https://hablarcondios.org/pt/meditacao-diaria/",
@@ -20,11 +20,11 @@
   {
     "id": "text-ibreviary",
     "type": "text",
-    "title": "Ofício das Leituras — iBreviary",
+    "title": "Ofício das Leituras — Liturgia das Horas",
     "summary": "O Ofício das Leituras do dia com textos dos Padres da Igreja e reflexões patrísticas.",
     "categoryTags": ["espiritual", "liturgia", "diário"],
     "sourceName": "iBreviary",
-    "sourceUrl": "https://www.ibreviary.com/m2/breviario.php?s=ufficio_delle_letture",
+    "sourceUrl": "https://www.ibreviary.com/m2/breviario.php?s=ufficio_delle_letture&lang=pt",
     "imageUrl": null,
     "availability": { "kind": "daily", "timezone": "America/Sao_Paulo" },
     "textContent": {
