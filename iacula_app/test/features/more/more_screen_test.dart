@@ -26,7 +26,7 @@ void main() {
     expect(find.text('Avaliar experiência'), findsOneWidget);
     
     expect(find.text('Favoritos'), findsNothing);
-    expect(find.text('Sagrada Escritura'), findsNothing);
+    expect(find.text('Bíblia'), findsNothing);
   });
 
   testWidgets('MoreScreen navigates to Perfil', (tester) async {

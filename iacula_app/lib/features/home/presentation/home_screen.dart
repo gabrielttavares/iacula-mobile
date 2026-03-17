@@ -393,7 +393,7 @@ class _FeatureCardsList extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
           child: ImageBackgroundCard(
             key: const Key('home_feature_biblia_card'),
-            title: 'Sagrada Escritura',
+            title: 'Bíblia',
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
