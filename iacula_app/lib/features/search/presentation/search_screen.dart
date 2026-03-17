@@ -8,7 +8,6 @@ import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../leituras/presentation/pages/book_reader_page.dart';
-import '../../meditation/presentation/meditation_reader_screen.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../application/app_search_service.dart';
 
@@ -107,11 +106,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(IaculaSpacing.md),
-              child: CupertinoSearchTextField(
-                controller: _controller,
-                placeholder: 'Busque por oração, Meditação, leitura ou citação',
-                onChanged: _onQueryChanged,
-              ),
+                child: CupertinoSearchTextField(
+                  controller: _controller,
+                  placeholder: 'Busque por oração, leitura ou citação',
+                  onChanged: _onQueryChanged,
+                ),
             ),
             Expanded(
               child: _loading
@@ -186,13 +185,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           CupertinoPageRoute(
             builder: (_) =>
                 PrayerCatalogDetailScreen(entry: result.prayerEntry!),
-          ),
-        );
-      case AppSearchResultType.meditation:
-        Navigator.of(context).push(
-          CupertinoPageRoute(
-            builder: (_) =>
-                MeditationReaderScreen(item: result.meditationItem!),
           ),
         );
       case AppSearchResultType.reading:

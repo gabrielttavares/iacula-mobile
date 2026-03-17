@@ -1,8 +1,6 @@
 import '../../leituras/data/models/book_model.dart';
 import '../../leituras/data/repositories/leitura_repository.dart';
 import '../../liturgical/domain/liturgical_season.dart';
-import '../../meditation/domain/entities/meditation_item.dart';
-import '../../meditation/domain/repositories/meditation_catalog_repository.dart';
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/domain/repositories/prayer_catalog_repository.dart';
 import '../../quotes/domain/repositories/quote_content_repository.dart';
@@ -24,7 +22,7 @@ String _normalizeSearchValue(String value) {
       .replaceAll('ç', 'c');
 }
 
-enum AppSearchResultType { prayer, meditation, reading, quote }
+enum AppSearchResultType { prayer, reading, quote }
 
 final class AppSearchResult {
   const AppSearchResult._({
@@ -35,7 +33,6 @@ final class AppSearchResult {
     required this.subtitle,
     required this.snippet,
     this.prayerEntry,
-    this.meditationItem,
     this.readingBook,
     this.quoteText,
   });
@@ -47,7 +44,6 @@ final class AppSearchResult {
   final String subtitle;
   final String snippet;
   final PrayerCatalogEntry? prayerEntry;
-  final MeditationItem? meditationItem;
   final BookModel? readingBook;
   final String? quoteText;
 
@@ -68,26 +64,6 @@ final class AppSearchResult {
         fallbacks: [...entry.themes, ...entry.saints],
       ),
       prayerEntry: entry,
-    );
-  }
-
-  factory AppSearchResult.meditation({
-    required MeditationItem item,
-    required int score,
-    required String query,
-  }) {
-    return AppSearchResult._(
-      type: AppSearchResultType.meditation,
-      sectionTitle: 'Meditações',
-      score: score,
-      title: item.title,
-      subtitle: 'Meditação · ${item.sourceName}',
-      snippet: _buildSnippet(
-        primary: item.summary,
-        query: query,
-        fallbacks: [item.sourceName, ...item.categoryTags],
-      ),
-      meditationItem: item,
     );
   }
 
@@ -164,20 +140,17 @@ final class AppSearchService {
   static const int _maxResultsPerSection = 4;
   static const Map<AppSearchResultType, int> _typeOrder = {
     AppSearchResultType.prayer: 0,
-    AppSearchResultType.meditation: 1,
-    AppSearchResultType.reading: 2,
-    AppSearchResultType.quote: 3,
+    AppSearchResultType.reading: 1,
+    AppSearchResultType.quote: 2,
   };
 
   AppSearchService({
     required this.prayerCatalogRepository,
-    required this.meditationCatalogRepository,
     required this.leituraRepository,
     required this.quoteContentRepository,
   });
 
   final PrayerCatalogRepository prayerCatalogRepository;
-  final MeditationCatalogRepository meditationCatalogRepository;
   final LeituraRepository leituraRepository;
   final QuoteContentRepository quoteContentRepository;
 
@@ -193,7 +166,6 @@ final class AppSearchService {
     final prayers = await prayerCatalogRepository.listCatalog(
       language: language,
     );
-    final meditations = await meditationCatalogRepository.listAll();
     final books = await leituraRepository.listBooks();
 
     final results = <AppSearchResult>[
@@ -206,19 +178,6 @@ final class AppSearchService {
           .map(
             (candidate) => AppSearchResult.prayer(
               entry: candidate.entry,
-              score: candidate.score,
-              query: normalizedQuery,
-            ),
-          ),
-      ...meditations
-          .map(
-            (item) =>
-                (item: item, score: _scoreMeditation(item, normalizedQuery)),
-          )
-          .where((candidate) => candidate.score > 0)
-          .map(
-            (candidate) => AppSearchResult.meditation(
-              item: candidate.item,
               score: candidate.score,
               query: normalizedQuery,
             ),
@@ -266,14 +225,6 @@ final class AppSearchService {
       query: query,
       title: entry.title,
       secondary: [entry.content, ...entry.themes, ...entry.saints],
-    );
-  }
-
-  int _scoreMeditation(MeditationItem item, String query) {
-    return _scoreFields(
-      query: query,
-      title: item.title,
-      secondary: [item.summary, item.sourceName, ...item.categoryTags],
     );
   }
 

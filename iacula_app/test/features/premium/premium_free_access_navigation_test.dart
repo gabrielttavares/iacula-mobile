@@ -31,7 +31,7 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-  testWidgets('default runtime can open Plano tab without premium modal', (
+  testWidgets('default runtime can open Exame Diário tab without premium modal', (
     tester,
   ) async {
     final purchaseService = _FakePurchaseService();
@@ -53,14 +53,14 @@ void main() {
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(find.byIcon(CupertinoIcons.check_mark_circled));
+    await tester.tap(find.byIcon(CupertinoIcons.doc_text));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Continue com o Premium'), findsNothing);
 
     final tabBar = tester.widget<CupertinoTabBar>(find.byType(CupertinoTabBar));
-    expect(tabBar.currentIndex, 2);
+    expect(tabBar.currentIndex, 1);
 
     await purchaseService.dispose();
   });

@@ -18,7 +18,6 @@ final class InMemoryNotificationSchedulerRepository
       ReminderEventType.vespers => 302,
       ReminderEventType.compline => 303,
       ReminderEventType.oraMedia => 304,
-      ReminderEventType.customMeditationAlarm => 400,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
     };

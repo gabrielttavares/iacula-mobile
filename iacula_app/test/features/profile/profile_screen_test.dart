@@ -4,8 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/auth/domain/entities/auth_user.dart';
 import 'package:iacula_app/features/profile/presentation/profile_screen.dart';
-import 'package:iacula_app/features/settings/presentation/settings_screen.dart';
-
 void main() {
   testWidgets('profile renders sections when logged in', (
     tester,
@@ -41,7 +39,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Faça login para ver seu perfil.'), findsOneWidget);
+    expect(find.text('Sincronização entre dispositivos'), findsOneWidget);
     expect(find.text('Dados da conta'), findsNothing);
   });
 }

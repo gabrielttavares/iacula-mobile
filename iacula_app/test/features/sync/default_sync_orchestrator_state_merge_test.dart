@@ -13,15 +13,15 @@ void main() {
     () async {
       final stateRepo = _FakeSyncStateRepository(
         lastPullByModule: {
-          SpiritualModule.planOfLife: DateTime.utc(2026, 2, 22, 8),
+          SpiritualModule.examination: DateTime.utc(2026, 2, 22, 8),
         },
       );
       final localRepo = _FakeLocalRepo(
-        SpiritualModule.planOfLife,
+        SpiritualModule.examination,
         seed: const [],
       );
       final remoteRepo = _FakeRemoteRepo(
-        module: SpiritualModule.planOfLife,
+        module: SpiritualModule.examination,
         pulled: const [],
       );
 
@@ -31,7 +31,7 @@ void main() {
         ),
         modules: [
           SyncModuleAdapter(
-            module: SpiritualModule.planOfLife,
+            module: SpiritualModule.examination,
             localRepository: localRepo,
             remoteRepository: remoteRepo,
           ),
@@ -44,11 +44,11 @@ void main() {
 
       expect(remoteRepo.lastSince, DateTime.utc(2026, 2, 22, 8));
       expect(
-        stateRepo.lastPullByModule[SpiritualModule.planOfLife],
+        stateRepo.lastPullByModule[SpiritualModule.examination],
         DateTime.utc(2026, 2, 22, 9),
       );
       expect(
-        stateRepo.lastPushByModule[SpiritualModule.planOfLife],
+        stateRepo.lastPushByModule[SpiritualModule.examination],
         DateTime.utc(2026, 2, 22, 9),
       );
     },

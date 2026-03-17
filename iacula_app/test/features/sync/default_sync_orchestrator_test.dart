@@ -11,11 +11,11 @@ void main() {
     final clockNow = DateTime.utc(2026, 2, 22, 16, 0);
 
     final localRepo = _FakeLocalRepo(
-      SpiritualModule.planOfLife,
+      SpiritualModule.examination,
       seed: [
         SpiritualEntry(
           id: 'a',
-          module: SpiritualModule.planOfLife,
+          module: SpiritualModule.examination,
           body: 'local old',
           createdAt: DateTime.utc(2026, 2, 22, 10),
           updatedAt: DateTime.utc(2026, 2, 22, 10),
@@ -24,11 +24,11 @@ void main() {
       ],
     );
     final remoteRepo = _FakeRemoteRepo(
-      module: SpiritualModule.planOfLife,
+      module: SpiritualModule.examination,
       pulled: [
         SpiritualEntry(
           id: 'a',
-          module: SpiritualModule.planOfLife,
+          module: SpiritualModule.examination,
           body: 'remote newer',
           createdAt: DateTime.utc(2026, 2, 22, 10),
           updatedAt: DateTime.utc(2026, 2, 22, 12),
@@ -41,7 +41,7 @@ void main() {
       authRepository: _FakeAuthRepository(user: const AuthUser(id: 'user-1', email: 'u@x.dev')),
       modules: [
         SyncModuleAdapter(
-          module: SpiritualModule.planOfLife,
+          module: SpiritualModule.examination,
           localRepository: localRepo,
           remoteRepository: remoteRepo,
         ),

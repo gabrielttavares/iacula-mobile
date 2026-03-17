@@ -24,8 +24,8 @@ void main() {
         ],
       );
       final repo = SupabaseSpiritualSyncRepository(
-        module: SpiritualModule.planOfLife,
-        table: 'plan_of_life_entries',
+        module: SpiritualModule.prayerIntention,
+        table: 'prayer_intention_entries',
         gateway: gateway,
       );
 
@@ -34,10 +34,10 @@ void main() {
         userId: 'user-1',
       );
 
-      expect(gateway.lastPullTable, 'plan_of_life_entries');
+      expect(gateway.lastPullTable, 'prayer_intention_entries');
       expect(gateway.lastPullUserId, 'user-1');
       expect(gateway.lastPullSince, DateTime.utc(2026, 2, 22, 9));
-      expect(result.single.module, SpiritualModule.planOfLife);
+      expect(result.single.module, SpiritualModule.prayerIntention);
       expect(result.single.scheduleJson, '{"weekday":1}');
     },
   );

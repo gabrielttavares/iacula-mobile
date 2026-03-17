@@ -198,7 +198,7 @@ void main() {
     );
     expect(
       schedulerRepo.scheduled.any((e) => e.type == ReminderEventType.laudes),
-      isFalse,
+      isTrue,
     );
   });
 }

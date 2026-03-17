@@ -11,14 +11,6 @@ import '../../features/auth/infrastructure/repositories/in_memory_auth_repositor
 import '../../features/favorites/domain/entities/favorite_item.dart';
 import '../../features/favorites/domain/repositories/favorite_repository.dart';
 import '../../features/favorites/infrastructure/repositories/in_memory_favorite_repository.dart';
-import '../../features/liturgia_diaria/application/use_cases/get_liturgy_period_use_case.dart';
-import '../../features/meditation/domain/entities/meditation_item.dart';
-import '../../features/meditation/domain/repositories/meditation_catalog_repository.dart';
-import '../../features/meditation/infrastructure/repositories/asset_meditation_catalog_repository.dart';
-import '../../features/meditation/infrastructure/services/remote_meditation_reader_service.dart';
-import '../../features/liturgia_diaria/domain/repositories/liturgia_repository.dart';
-import '../../features/liturgia_diaria/infrastructure/repositories/liturgia_cache_repository.dart';
-import '../../features/liturgia_diaria/infrastructure/services/liturgia_api_service.dart';
 import '../../features/liturgical/domain/repositories/liturgical_season_cache_repository.dart';
 import '../../features/liturgical/domain/liturgical_context.dart';
 import '../../features/liturgical/domain/services/liturgical_season_service.dart';
@@ -57,14 +49,6 @@ import '../../features/spiritual_data/domain/repositories/spiritual_entry_reposi
 import '../../features/spiritual_data/infrastructure/repositories/isar_spiritual_entry_repositories.dart';
 import '../../features/spiritual_data/infrastructure/storage/spiritual_data_encryption_key_provider.dart';
 import '../../features/spiritual_data/infrastructure/storage/spiritual_data_isar_store.dart';
-import '../../features/plan_of_life/domain/repositories/plan_completion_repository.dart';
-import '../../features/plan_of_life/infrastructure/repositories/isar_plan_completion_repository.dart';
-import '../../features/plan_of_life/application/use_cases/get_daily_plan_use_case.dart';
-import '../../features/plan_of_life/application/use_cases/toggle_item_use_case.dart';
-import '../../features/plan_of_life/application/use_cases/add_plan_item_use_case.dart';
-import '../../features/plan_of_life/application/use_cases/update_plan_item_use_case.dart';
-import '../../features/plan_of_life/application/use_cases/delete_plan_item_use_case.dart';
-import '../../features/plan_of_life/application/plan_of_life_notifier.dart';
 
 import '../../features/prayer_intentions/application/use_cases/list_intentions_use_case.dart';
 import '../../features/prayer_intentions/application/use_cases/add_intention_use_case.dart';
@@ -86,11 +70,6 @@ import '../../features/prayer_activity/domain/entities/streak_info.dart';
 import '../../features/prayer_activity/domain/entities/dashboard_stats.dart';
 import '../../features/prayer_activity/domain/repositories/prayer_activity_repository.dart';
 import '../../features/prayer_activity/infrastructure/repositories/isar_prayer_activity_repository.dart';
-import '../../features/rosary/domain/entities/rosary_mystery_set.dart';
-import '../../features/rosary/domain/entities/rosary_final_prayers.dart';
-import '../../features/rosary/domain/entities/rosary_initial_prayers.dart';
-import '../../features/rosary/infrastructure/repositories/asset_rosary_repository.dart';
-import '../../features/rosary/domain/repositories/rosary_repository.dart';
 import '../../features/search/application/app_search_service.dart';
 import '../../features/bible/domain/entities/bible_book.dart';
 import '../../features/bible/domain/entities/bible_chapter_ref.dart';
@@ -141,16 +120,6 @@ final supabaseClientProvider = Provider<SupabaseClient?>((ref) {
 });
 
 final httpClientProvider = Provider<http.Client>((ref) => http.Client());
-
-final liturgiaApiServiceProvider = Provider<LiturgiaApiService>((ref) {
-  return LiturgiaApiService(httpClient: ref.watch(httpClientProvider));
-});
-
-final liturgiaCacheRepositoryProvider = Provider<LiturgiaRepository>((ref) {
-  return LiturgiaCacheRepository(
-    apiService: ref.watch(liturgiaApiServiceProvider),
-  );
-});
 
 final liturgicalSeasonCacheRepositoryProvider =
     Provider<LiturgicalSeasonCacheRepository>((ref) {
@@ -211,15 +180,6 @@ final localDisplayNameProvider = FutureProvider<String?>((ref) async {
   return settings.displayName;
 });
 
-final meditationCatalogRepositoryProvider =
-    Provider<MeditationCatalogRepository>((ref) {
-      return AssetMeditationCatalogRepository();
-    });
-
-final meditationCatalogProvider = FutureProvider<List<MeditationItem>>((ref) {
-  return ref.watch(meditationCatalogRepositoryProvider).listAll();
-});
-
 final journalPromptRepositoryProvider = Provider<JournalPromptRepository>((
   ref,
 ) {
@@ -232,13 +192,6 @@ final journalPromptCatalogProvider = FutureProvider<List<JournalPrompt>>((
   return ref.watch(journalPromptRepositoryProvider).listAll();
 });
 
-final remoteMeditationReaderServiceProvider =
-    Provider<RemoteMeditationReaderService>((ref) {
-      return RemoteMeditationReaderService(
-        httpClient: ref.watch(httpClientProvider),
-      );
-    });
-
 final leituraLocalSourceProvider = Provider<LeituraLocalSource>((ref) {
   return LeituraLocalSource();
 });
@@ -250,7 +203,6 @@ final leituraRepositoryProvider = Provider<LeituraRepository>((ref) {
 final appSearchServiceProvider = Provider<AppSearchService>((ref) {
   return AppSearchService(
     prayerCatalogRepository: ref.watch(prayerCatalogRepositoryProvider),
-    meditationCatalogRepository: ref.watch(meditationCatalogRepositoryProvider),
     leituraRepository: ref.watch(leituraRepositoryProvider),
     quoteContentRepository: ref.watch(quoteContentRepositoryProvider),
   );
@@ -343,15 +295,6 @@ final syncOrchestratorProvider = Provider<SyncOrchestrator>((ref) {
     authRepository: ref.watch(authRepositoryProvider),
     syncStateRepository: ref.watch(syncStateRepositoryProvider),
     modules: [
-      SyncModuleAdapter(
-        module: SpiritualModule.planOfLife,
-        localRepository: ref.watch(planOfLifeEntryRepositoryProvider),
-        remoteRepository: SupabaseSpiritualSyncRepository(
-          module: SpiritualModule.planOfLife,
-          table: 'plan_of_life_entries',
-          gateway: gateway,
-        ),
-      ),
       SyncModuleAdapter(
         module: SpiritualModule.examination,
         localRepository: ref.watch(examinationEntryRepositoryProvider),
@@ -446,13 +389,7 @@ final prayerEntryBySlugProvider =
       return useCase.getBySlug(language: settings.language, slug: slug);
     });
 
-final getLiturgyPeriodUseCaseProvider = Provider<GetLiturgyPeriodUseCase>((
-  ref,
-) {
-  return GetLiturgyPeriodUseCase(ref.watch(liturgiaCacheRepositoryProvider));
-});
-
-// -- Spiritual Data / Plan of Life Providers --
+// -- Spiritual Data Providers --
 
 final spiritualDataKeyProvider = Provider<EncryptionKeyProvider>((ref) {
   return SpiritualDataEncryptionKeyProvider(store: FlutterSecureKvStore());
@@ -461,14 +398,6 @@ final spiritualDataKeyProvider = Provider<EncryptionKeyProvider>((ref) {
 final spiritualDataIsarStoreProvider = Provider<SpiritualDataIsarStore>((ref) {
   return SpiritualDataIsarStore(
     keyProvider: ref.watch(spiritualDataKeyProvider),
-  );
-});
-
-final planOfLifeEntryRepositoryProvider = Provider<SpiritualEntryRepository>((
-  ref,
-) {
-  return IsarPlanOfLifeSpiritualEntryRepository(
-    ref.watch(spiritualDataIsarStoreProvider),
   );
 });
 
@@ -513,14 +442,6 @@ final examinationReflectionItemsProvider =
       return ref.watch(examinationReflectionRepositoryProvider).watchAll();
     });
 
-final planCompletionRepositoryProvider = Provider<PlanCompletionRepository>((
-  ref,
-) {
-  return IsarPlanCompletionRepository(
-    ref.watch(spiritualDataIsarStoreProvider),
-  );
-});
-
 final syncStateRepositoryProvider = Provider<SyncStateRepository>((ref) {
   return IsarSyncStateRepository(ref.watch(spiritualDataIsarStoreProvider));
 });
@@ -530,40 +451,6 @@ final spiritualSyncGatewayProvider = Provider<SpiritualSyncGateway?>((ref) {
   if (client == null) return null;
   return SupabaseSpiritualSyncGateway(client);
 });
-
-final getDailyPlanUseCaseProvider = Provider<GetDailyPlanUseCase>((ref) {
-  return GetDailyPlanUseCase(
-    ref.watch(planOfLifeEntryRepositoryProvider),
-    ref.watch(planCompletionRepositoryProvider),
-  );
-});
-
-final toggleItemUseCaseProvider = Provider<ToggleItemUseCase>((ref) {
-  return ToggleItemUseCase(ref.watch(planCompletionRepositoryProvider));
-});
-
-final addPlanItemUseCaseProvider = Provider<AddPlanItemUseCase>((ref) {
-  return AddPlanItemUseCase(ref.watch(planOfLifeEntryRepositoryProvider));
-});
-
-final updatePlanItemUseCaseProvider = Provider<UpdatePlanItemUseCase>((ref) {
-  return UpdatePlanItemUseCase(ref.watch(planOfLifeEntryRepositoryProvider));
-});
-
-final deletePlanItemUseCaseProvider = Provider<DeletePlanItemUseCase>((ref) {
-  return DeletePlanItemUseCase(ref.watch(planOfLifeEntryRepositoryProvider));
-});
-
-final planOfLifeNotifierProvider =
-    StateNotifierProvider<PlanOfLifeNotifier, PlanOfLifeState>((ref) {
-      return PlanOfLifeNotifier(
-        getDailyPlan: ref.watch(getDailyPlanUseCaseProvider),
-        toggleItem: ref.watch(toggleItemUseCaseProvider),
-        addItem: ref.watch(addPlanItemUseCaseProvider),
-        updateItem: ref.watch(updatePlanItemUseCaseProvider),
-        deleteItem: ref.watch(deletePlanItemUseCaseProvider),
-      );
-    });
 
 // -- Prayer Intentions Providers --
 
@@ -675,43 +562,6 @@ final dashboardStatsProvider = FutureProvider<DashboardStats>((ref) async {
   final entries = await repo.listAll();
   return const StreakCalculator().computeDashboard(entries);
 });
-
-// -- Rosary Providers --
-
-final rosaryRepositoryProvider = Provider<RosaryRepository>((ref) {
-  return AssetRosaryRepository();
-});
-
-final rosaryMysterySetProvider =
-    FutureProvider.family<RosaryMysterySet?, RosaryMysteryType>((
-      ref,
-      type,
-    ) async {
-      return ref.watch(rosaryRepositoryProvider).getMysterySet(type);
-    });
-
-final allRosaryMysterySetProvider = FutureProvider<List<RosaryMysterySet>>((
-  ref,
-) async {
-  return ref.watch(rosaryRepositoryProvider).listAll();
-});
-
-final rosaryCompletionPrayersProvider =
-    FutureProvider.family<RosaryCompletionPrayers, String>((
-      ref,
-      language,
-    ) async {
-      return ref
-          .watch(rosaryRepositoryProvider)
-          .getCompletionPrayers(language: language);
-    });
-
-final rosaryInitialPrayersProvider =
-    FutureProvider.family<RosaryInitialPrayers, String>((ref, language) async {
-      return ref
-          .watch(rosaryRepositoryProvider)
-          .getInitialPrayers(language: language);
-    });
 
 // -- Bible Providers --
 

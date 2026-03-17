@@ -12,25 +12,10 @@ final class PremiumCopy {
 
 PremiumCopy premiumCopyFor(PremiumFeature feature) {
   return switch (feature) {
-    PremiumFeature.meditation => const PremiumCopy(
-      featureTitle: 'Meditações',
-      gateMessage:
-          'Abra meditações guiadas, leitura em modo foco e conteúdos para recolher o coração todos os dias.',
-    ),
-    PremiumFeature.planOfLife => const PremiumCopy(
-      featureTitle: 'Plano de vida',
-      gateMessage:
-          'Organize pequenas práticas espirituais e acompanhe sua constância com mais profundidade.',
-    ),
     PremiumFeature.streakDashboard => const PremiumCopy(
       featureTitle: 'Painel espiritual',
       gateMessage:
           'Veja sua constância de oração e acompanhe seu caminho com mais clareza.',
-    ),
-    PremiumFeature.rosary => const PremiumCopy(
-      featureTitle: 'Rosário guiado',
-      gateMessage:
-          'Reze cada mistério com textos, imagens e ritmo guiado dentro do app.',
     ),
     PremiumFeature.leituras => const PremiumCopy(
       featureTitle: 'Leituras',

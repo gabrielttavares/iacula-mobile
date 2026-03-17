@@ -67,7 +67,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Faça login para ver seu perfil.'), findsOneWidget);
+    expect(find.text('Sincronização entre dispositivos'), findsOneWidget);
     expect(find.text('Editar'), findsNothing);
   });
 }

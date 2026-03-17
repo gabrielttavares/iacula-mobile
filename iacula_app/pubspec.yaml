@@ -88,8 +88,6 @@ flutter:
     - assets/seed/images/ordinary/7/
     - assets/seed/images/reginaCaeli/
     - assets/seed/audio/
-    - assets/seed/meditations/
-    - assets/seed/rosary/
     - assets/seed/examination/
     - assets/seed/journal_prompts/
     - assets/seed/night_prayer/
@@ -104,7 +102,6 @@ flutter:
     - assets/fonts/google_fonts/
     - assets/placeholders/oracoes-tematicas/
     - assets/placeholders/
-    - assets/seed/icons/meditation_resources/
 
 
 dependency_overrides:

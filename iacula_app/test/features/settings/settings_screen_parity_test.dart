@@ -2,15 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
-import 'package:iacula_app/core/presentation/design/iacula_input.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
 import 'package:iacula_app/features/settings/presentation/settings_screen.dart';
 
 final class _FakeSettingsRepository implements SettingsRepository {
-  Settings _value;
-
   _FakeSettingsRepository(this._value);
+
+  Settings _value;
 
   @override
   Future<Settings> load() async => _value;
@@ -22,9 +21,7 @@ final class _FakeSettingsRepository implements SettingsRepository {
 }
 
 void main() {
-  testWidgets('settings screen shows parity controls from desktop', (
-    tester,
-  ) async {
+  testWidgets('settings screen shows current mobile sections', (tester) async {
     final repo = _FakeSettingsRepository(Settings.defaults);
 
     await tester.pumpWidget(
@@ -33,42 +30,29 @@ void main() {
         child: const CupertinoApp(home: SettingsScreen()),
       ),
     );
-
     await tester.pumpAndSettle();
 
     Future<void> expectVisible(String text) async {
       final finder = find.text(text);
-      for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
-        await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+      for (var i = 0; i < 12 && finder.evaluate().isEmpty; i++) {
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -250));
         await tester.pumpAndSettle();
       }
       expect(finder, findsOneWidget);
     }
 
-    expect(find.text('Intervalo das jaculatórias (minutos)'), findsOneWidget);
-    expect(find.text('Duracao (desktop apenas)'), findsNothing);
-    expect(
-      find.text(
-        'No mobile, o tempo do banner e controlado pelo sistema operacional.',
-      ),
-      findsNothing,
-    );
-    expect(find.text('Duracao (segundos)'), findsNothing);
-    expect(find.text('Autostart (mobile limitado)'), findsNothing);
-    // Liturgy controls removed from settings
-    expect(find.text('Som no lembrete liturgico'), findsNothing);
-    expect(find.text('Laudes'), findsNothing);
-    expect(find.text('Vesperas'), findsNothing);
-    expect(find.text('Completas'), findsNothing);
-    expect(find.text('Ora Media'), findsNothing);
-    // New sections present
-    await expectVisible('Aparência');
-    await expectVisible('Notificações');
+    expect(find.text('Notificações'), findsOneWidget);
+    expect(find.text('Aparência'), findsOneWidget);
+    expect(find.text('Notificações ativas'), findsOneWidget);
+    expect(find.text('Intervalo (minutos)'), findsOneWidget);
+    expect(find.text('Tema'), findsOneWidget);
+    expect(find.text('Tamanho da fonte'), findsOneWidget);
     await expectVisible('Personalização');
+    await expectVisible('Minhas frases');
     await expectVisible('Salvar');
   });
 
-  testWidgets('settings shows inline validation for invalid interval', (
+  testWidgets('settings no longer shows deprecated sync and interval inputs', (
     tester,
   ) async {
     final repo = _FakeSettingsRepository(Settings.defaults);
@@ -81,18 +65,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(IaculaTextInput).first, '0');
-    final saveFinder = find.text('Salvar');
-    for (var i = 0; i < 20 && saveFinder.evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
-      await tester.pumpAndSettle();
-    }
-    await tester.tap(find.text('Salvar'));
-    await tester.pumpAndSettle();
-
-    expect(
-      find.text('O intervalo deve ser entre 1 e 60 minutos.'),
-      findsOneWidget,
-    );
+    expect(find.text('Intervalo das jaculatórias (minutos)'), findsNothing);
+    expect(find.text('Sincronização entre dispositivos'), findsNothing);
+    expect(find.text('Continuar com Google'), findsNothing);
+    expect(find.text('Sincronizar agora'), findsNothing);
   });
 }

@@ -47,7 +47,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(CupertinoIcons.bell));
+    await tester.tap(find.byKey(const Key('home_notifications_button')));
     await tester.pumpAndSettle();
     expect(find.byType(NotificationsScreen), findsOneWidget);
   });

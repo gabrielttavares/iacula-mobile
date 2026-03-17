@@ -7,8 +7,6 @@ import 'package:sqflite/sqflite.dart';
 import '../../../../core/storage/isar/custom_phrase_doc.dart';
 import '../../../../core/storage/isar/examination_entry_doc.dart';
 import '../../../../core/storage/isar/examination_reflection_doc.dart';
-import '../../../../core/storage/isar/plan_completion_doc.dart';
-import '../../../../core/storage/isar/plan_of_life_entry_doc.dart';
 import '../../../../core/storage/isar/prayer_intention_entry_doc.dart';
 import '../../../../core/storage/isar/sync_state_doc.dart';
 import 'spiritual_data_encryption_key_provider.dart';
@@ -45,8 +43,6 @@ final class SpiritualDataIsarStore {
 
     _isar = await _openIsar(
       schemas: <CollectionSchema<dynamic>>[
-        PlanOfLifeEntryDocSchema,
-        PlanCompletionDocSchema,
         ExaminationEntryDocSchema,
         ExaminationReflectionDocSchema,
         PrayerIntentionEntryDocSchema,

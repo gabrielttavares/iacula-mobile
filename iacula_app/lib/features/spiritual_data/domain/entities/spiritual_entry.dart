@@ -1,5 +1,4 @@
 enum SpiritualModule {
-  planOfLife,
   examination,
   prayerIntention,
   journal,

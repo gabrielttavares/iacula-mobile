@@ -1,8 +1,5 @@
 enum PremiumFeature {
-  meditation,
-  planOfLife,
   streakDashboard,
-  rosary,
   leituras,
   journal,
   nightPrayer,

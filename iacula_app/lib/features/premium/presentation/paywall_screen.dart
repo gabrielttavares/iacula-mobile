@@ -93,15 +93,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 const SizedBox(height: 20),
                 _featureTile(
                   context,
-                  CupertinoIcons.play_circle,
-                  premiumCopyFor(PremiumFeature.meditation).featureTitle,
-                  premiumCopyFor(PremiumFeature.meditation).gateMessage,
-                ),
-                _featureTile(
-                  context,
-                  CupertinoIcons.check_mark_circled,
-                  premiumCopyFor(PremiumFeature.planOfLife).featureTitle,
-                  premiumCopyFor(PremiumFeature.planOfLife).gateMessage,
+                  CupertinoIcons.chart_bar,
+                  premiumCopyFor(PremiumFeature.streakDashboard).featureTitle,
+                  premiumCopyFor(PremiumFeature.streakDashboard).gateMessage,
                 ),
                 _featureTile(
                   context,

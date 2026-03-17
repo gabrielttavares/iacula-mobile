@@ -7,9 +7,6 @@ import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/leituras/data/repositories/leitura_repository.dart';
 import 'package:iacula_app/features/leituras/data/sources/leitura_local_source.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
-import 'package:iacula_app/features/meditation/domain/entities/meditation_item.dart';
-import 'package:iacula_app/features/meditation/domain/repositories/meditation_catalog_repository.dart';
-import 'package:iacula_app/features/meditation/presentation/meditation_reader_screen.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
@@ -19,9 +16,7 @@ import 'package:iacula_app/features/search/presentation/search_screen.dart';
 
 final class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
   @override
-  Future<List<PrayerCatalogEntry>> listCatalog({
-    required String language,
-  }) async {
+  Future<List<PrayerCatalogEntry>> listCatalog({required String language}) async {
     return const [
       PrayerCatalogEntry(
         slug: 'salve-rainha',
@@ -40,44 +35,6 @@ final class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
       ),
     ];
   }
-}
-
-final class _FakeMeditationCatalogRepository
-    implements MeditationCatalogRepository {
-  @override
-  Future<MeditationItem?> getById(String id) async => null;
-
-  @override
-  Future<List<MeditationItem>> listAll() async {
-    return const [
-      MeditationItem(
-        id: 'med-1',
-        type: MeditationType.text,
-        title: 'Meditação para recomeçar',
-        summary: 'Retome a oração com silêncio e presença de Deus.',
-        categoryTags: ['recomecar'],
-        sourceName: 'Hablar con Dios',
-        textContent: MeditationTextContent(
-          body: 'Texto de meditação para recomeçar com serenidade.',
-          format: 'plain',
-          language: 'pt',
-        ),
-        availability: MeditationAvailability(
-          kind: MeditationAvailabilityKind.daily,
-        ),
-        provenance: MeditationProvenance(
-          providerId: 'hablar-con-dios',
-          providerType: 'daily_text',
-        ),
-      ),
-    ];
-  }
-
-  @override
-  Future<List<MeditationItem>> listByCategory(String category) => listAll();
-
-  @override
-  Future<List<MeditationItem>> listByType(MeditationType type) => listAll();
 }
 
 final class _FakeQuoteContentRepository implements QuoteContentRepository {
@@ -153,7 +110,6 @@ ProviderScope _buildApp() {
       appSearchServiceProvider.overrideWithValue(
         AppSearchService(
           prayerCatalogRepository: _FakePrayerCatalogRepository(),
-          meditationCatalogRepository: _FakeMeditationCatalogRepository(),
           leituraRepository: _buildLeituraRepository(),
           quoteContentRepository: _FakeQuoteContentRepository(),
         ),
@@ -181,15 +137,15 @@ void main() {
     expect(find.text('silêncio'), findsOneWidget);
   });
 
-  testWidgets('shows matching meditation search results', (tester) async {
+  testWidgets('shows matching prayer search results', (tester) async {
     await tester.pumpWidget(_buildApp());
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(CupertinoSearchTextField), 'meditação');
+    await tester.enterText(find.byType(CupertinoSearchTextField), 'exame');
     await tester.pump(const Duration(milliseconds: 250));
     await tester.pumpAndSettle();
 
-    expect(find.text('Meditação para recomeçar'), findsOneWidget);
+    expect(find.text('Exame breve'), findsOneWidget);
     expect(find.textContaining('resultado'), findsWidgets);
   });
 
@@ -226,21 +182,20 @@ void main() {
     expect(find.text('recomeçar'), findsWidgets);
   });
 
-  testWidgets('tapping a meditation search result opens the reader directly', (
+  testWidgets('tapping a reading search result opens the reader', (
     tester,
   ) async {
     await tester.pumpWidget(_buildApp());
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(CupertinoSearchTextField), 'meditação');
+    await tester.enterText(find.byType(CupertinoSearchTextField), 'caminho');
     await tester.pump(const Duration(milliseconds: 250));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Meditação para recomeçar'));
-    await tester.pumpAndSettle();
+    await tester.tap(find.text('Caminho'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
 
-    expect(find.byType(MeditationReaderScreen), findsOneWidget);
-    expect(find.text('A-'), findsOneWidget);
-    expect(find.text('A+'), findsOneWidget);
+    expect(find.text('Capítulos'), findsWidgets);
   });
 }

@@ -7,10 +7,9 @@ void main() {
     expect(
       PremiumFeature.values,
       containsAll([
-        PremiumFeature.meditation,
-        PremiumFeature.planOfLife,
-        PremiumFeature.rosary,
+        PremiumFeature.streakDashboard,
         PremiumFeature.leituras,
+        PremiumFeature.journal,
       ]),
     );
   });

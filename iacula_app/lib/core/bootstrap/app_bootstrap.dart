@@ -21,7 +21,6 @@ import '../../features/notifications/application/use_cases/schedule_liturgy_remi
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
-import '../../features/plan_of_life/application/use_cases/seed_default_items_use_case.dart';
 import '../../features/premium/domain/entities/premium_status.dart';
 import '../../features/premium/domain/repositories/premium_repository.dart';
 import '../../features/premium/infrastructure/always_unlocked_premium_repository.dart';
@@ -157,11 +156,6 @@ final class AppBootstrap {
     var bootstrapStatus = const BootstrapStatus();
     SupabaseClient? supabaseClient;
 
-    // Seed default plan of life items
-    await SeedDefaultItemsUseCase(
-      IsarPlanOfLifeSpiritualEntryRepository(spiritualStore),
-    ).call();
-
     if (env.authSyncEnabled && env.hasSupabase) {
       try {
         await Supabase.initialize(
@@ -187,17 +181,6 @@ final class AppBootstrap {
           authRepository: authRepository,
           syncStateRepository: IsarSyncStateRepository(spiritualStore),
           modules: [
-            SyncModuleAdapter(
-              module: SpiritualModule.planOfLife,
-              localRepository: IsarPlanOfLifeSpiritualEntryRepository(
-                spiritualStore,
-              ),
-              remoteRepository: SupabaseSpiritualSyncRepository(
-                module: SpiritualModule.planOfLife,
-                table: 'plan_of_life_entries',
-                gateway: gateway,
-              ),
-            ),
             SyncModuleAdapter(
               module: SpiritualModule.examination,
               localRepository: IsarExaminationSpiritualEntryRepository(

@@ -287,7 +287,6 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.vespers => 302,
       ReminderEventType.compline => 303,
       ReminderEventType.oraMedia => 304,
-      ReminderEventType.customMeditationAlarm => 400,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
     };
@@ -301,7 +300,6 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.vespers ||
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'liturgy_hours_alarm',
-      ReminderEventType.customMeditationAlarm => 'custom_meditation_alarm',
       ReminderEventType.customPhrase => 'custom_phrases',
       ReminderEventType.prayerIntentionReminder => 'prayer_intention_reminder',
     };
@@ -315,7 +313,6 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.vespers ||
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'Liturgia das Horas',
-      ReminderEventType.customMeditationAlarm => 'Meditação',
       ReminderEventType.customPhrase => 'Minhas frases',
       ReminderEventType.prayerIntentionReminder => 'Intenções',
     };
@@ -329,7 +326,6 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.vespers ||
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'Alarmes da Liturgia das Horas',
-      ReminderEventType.customMeditationAlarm => 'Alarmes de meditação',
       ReminderEventType.customPhrase => 'Notificações de frases personalizadas',
       ReminderEventType.prayerIntentionReminder => 'Lembretes para rezar por intenções',
     };

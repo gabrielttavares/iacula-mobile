@@ -18,7 +18,7 @@ void main() {
         ],
         child: const MaterialApp(
           home: PremiumGate(
-            feature: PremiumFeature.meditation,
+            feature: PremiumFeature.leituras,
             lockedFallback: Text('locked'),
             child: Text('unlocked'),
           ),
@@ -44,7 +44,7 @@ void main() {
         ],
         child: const MaterialApp(
           home: PremiumGate(
-            feature: PremiumFeature.planOfLife,
+            feature: PremiumFeature.streakDashboard,
             lockedFallback: Text('locked'),
             child: Text('unlocked'),
           ),

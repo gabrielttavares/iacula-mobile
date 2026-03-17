@@ -161,7 +161,7 @@ final class SupabaseSpiritualSyncRepository implements SyncRepository {
     Map<String, dynamic> row, {
     required SpiritualModule module,
   }) {
-    final schedule = module == SpiritualModule.planOfLife
+    final schedule = module == SpiritualModule.prayerIntention
         ? row['schedule_json'] as String?
         : null;
 
@@ -190,7 +190,7 @@ final class SupabaseSpiritualSyncRepository implements SyncRepository {
     SpiritualEntry entry, {
     required String userId,
   }) {
-    final schedule = entry.module == SpiritualModule.planOfLife
+    final schedule = entry.module == SpiritualModule.prayerIntention
         ? entry.scheduleJson
         : null;
 

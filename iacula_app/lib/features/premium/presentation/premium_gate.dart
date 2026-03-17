@@ -42,10 +42,7 @@ class PremiumGate extends ConsumerWidget {
 
   static bool _isPremiumFeature(PremiumFeature value) {
     return switch (value) {
-      PremiumFeature.meditation ||
-      PremiumFeature.planOfLife ||
       PremiumFeature.streakDashboard ||
-      PremiumFeature.rosary ||
       PremiumFeature.leituras ||
       PremiumFeature.journal ||
       PremiumFeature.nightPrayer ||

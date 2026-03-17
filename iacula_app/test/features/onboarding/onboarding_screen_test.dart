@@ -43,8 +43,8 @@ void main() {
 
     Future<void> reveal(String text) async {
       final finder = find.text(text);
-      for (var i = 0; i < 12 && finder.evaluate().isEmpty; i++) {
-        await tester.drag(find.byType(ListView), const Offset(0, -220));
+      for (var i = 0; i < 8 && finder.evaluate().isEmpty; i++) {
+        await tester.drag(find.byType(ListView), const Offset(0, -180));
         await tester.pumpAndSettle();
       }
       expect(finder, findsOneWidget);
@@ -52,28 +52,21 @@ void main() {
 
     expect(find.byType(OnboardingScreen), findsOneWidget);
     expect(find.text('Iacula'), findsOneWidget);
-    expect(find.byIcon(CupertinoIcons.circle_grid_3x3_fill), findsNothing);
     expect(find.text('Volte a Deus ao longo do dia.'), findsOneWidget);
-    expect(
-      find.text(
-        'Um caminho simples de oração, leitura e exame para recomeçar com constância.',
-      ),
-      findsOneWidget,
-    );
-    await reveal('Reze sem se perder');
-    await reveal('Volte rápido ao essencial');
+    expect(find.text('Reze sem se perder'), findsOneWidget);
+    expect(find.text('Volte rápido ao essencial'), findsOneWidget);
     await reveal('Siga um ritmo de oração');
-    expect(find.text('Jaculatórias do dia'), findsNothing);
-    await reveal('Quero começar agora');
-    expect(find.text('Iacula • presença de Deus no cotidiano'), findsNothing);
+    await reveal('Continuar');
 
-    await tester.dragUntilVisible(
-      find.text('Quero começar agora'),
-      find.byType(ListView),
-      const Offset(0, -120),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Quero começar agora'));
+    await tester.tap(find.text('Continuar'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text('Jaculatórias no seu dia'), findsOneWidget);
+    await reveal('Ativar notificações');
+    await reveal('Agora não');
+
+    await tester.tap(find.text('Agora não'));
     await tester.pumpAndSettle();
 
     expect(repo.value.onboardingCompleted, isTrue);

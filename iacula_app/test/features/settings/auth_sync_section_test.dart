@@ -7,9 +7,9 @@ import 'package:iacula_app/features/settings/domain/repositories/settings_reposi
 import 'package:iacula_app/features/settings/presentation/settings_screen.dart';
 
 final class _FakeSettingsRepository implements SettingsRepository {
-  Settings _value;
-
   _FakeSettingsRepository(this._value);
+
+  Settings _value;
 
   @override
   Future<Settings> load() async => _value;
@@ -21,9 +21,7 @@ final class _FakeSettingsRepository implements SettingsRepository {
 }
 
 void main() {
-  testWidgets('settings screen shows optional auth sync section', (
-    tester,
-  ) async {
+  testWidgets('settings screen omits the old auth sync section', (tester) async {
     final repo = _FakeSettingsRepository(Settings.defaults);
 
     await tester.pumpWidget(
@@ -32,20 +30,10 @@ void main() {
         child: const CupertinoApp(home: SettingsScreen()),
       ),
     );
-
     await tester.pumpAndSettle();
 
-    Future<void> expectVisible(String text) async {
-      final finder = find.text(text);
-      for (var i = 0; i < 24 && finder.evaluate().isEmpty; i++) {
-        await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
-        await tester.pumpAndSettle();
-      }
-      expect(finder, findsOneWidget);
-    }
-
-    await expectVisible('Sincronização entre dispositivos');
-    await expectVisible('Continuar com Google');
-    await expectVisible('Continuar com Microsoft');
+    expect(find.text('Sincronização entre dispositivos'), findsNothing);
+    expect(find.text('Continuar com Google'), findsNothing);
+    expect(find.text('Continuar com Microsoft'), findsNothing);
   });
 }

@@ -13,8 +13,6 @@ import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
-import '../../premium/domain/entities/premium_feature.dart';
-import '../../premium/presentation/premium_gate.dart';
 import '../domain/entities/settings.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -279,19 +277,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         vertical: 16,
                       ),
                       onPressed: () {
-                        final isPremium =
-                            ref
-                                .read(premiumStatusProvider)
-                                .valueOrNull
-                                ?.isPremium ??
-                            true;
-                        if (!isPremium) {
-                          PremiumGate.showModal(
-                            context,
-                            feature: PremiumFeature.meditation,
-                          );
-                          return;
-                        }
                         Navigator.of(context).push(
                           CupertinoPageRoute(
                             builder: (_) => const CustomPhrasesScreen(),

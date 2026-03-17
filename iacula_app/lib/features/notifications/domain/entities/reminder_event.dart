@@ -5,7 +5,6 @@ enum ReminderEventType {
   vespers,
   compline,
   oraMedia,
-  customMeditationAlarm,
   customPhrase,
   prayerIntentionReminder,
 }
@@ -17,8 +16,6 @@ enum NotificationRouteTarget {
   prayerIntention,
   nightPrayer,
   liturgyHours,
-  rosary,
-  journal,
 }
 
 final class ReminderEvent {
@@ -132,9 +129,8 @@ final class ReminderEvent {
       ReminderEventType.laudes ||
       ReminderEventType.vespers => NotificationRouteTarget.liturgyHours,
       ReminderEventType.compline => NotificationRouteTarget.nightPrayer,
-      ReminderEventType.oraMedia ||
-      ReminderEventType.customMeditationAlarm ||
-      ReminderEventType.customPhrase => NotificationRouteTarget.home,
+      ReminderEventType.oraMedia || ReminderEventType.customPhrase =>
+        NotificationRouteTarget.home,
       ReminderEventType.prayerIntentionReminder => NotificationRouteTarget.prayerIntention,
     };
   }

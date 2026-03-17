@@ -59,7 +59,7 @@ void main() {
               .toList()
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
       expect(quoteEvents.length, 64);
-      expect(quoteEvents.first.title, '');
+      expect(quoteEvents.first.title, 'Iacula');
       expect(quoteEvents.first.body, 'Sede santos, porque eu sou santo.');
       expect(
         quoteEvents.map((event) => event.scheduledId).whereType<int>().toSet(),

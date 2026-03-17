@@ -27,10 +27,10 @@ void main() {
       expect(details.actions!.first.title, 'Abrir');
     });
 
-    test('keeps alarm actions and channel mapping unchanged', () {
+    test('keeps alarm actions and liturgy channel mapping unchanged', () {
       final event = ReminderEvent(
-        type: ReminderEventType.customMeditationAlarm,
-        title: 'Meditacao',
+        type: ReminderEventType.oraMedia,
+        title: 'Hora Média',
         body: 'Hora de rezar',
         scheduledAt: DateTime(2026, 2, 22, 9),
         withVibration: true,
@@ -42,7 +42,7 @@ void main() {
             event,
           );
 
-      expect(details.channelId, 'custom_meditation_alarm');
+      expect(details.channelId, 'liturgy_hours_alarm');
       expect(details.actions, hasLength(2));
       expect(details.actions!.map((action) => action.id), [
         NotificationActionEvent.openAction,
