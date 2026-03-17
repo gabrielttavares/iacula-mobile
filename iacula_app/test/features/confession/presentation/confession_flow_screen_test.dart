@@ -17,6 +17,34 @@ final class _FakeConfessionExaminationRepository
 }
 
 void main() {
+  Widget buildNavigationHarness({
+    required ConfessionExaminationRepository repository,
+  }) {
+    return ProviderScope(
+      overrides: [
+        confessionExaminationRepositoryProvider.overrideWithValue(repository),
+      ],
+      child: CupertinoApp(
+        home: Builder(
+          builder: (context) => CupertinoPageScaffold(
+            child: Center(
+              child: CupertinoButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (_) => const ConfessionFlowScreen(),
+                    ),
+                  );
+                },
+                child: const Text('Abrir'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   ProviderScope buildTestApp({
     required ConfessionExaminationRepository repository,
   }) {
@@ -74,4 +102,24 @@ void main() {
       expect(find.byIcon(CupertinoIcons.checkmark_square_fill), findsNothing);
     },
   );
+
+  testWidgets('back arrow returns to parent screen', (tester) async {
+    await tester.pumpWidget(
+      buildNavigationHarness(
+        repository: const _FakeConfessionExaminationRepository(items),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Abrir'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ConfessionFlowScreen), findsOneWidget);
+
+    await tester.tap(find.byIcon(CupertinoIcons.chevron_back));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ConfessionFlowScreen), findsNothing);
+    expect(find.text('Abrir'), findsOneWidget);
+  });
 }

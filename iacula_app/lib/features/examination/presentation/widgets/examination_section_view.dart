@@ -26,6 +26,7 @@ class ExaminationSectionView extends ConsumerWidget {
                   onPressed: () {
                     HapticFeedback.selectionClick();
                     ref.read(examinationFlowProvider.notifier).clearAll();
+                    Navigator.of(context).pop();
                   },
                   child: Icon(
                     CupertinoIcons.chevron_back,
