@@ -137,7 +137,7 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Usa este conteúdo no Hero e nas jaculatórias.',
+                            'Usa estes conteúdos no lugar das jaculatórias.',
                             style: context.textStyles.secondary.copyWith(
                               fontSize: 12,
                             ),

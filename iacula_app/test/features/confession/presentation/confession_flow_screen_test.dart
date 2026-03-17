@@ -47,7 +47,7 @@ void main() {
   ];
 
   testWidgets(
-    'renders a textual confession examination in daily-style layout',
+    'opens confession examination directly without intro screen',
     (tester) async {
       await tester.pumpWidget(
         buildTestApp(
@@ -56,13 +56,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Começar'));
-      await tester.pumpAndSettle();
-
       expect(
         find.text('Exame de Consciência para Confissão'),
         findsOneWidget,
       );
+      expect(find.text('Começar'), findsNothing);
+      expect(find.text('Como se confessar?'), findsNothing);
       expect(find.text('Neguei ou abandonei a minha fé.'), findsOneWidget);
       expect(
         find.text(

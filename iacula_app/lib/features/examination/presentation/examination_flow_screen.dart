@@ -9,7 +9,9 @@ import 'widgets/examination_preparation_view.dart';
 import 'widgets/examination_section_view.dart';
 
 class ExaminationFlowScreen extends ConsumerStatefulWidget {
-  const ExaminationFlowScreen({super.key});
+  const ExaminationFlowScreen({super.key, this.skipPreparation = false});
+
+  final bool skipPreparation;
 
   @override
   ConsumerState<ExaminationFlowScreen> createState() =>
@@ -41,6 +43,13 @@ class _ExaminationFlowScreenState extends ConsumerState<ExaminationFlowScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.skipPreparation) {
+      return CupertinoPageScaffold(
+        backgroundColor: context.colors.background,
+        child: const ExaminationSectionView(),
+      );
+    }
+
     final flowState = ref.watch(examinationFlowProvider);
 
     return CupertinoPageScaffold(
