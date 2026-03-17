@@ -160,11 +160,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                             );
                           },
-                          onOpenIntentions: () {
+                          onOpenBible: () {
                             HapticFeedback.lightImpact();
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (_) => const PrayerIntentionsScreen(),
+                                builder: (_) => const BibleBooksScreen(),
                               ),
                             );
                           },
@@ -188,12 +188,12 @@ class _HomeShortcutsRail extends StatelessWidget {
   const _HomeShortcutsRail({
     required this.onOpenCustomPhrases,
     required this.onOpenPrayers,
-    required this.onOpenIntentions,
+    required this.onOpenBible,
   });
 
   final VoidCallback onOpenCustomPhrases;
   final VoidCallback onOpenPrayers;
-  final VoidCallback onOpenIntentions;
+  final VoidCallback onOpenBible;
 
   @override
   Widget build(BuildContext context) {
@@ -205,10 +205,10 @@ class _HomeShortcutsRail extends StatelessWidget {
         label: 'Orações',
         onTap: onOpenPrayers,
       ),
-            _RailCard(
-        key: const Key('home_action_intencoes'),
-        label: 'Intenções',
-        onTap: onOpenIntentions,
+      _RailCard(
+        key: const Key('home_feature_biblia_card'),
+        label: 'Bíblia',
+        onTap: onOpenBible,
       ),
       _RailCard(
         key: const Key('home_custom_phrases_card'),
@@ -392,12 +392,14 @@ class _FeatureCardsList extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
           child: ImageBackgroundCard(
-            key: const Key('home_feature_biblia_card'),
-            title: 'Bíblia',
+            key: const Key('home_action_intencoes'),
+            title: 'Intenções',
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
-                CupertinoPageRoute(builder: (_) => const BibleBooksScreen()),
+                CupertinoPageRoute(
+                  builder: (_) => const PrayerIntentionsScreen(),
+                ),
               );
             },
             height: 120,
@@ -406,16 +408,16 @@ class _FeatureCardsList extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
           child: ImageBackgroundCard(
-          key: const Key('home_feature_confissao_card'),
-          title: 'Sacramento da Confissão',
-          onTap: () {
-            HapticFeedback.lightImpact();
-            Navigator.of(context).push(
-              CupertinoPageRoute(builder: (_) => const ConfessionFlowScreen()),
-            );
-          },
-          height: 120,
-        ),
+            key: const Key('home_feature_confissao_card'),
+            title: 'Sacramento da Confissão',
+            onTap: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).push(
+                CupertinoPageRoute(builder: (_) => const ConfessionFlowScreen()),
+              );
+            },
+            height: 120,
+          ),
         ),
       ],
     );
