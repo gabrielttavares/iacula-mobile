@@ -76,6 +76,7 @@ import '../../features/bible/domain/entities/bible_chapter_ref.dart';
 import '../../features/bible/domain/entities/bible_verse.dart';
 import '../../features/bible/domain/repositories/bible_repository.dart';
 import '../../features/bible/infrastructure/repositories/asset_bible_repository.dart';
+import '../../features/bible/presentation/bible_prefs_notifier.dart';
 import '../../features/confession/domain/entities/confession_examination_item.dart';
 import '../../features/confession/domain/repositories/confession_examination_repository.dart';
 import '../../features/confession/domain/services/native_share_service.dart';
@@ -568,6 +569,11 @@ final dashboardStatsProvider = FutureProvider<DashboardStats>((ref) async {
 final bibleRepositoryProvider = Provider<BibleRepository>((ref) {
   return AssetBibleRepository();
 });
+
+final biblePrefsProvider =
+    StateNotifierProvider<BiblePrefsNotifier, BiblePrefs>((ref) {
+      return BiblePrefsNotifier();
+    });
 
 final bibleBooksProvider = FutureProvider<List<BibleBook>>((ref) async {
   return ref.watch(bibleRepositoryProvider).listBooks();

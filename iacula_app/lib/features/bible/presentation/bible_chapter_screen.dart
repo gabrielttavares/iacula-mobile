@@ -7,7 +7,7 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/bible_book.dart';
 import '../domain/entities/bible_chapter_ref.dart';
 
-class BibleChapterScreen extends ConsumerWidget {
+class BibleChapterScreen extends ConsumerStatefulWidget {
   const BibleChapterScreen({
     super.key,
     required this.book,
@@ -18,10 +18,29 @@ class BibleChapterScreen extends ConsumerWidget {
   final int chapterNumber;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BibleChapterScreen> createState() => _BibleChapterScreenState();
+}
+
+class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(biblePrefsProvider.notifier).savePosition(
+            widget.book.abbrev,
+            widget.chapterNumber,
+          );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final chapterAsync = ref.watch(
       bibleChapterProvider(
-        BibleChapterRef(bookAbbrev: book.abbrev, chapterNumber: chapterNumber),
+        BibleChapterRef(
+          bookAbbrev: widget.book.abbrev,
+          chapterNumber: widget.chapterNumber,
+        ),
       ),
     );
 
@@ -30,7 +49,7 @@ class BibleChapterScreen extends ConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: context.colors.background,
         border: null,
-        middle: Text('${book.name} $chapterNumber'),
+        middle: Text('${widget.book.name} ${widget.chapterNumber}'),
       ),
       child: SafeArea(
         child: chapterAsync.when(

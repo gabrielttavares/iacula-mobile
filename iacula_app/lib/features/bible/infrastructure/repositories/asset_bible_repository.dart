@@ -67,11 +67,15 @@ final class AssetBibleRepository implements BibleRepository {
   }
 
   BibleBook _bookFromJson(Map<String, dynamic> json, int order) {
+    final abbrev = (json['livro'] as String? ?? '').trim();
     return BibleBook(
-      abbrev: (json['livro'] as String? ?? '').trim(),
+      abbrev: abbrev,
       chapterCount: _readInt(json['quantidadeCap']) ?? 0,
-      name: _bookLabelForAbbrev((json['livro'] as String? ?? '').trim()),
+      name: _bookLabelForAbbrev(abbrev),
       order: order,
+      testament: _ntAbbrevs.contains(abbrev.toLowerCase())
+          ? BibleTestament.novo
+          : BibleTestament.antigo,
     );
   }
 
@@ -196,3 +200,33 @@ String _bookLabelForAbbrev(String abbrev) {
   final key = abbrev.toLowerCase();
   return _bookLabels[key] ?? abbrev;
 }
+
+const _ntAbbrevs = {
+  'mt',
+  'mc',
+  'lc',
+  'jo',
+  'act',
+  'rm',
+  '1co',
+  '2co',
+  'gl',
+  'ef',
+  'fp',
+  'cl',
+  '1ts',
+  '2ts',
+  '1tm',
+  '2tm',
+  'tt',
+  'fm',
+  'hb',
+  'tg',
+  '1pe',
+  '2pe',
+  '1jo',
+  '2jo',
+  '3jo',
+  'jda',
+  'ap',
+};
