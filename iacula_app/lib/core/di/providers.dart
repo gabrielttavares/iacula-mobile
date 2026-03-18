@@ -71,12 +71,6 @@ import '../../features/prayer_activity/domain/entities/dashboard_stats.dart';
 import '../../features/prayer_activity/domain/repositories/prayer_activity_repository.dart';
 import '../../features/prayer_activity/infrastructure/repositories/isar_prayer_activity_repository.dart';
 import '../../features/search/application/app_search_service.dart';
-import '../../features/bible/domain/entities/bible_book.dart';
-import '../../features/bible/domain/entities/bible_chapter_ref.dart';
-import '../../features/bible/domain/entities/bible_verse.dart';
-import '../../features/bible/domain/repositories/bible_repository.dart';
-import '../../features/bible/infrastructure/repositories/asset_bible_repository.dart';
-import '../../features/bible/presentation/bible_prefs_notifier.dart';
 import '../../features/confession/domain/entities/confession_examination_item.dart';
 import '../../features/confession/domain/repositories/confession_examination_repository.dart';
 import '../../features/confession/domain/services/native_share_service.dart';
@@ -563,34 +557,6 @@ final dashboardStatsProvider = FutureProvider<DashboardStats>((ref) async {
   final entries = await repo.listAll();
   return const StreakCalculator().computeDashboard(entries);
 });
-
-// -- Bible Providers --
-
-final bibleRepositoryProvider = Provider<BibleRepository>((ref) {
-  return AssetBibleRepository();
-});
-
-final biblePrefsProvider =
-    StateNotifierProvider<BiblePrefsNotifier, BiblePrefs>((ref) {
-      return BiblePrefsNotifier();
-    });
-
-final bibleBooksProvider = FutureProvider<List<BibleBook>>((ref) async {
-  return ref.watch(bibleRepositoryProvider).listBooks();
-});
-
-final bibleChapterProvider =
-    FutureProvider.family<List<BibleVerse>, BibleChapterRef>((
-      ref,
-      chapter,
-    ) async {
-      return ref
-          .watch(bibleRepositoryProvider)
-          .getChapter(
-            bookAbbrev: chapter.bookAbbrev,
-            chapterNumber: chapter.chapterNumber,
-          );
-    });
 
 // -- Journal Providers --
 

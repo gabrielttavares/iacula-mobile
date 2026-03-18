@@ -6,7 +6,6 @@ import 'package:iacula_app/features/profile/presentation/profile_screen.dart';
 import 'package:iacula_app/features/settings/presentation/settings_screen.dart';
 import 'package:iacula_app/features/notifications/presentation/notifications_screen.dart';
 import 'package:iacula_app/features/favorites/presentation/favorites_screen.dart';
-import 'package:iacula_app/features/bible/presentation/bible_books_screen.dart';
 
 void main() {
   testWidgets('MoreScreen renders all 8 items', (tester) async {

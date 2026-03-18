@@ -35,7 +35,7 @@ class ProfileScreen extends ConsumerWidget {
               child: AuthActionSheet(
                 title: 'Sincronização entre dispositivos',
                 subtitle:
-                    'Faça login para manter seus dados espirituais sincronizados entre dispositivos. A sincronização acontece automaticamente.',
+                    'Faça login para manter suas frases e intenções sincronizadas entre dispositivos. A sincronização acontece automaticamente.',
                 onGoogle: () => authRepo.signInWithGoogle(),
                 onMicrosoft: () => authRepo.signInWithMicrosoft(),
                 onApple: () => authRepo.signInWithApple(),

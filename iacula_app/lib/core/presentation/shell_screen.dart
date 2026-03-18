@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../features/examination/presentation/examination_reading_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
 import '../../features/more/presentation/more_screen.dart';
 import '../theme/cupertino_tokens.dart';
@@ -24,7 +24,7 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
 
   static const _screens = <Widget>[
     HomeScreen(),
-    ExaminationReadingScreen(),
+    NotificationsScreen(),
     FavoritesScreen(),
     MoreScreen(),
   ];
@@ -72,9 +72,9 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 4.0),
-              child: SizedBox(width: 30, child: Icon(CupertinoIcons.doc_text)),
+              child: SizedBox(width: 30, child: Icon(CupertinoIcons.bell)),
             ),
-            label: 'Exame Diário',
+            label: 'Notificações',
           ),
           BottomNavigationBarItem(
             icon: Padding(

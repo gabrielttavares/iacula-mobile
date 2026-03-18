@@ -22,7 +22,7 @@ import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../../confession/presentation/confession_flow_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
-import '../../bible/presentation/bible_books_screen.dart';
+import '../../examination/presentation/examination_reading_screen.dart';
 import 'hero_reflection_sheet.dart';
 import 'widgets/home_hero_card.dart';
 
@@ -160,11 +160,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                             );
                           },
-                          onOpenBible: () {
+                          onOpenExame: () {
                             HapticFeedback.lightImpact();
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (_) => const BibleBooksScreen(),
+                                builder: (_) => const ExaminationReadingScreen(),
                               ),
                             );
                           },
@@ -188,12 +188,12 @@ class _HomeShortcutsRail extends StatelessWidget {
   const _HomeShortcutsRail({
     required this.onOpenCustomPhrases,
     required this.onOpenPrayers,
-    required this.onOpenBible,
+    required this.onOpenExame,
   });
 
   final VoidCallback onOpenCustomPhrases;
   final VoidCallback onOpenPrayers;
-  final VoidCallback onOpenBible;
+  final VoidCallback onOpenExame;
 
   @override
   Widget build(BuildContext context) {
@@ -206,9 +206,9 @@ class _HomeShortcutsRail extends StatelessWidget {
         onTap: onOpenPrayers,
       ),
       _RailCard(
-        key: const Key('home_feature_biblia_card'),
-        label: 'Bíblia',
-        onTap: onOpenBible,
+        key: const Key('home_action_exame'),
+        label: 'Exame Diário',
+        onTap: onOpenExame,
       ),
       _RailCard(
         key: const Key('home_custom_phrases_card'),

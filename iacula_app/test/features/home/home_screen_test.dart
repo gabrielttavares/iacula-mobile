@@ -80,7 +80,7 @@ void main() {
     expect(find.byKey(const Key('home_action_oracoes')), findsOneWidget);
     expect(find.byKey(const Key('home_action_intencoes')), findsOneWidget);
     expect(find.byKey(const Key('home_custom_phrases_card')), findsOneWidget);
-    expect(find.byKey(const Key('home_feature_biblia_card')), findsOneWidget);
+    expect(find.byKey(const Key('home_action_exame')), findsOneWidget);
     expect(find.byKey(const Key('home_feature_confissao_card')), findsOneWidget);
   });
 
@@ -90,28 +90,9 @@ void main() {
 
     expect(find.text('Ação de Graças'), findsNothing);
     expect(find.byKey(const Key('home_action_liturgia')), findsNothing);
-    expect(find.byKey(const Key('home_action_exame')), findsNothing);
     expect(find.byKey(const Key('home_feature_rosario_card')), findsNothing);
     expect(find.text('Liturgia diária'), findsNothing);
     expect(find.text('Rosário'), findsNothing);
-  });
-
-  testWidgets('home keeps bible card above confession card', (tester) async {
-    await tester.pumpWidget(_buildApp());
-    await tester.pumpAndSettle();
-
-    final confessionCard = find.byKey(const Key('home_feature_confissao_card'));
-    await tester.dragUntilVisible(
-      confessionCard,
-      find.byType(CustomScrollView),
-      const Offset(0, -220),
-    );
-
-    final bibleY = tester
-        .getTopLeft(find.byKey(const Key('home_feature_biblia_card')))
-        .dy;
-    final confessionY = tester.getTopLeft(confessionCard).dy;
-
-    expect(bibleY, lessThan(confessionY));
+    expect(find.byKey(const Key('home_feature_biblia_card')), findsNothing);
   });
 }
