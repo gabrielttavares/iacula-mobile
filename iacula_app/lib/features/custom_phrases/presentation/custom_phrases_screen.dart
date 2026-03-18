@@ -287,7 +287,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Crie frases que inspirem sua jornada espiritual. Elas aparecem na tela inicial e como notificações.',
+              'Suas frases aparecem no destaque da tela inicial junto com as jaculatórias do tempo, e também como notificações nos horários que você escolher.',
               style: context.textStyles.secondary,
               textAlign: TextAlign.center,
             ),

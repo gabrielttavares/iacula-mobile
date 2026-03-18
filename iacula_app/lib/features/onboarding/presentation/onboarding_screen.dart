@@ -64,6 +64,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     onComplete: _completeWithNotifications,
                     onSkip: _skipWithoutAccount,
                   ),
+                  _CustomPhrasesPage(
+                    onComplete: _finishOnboarding,
+                  ),
                 ],
               ),
             ),
@@ -71,7 +74,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(2, (i) {
+                children: List.generate(3, (i) {
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 250),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -134,9 +137,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(updated);
 
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      CupertinoPageRoute(builder: (_) => const ShellScreen()),
-    );
+    _goToPage(2);
   }
 
   Future<void> _skipWithoutAccount() async {
@@ -149,6 +150,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           intervalMinutes: _selectedInterval,
         ));
     if (!mounted) return;
+    _goToPage(2);
+  }
+
+  void _finishOnboarding() {
     Navigator.of(context).pushReplacement(
       CupertinoPageRoute(builder: (_) => const ShellScreen()),
     );
@@ -208,7 +213,7 @@ class _WelcomePage extends StatelessWidget {
               icon: CupertinoIcons.check_mark_circled,
               title: 'Siga um ritmo de oração',
               subtitle:
-                  'Liturgia, exame e práticas diárias para perseverar com paz.',
+                  'Exame de consciência, Liturgia das Horas e práticas diárias para perseverar com paz.',
               minHeight: 104,
             ),
             const SizedBox(height: IaculaSpacing.xl),
@@ -384,6 +389,25 @@ class _NotificationSetupPage extends StatelessWidget {
               ],
             ),
 
+            const SizedBox(height: IaculaSpacing.sm),
+
+            Row(
+              children: [
+                Icon(
+                  CupertinoIcons.pencil,
+                  size: 14,
+                  color: context.colors.textSecondary,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Você também pode adicionar frases pessoais que aparecem aqui junto com as jaculatórias.',
+                    style: context.textStyles.secondary.copyWith(fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+
             const SizedBox(height: IaculaSpacing.xl),
             IaculaPrimaryPillButton(
               label: saving ? 'Configurando...' : 'Ativar notificações',
@@ -393,6 +417,77 @@ class _NotificationSetupPage extends StatelessWidget {
             IaculaSecondaryPillButton(
               label: 'Agora não',
               onPressed: saving ? null : onSkip,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CustomPhrasesPage extends StatelessWidget {
+  const _CustomPhrasesPage({required this.onComplete});
+
+  final VoidCallback onComplete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 460),
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(
+            IaculaSpacing.md,
+            IaculaSpacing.xl,
+            IaculaSpacing.md,
+            IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: [
+            Icon(
+              CupertinoIcons.pencil_circle_fill,
+              size: 48,
+              color: context.colors.primaryButton,
+            ),
+            const SizedBox(height: IaculaSpacing.md),
+            Text(
+              'Adicione suas próprias frases',
+              textAlign: TextAlign.center,
+              style: context.textStyles.sectionTitle,
+            ),
+            const SizedBox(height: IaculaSpacing.sm),
+            Text(
+              'Se quiser que uma frase sua apareça junto com as jaculatórias do tempo, adicione em Minhas Frases.',
+              textAlign: TextAlign.center,
+              style: context.textStyles.secondary,
+            ),
+            const SizedBox(height: IaculaSpacing.xl),
+            const _FeatureCard(
+              icon: CupertinoIcons.star_fill,
+              title: 'No destaque da tela inicial',
+              subtitle:
+                  'Aparece no hero card junto com as do tempo litúrgico.',
+              minHeight: 80,
+            ),
+            const SizedBox(height: IaculaSpacing.sm),
+            const _FeatureCard(
+              icon: CupertinoIcons.bell_fill,
+              title: 'Como notificação',
+              subtitle:
+                  'Horários próprios, independentes das jaculatórias gerais.',
+              minHeight: 80,
+            ),
+            const SizedBox(height: IaculaSpacing.sm),
+            const _FeatureCard(
+              icon: CupertinoIcons.calendar,
+              title: 'Com sua agenda',
+              subtitle: 'Diário, dias da semana, ou datas específicas.',
+              minHeight: 80,
+            ),
+            const SizedBox(height: IaculaSpacing.xl),
+            IaculaPrimaryPillButton(
+              label: 'Começar',
+              onPressed: onComplete,
             ),
           ],
         ),
