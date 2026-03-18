@@ -100,8 +100,9 @@ flutter:
     - assets/books/library/authors/
     - assets/books/library/works/
     - assets/fonts/google_fonts/
-    - assets/placeholders/oracoes-tematicas/
     - assets/placeholders/sections/
+    - assets/placeholders/sections/intencoes/
+    - assets/placeholders/sections/minhas-frases/
     - assets/placeholders/
     - assets/icons/sections/
 
