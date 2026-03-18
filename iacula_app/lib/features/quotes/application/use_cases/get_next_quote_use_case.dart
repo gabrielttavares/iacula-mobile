@@ -35,22 +35,23 @@ final class GetNextQuoteUseCase {
     final seasonalDay = seasonalCollection[dayOfWeek.toString()];
     final seasonalQuotes = seasonalDay?.quotes ?? const <String>[];
 
-    final feastQuotes = context.feast == null
-        ? const <String>[]
-        : await _contentRepository.loadFeastQuotes(context.feast!);
-
-    final mergedFeastQuotes = _mergeDedup(feastQuotes, context.apiQuotes);
-    final useFeastPool = mergedFeastQuotes.isNotEmpty;
-
-    final quotePool = useFeastPool
-        ? {
-            dayOfWeek.toString(): DayQuotes(
-              day: seasonalDay?.day ?? 'Dia',
-              theme: context.feastName ?? seasonalDay?.theme ?? 'Festa',
-              quotes: mergedFeastQuotes,
-            ),
-          }
-        : seasonalCollection;
+    // TODO: re-enable feast quotes
+    // final feastQuotes = context.feast == null
+    //     ? const <String>[]
+    //     : await _contentRepository.loadFeastQuotes(context.feast!);
+    // final mergedFeastQuotes = _mergeDedup(feastQuotes, context.apiQuotes);
+    // final useFeastPool = mergedFeastQuotes.isNotEmpty;
+    // final quotePool = useFeastPool
+    //     ? {
+    //         dayOfWeek.toString(): DayQuotes(
+    //           day: seasonalDay?.day ?? 'Dia',
+    //           theme: context.feastName ?? seasonalDay?.theme ?? 'Festa',
+    //           quotes: mergedFeastQuotes,
+    //         ),
+    //       }
+    //     : seasonalCollection;
+    const useFeastPool = false;
+    final quotePool = seasonalCollection;
 
     final dayData = quotePool[dayOfWeek.toString()];
     if (dayData == null || dayData.quotes.isEmpty) {
@@ -66,14 +67,15 @@ final class GetNextQuoteUseCase {
     final currentQuoteIndex = indices.quoteIndices[dayOfWeek] ?? 0;
     final quoteStep = QuoteSelector.getNextIndex(dayData.quotes.length, currentQuoteIndex);
 
-    final feastImagePath = context.feast == null ? null : await _contentRepository.getFeastImagePath(context.feast!);
+    // TODO: re-enable feast images
+    // final feastImagePath = context.feast == null ? null : await _contentRepository.getFeastImagePath(context.feast!);
     final seasonalImages = await _contentRepository.listDayImages(dayOfWeek: dayOfWeek, season: context.season);
     final currentImageIndex = indices.imageIndices[dayOfWeek] ?? 0;
 
-    String? imagePath = feastImagePath;
+    String? imagePath;
     var nextImageIndex = 0;
 
-    if (imagePath == null && seasonalImages.isNotEmpty) {
+    if (seasonalImages.isNotEmpty) {
       final imageStep = QuoteSelector.getNextIndex(seasonalImages.length, currentImageIndex);
       imagePath = seasonalImages[imageStep.currentIndex];
       nextImageIndex = imageStep.nextIndex;
