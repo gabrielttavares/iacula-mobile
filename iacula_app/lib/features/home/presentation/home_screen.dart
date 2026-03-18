@@ -196,10 +196,12 @@ class _HomeShortcutsRail extends StatelessWidget {
     ];
 
     return SizedBox(
-      height: 100,
+      height: 130,
       child: ListView.separated(
         key: const Key('home_shortcuts_rail'),
         scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        padding: const EdgeInsets.symmetric(vertical: 15),
         itemCount: cards.length,
         separatorBuilder: (context, index) =>
             const SizedBox(width: IaculaSpacing.sm),
@@ -387,6 +389,7 @@ class _RailCard extends StatelessWidget {
       onTap: onTap,
       child: IaculaSoftCard(
         radius: 16,
+        showShadow: false,
         padding: const EdgeInsets.all(IaculaSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
