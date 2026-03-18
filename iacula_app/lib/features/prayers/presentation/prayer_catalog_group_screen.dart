@@ -110,6 +110,8 @@ class PrayerCatalogGroupScreen extends ConsumerWidget {
                         title: title,
                         subtitle: '${entries.length} orações',
                         height: 120,
+                        imageAsset: kSectionImages[groupKey],
+                        imageAlignment: kSectionImageAlignments[groupKey] ?? Alignment.center,
                       ),
                     ),
                   );

@@ -1,3 +1,5 @@
+import 'package:flutter/painting.dart';
+
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 
 enum HomePrayerGroupType { theme, saint, section }
@@ -30,6 +32,30 @@ const kSectionIcons = <String, String>{
   'oracoes-pelos-defuntos': 'assets/icons/sections/oracoes-pelos-defuntos.png',
   'hinos': 'assets/icons/sections/hinos.png',
   'formulas-doutrina-catolica': 'assets/icons/sections/formulas-doutrina-catolica.png',
+};
+
+const kSectionImages = <String, String>{
+  'oracoes-comuns': 'assets/placeholders/sections/oracoes-comuns.jpg',
+  'oracoes-santissima-trindade': 'assets/placeholders/sections/santissima-trindade.jpeg',
+  'adoracao-eucaristica': 'assets/placeholders/sections/adoracao-eucaristica.jpg',
+  'ao-espirito-santo': 'assets/placeholders/sections/ES.jpg',
+  'oracoes-a-nossa-senhora': 'assets/placeholders/sections/our-lady.jpeg',
+  'preparacao-santa-missa': 'assets/placeholders/sections/preparacao-santa-missa.jpg',
+  'acao-de-gracas-santa-missa': 'assets/placeholders/sections/acao-de-gracas.jpeg',
+  'oracoes-a-sao-jose': 'assets/placeholders/sections/st-joseph.jpeg',
+  'oracoes-diversas': 'assets/placeholders/sections/oracoes-diversas.jpg',
+  'outras-devocoes': 'assets/placeholders/sections/outras-devocoes.jpeg',
+  'oracoes-pelos-defuntos': 'assets/placeholders/sections/defuntos.png',
+  'hinos': 'assets/placeholders/sections/hinos.jpeg',
+  'formulas-doutrina-catolica': 'assets/placeholders/sections/formulas.jpeg',
+};
+
+const kSectionImageAlignments = <String, Alignment>{
+  'oracoes-comuns': Alignment(0, 0.3),
+  'oracoes-santissima-trindade': Alignment(0, -0.4),
+  'adoracao-eucaristica': Alignment(0, -0.25),
+  'preparacao-santa-missa': Alignment(0, -0.6),
+  'acao-de-gracas-santa-missa': Alignment(0, 0.35),
 };
 
 const kHomeShortcutIcons = <String, String>{

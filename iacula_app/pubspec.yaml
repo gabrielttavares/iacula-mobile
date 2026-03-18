@@ -101,6 +101,7 @@ flutter:
     - assets/books/library/works/
     - assets/fonts/google_fonts/
     - assets/placeholders/oracoes-tematicas/
+    - assets/placeholders/sections/
     - assets/placeholders/
     - assets/icons/sections/
 

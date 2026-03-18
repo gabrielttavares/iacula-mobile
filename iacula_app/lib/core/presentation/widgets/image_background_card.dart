@@ -10,6 +10,7 @@ class ImageBackgroundCard extends StatelessWidget {
   final VoidCallback? onTap;
   final double height;
   final Widget? trailing;
+  final Alignment imageAlignment;
 
   const ImageBackgroundCard({
     super.key,
@@ -19,6 +20,7 @@ class ImageBackgroundCard extends StatelessWidget {
     this.onTap,
     this.height = 180.0,
     this.trailing,
+    this.imageAlignment = Alignment.center,
   });
 
   @override
@@ -37,7 +39,7 @@ class ImageBackgroundCard extends StatelessWidget {
               ? DecorationImage(
                   image: AssetImage(imageAsset!),
                   fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
+                  alignment: imageAlignment,
                 )
               : null,
         ),
@@ -51,17 +53,18 @@ class ImageBackgroundCard extends StatelessWidget {
                   child: Container(color: context.colors.background),
                 ),
               // Gradient for text readability
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                height: height * 0.7,
+              Positioned.fill(
                 child: Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Color(0x00000000), Color(0xCC000000)],
+                      stops: [0.0, 0.3, 1.0],
+                      colors: [
+                        Color(0x33000000),
+                        Color(0x99000000),
+                        Color(0xF5000000),
+                      ],
                     ),
                   ),
                 ),
@@ -92,7 +95,7 @@ class ImageBackgroundCard extends StatelessWidget {
                             title,
                             style: context.textStyles.cardTitle.copyWith(
                               color: hasImage
-                                  ? context.colors.primaryButton
+                                  ? CupertinoColors.white
                                   : context.colors.title,
                               fontSize:
                                   22, // Lora feels a bit smaller sometimes, bumped up slightly
