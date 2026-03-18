@@ -66,7 +66,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 leading: Padding(
                   padding: const EdgeInsets.only(left: 4),
                   child: Image.asset(
-                    'assets/images/icon.png',
+                    'assets/images/icon_inapp.png',
                     height: 28,
                     width: 28,
                   ),
