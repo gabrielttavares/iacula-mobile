@@ -126,7 +126,6 @@ const _themeLabels = <String, String>{
   'espirito-santo': 'Espírito Santo',
   'eucaristica': 'Eucarística',
   'familia': 'Família',
-  'homilia': 'Homilia',
   'mariano': 'Mariano',
   'missa-acao-de-gracas': 'Missa: Ação de Graças',
   'missa-preparacao': 'Missa: Preparação',

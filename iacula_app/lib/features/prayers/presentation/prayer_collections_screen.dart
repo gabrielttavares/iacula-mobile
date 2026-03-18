@@ -31,12 +31,6 @@ const _sectionOrder = [
   'oracoes-diversas',
   'outras-devocoes',
   'oracoes-pelos-defuntos',
-  'homilia-rumo-santidade',
-];
-
-// Seções que fazem parte de "Recursos Adicionais"
-const _recursosAdicionaisSections = [
-  'homilia-rumo-santidade',
 ];
 
 class PrayerCollectionsScreen extends ConsumerWidget {
@@ -73,36 +67,13 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                       itemCount: grouped.length,
                       itemBuilder: (context, index) {
                         final group = grouped[index];
-                        final isFirstRecurso =
-                            group.sectionId ==
-                            _recursosAdicionaisSections.first;
 
                         return IaculaScrollItemEntrance(
                           child: Padding(
                             padding: const EdgeInsets.only(
                               bottom: IaculaSpacing.sm,
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (isFirstRecurso) ...[
-                                  Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: IaculaSpacing.md,
-                                    ),
-                                    child: Text(
-                                      'Recursos Adicionais',
-                                      style: context.textStyles.sectionTitle
-                                          .copyWith(
-                                            fontSize: 20,
-                                            color: context.colors.textPrimary,
-                                          ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: IaculaSpacing.sm),
-                                ],
-                                _PrayerCategoryCard(
+                            child: _PrayerCategoryCard(
                                   title: group.sectionTitle,
                                   iconPath: kSectionIcons[group.sectionId],
                                   onTap: () {
@@ -118,8 +89,6 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                                     );
                                   },
                                 ),
-                              ],
-                            ),
                           ),
                         );
                       },
