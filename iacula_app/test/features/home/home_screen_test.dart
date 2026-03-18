@@ -65,7 +65,7 @@ void main() {
 
     for (
       var i = 0;
-      i < 5 && find.byKey(const Key('home_custom_phrases_card')).evaluate().isEmpty;
+      i < 5 && find.byKey(const Key('home_feature_confissao_card')).evaluate().isEmpty;
       i++
     ) {
       await tester.drag(

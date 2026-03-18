@@ -118,10 +118,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         const SizedBox(height: IaculaSpacing.lg),
                         _HomeShortcutsRail(
-                          onOpenCustomPhrases: () {
+                          onOpenConfession: () {
+                            HapticFeedback.lightImpact();
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (_) => const CustomPhrasesScreen(),
+                                builder: (_) => const ConfessionFlowScreen(),
                               ),
                             );
                           },
@@ -159,12 +160,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 class _HomeShortcutsRail extends StatelessWidget {
   const _HomeShortcutsRail({
-    required this.onOpenCustomPhrases,
+    required this.onOpenConfession,
     required this.onOpenPrayers,
     required this.onOpenExame,
   });
 
-  final VoidCallback onOpenCustomPhrases;
+  final VoidCallback onOpenConfession;
   final VoidCallback onOpenPrayers;
   final VoidCallback onOpenExame;
 
@@ -184,9 +185,9 @@ class _HomeShortcutsRail extends StatelessWidget {
         onTap: onOpenExame,
       ),
       _RailCard(
-        key: const Key('home_custom_phrases_card'),
-        label: 'Minhas frases',
-        onTap: onOpenCustomPhrases,
+        key: const Key('home_feature_confissao_card'),
+        label: 'Confissão',
+        onTap: onOpenConfession,
       ),
     ];
 
@@ -349,12 +350,14 @@ class _FeatureCardsList extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
           child: ImageBackgroundCard(
-            key: const Key('home_feature_confissao_card'),
-            title: 'Sacramento da Confissão',
+            key: const Key('home_custom_phrases_card'),
+            title: 'Minhas frases',
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
-                CupertinoPageRoute(builder: (_) => const ConfessionFlowScreen()),
+                CupertinoPageRoute(
+                  builder: (_) => const CustomPhrasesScreen(),
+                ),
               );
             },
             height: 120,
