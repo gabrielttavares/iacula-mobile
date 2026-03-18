@@ -102,6 +102,7 @@ flutter:
     - assets/fonts/google_fonts/
     - assets/placeholders/oracoes-tematicas/
     - assets/placeholders/
+    - assets/icons/sections/
 
 
 dependency_overrides:

@@ -16,6 +16,28 @@ final class HomePrayerGroup {
   final HomePrayerGroupType type;
 }
 
+const kSectionIcons = <String, String>{
+  'oracoes-comuns': 'assets/icons/sections/oracoes-comuns.png',
+  'oracoes-santissima-trindade': 'assets/icons/sections/oracoes-santissima-trindade.png',
+  'adoracao-eucaristica': 'assets/icons/sections/adoracao-eucaristica.png',
+  'ao-espirito-santo': 'assets/icons/sections/ao-espirito-santo.png',
+  'oracoes-a-nossa-senhora': 'assets/icons/sections/oracoes-a-nossa-senhora.png',
+  'preparacao-santa-missa': 'assets/icons/sections/preparacao-santa-missa.png',
+  'acao-de-gracas-santa-missa': 'assets/icons/sections/acao-de-gracas-santa-missa.png',
+  'oracoes-a-sao-jose': 'assets/icons/sections/oracoes-a-sao-jose.png',
+  'oracoes-diversas': 'assets/icons/sections/oracoes-diversas.png',
+  'outras-devocoes': 'assets/icons/sections/outras-devocoes.png',
+  'oracoes-pelos-defuntos': 'assets/icons/sections/oracoes-pelos-defuntos.png',
+  'hinos': 'assets/icons/sections/hinos.png',
+  'formulas-doutrina-catolica': 'assets/icons/sections/formulas-doutrina-catolica.png',
+};
+
+const kHomeShortcutIcons = <String, String>{
+  'oracoes': 'assets/icons/sections/oracoes.png',
+  'exame-diario': 'assets/icons/sections/exame-diario.png',
+  'confissao': 'assets/icons/sections/confissao.png',
+};
+
 const kCuratedThemeOrder = <String>[
   'familia',
   'trabalho',

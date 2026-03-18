@@ -104,6 +104,7 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                                 ],
                                 _PrayerCategoryCard(
                                   title: group.sectionTitle,
+                                  iconPath: kSectionIcons[group.sectionId],
                                   onTap: () {
                                     Navigator.of(context).push(
                                       CupertinoPageRoute(
@@ -144,10 +145,12 @@ class _PrayerCategoryCard extends StatelessWidget {
   const _PrayerCategoryCard({
     required this.title,
     required this.onTap,
+    this.iconPath,
   });
 
   final String title;
   final VoidCallback onTap;
+  final String? iconPath;
 
   @override
   Widget build(BuildContext context) {
@@ -162,6 +165,10 @@ class _PrayerCategoryCard extends StatelessWidget {
           ),
           child: Row(
             children: [
+              if (iconPath != null) ...[
+                Image.asset(iconPath!, width: 28, height: 28),
+                const SizedBox(width: 12),
+              ],
               Expanded(child: Text(title, style: context.textStyles.cardTitle)),
               Icon(
                 CupertinoIcons.chevron_right,

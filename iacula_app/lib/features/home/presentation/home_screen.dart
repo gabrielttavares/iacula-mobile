@@ -22,6 +22,7 @@ import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../../confession/presentation/confession_flow_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../examination/presentation/examination_reading_screen.dart';
+import 'home_prayer_groups.dart';
 import 'hero_reflection_sheet.dart';
 import 'widgets/home_hero_card.dart';
 
@@ -177,16 +178,19 @@ class _HomeShortcutsRail extends StatelessWidget {
       _RailCard(
         key: const Key('home_action_oracoes'),
         label: 'Orações',
+        iconPath: kHomeShortcutIcons['oracoes'],
         onTap: onOpenPrayers,
       ),
       _RailCard(
         key: const Key('home_action_exame'),
         label: 'Exame Diário',
+        iconPath: kHomeShortcutIcons['exame-diario'],
         onTap: onOpenExame,
       ),
       _RailCard(
         key: const Key('home_feature_confissao_card'),
         label: 'Confissão',
+        iconPath: kHomeShortcutIcons['confissao'],
         onTap: onOpenConfession,
       ),
     ];
@@ -369,9 +373,10 @@ class _FeatureCardsList extends StatelessWidget {
 }
 
 class _RailCard extends StatelessWidget {
-  const _RailCard({super.key, required this.label, this.onTap});
+  const _RailCard({super.key, required this.label, this.iconPath, this.onTap});
 
   final String label;
+  final String? iconPath;
   final VoidCallback? onTap;
 
   @override
@@ -381,12 +386,17 @@ class _RailCard extends StatelessWidget {
       child: IaculaSoftCard(
         radius: 16,
         padding: const EdgeInsets.all(IaculaSpacing.md),
-        child: Align(
-          alignment: Alignment.bottomLeft,
-          child: Text(
-            label,
-            style: context.textStyles.cardTitle.copyWith(fontSize: 16),
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (iconPath != null)
+              Image.asset(iconPath!, width: 28, height: 28),
+            const Spacer(),
+            Text(
+              label,
+              style: context.textStyles.cardTitle.copyWith(fontSize: 16),
+            ),
+          ],
         ),
       ),
     );
