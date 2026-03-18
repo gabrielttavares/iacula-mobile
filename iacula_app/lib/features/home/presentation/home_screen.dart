@@ -340,6 +340,7 @@ class _FeatureCardsList extends StatelessWidget {
           child: ImageBackgroundCard(
             key: const Key('home_action_intencoes'),
             title: 'Intenções',
+            imageAsset: 'assets/placeholders/sections/intencoes/intencoes.jpg',
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
@@ -356,6 +357,7 @@ class _FeatureCardsList extends StatelessWidget {
           child: ImageBackgroundCard(
             key: const Key('home_custom_phrases_card'),
             title: 'Minhas frases',
+            imageAsset: 'assets/placeholders/sections/minhas-frases/minhas-frases.jpeg',
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
