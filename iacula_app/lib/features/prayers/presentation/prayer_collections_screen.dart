@@ -59,6 +59,7 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                   return Expanded(
                     child: ListView.builder(
                       physics: const BouncingScrollPhysics(),
+                      clipBehavior: Clip.none,
                       padding: EdgeInsets.only(
                         bottom:
                             MediaQuery.paddingOf(context).bottom +
