@@ -16,7 +16,6 @@ import '../../auth/domain/entities/auth_user.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
-import '../../notifications/presentation/notifications_screen.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
@@ -74,48 +73,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 largeTitle: Text(greeting),
                 middle: const SizedBox.shrink(),
                 alwaysShowMiddle: false,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CupertinoButton(
-                      key: const Key('home_notifications_button'),
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(32, 32),
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const NotificationsScreen(),
-                          ),
-                        );
-                      },
-                      child: _BellIcon(
-                        hasNotifications: ref.watch(
-                          _heroSettingsProvider.select(
-                            (s) => s.valueOrNull?.notificationsEnabled ?? true,
-                          ),
-                        ),
+                trailing: CupertinoButton(
+                  key: const Key('home_search_button'),
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(32, 32),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (_) => const SearchScreen(),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    CupertinoButton(
-                      key: const Key('home_search_button'),
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(32, 32),
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const SearchScreen(),
-                          ),
-                        );
-                      },
-                      child: Icon(
-                        CupertinoIcons.search,
-                        color: context.colors.textSecondary,
-                      ),
-                    ),
-                  ],
+                    );
+                  },
+                  child: Icon(
+                    CupertinoIcons.search,
+                    color: context.colors.textSecondary,
+                  ),
                 ),
               ),
               CupertinoSliverRefreshControl(
@@ -317,38 +290,6 @@ class _PermissionBanner extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _BellIcon extends StatelessWidget {
-  const _BellIcon({required this.hasNotifications});
-
-  final bool hasNotifications;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Icon(
-          CupertinoIcons.bell,
-          color: context.colors.textSecondary,
-        ),
-        if (hasNotifications)
-          Positioned(
-            top: -2,
-            right: -2,
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: context.colors.primaryButton,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-      ],
     );
   }
 }
