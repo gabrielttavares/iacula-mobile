@@ -198,7 +198,6 @@ final leituraRepositoryProvider = Provider<LeituraRepository>((ref) {
 final appSearchServiceProvider = Provider<AppSearchService>((ref) {
   return AppSearchService(
     prayerCatalogRepository: ref.watch(prayerCatalogRepositoryProvider),
-    leituraRepository: ref.watch(leituraRepositoryProvider),
     quoteContentRepository: ref.watch(quoteContentRepositoryProvider),
   );
 });

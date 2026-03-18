@@ -1,21 +1,21 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
-import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../leituras/presentation/pages/book_reader_page.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../application/app_search_service.dart';
 
 const List<String> _searchSuggestions = [
-  'recomeçar',
-  'exame',
-  'silêncio',
-  'confiança',
+  'pai nosso',
+  'perdão',
+  'contrição',
+  'rosário',
+  'gratidão',
 ];
 
 class SearchScreen extends ConsumerStatefulWidget {
@@ -187,20 +187,73 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 PrayerCatalogDetailScreen(entry: result.prayerEntry!),
           ),
         );
-      case AppSearchResultType.reading:
-        Navigator.of(context).push(
-          CupertinoPageRoute(
-            builder: (_) => BookReaderPage(bookId: result.readingBook!.id),
-          ),
-        );
       case AppSearchResultType.quote:
-        await IaculaModal.showAlert(
+        showCupertinoModalPopup(
           context: context,
-          title: result.title,
-          message: result.snippet,
-          actionLabel: 'Fechar',
+          builder: (context) => _QuoteDetailSheet(result: result),
         );
     }
+  }
+}
+
+class _QuoteDetailSheet extends StatelessWidget {
+  const _QuoteDetailSheet({required this.result});
+  final AppSearchResult result;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        IaculaSpacing.lg,
+        IaculaSpacing.lg,
+        IaculaSpacing.lg,
+        IaculaSpacing.lg + MediaQuery.paddingOf(context).bottom,
+      ),
+      decoration: BoxDecoration(
+        color: context.colors.background,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: context.colors.separator,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: IaculaSpacing.lg),
+          Text(
+            result.title,
+            style: context.textStyles.secondary.copyWith(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: context.colors.primaryButton,
+            ),
+          ),
+          const SizedBox(height: IaculaSpacing.md),
+          Text(
+            '"${result.quoteText ?? result.snippet}"',
+            textAlign: TextAlign.center,
+            style: context.textStyles.cardTitle.copyWith(
+              fontSize: 20,
+              fontStyle: FontStyle.italic,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: IaculaSpacing.xl),
+          SizedBox(
+            width: double.infinity,
+            child: CupertinoButton.filled(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Fechar'),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -224,7 +277,7 @@ class _DiscoveryState extends StatelessWidget {
               'Busque por tema, santo, título ou use uma sugestão para começar sem pensar muito.',
         ),
         const SizedBox(height: IaculaSpacing.lg),
-        Text('Sugestões para começar', style: context.textStyles.cardTitle),
+        Text('Sugestões para buscar', style: context.textStyles.cardTitle),
         const SizedBox(height: IaculaSpacing.sm),
         Wrap(
           spacing: 8,

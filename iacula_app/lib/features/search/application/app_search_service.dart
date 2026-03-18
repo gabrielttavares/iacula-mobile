@@ -1,5 +1,3 @@
-import '../../leituras/data/models/book_model.dart';
-import '../../leituras/data/repositories/leitura_repository.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../prayers/domain/repositories/prayer_catalog_repository.dart';
@@ -22,7 +20,7 @@ String _normalizeSearchValue(String value) {
       .replaceAll('ç', 'c');
 }
 
-enum AppSearchResultType { prayer, reading, quote }
+enum AppSearchResultType { prayer, quote }
 
 final class AppSearchResult {
   const AppSearchResult._({
@@ -33,7 +31,6 @@ final class AppSearchResult {
     required this.subtitle,
     required this.snippet,
     this.prayerEntry,
-    this.readingBook,
     this.quoteText,
   });
 
@@ -44,7 +41,6 @@ final class AppSearchResult {
   final String subtitle;
   final String snippet;
   final PrayerCatalogEntry? prayerEntry;
-  final BookModel? readingBook;
   final String? quoteText;
 
   factory AppSearchResult.prayer({
@@ -64,26 +60,6 @@ final class AppSearchResult {
         fallbacks: [...entry.themes, ...entry.saints],
       ),
       prayerEntry: entry,
-    );
-  }
-
-  factory AppSearchResult.reading({
-    required BookModel book,
-    required int score,
-    required String query,
-  }) {
-    return AppSearchResult._(
-      type: AppSearchResultType.reading,
-      sectionTitle: 'Leituras',
-      score: score,
-      title: book.title,
-      subtitle: 'Leitura · ${book.author}',
-      snippet: _buildSnippet(
-        primary: book.description,
-        query: query,
-        fallbacks: [book.author],
-      ),
-      readingBook: book,
     );
   }
 
@@ -140,18 +116,15 @@ final class AppSearchService {
   static const int _maxResultsPerSection = 4;
   static const Map<AppSearchResultType, int> _typeOrder = {
     AppSearchResultType.prayer: 0,
-    AppSearchResultType.reading: 1,
-    AppSearchResultType.quote: 2,
+    AppSearchResultType.quote: 1,
   };
 
   AppSearchService({
     required this.prayerCatalogRepository,
-    required this.leituraRepository,
     required this.quoteContentRepository,
   });
 
   final PrayerCatalogRepository prayerCatalogRepository;
-  final LeituraRepository leituraRepository;
   final QuoteContentRepository quoteContentRepository;
 
   Future<List<AppSearchResult>> search({
@@ -166,7 +139,6 @@ final class AppSearchService {
     final prayers = await prayerCatalogRepository.listCatalog(
       language: language,
     );
-    final books = await leituraRepository.listBooks();
 
     final results = <AppSearchResult>[
       ...prayers
@@ -178,16 +150,6 @@ final class AppSearchService {
           .map(
             (candidate) => AppSearchResult.prayer(
               entry: candidate.entry,
-              score: candidate.score,
-              query: normalizedQuery,
-            ),
-          ),
-      ...books
-          .map((book) => (book: book, score: _scoreBook(book, normalizedQuery)))
-          .where((candidate) => candidate.score > 0)
-          .map(
-            (candidate) => AppSearchResult.reading(
-              book: candidate.book,
               score: candidate.score,
               query: normalizedQuery,
             ),
@@ -225,14 +187,6 @@ final class AppSearchService {
       query: query,
       title: entry.title,
       secondary: [entry.content, ...entry.themes, ...entry.saints],
-    );
-  }
-
-  int _scoreBook(BookModel book, String query) {
-    return _scoreFields(
-      query: query,
-      title: book.title,
-      secondary: [book.author, book.description],
     );
   }
 
