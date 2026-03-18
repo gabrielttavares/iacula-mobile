@@ -158,15 +158,22 @@ class _PrayerCategoryCard extends StatelessWidget {
       onTap: onTap,
       child: IaculaSoftCard(
         radius: 16,
+        padding: EdgeInsets.zero,
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: IaculaSpacing.md,
-            vertical: IaculaSpacing.sm,
+            vertical: IaculaSpacing.md,
           ),
           child: Row(
             children: [
               if (iconPath != null) ...[
-                Image.asset(iconPath!, width: 28, height: 28),
+                Image.asset(
+                  iconPath!,
+                  width: 24,
+                  height: 24,
+                  color: context.colors.textPrimary,
+                  colorBlendMode: BlendMode.srcIn,
+                ),
                 const SizedBox(width: 12),
               ],
               Expanded(child: Text(title, style: context.textStyles.cardTitle)),
