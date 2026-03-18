@@ -11,7 +11,7 @@ import '../../favorites/presentation/favorites_screen.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../profile/presentation/profile_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
-import '../../home/presentation/hero_reflection_sheet.dart';
+import '../../../core/presentation/design/iacula_modal.dart';
 
 class MoreScreen extends ConsumerWidget {
   const MoreScreen({super.key});
@@ -94,21 +94,28 @@ class MoreScreen extends ConsumerWidget {
 
   void _showAbout(BuildContext context) {
     HapticFeedback.lightImpact();
-    // Reusing the content from HeroReflectionSheet as requested
-    showCupertinoModalPopup(
+    IaculaModal.showSheet<void>(
       context: context,
-      builder: (context) => CupertinoActionSheet(
-        title: const Text('Sobre o Iacula'),
-        message: const Text(
-          'O Iacula foi pensado para ajudar você a manter viva a oração breve no meio das tarefas normais do dia.\n\n'
-          'Inspirado na espiritualidade do trabalho santificado, o app procura acompanhar você nos momentos certos.',
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(IaculaSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Sobre o Iacula', style: context.textStyles.cardTitle),
+            const SizedBox(height: IaculaSpacing.md),
+            Text(
+              'O Iacula foi pensado para ajudar você a manter viva a oração breve no meio das tarefas normais do dia.\n\n'
+              'Inspirado na espiritualidade do trabalho santificado, o app procura acompanhar você nos momentos certos.',
+              style: context.textStyles.secondary,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: IaculaSpacing.lg),
+            CupertinoButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Fechar', style: TextStyle(color: context.colors.primaryButton)),
+            ),
+          ],
         ),
-        actions: [
-          CupertinoActionSheetAction(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Fechar'),
-          ),
-        ],
       ),
     );
   }
