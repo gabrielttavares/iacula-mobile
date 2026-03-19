@@ -124,6 +124,7 @@ final class AppBootstrap {
 
             return quoteUseCase.call(language: language, now: now);
           },
+          notificationHistoryRepository: notificationHistoryRepo,
         ).call(
           currentSettings,
           isEasterSeason: currentSeason == LiturgicalSeason.easter,

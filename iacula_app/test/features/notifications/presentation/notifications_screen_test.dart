@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show SelectableText;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
@@ -7,44 +8,54 @@ import 'package:iacula_app/features/notifications/infrastructure/repositories/in
 import 'package:iacula_app/features/notifications/presentation/notifications_screen.dart';
 
 void main() {
-  testWidgets('shows today quote history empty state', (tester) async {
+  testWidgets('shows today scheduled quote history empty state', (tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           notificationHistoryRepositoryProvider.overrideWithValue(
             InMemoryNotificationHistoryRepository(),
           ),
+          notificationHistoryNowProvider.overrideWith((ref) => DateTime(2026, 2, 24, 10)),
         ],
         child: const CupertinoApp(home: NotificationsScreen()),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Notificações de hoje'), findsOneWidget);
-    expect(find.textContaining('Nenhuma citação recebida hoje'), findsOneWidget);
+    expect(find.text('Citações de hoje'), findsOneWidget);
+    expect(
+      find.textContaining('As citações programadas para hoje aparecerão aqui'),
+      findsOneWidget,
+    );
     expect(find.text('Próximas notificações'), findsNothing);
     expect(find.text('Última notificação'), findsNothing);
   });
 
-  testWidgets('shows today quote history rail entries', (tester) async {
+  testWidgets('shows only quotes scheduled up to the current moment', (tester) async {
     final repo = InMemoryNotificationHistoryRepository();
-    final now = DateTime.now();
     await repo.add(NotificationHistoryEntry(
       quoteText: 'Deus é amor.',
       theme: 'Amor',
       season: 'ordinary',
-      deliveredAt: DateTime(now.year, now.month, now.day, 10),
+      deliveredAt: DateTime(2026, 2, 24, 9, 45),
     ));
     await repo.add(NotificationHistoryEntry(
       quoteText: 'Permanecei em mim.',
       theme: 'Confiança',
       season: 'ordinary',
-      deliveredAt: DateTime(now.year, now.month, now.day, 8, 30),
+      deliveredAt: DateTime(2026, 2, 24, 8, 30),
+    ));
+    await repo.add(NotificationHistoryEntry(
+      quoteText: 'Ainda virá.',
+      theme: 'Esperança',
+      season: 'ordinary',
+      deliveredAt: DateTime(2026, 2, 24, 10, 30),
     ));
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           notificationHistoryRepositoryProvider.overrideWithValue(repo),
+          notificationHistoryNowProvider.overrideWith((ref) => DateTime(2026, 2, 24, 10)),
         ],
         child: const CupertinoApp(home: NotificationsScreen()),
       ),
@@ -54,6 +65,36 @@ void main() {
     expect(find.byKey(const Key('today_notifications_rail')), findsOneWidget);
     expect(find.text('Deus é amor.'), findsOneWidget);
     expect(find.text('Permanecei em mim.'), findsOneWidget);
+    expect(find.text('Ainda virá.'), findsNothing);
     expect(find.text('Última notificação'), findsNothing);
+  });
+
+  testWidgets('renders quote text as selectable for copying', (tester) async {
+    final repo = InMemoryNotificationHistoryRepository();
+    await repo.add(NotificationHistoryEntry(
+      quoteText: 'Permanecei em mim.',
+      theme: 'Confiança',
+      season: 'ordinary',
+      deliveredAt: DateTime(2026, 2, 24, 8, 30),
+    ));
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notificationHistoryRepositoryProvider.overrideWithValue(repo),
+          notificationHistoryNowProvider.overrideWith((ref) => DateTime(2026, 2, 24, 10)),
+        ],
+        child: const CupertinoApp(home: NotificationsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('today_notifications_rail')),
+        matching: find.byType(SelectableText),
+      ),
+      findsWidgets,
+    );
   });
 }

@@ -1,7 +1,9 @@
 import '../../../prayers/domain/services/prayer_scheduler.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../../../settings/domain/entities/settings.dart';
+import '../../domain/entities/notification_history_entry.dart';
 import '../../domain/entities/reminder_event.dart';
+import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
 typedef QuoteFetcher =
@@ -14,10 +16,13 @@ final class ScheduleCoreRemindersUseCase {
   const ScheduleCoreRemindersUseCase(
     this._scheduler, {
     required QuoteFetcher quoteFetcher,
-  }) : _quoteFetcher = quoteFetcher;
+    required NotificationHistoryRepository notificationHistoryRepository,
+  }) : _quoteFetcher = quoteFetcher,
+       _notificationHistoryRepository = notificationHistoryRepository;
 
   final NotificationSchedulerRepository _scheduler;
   final QuoteFetcher _quoteFetcher;
+  final NotificationHistoryRepository _notificationHistoryRepository;
 
   Future<void> call(
     Settings settings, {
@@ -25,6 +30,8 @@ final class ScheduleCoreRemindersUseCase {
     bool isEasterSeason = false,
   }) async {
     final current = now ?? DateTime.now();
+    await _notificationHistoryRepository.clearFrom(current);
+
     for (var i = 0; i < maxQueuedQuoteReminders; i++) {
       final quoteAt = current.add(
         Duration(minutes: settings.intervalMinutes * (i + 1)),
@@ -50,6 +57,19 @@ final class ScheduleCoreRemindersUseCase {
           quoteFeastName: quote.feastName,
         ),
       );
+
+      if (_isSameDay(quoteAt, current)) {
+        await _notificationHistoryRepository.add(
+          NotificationHistoryEntry(
+            quoteText: quote.text,
+            theme: quote.theme,
+            season: quote.season.name,
+            deliveredAt: quoteAt,
+            imagePath: quote.imagePath,
+            feastName: quote.feastName,
+          ),
+        );
+      }
     }
 
     final noonTitle = isEasterSeason ? 'Regina Caeli' : 'Angelus';
@@ -70,5 +90,11 @@ final class ScheduleCoreRemindersUseCase {
         routeTarget: NotificationRouteTarget.prayer,
       ),
     );
+  }
+
+  bool _isSameDay(DateTime left, DateTime right) {
+    return left.year == right.year &&
+        left.month == right.month &&
+        left.day == right.day;
   }
 }

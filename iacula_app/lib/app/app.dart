@@ -50,17 +50,10 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
       unawaited(ref.read(syncOrchestratorProvider).syncAll());
 
       final scheduler = ref.read(notificationSchedulerRepositoryProvider);
-      final handler = HandleNotificationActionUseCase(
-        scheduler,
-        ref.read(notificationHistoryRepositoryProvider),
-      );
+      final handler = HandleNotificationActionUseCase(scheduler);
 
       _actionsSub = scheduler.actions.listen((event) async {
         final shouldOpen = await handler.call(event);
-        if (event.event.type == ReminderEventType.quoteInterval &&
-            event.actionId != NotificationActionEvent.snooze10Action) {
-          ref.read(notificationHistoryEpochProvider.notifier).state++;
-        }
         if (!shouldOpen) return;
 
         final nav = _navigatorKey.currentState;

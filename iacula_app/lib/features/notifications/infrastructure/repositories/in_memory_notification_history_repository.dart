@@ -7,7 +7,24 @@ final class InMemoryNotificationHistoryRepository
 
   @override
   Future<void> add(NotificationHistoryEntry entry) async {
+    final alreadyExists = _entries.any(
+      (current) =>
+          current.quoteText == entry.quoteText &&
+          current.deliveredAt == entry.deliveredAt,
+    );
+    if (alreadyExists) return;
     _entries.add(entry);
+  }
+
+  @override
+  Future<void> clearFrom(DateTime instant) async {
+    _entries.removeWhere(
+      (entry) =>
+          entry.deliveredAt.year == instant.year &&
+          entry.deliveredAt.month == instant.month &&
+          entry.deliveredAt.day == instant.day &&
+          !entry.deliveredAt.isBefore(instant),
+    );
   }
 
   @override

@@ -120,7 +120,7 @@ final class ReminderEvent {
     if (scheduledId is int) {
       sid = scheduledId;
     } else if (scheduledId is num) {
-      sid = (scheduledId as num).toInt();
+      sid = scheduledId.toInt();
     }
 
     return ReminderEvent(

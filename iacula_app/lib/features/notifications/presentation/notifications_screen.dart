@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show SelectableText;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,8 +16,8 @@ import '../domain/entities/notification_history_entry.dart';
 final _todayHistoryProvider = FutureProvider<List<NotificationHistoryEntry>>((
   ref,
 ) {
-  ref.watch(notificationHistoryEpochProvider);
-  return ref.watch(notificationHistoryRepositoryProvider).listForDay(DateTime.now());
+  final now = ref.watch(notificationHistoryNowProvider);
+  return ref.watch(notificationHistoryRepositoryProvider).listForDay(now);
 });
 
 final _settingsProvider = FutureProvider((ref) {
@@ -29,6 +30,7 @@ class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final historyAsync = ref.watch(_todayHistoryProvider);
+    final now = ref.watch(notificationHistoryNowProvider);
     final settingsAsync = ref.watch(_settingsProvider);
     final permissionGranted = ref.watch(notificationPermissionProvider);
 
@@ -83,6 +85,9 @@ class NotificationsScreen extends ConsumerWidget {
                               .read(getNextQuoteUseCaseProvider)
                               .call(language: language, now: now);
                         },
+                        notificationHistoryRepository: ref.read(
+                          notificationHistoryRepositoryProvider,
+                        ),
                       ).call(
                         updated,
                         isEasterSeason: season == LiturgicalSeason.easter,
@@ -104,19 +109,23 @@ class NotificationsScreen extends ConsumerWidget {
 
                 const SizedBox(height: IaculaRadius.cardSpacing),
 
-                const IaculaSectionHeader(title: 'Notificações de hoje'),
+                const IaculaSectionHeader(title: 'Citações de hoje'),
                 const SizedBox(height: IaculaSpacing.sm),
                 historyAsync.when(
                   data: (entries) {
-                    if (entries.isEmpty) {
+                    final visibleEntries = entries
+                        .where((entry) => !entry.deliveredAt.isAfter(now))
+                        .toList(growable: false);
+
+                    if (visibleEntries.isEmpty) {
                       return IaculaSoftCard(
                         child: Text(
-                          'Nenhuma citação recebida hoje.',
+                          'As citações programadas para hoje aparecerão aqui conforme o dia avança.',
                           style: context.textStyles.secondary,
                         ),
                       );
                     }
-                    return _TodayNotificationsRail(entries: entries);
+                    return _TodayNotificationsRail(entries: visibleEntries);
                   },
                   loading: () =>
                       const Center(child: CupertinoActivityIndicator()),
@@ -174,10 +183,9 @@ class _TodayNotificationsRail extends StatelessWidget {
                     style: context.textStyles.secondary,
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  SelectableText(
                     entry.quoteText,
                     maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
                     style: context.textStyles.cardTitle,
                   ),
                   const Spacer(),

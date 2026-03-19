@@ -179,6 +179,8 @@ final notificationHistoryRepositoryProvider =
 
 final notificationHistoryEpochProvider = StateProvider<int>((ref) => 0);
 
+final notificationHistoryNowProvider = Provider<DateTime>((ref) => DateTime.now());
+
 final localDisplayNameProvider = FutureProvider<String?>((ref) async {
   final settings = await ref.read(getSettingsUseCaseProvider).call();
   return settings.displayName;

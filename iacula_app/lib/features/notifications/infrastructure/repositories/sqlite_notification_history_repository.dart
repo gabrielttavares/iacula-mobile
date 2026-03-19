@@ -1,5 +1,3 @@
-import 'package:sqflite/sqflite.dart';
-
 import '../../../../core/storage/sqlite/app_database.dart';
 import '../../domain/entities/notification_history_entry.dart';
 import '../../domain/repositories/notification_history_repository.dart';
@@ -13,6 +11,14 @@ final class SqliteNotificationHistoryRepository
   @override
   Future<void> add(NotificationHistoryEntry entry) async {
     final db = await _database.database;
+    final existing = await db.query(
+      'notification_history_entries',
+      columns: ['id'],
+      where: 'quote_text = ? AND delivered_at = ?',
+      whereArgs: [entry.quoteText, entry.deliveredAt.toIso8601String()],
+      limit: 1,
+    );
+    if (existing.isNotEmpty) return;
     await db.insert('notification_history_entries', {
       'quote_text': entry.quoteText,
       'theme': entry.theme,
@@ -21,6 +27,18 @@ final class SqliteNotificationHistoryRepository
       'feast_name': entry.feastName,
       'delivered_at': entry.deliveredAt.toIso8601String(),
     });
+  }
+
+  @override
+  Future<void> clearFrom(DateTime instant) async {
+    final start = DateTime(instant.year, instant.month, instant.day);
+    final end = start.add(const Duration(days: 1));
+    final db = await _database.database;
+    await db.delete(
+      'notification_history_entries',
+      where: 'delivered_at >= ? AND delivered_at < ?',
+      whereArgs: [instant.toIso8601String(), end.toIso8601String()],
+    );
   }
 
   @override

@@ -429,6 +429,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               .read(getNextQuoteUseCaseProvider)
               .call(language: language, now: now);
         },
+        notificationHistoryRepository: ref.read(
+          notificationHistoryRepositoryProvider,
+        ),
       ).call(settings, isEasterSeason: season == LiturgicalSeason.easter);
       await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(settings);
     }
