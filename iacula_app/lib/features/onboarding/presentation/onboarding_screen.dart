@@ -130,9 +130,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             .read(getNextQuoteUseCaseProvider)
             .call(language: language, now: now);
       },
-      lastDeliveredCardRepository: ref.read(
-        lastDeliveredCardRepositoryProvider,
-      ),
     ).call(updated, isEasterSeason: season == LiturgicalSeason.easter);
     await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(updated);
 

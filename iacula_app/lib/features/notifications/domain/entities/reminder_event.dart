@@ -30,6 +30,9 @@ final class ReminderEvent {
     this.routeTarget = NotificationRouteTarget.alarm,
     this.scheduledId,
     this.intentionId,
+    this.quoteTheme,
+    this.quoteSeason,
+    this.quoteFeastName,
   });
 
   final ReminderEventType type;
@@ -44,6 +47,9 @@ final class ReminderEvent {
   final int? scheduledId;
   /// Optional intention id for prayer intention reminders (snooze, routing).
   final String? intentionId;
+  final String? quoteTheme;
+  final String? quoteSeason;
+  final String? quoteFeastName;
 
   ReminderEvent copyWith({
     ReminderEventType? type,
@@ -56,6 +62,9 @@ final class ReminderEvent {
     NotificationRouteTarget? routeTarget,
     int? scheduledId,
     String? intentionId,
+    String? quoteTheme,
+    String? quoteSeason,
+    String? quoteFeastName,
   }) {
     return ReminderEvent(
       type: type ?? this.type,
@@ -68,6 +77,9 @@ final class ReminderEvent {
       routeTarget: routeTarget ?? this.routeTarget,
       scheduledId: scheduledId ?? this.scheduledId,
       intentionId: intentionId ?? this.intentionId,
+      quoteTheme: quoteTheme ?? this.quoteTheme,
+      quoteSeason: quoteSeason ?? this.quoteSeason,
+      quoteFeastName: quoteFeastName ?? this.quoteFeastName,
     );
   }
 
@@ -83,6 +95,9 @@ final class ReminderEvent {
       'routeTarget': routeTarget.name,
       if (scheduledId != null) 'scheduledId': scheduledId,
       if (intentionId != null) 'intentionId': intentionId,
+      if (quoteTheme != null) 'quoteTheme': quoteTheme,
+      if (quoteSeason != null) 'quoteSeason': quoteSeason,
+      if (quoteFeastName != null) 'quoteFeastName': quoteFeastName,
     };
   }
 
@@ -119,6 +134,9 @@ final class ReminderEvent {
       routeTarget: routeTarget,
       scheduledId: sid,
       intentionId: intentionId,
+      quoteTheme: map['quoteTheme']?.toString(),
+      quoteSeason: map['quoteSeason']?.toString(),
+      quoteFeastName: map['quoteFeastName']?.toString(),
     );
   }
 

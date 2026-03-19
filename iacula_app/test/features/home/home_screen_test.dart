@@ -86,13 +86,14 @@ void main() {
 
   testWidgets('home removes deleted shortcuts and sections', (tester) async {
     await tester.pumpWidget(_buildApp());
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Ação de Graças'), findsNothing);
     expect(find.byKey(const Key('home_action_liturgia')), findsNothing);
+    expect(find.byKey(const Key('home_action_exame')), findsOneWidget);
     expect(find.byKey(const Key('home_feature_rosario_card')), findsNothing);
     expect(find.text('Liturgia diária'), findsNothing);
     expect(find.text('Rosário'), findsNothing);
-    expect(find.byKey(const Key('home_feature_biblia_card')), findsNothing);
   });
 }

@@ -20,6 +20,7 @@ import '../../features/notifications/application/use_cases/schedule_core_reminde
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
+import '../../features/notifications/infrastructure/repositories/sqlite_notification_history_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
 import '../../features/premium/domain/entities/premium_status.dart';
 import '../../features/premium/domain/repositories/premium_repository.dart';
@@ -69,6 +70,7 @@ final class AppBootstrap {
     final settingsRepo = SqliteSettingsRepository(db);
     final indicesRepo = SqliteQuoteIndicesRepository(db);
     final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
+    final notificationHistoryRepo = SqliteNotificationHistoryRepository(db);
     final mediaRepo = IsarMediaCatalogRepository(isarStore);
     final favoriteRepo = IsarFavoriteRepository(store: isarStore);
     final readingAnnotationRepo = IsarReadingAnnotationRepository(
@@ -122,7 +124,6 @@ final class AppBootstrap {
 
             return quoteUseCase.call(language: language, now: now);
           },
-          lastDeliveredCardRepository: lastDeliveredCardRepo,
         ).call(
           currentSettings,
           isEasterSeason: currentSeason == LiturgicalSeason.easter,
@@ -233,6 +234,9 @@ final class AppBootstrap {
       quoteIndicesRepositoryProvider.overrideWithValue(indicesRepo),
       lastDeliveredCardRepositoryProvider.overrideWithValue(
         lastDeliveredCardRepo,
+      ),
+      notificationHistoryRepositoryProvider.overrideWithValue(
+        notificationHistoryRepo,
       ),
       mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
       favoriteRepositoryProvider.overrideWithValue(favoriteRepo),

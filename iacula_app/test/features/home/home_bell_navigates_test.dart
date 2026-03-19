@@ -46,9 +46,11 @@ void main() {
         child: const CupertinoApp(home: HomeScreen()),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.byKey(const Key('home_notifications_button')));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.byType(NotificationsScreen), findsOneWidget);
   });
 }

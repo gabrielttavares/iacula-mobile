@@ -15,7 +15,7 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../../auth/domain/entities/auth_user.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
-import '../../notifications/domain/entities/last_delivered_card.dart';
+import '../../notifications/presentation/notifications_screen.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
@@ -74,22 +74,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 largeTitle: Text(greeting),
                 middle: const SizedBox.shrink(),
                 alwaysShowMiddle: false,
-                trailing: CupertinoButton(
-                  key: const Key('home_search_button'),
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(32, 32),
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => const SearchScreen(),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CupertinoButton(
+                      key: const Key('home_notifications_button'),
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(32, 32),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => NotificationsScreen(),
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        CupertinoIcons.bell,
+                        color: context.colors.textSecondary,
                       ),
-                    );
-                  },
-                  child: Icon(
-                    CupertinoIcons.search,
-                    color: context.colors.textSecondary,
-                  ),
+                    ),
+                    CupertinoButton(
+                      key: const Key('home_search_button'),
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(32, 32),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const SearchScreen(),
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        CupertinoIcons.search,
+                        color: context.colors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               CupertinoSliverRefreshControl(
@@ -442,22 +464,11 @@ final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
 
 final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
-  final lastDeliveredCardRepo = ref.watch(lastDeliveredCardRepositoryProvider);
 
   if (settings.escrivaPointsFeedEnabled) {
-    final quote = await ref
+    return ref
         .watch(getNextEscrivaPointsQuoteUseCaseProvider)
         .call(language: settings.language);
-    await lastDeliveredCardRepo.save(
-      LastDeliveredCard.fromQuote(quote, deliveredAt: DateTime.now()),
-    );
-    return quote;
-  }
-
-  final lastDeliveredCard = await lastDeliveredCardRepo.load();
-
-  if (lastDeliveredCard != null) {
-    return lastDeliveredCard.toQuote();
   }
 
   // Check custom phrases first
@@ -485,8 +496,5 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final quote = await ref
       .watch(getNextQuoteUseCaseProvider)
       .call(language: settings.language);
-  await lastDeliveredCardRepo.save(
-    LastDeliveredCard.fromQuote(quote, deliveredAt: DateTime.now()),
-  );
   return quote;
 });

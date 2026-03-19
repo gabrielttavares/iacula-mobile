@@ -68,7 +68,6 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
               .read(getNextQuoteUseCaseProvider)
               .call(language: language, now: now);
         },
-        lastDeliveredCardRepository: ref.read(lastDeliveredCardRepositoryProvider),
       ).call(updated);
     } catch (_) {
       if (!mounted) {

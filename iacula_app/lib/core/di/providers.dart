@@ -17,8 +17,10 @@ import '../../features/liturgical/domain/services/liturgical_season_service.dart
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
 import '../../features/notifications/domain/repositories/last_delivered_card_repository.dart';
+import '../../features/notifications/domain/repositories/notification_history_repository.dart';
 import '../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
+import '../../features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import '../../features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
 import '../../features/premium/application/premium_bloc.dart';
 import '../../features/premium/domain/entities/premium_status.dart';
@@ -169,6 +171,13 @@ final lastDeliveredCardRepositoryProvider =
     Provider<LastDeliveredCardRepository>((ref) {
       return InMemoryLastDeliveredCardRepository();
     });
+
+final notificationHistoryRepositoryProvider =
+    Provider<NotificationHistoryRepository>((ref) {
+      return InMemoryNotificationHistoryRepository();
+    });
+
+final notificationHistoryEpochProvider = StateProvider<int>((ref) => 0);
 
 final localDisplayNameProvider = FutureProvider<String?>((ref) async {
   final settings = await ref.read(getSettingsUseCaseProvider).call();

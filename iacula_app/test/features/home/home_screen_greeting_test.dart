@@ -77,7 +77,8 @@ void main() {
         ],
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     final greeting = _largeTitleText(tester);
     expect(greeting, contains('Bem vindo'));
     expect(greeting, isNot(contains('Pedro')));
@@ -99,7 +100,8 @@ void main() {
         ],
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(_largeTitleText(tester), 'Bem vinda, Maria!');
   });
 
@@ -119,7 +121,8 @@ void main() {
         ],
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(_largeTitleText(tester), 'Bem vindo, Pedro!');
   });
 
@@ -134,7 +137,8 @@ void main() {
         ],
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(_largeTitleText(tester), 'Bem vindo!');
   });
 }

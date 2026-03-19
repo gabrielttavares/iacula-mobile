@@ -10,10 +10,13 @@ import '../../liturgical/domain/liturgical_season.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../application/use_cases/schedule_core_reminders_use_case.dart';
 import '../application/use_cases/schedule_liturgy_reminders_use_case.dart';
-import '../domain/entities/last_delivered_card.dart';
+import '../domain/entities/notification_history_entry.dart';
 
-final _lastCardProvider = FutureProvider<LastDeliveredCard?>((ref) {
-  return ref.watch(lastDeliveredCardRepositoryProvider).load();
+final _todayHistoryProvider = FutureProvider<List<NotificationHistoryEntry>>((
+  ref,
+) {
+  ref.watch(notificationHistoryEpochProvider);
+  return ref.watch(notificationHistoryRepositoryProvider).listForDay(DateTime.now());
 });
 
 final _settingsProvider = FutureProvider((ref) {
@@ -25,7 +28,7 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cardAsync = ref.watch(_lastCardProvider);
+    final historyAsync = ref.watch(_todayHistoryProvider);
     final settingsAsync = ref.watch(_settingsProvider);
     final permissionGranted = ref.watch(notificationPermissionProvider);
 
@@ -80,9 +83,6 @@ class NotificationsScreen extends ConsumerWidget {
                               .read(getNextQuoteUseCaseProvider)
                               .call(language: language, now: now);
                         },
-                        lastDeliveredCardRepository: ref.read(
-                          lastDeliveredCardRepositoryProvider,
-                        ),
                       ).call(
                         updated,
                         isEasterSeason: season == LiturgicalSeason.easter,
@@ -104,57 +104,19 @@ class NotificationsScreen extends ConsumerWidget {
 
                 const SizedBox(height: IaculaRadius.cardSpacing),
 
-                // -- PRÓXIMAS --
-                if (settings.notificationsEnabled) ...[
-                  const IaculaSectionHeader(title: 'Próximas notificações'),
-                  const SizedBox(height: IaculaSpacing.sm),
-                  _UpcomingNotificationsCard(
-                    intervalMinutes: settings.intervalMinutes,
-                  ),
-                  const SizedBox(height: IaculaRadius.cardSpacing),
-                ],
-
-                // -- ÚLTIMA --
-                const IaculaSectionHeader(title: 'Última notificação'),
+                const IaculaSectionHeader(title: 'Notificações de hoje'),
                 const SizedBox(height: IaculaSpacing.sm),
-                cardAsync.when(
-                  data: (card) {
-                    if (card == null) {
+                historyAsync.when(
+                  data: (entries) {
+                    if (entries.isEmpty) {
                       return IaculaSoftCard(
                         child: Text(
-                          'Nenhuma notificação enviada ainda.',
+                          'Nenhuma citação recebida hoje.',
                           style: context.textStyles.secondary,
                         ),
                       );
                     }
-                    return IaculaSoftCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            card.theme,
-                            style: context.textStyles.secondary,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            card.quoteText,
-                            style: context.textStyles.cardTitle,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            _formatDate(card.deliveredAt),
-                            style: context.textStyles.secondary,
-                          ),
-                          if (card.feastName != null) ...[
-                            const SizedBox(height: 4),
-                            Text(
-                              card.feastName!,
-                              style: context.textStyles.secondary,
-                            ),
-                          ],
-                        ],
-                      ),
-                    );
+                    return _TodayNotificationsRail(entries: entries);
                   },
                   loading: () =>
                       const Center(child: CupertinoActivityIndicator()),
@@ -180,9 +142,56 @@ class NotificationsScreen extends ConsumerWidget {
     );
   }
 
-  static String _formatDate(DateTime dt) {
-    return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year} '
-        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  static String _formatTime(DateTime dt) {
+    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+class _TodayNotificationsRail extends StatelessWidget {
+  const _TodayNotificationsRail({required this.entries});
+
+  final List<NotificationHistoryEntry> entries;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 176,
+      child: ListView.separated(
+        key: const Key('today_notifications_rail'),
+        scrollDirection: Axis.horizontal,
+        itemCount: entries.length,
+        separatorBuilder: (_, _) => const SizedBox(width: IaculaSpacing.sm),
+        itemBuilder: (context, index) {
+          final entry = entries[index];
+          return SizedBox(
+            width: 280,
+            child: IaculaSoftCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    NotificationsScreen._formatTime(entry.deliveredAt),
+                    style: context.textStyles.secondary,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    entry.quoteText,
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.cardTitle,
+                  ),
+                  const Spacer(),
+                  Text(
+                    entry.feastName ?? entry.theme,
+                    style: context.textStyles.secondary,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -283,117 +292,4 @@ class _NotificationStatusCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _UpcomingNotificationsCard extends StatelessWidget {
-  const _UpcomingNotificationsCard({required this.intervalMinutes});
-
-  final int intervalMinutes;
-
-  @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-
-    final entries = <_UpcomingEntry>[];
-
-    for (var i = 0; i < 5; i++) {
-      final at = now.add(Duration(minutes: intervalMinutes * (i + 1)));
-      entries.add(_UpcomingEntry(
-        time: at,
-        label: 'Jaculatória',
-        icon: CupertinoIcons.bell,
-      ));
-    }
-
-    final nextNoon = _nextNoon(now);
-    entries.add(_UpcomingEntry(
-      time: nextNoon,
-      label: 'Angelus',
-      icon: CupertinoIcons.time,
-      isAngelus: true,
-    ));
-
-    entries.sort((a, b) => a.time.compareTo(b.time));
-
-    final visible = entries.take(6).toList();
-
-    return IaculaSoftCard(
-      child: Column(
-        children: [
-          for (var i = 0; i < visible.length; i++) ...[
-            if (i > 0)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Container(
-                  height: 1,
-                  color: context.colors.separator,
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(
-                children: [
-                  Icon(
-                    visible[i].icon,
-                    size: 16,
-                    color: visible[i].isAngelus
-                        ? context.colors.primaryButton
-                        : context.colors.textSecondary,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    _formatTime(visible[i].time),
-                    style: context.textStyles.cardTitle.copyWith(fontSize: 15),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    visible[i].label,
-                    style: context.textStyles.secondary.copyWith(fontSize: 13),
-                  ),
-                  const Spacer(),
-                  Text(
-                    _relativeTime(visible[i].time, now),
-                    style: context.textStyles.secondary.copyWith(fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  static DateTime _nextNoon(DateTime now) {
-    final todayNoon = DateTime(now.year, now.month, now.day, 12);
-    if (todayNoon.isAfter(now)) return todayNoon;
-    return todayNoon.add(const Duration(days: 1));
-  }
-
-  static String _formatTime(DateTime dt) {
-    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-  }
-
-  static String _relativeTime(DateTime target, DateTime now) {
-    final diff = target.difference(now);
-    if (diff.inMinutes < 60) return 'em ${diff.inMinutes} min';
-    final hours = diff.inHours;
-    final mins = diff.inMinutes % 60;
-    if (mins == 0) return 'em ${hours}h';
-    return 'em ${hours}h ${mins}min';
-  }
-}
-
-class _UpcomingEntry {
-  const _UpcomingEntry({
-    required this.time,
-    required this.label,
-    required this.icon,
-    this.isAngelus = false,
-  });
-
-  final DateTime time;
-  final String label;
-  final IconData icon;
-  final bool isAngelus;
 }

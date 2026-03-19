@@ -1,9 +1,7 @@
 import '../../../prayers/domain/services/prayer_scheduler.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../../../settings/domain/entities/settings.dart';
-import '../../domain/entities/last_delivered_card.dart';
 import '../../domain/entities/reminder_event.dart';
-import '../../domain/repositories/last_delivered_card_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
 typedef QuoteFetcher =
@@ -16,13 +14,10 @@ final class ScheduleCoreRemindersUseCase {
   const ScheduleCoreRemindersUseCase(
     this._scheduler, {
     required QuoteFetcher quoteFetcher,
-    required LastDeliveredCardRepository lastDeliveredCardRepository,
-  }) : _quoteFetcher = quoteFetcher,
-       _lastDeliveredCardRepository = lastDeliveredCardRepository;
+  }) : _quoteFetcher = quoteFetcher;
 
   final NotificationSchedulerRepository _scheduler;
   final QuoteFetcher _quoteFetcher;
-  final LastDeliveredCardRepository _lastDeliveredCardRepository;
 
   Future<void> call(
     Settings settings, {
@@ -30,9 +25,6 @@ final class ScheduleCoreRemindersUseCase {
     bool isEasterSeason = false,
   }) async {
     final current = now ?? DateTime.now();
-    Quote? firstQuote;
-    DateTime? firstQuoteAt;
-
     for (var i = 0; i < maxQueuedQuoteReminders; i++) {
       final quoteAt = current.add(
         Duration(minutes: settings.intervalMinutes * (i + 1)),
@@ -41,8 +33,6 @@ final class ScheduleCoreRemindersUseCase {
         language: settings.language,
         now: quoteAt,
       );
-      firstQuote ??= quote;
-      firstQuoteAt ??= quoteAt;
 
       await _scheduler.scheduleWithId(
         quoteScheduleIdBase + i,
@@ -55,13 +45,10 @@ final class ScheduleCoreRemindersUseCase {
           isAlarm: false,
           routeTarget: NotificationRouteTarget.home,
           scheduledId: quoteScheduleIdBase + i,
+          quoteTheme: quote.theme,
+          quoteSeason: quote.season.name,
+          quoteFeastName: quote.feastName,
         ),
-      );
-    }
-
-    if (firstQuote != null && firstQuoteAt != null) {
-      await _lastDeliveredCardRepository.save(
-        LastDeliveredCard.fromQuote(firstQuote, deliveredAt: firstQuoteAt),
       );
     }
 
