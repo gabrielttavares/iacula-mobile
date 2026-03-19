@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
-import 'package:iacula_app/features/leituras/data/repositories/leitura_repository.dart';
-import 'package:iacula_app/features/leituras/data/sources/leitura_local_source.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
@@ -65,52 +61,12 @@ final class _FakeQuoteContentRepository implements QuoteContentRepository {
   }
 }
 
-LeituraRepository _buildLeituraRepository() {
-  final localSource = LeituraLocalSource(
-    loadAsset: (path) async {
-      if (path == 'assets/books/library/index.json') {
-        return jsonEncode({
-          'authors': [
-            {
-              'id': 'josemaria',
-              'name': 'São Josemaria',
-              'assetPath': 'assets/books/library/authors/sao-josemaria.json',
-            },
-          ],
-        });
-      }
-
-      if (path == 'assets/books/library/authors/sao-josemaria.json') {
-        return jsonEncode({
-          'books': [
-            {
-              'id': 'caminho',
-              'title': 'Caminho',
-              'author': 'São Josemaria',
-              'language': 'pt-br',
-              'type': 'points',
-              'assetPath': 'assets/books/escriva/caminho.json',
-              'description': 'Leitura breve para recomeçar o dia.',
-              'available': true,
-            },
-          ],
-        });
-      }
-
-      return jsonEncode(<String, dynamic>{});
-    },
-  );
-
-  return LeituraRepository(localSource: localSource);
-}
-
 ProviderScope _buildApp() {
   return ProviderScope(
     overrides: [
       appSearchServiceProvider.overrideWithValue(
         AppSearchService(
           prayerCatalogRepository: _FakePrayerCatalogRepository(),
-          leituraRepository: _buildLeituraRepository(),
           quoteContentRepository: _FakeQuoteContentRepository(),
         ),
       ),
