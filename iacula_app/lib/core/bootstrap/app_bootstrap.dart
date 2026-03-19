@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:flutter/services.dart';
@@ -113,42 +114,46 @@ final class AppBootstrap {
     await scheduler.cancelAll();
 
     if (currentSettings.notificationsEnabled && permissionGranted) {
-      try {
-        final currentSeason = await liturgicalSeasonService.getCurrentSeason();
-        await ScheduleCoreRemindersUseCase(
-          scheduler,
-          quoteFetcher: ({required String language, required DateTime now}) {
-            if (currentSettings.escrivaPointsFeedEnabled) {
-              return escrivaPointsUseCase.call(language: language, now: now);
-            }
+      unawaited(Future(() async {
+        try {
+          final currentSeason =
+              await liturgicalSeasonService.getCurrentSeason();
+          await ScheduleCoreRemindersUseCase(
+            scheduler,
+            quoteFetcher: ({required String language, required DateTime now}) {
+              if (currentSettings.escrivaPointsFeedEnabled) {
+                return escrivaPointsUseCase.call(language: language, now: now);
+              }
 
-            return quoteUseCase.call(language: language, now: now);
-          },
-          notificationHistoryRepository: notificationHistoryRepo,
-        ).call(
-          currentSettings,
-          isEasterSeason: currentSeason == LiturgicalSeason.easter,
-        );
-        await SchedulePhraseNotificationsUseCase(
-          scheduler,
-          localCustomPhraseRepo,
-        ).call();
-        await ScheduleLiturgyRemindersUseCase(scheduler).call(currentSettings);
-      } on PlatformException catch (e, st) {
-        developer.log(
-          'Notification scheduling skipped: ${e.code} ${e.message}',
-          name: 'AppBootstrap',
-          error: e,
-          stackTrace: st,
-        );
-      } catch (e, st) {
-        developer.log(
-          'Notification scheduling failed during bootstrap.',
-          name: 'AppBootstrap',
-          error: e,
-          stackTrace: st,
-        );
-      }
+              return quoteUseCase.call(language: language, now: now);
+            },
+            notificationHistoryRepository: notificationHistoryRepo,
+          ).call(
+            currentSettings,
+            isEasterSeason: currentSeason == LiturgicalSeason.easter,
+          );
+          await SchedulePhraseNotificationsUseCase(
+            scheduler,
+            localCustomPhraseRepo,
+          ).call();
+          await ScheduleLiturgyRemindersUseCase(scheduler)
+              .call(currentSettings);
+        } on PlatformException catch (e, st) {
+          developer.log(
+            'Notification scheduling skipped: ${e.code} ${e.message}',
+            name: 'AppBootstrap',
+            error: e,
+            stackTrace: st,
+          );
+        } catch (e, st) {
+          developer.log(
+            'Notification scheduling failed during bootstrap.',
+            name: 'AppBootstrap',
+            error: e,
+            stackTrace: st,
+          );
+        }
+      }));
     }
 
     AuthRepository authRepository = InMemoryAuthRepository();

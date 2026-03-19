@@ -26,6 +26,9 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
   final Map<String, LiturgicalContext> _memoryCache = {};
   final Map<String, Future<LiturgicalContext>> _pending = {};
 
+  DateTime? _lastFailureTime;
+  static const _retryCooldown = Duration(seconds: 60);
+
   static const Map<String, String> _feastSlugAliases = {
     'domingo-de-pentecostes': 'pentecost',
     'santissima-trindade': 'holy-trinity',
@@ -87,8 +90,8 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
     }
 
     final request = _resolveContext(target).then((result) async {
+      _memoryCache[key] = result.context;
       if (result.cacheable) {
-        _memoryCache[key] = result.context;
         await _cacheRepository.put(key, result.context.season);
       }
       return result.context;
@@ -101,6 +104,15 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
   }
 
   Future<_ContextResolution> _resolveContext(DateTime date) async {
+    final lastFail = _lastFailureTime;
+    if (lastFail != null &&
+        DateTime.now().difference(lastFail) < _retryCooldown) {
+      return const _ContextResolution(
+        LiturgicalContext.ordinaryFallback,
+        false,
+      );
+    }
+
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     final year = date.year;
@@ -116,9 +128,11 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
           'Liturgical API returned non-2xx; returning fallback. statusCode=${response.statusCode} uri=$uri date=$date',
           name: 'RemoteLiturgicalSeasonService',
         );
+        _lastFailureTime = DateTime.now();
         return const _ContextResolution(LiturgicalContext.ordinaryFallback, false);
       }
 
+      _lastFailureTime = null;
       final payload = jsonDecode(response.body) as Map<String, dynamic>;
       final liturgia = payload['liturgia']?.toString() ?? '';
       final normalizedLiturgy = _normalizeText(liturgia);
@@ -146,6 +160,7 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
         error: e,
         stackTrace: st,
       );
+      _lastFailureTime = DateTime.now();
       return const _ContextResolution(LiturgicalContext.ordinaryFallback, false);
     }
   }
