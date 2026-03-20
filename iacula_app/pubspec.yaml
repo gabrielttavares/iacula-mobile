@@ -1,7 +1,7 @@
 name: iacula_app
 description: "Iacula Flutter mobile app"
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ^3.11.0
@@ -14,6 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
   http: ^1.2.2
+  cronet_http: ^1.8.0
   sqflite: ^2.4.2
   path: ^1.9.1
   isar: ^3.1.0+1

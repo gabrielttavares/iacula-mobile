@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:developer' as developer;
+import 'dart:io' show Platform;
 
+import 'package:cronet_http/cronet_http.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -91,7 +93,16 @@ final class AppBootstrap {
       );
     }
     final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(isarStore);
-    final httpClient = http.Client();
+    final http.Client httpClient;
+    if (Platform.isAndroid) {
+      final engine = CronetEngine.build(
+        cacheMode: CacheMode.memory,
+        cacheMaxSize: 1024 * 1024,
+      );
+      httpClient = CronetClient.fromCronetEngine(engine, closeEngine: true);
+    } else {
+      httpClient = http.Client();
+    }
     final liturgicalSeasonService = RemoteLiturgicalSeasonService(
       httpClient: httpClient,
       cacheRepository: liturgicalCacheRepo,
