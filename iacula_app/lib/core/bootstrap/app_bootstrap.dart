@@ -120,9 +120,10 @@ final class AppBootstrap {
     await _seedMediaCatalog(mediaRepo);
 
     final scheduler = LocalNotificationSchedulerRepository();
-    final permissionGranted = await scheduler.initialize();
-
     final currentSettings = await settingsRepo.load();
+    final permissionGranted = await scheduler.initialize(
+      requestPermission: currentSettings.onboardingCompleted,
+    );
     await scheduler.cancelAll();
 
     final QuoteFetcher quoteFetcher = ({

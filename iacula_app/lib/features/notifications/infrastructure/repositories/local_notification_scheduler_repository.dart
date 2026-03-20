@@ -34,7 +34,7 @@ final class LocalNotificationSchedulerRepository
 
   bool get permissionGranted => _permissionGranted;
 
-  Future<bool> initialize() async {
+  Future<bool> initialize({bool requestPermission = true}) async {
     _singleton = this;
     tzdata.initializeTimeZones();
 
@@ -47,6 +47,11 @@ final class LocalNotificationSchedulerRepository
       onDidReceiveBackgroundNotificationResponse:
           onDidReceiveBackgroundNotificationResponse,
     );
+
+    if (!requestPermission) {
+      _permissionGranted = false;
+      return _permissionGranted;
+    }
 
     final androidImpl = _plugin
         .resolvePlatformSpecificImplementation<
