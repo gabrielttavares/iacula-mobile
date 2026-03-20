@@ -265,6 +265,32 @@ final class LocalNotificationSchedulerRepository
   }
 
   @override
+  Future<void> showNow(int id, ReminderEvent event) async {
+    final androidDetails = buildAndroidNotificationDetails(event);
+
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentSound: true,
+      presentBadge: true,
+    );
+
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+    final payload =
+        NotificationActionEvent(actionId: null, event: event).toPayload();
+
+    await _plugin.show(
+      id,
+      event.title,
+      event.body,
+      details,
+      payload: payload,
+    );
+  }
+
+  @override
   Future<void> cancelByType(ReminderEventType type) {
     return _plugin.cancel(_idForType(type));
   }

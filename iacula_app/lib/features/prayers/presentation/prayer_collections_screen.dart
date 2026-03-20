@@ -137,12 +137,16 @@ class _PrayerCategoryCard extends StatelessWidget {
           child: Row(
             children: [
               if (iconPath != null) ...[
-                Image.asset(
-                  iconPath!,
-                  width: 24,
-                  height: 24,
-                  color: context.colors.textPrimary,
-                  colorBlendMode: BlendMode.srcIn,
+                ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    context.colors.textPrimary,
+                    BlendMode.srcIn,
+                  ),
+                  child: Image.asset(
+                    iconPath!,
+                    width: 24,
+                    height: 24,
+                  ),
                 ),
                 const SizedBox(width: 12),
               ],

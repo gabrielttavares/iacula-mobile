@@ -1,7 +1,7 @@
 name: iacula_app
 description: "Iacula Flutter mobile app"
 publish_to: 'none'
-version: 1.0.2+4
+version: 1.0.2+5
 
 environment:
   sdk: ^3.11.0
@@ -115,5 +115,6 @@ dependency_overrides:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/icon.png"
+  image_path_ios: "assets/images/icon.png"
+  image_path_android: "assets/images/icon_android.png"
   remove_alpha_ios: true

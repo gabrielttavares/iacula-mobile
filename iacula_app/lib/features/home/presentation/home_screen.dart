@@ -417,12 +417,16 @@ class _RailCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (iconPath != null)
-              Image.asset(
-                iconPath!,
-                width: 28,
-                height: 28,
-                color: context.colors.textPrimary,
-                colorBlendMode: BlendMode.srcIn,
+              ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  context.colors.textPrimary,
+                  BlendMode.srcIn,
+                ),
+                child: Image.asset(
+                  iconPath!,
+                  width: 28,
+                  height: 28,
+                ),
               ),
             const Spacer(),
             Text(

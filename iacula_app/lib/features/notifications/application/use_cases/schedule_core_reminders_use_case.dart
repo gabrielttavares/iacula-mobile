@@ -32,6 +32,43 @@ final class ScheduleCoreRemindersUseCase {
     final current = now ?? DateTime.now();
     await _notificationHistoryRepository.clearFrom(current);
 
+    // Immediate notification upon opening the app
+    final immediateQuote = await _quoteFetcher(
+      language: settings.language,
+      now: current,
+    );
+
+    const immediateId = quoteScheduleIdBase - 1;
+    await _scheduler.showNow(
+      immediateId,
+      ReminderEvent(
+        type: ReminderEventType.quoteInterval,
+        title: 'Iacula',
+        body: immediateQuote.text,
+        scheduledAt: current,
+        withVibration: true,
+        isAlarm: false,
+        routeTarget: NotificationRouteTarget.home,
+        scheduledId: immediateId,
+        quoteTheme: immediateQuote.theme,
+        quoteSeason: immediateQuote.season.name,
+        quoteFeastName: immediateQuote.feastName,
+      ),
+    );
+
+    if (_isSameDay(current, current)) {
+      await _notificationHistoryRepository.add(
+        NotificationHistoryEntry(
+          quoteText: immediateQuote.text,
+          theme: immediateQuote.theme,
+          season: immediateQuote.season.name,
+          deliveredAt: current,
+          imagePath: immediateQuote.imagePath,
+          feastName: immediateQuote.feastName,
+        ),
+      );
+    }
+
     for (var i = 0; i < maxQueuedQuoteReminders; i++) {
       final quoteAt = current.add(
         Duration(minutes: settings.intervalMinutes * (i + 1)),
