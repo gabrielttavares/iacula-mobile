@@ -39,10 +39,14 @@ final class LocalNotificationSchedulerRepository
     tzdata.initializeTimeZones();
 
     const android = AndroidInitializationSettings(_smallIcon);
-    const ios = DarwinInitializationSettings();
+    final ios = DarwinInitializationSettings(
+      requestAlertPermission: requestPermission,
+      requestBadgePermission: requestPermission,
+      requestSoundPermission: requestPermission,
+    );
 
     await _plugin.initialize(
-      const InitializationSettings(android: android, iOS: ios),
+      InitializationSettings(android: android, iOS: ios),
       onDidReceiveNotificationResponse: handleNotificationResponse,
       onDidReceiveBackgroundNotificationResponse:
           onDidReceiveBackgroundNotificationResponse,
