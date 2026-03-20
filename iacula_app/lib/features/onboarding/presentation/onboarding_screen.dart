@@ -114,30 +114,35 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     await ref.read(updateSettingsUseCaseProvider).call(updated);
 
     final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
-    await schedulerRepo.cancelAll();
-    final season = await ref
-        .read(liturgicalSeasonServiceProvider)
-        .getCurrentSeason();
-    await ScheduleCoreRemindersUseCase(
-      schedulerRepo,
-      quoteFetcher: ({required String language, required DateTime now}) {
-        if (updated.escrivaPointsFeedEnabled) {
+    try {
+      await schedulerRepo.cancelAll();
+      final season = await ref
+          .read(liturgicalSeasonServiceProvider)
+          .getCurrentSeason();
+      await ScheduleCoreRemindersUseCase(
+        schedulerRepo,
+        quoteFetcher: ({required String language, required DateTime now}) {
+          if (updated.escrivaPointsFeedEnabled) {
+            return ref
+                .read(getNextEscrivaPointsQuoteUseCaseProvider)
+                .call(language: language, now: now);
+          }
           return ref
-              .read(getNextEscrivaPointsQuoteUseCaseProvider)
+              .read(getNextQuoteUseCaseProvider)
               .call(language: language, now: now);
-        }
-        return ref
-            .read(getNextQuoteUseCaseProvider)
-            .call(language: language, now: now);
-      },
-      notificationHistoryRepository: ref.read(
-        notificationHistoryRepositoryProvider,
-      ),
-      lastDeliveredCardRepository: ref.read(
-        lastDeliveredCardRepositoryProvider,
-      ),
-    ).call(updated, isEasterSeason: season == LiturgicalSeason.easter);
-    await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(updated);
+        },
+        notificationHistoryRepository: ref.read(
+          notificationHistoryRepositoryProvider,
+        ),
+        lastDeliveredCardRepository: ref.read(
+          lastDeliveredCardRepositoryProvider,
+        ),
+      ).call(updated, isEasterSeason: season == LiturgicalSeason.easter);
+      await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(updated);
+    } on PlatformException catch (_) {
+      // Scheduling failed (e.g. exact alarms denied) — continue onboarding.
+      // Notifications will be retried on next app launch.
+    }
 
     if (!mounted) return;
     _goToPage(2);
@@ -185,38 +190,30 @@ class _WelcomePage extends StatelessWidget {
             const _BrandBlock(),
             const SizedBox(height: IaculaSpacing.md),
             Text(
-              'Volte a Deus ao longo do dia.',
+              'Reze mais, sem complicar.',
               textAlign: TextAlign.center,
               style: context.textStyles.sectionTitle,
             ),
             const SizedBox(height: 4),
             Text(
-              'Um caminho simples de oração, leitura e exame para recomeçar com constância.',
+              'Jaculatórias, orações e exame de consciência para manter Deus presente no seu dia.',
               textAlign: TextAlign.center,
               style: context.textStyles.secondary,
             ),
             const SizedBox(height: IaculaSpacing.xl),
             const _FeatureCard(
               icon: CupertinoIcons.bell_fill,
-              title: 'Reze sem se perder',
+              title: 'Jaculatórias ao longo do dia',
               subtitle:
-                  'Encontre rápido o melhor ponto de partida para agora.',
+                  'Receba breves orações por notificação para voltar a Deus sem parar o que faz.',
               minHeight: 104,
             ),
             const SizedBox(height: IaculaSpacing.sm),
             const _FeatureCard(
-              icon: CupertinoIcons.arrow_clockwise_circle,
-              title: 'Volte rápido ao essencial',
+              icon: CupertinoIcons.book_fill,
+              title: 'Orações e intenções',
               subtitle:
-                  'Jaculatórias, leituras e meditações para retomar o recolhimento.',
-              minHeight: 104,
-            ),
-            const SizedBox(height: IaculaSpacing.sm),
-            const _FeatureCard(
-              icon: CupertinoIcons.check_mark_circled,
-              title: 'Siga um ritmo de oração',
-              subtitle:
-                  'Exame de consciência, Liturgia das Horas e práticas diárias para perseverar com paz.',
+                  'Registre suas intenções pessoais de oração e acesse dezenas de orações tradicionais organizadas.',
               minHeight: 104,
             ),
             const SizedBox(height: IaculaSpacing.xl),

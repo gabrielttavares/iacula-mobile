@@ -52,10 +52,9 @@ void main() {
 
     expect(find.byType(OnboardingScreen), findsOneWidget);
     expect(find.text('Iacula'), findsOneWidget);
-    expect(find.text('Volte a Deus ao longo do dia.'), findsOneWidget);
-    expect(find.text('Reze sem se perder'), findsOneWidget);
-    expect(find.text('Volte rápido ao essencial'), findsOneWidget);
-    await reveal('Siga um ritmo de oração');
+    expect(find.text('Reze mais, sem complicar.'), findsOneWidget);
+    expect(find.text('Jaculatórias ao longo do dia'), findsOneWidget);
+    expect(find.text('Orações e intenções'), findsOneWidget);
     await reveal('Continuar');
 
     await tester.tap(find.text('Continuar'));
@@ -67,6 +66,13 @@ void main() {
     await reveal('Agora não');
 
     await tester.tap(find.text('Agora não'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text('Adicione suas próprias frases'), findsOneWidget);
+    await reveal('Começar');
+
+    await tester.tap(find.text('Começar'));
     await tester.pumpAndSettle();
 
     expect(repo.value.onboardingCompleted, isTrue);
