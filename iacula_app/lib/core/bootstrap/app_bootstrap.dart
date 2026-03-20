@@ -135,7 +135,9 @@ final class AppBootstrap {
       return quoteUseCase.call(language: language, now: now);
     };
 
-    if (currentSettings.notificationsEnabled && permissionGranted) {
+    if (currentSettings.onboardingCompleted &&
+        currentSettings.notificationsEnabled &&
+        permissionGranted) {
       final immediateQuote = await quoteFetcher(
         language: currentSettings.language,
         now: DateTime.now(),
