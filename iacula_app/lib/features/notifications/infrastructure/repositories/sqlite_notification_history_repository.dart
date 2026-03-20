@@ -37,7 +37,7 @@ final class SqliteNotificationHistoryRepository
     await db.delete(
       'notification_history_entries',
       where: 'delivered_at >= ? AND delivered_at < ?',
-      whereArgs: [instant.toIso8601String(), end.toIso8601String()],
+      whereArgs: [start.toIso8601String(), end.toIso8601String()],
     );
   }
 

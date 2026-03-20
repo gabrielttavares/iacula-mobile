@@ -18,12 +18,12 @@ final class InMemoryNotificationHistoryRepository
 
   @override
   Future<void> clearFrom(DateTime instant) async {
+    final start = DateTime(instant.year, instant.month, instant.day);
+    final end = start.add(const Duration(days: 1));
     _entries.removeWhere(
       (entry) =>
-          entry.deliveredAt.year == instant.year &&
-          entry.deliveredAt.month == instant.month &&
-          entry.deliveredAt.day == instant.day &&
-          !entry.deliveredAt.isBefore(instant),
+          !entry.deliveredAt.isBefore(start) &&
+          entry.deliveredAt.isBefore(end),
     );
   }
 

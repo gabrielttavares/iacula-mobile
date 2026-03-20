@@ -66,18 +66,16 @@ final class ScheduleCoreRemindersUseCase {
       LastDeliveredCard.fromQuote(resolvedImmediate, deliveredAt: current),
     );
 
-    if (_isSameDay(current, current)) {
-      await _notificationHistoryRepository.add(
-        NotificationHistoryEntry(
-          quoteText: resolvedImmediate.text,
-          theme: resolvedImmediate.theme,
-          season: resolvedImmediate.season.name,
-          deliveredAt: current,
-          imagePath: resolvedImmediate.imagePath,
-          feastName: resolvedImmediate.feastName,
-        ),
-      );
-    }
+    await _notificationHistoryRepository.add(
+      NotificationHistoryEntry(
+        quoteText: resolvedImmediate.text,
+        theme: resolvedImmediate.theme,
+        season: resolvedImmediate.season.name,
+        deliveredAt: current,
+        imagePath: resolvedImmediate.imagePath,
+        feastName: resolvedImmediate.feastName,
+      ),
+    );
 
     for (var i = 0; i < maxQueuedQuoteReminders; i++) {
       final quoteAt = current.add(
