@@ -4,6 +4,7 @@ import 'package:iacula_app/features/notifications/application/use_cases/schedule
 import 'package:iacula_app/features/notifications/domain/entities/notification_history_entry.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_history_repository.dart';
+import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
@@ -59,6 +60,7 @@ void main() {
               );
             },
         notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
       );
 
       final settings = Settings.defaults.copyWith(
@@ -69,33 +71,39 @@ void main() {
 
       await useCase(settings, now: now);
 
-      final quoteEvents =
+      final allQuoteEvents =
           scheduler.events
               .where((e) => e.type == ReminderEventType.quoteInterval)
               .toList()
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
-      expect(quoteEvents.length, 64);
-      expect(quoteEvents.first.title, 'Iacula');
-      expect(quoteEvents.first.body, 'Sede santos, porque eu sou santo.');
+      expect(allQuoteEvents.length, 65);
+
+      expect(allQuoteEvents.first.scheduledId, 8999);
+      expect(allQuoteEvents.first.scheduledAt, now);
+
+      final scheduledEvents = allQuoteEvents.skip(1).toList();
+      expect(scheduledEvents.length, 64);
+      expect(scheduledEvents.first.title, 'Iacula');
+      expect(scheduledEvents.first.body, 'Sede santos, porque eu sou santo.');
       expect(
-        quoteEvents.map((event) => event.scheduledId).whereType<int>().toSet(),
+        scheduledEvents.map((event) => event.scheduledId).whereType<int>().toSet(),
         hasLength(64),
       );
-      expect(quoteEvents.first.scheduledId, 9000);
-      expect(quoteEvents.last.scheduledId, 9063);
+      expect(scheduledEvents.first.scheduledId, 9000);
+      expect(scheduledEvents.last.scheduledId, 9063);
       expect(
-        quoteEvents.first.scheduledAt,
+        scheduledEvents.first.scheduledAt,
         now.add(const Duration(minutes: 15)),
       );
       expect(
-        quoteEvents.last.scheduledAt,
+        scheduledEvents.last.scheduledAt,
         now.add(const Duration(minutes: 15 * 64)),
       );
 
-      expect(history.entries, hasLength(55));
+      expect(history.entries, hasLength(56));
       expect(history.entries.first.quoteText, 'Sede santos, porque eu sou santo.');
       expect(history.entries.first.theme, 'todos os santos');
-      expect(history.entries.first.deliveredAt, now.add(const Duration(minutes: 15)));
+      expect(history.entries.first.deliveredAt, now);
       expect(
         history.entries.last.deliveredAt,
         DateTime(2026, 2, 21, 23, 45),
@@ -126,6 +134,7 @@ void main() {
         );
       },
       notificationHistoryRepository: history,
+      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
     );
 
     await useCase(Settings.defaults.copyWith(intervalMinutes: 15), now: DateTime(2026, 2, 21, 10));
@@ -133,7 +142,7 @@ void main() {
 
     await useCase(Settings.defaults.copyWith(intervalMinutes: 30), now: DateTime(2026, 2, 21, 12));
 
-    expect(firstRunCount, 55);
-    expect(history.entries.where((entry) => !entry.deliveredAt.isBefore(DateTime(2026, 2, 21, 12))).length, 23);
+    expect(firstRunCount, 56);
+    expect(history.entries.where((entry) => !entry.deliveredAt.isBefore(DateTime(2026, 2, 21, 12))).length, 24);
   });
 }

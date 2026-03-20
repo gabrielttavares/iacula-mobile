@@ -88,6 +88,9 @@ class NotificationsScreen extends ConsumerWidget {
                         notificationHistoryRepository: ref.read(
                           notificationHistoryRepositoryProvider,
                         ),
+                        lastDeliveredCardRepository: ref.read(
+                          lastDeliveredCardRepositoryProvider,
+                        ),
                       ).call(
                         updated,
                         isEasterSeason: season == LiturgicalSeason.easter,

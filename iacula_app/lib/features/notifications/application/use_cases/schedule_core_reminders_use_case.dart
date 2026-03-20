@@ -1,8 +1,10 @@
 import '../../../prayers/domain/services/prayer_scheduler.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../../../settings/domain/entities/settings.dart';
+import '../../domain/entities/last_delivered_card.dart';
 import '../../domain/entities/notification_history_entry.dart';
 import '../../domain/entities/reminder_event.dart';
+import '../../domain/repositories/last_delivered_card_repository.dart';
 import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
@@ -17,26 +19,30 @@ final class ScheduleCoreRemindersUseCase {
     this._scheduler, {
     required QuoteFetcher quoteFetcher,
     required NotificationHistoryRepository notificationHistoryRepository,
+    required LastDeliveredCardRepository lastDeliveredCardRepository,
   }) : _quoteFetcher = quoteFetcher,
-       _notificationHistoryRepository = notificationHistoryRepository;
+       _notificationHistoryRepository = notificationHistoryRepository,
+       _lastDeliveredCardRepository = lastDeliveredCardRepository;
 
   final NotificationSchedulerRepository _scheduler;
   final QuoteFetcher _quoteFetcher;
   final NotificationHistoryRepository _notificationHistoryRepository;
+  final LastDeliveredCardRepository _lastDeliveredCardRepository;
 
   Future<void> call(
     Settings settings, {
     DateTime? now,
     bool isEasterSeason = false,
+    Quote? immediateQuote,
   }) async {
     final current = now ?? DateTime.now();
     await _notificationHistoryRepository.clearFrom(current);
 
-    // Immediate notification upon opening the app
-    final immediateQuote = await _quoteFetcher(
-      language: settings.language,
-      now: current,
-    );
+    final resolvedImmediate = immediateQuote ??
+        await _quoteFetcher(
+          language: settings.language,
+          now: current,
+        );
 
     const immediateId = quoteScheduleIdBase - 1;
     await _scheduler.showNow(
@@ -44,27 +50,31 @@ final class ScheduleCoreRemindersUseCase {
       ReminderEvent(
         type: ReminderEventType.quoteInterval,
         title: 'Iacula',
-        body: immediateQuote.text,
+        body: resolvedImmediate.text,
         scheduledAt: current,
         withVibration: true,
         isAlarm: false,
         routeTarget: NotificationRouteTarget.home,
         scheduledId: immediateId,
-        quoteTheme: immediateQuote.theme,
-        quoteSeason: immediateQuote.season.name,
-        quoteFeastName: immediateQuote.feastName,
+        quoteTheme: resolvedImmediate.theme,
+        quoteSeason: resolvedImmediate.season.name,
+        quoteFeastName: resolvedImmediate.feastName,
       ),
+    );
+
+    await _lastDeliveredCardRepository.save(
+      LastDeliveredCard.fromQuote(resolvedImmediate, deliveredAt: current),
     );
 
     if (_isSameDay(current, current)) {
       await _notificationHistoryRepository.add(
         NotificationHistoryEntry(
-          quoteText: immediateQuote.text,
-          theme: immediateQuote.theme,
-          season: immediateQuote.season.name,
+          quoteText: resolvedImmediate.text,
+          theme: resolvedImmediate.theme,
+          season: resolvedImmediate.season.name,
           deliveredAt: current,
-          imagePath: immediateQuote.imagePath,
-          feastName: immediateQuote.feastName,
+          imagePath: resolvedImmediate.imagePath,
+          feastName: resolvedImmediate.feastName,
         ),
       );
     }

@@ -432,6 +432,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         notificationHistoryRepository: ref.read(
           notificationHistoryRepositoryProvider,
         ),
+        lastDeliveredCardRepository: ref.read(
+          lastDeliveredCardRepositoryProvider,
+        ),
       ).call(settings, isEasterSeason: season == LiturgicalSeason.easter);
       await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(settings);
     }

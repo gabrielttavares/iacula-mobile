@@ -475,7 +475,6 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
         .call(language: settings.language);
   }
 
-  // Check custom phrases first
   final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
   final phrases = phrasesAsync.valueOrNull ?? [];
   final now = DateTime.now();
@@ -484,7 +483,6 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
       .toList();
 
   if (matching.isNotEmpty) {
-    // Cycle daily: use day-of-year to rotate
     final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
     final selected = matching[dayOfYear % matching.length];
     return Quote(
@@ -492,9 +490,14 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
       dayOfWeek: now.weekday,
       theme: 'personal',
       season: LiturgicalSeason.ordinary,
-      imagePath: null, // uses fallback color
+      imagePath: null,
       source: QuoteSource.personal,
     );
+  }
+
+  final lastCard = await ref.watch(lastDeliveredCardRepositoryProvider).load();
+  if (lastCard != null && _isSameDay(lastCard.deliveredAt, now)) {
+    return lastCard.toQuote();
   }
 
   final quote = await ref
@@ -502,3 +505,6 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
       .call(language: settings.language);
   return quote;
 });
+
+bool _isSameDay(DateTime a, DateTime b) =>
+    a.year == b.year && a.month == b.month && a.day == b.day;

@@ -133,6 +133,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       notificationHistoryRepository: ref.read(
         notificationHistoryRepositoryProvider,
       ),
+      lastDeliveredCardRepository: ref.read(
+        lastDeliveredCardRepositoryProvider,
+      ),
     ).call(updated, isEasterSeason: season == LiturgicalSeason.easter);
     await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(updated);
 

@@ -71,6 +71,9 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
         notificationHistoryRepository: ref.read(
           notificationHistoryRepositoryProvider,
         ),
+        lastDeliveredCardRepository: ref.read(
+          lastDeliveredCardRepositoryProvider,
+        ),
       ).call(updated);
     } catch (_) {
       if (!mounted) {

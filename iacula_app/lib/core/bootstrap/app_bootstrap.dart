@@ -22,6 +22,7 @@ import '../../features/leituras/data/sources/leitura_local_source.dart';
 import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
+import '../../features/notifications/domain/entities/last_delivered_card.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_notification_history_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
@@ -124,23 +125,40 @@ final class AppBootstrap {
     final currentSettings = await settingsRepo.load();
     await scheduler.cancelAll();
 
+    final QuoteFetcher quoteFetcher = ({
+      required String language,
+      required DateTime now,
+    }) {
+      if (currentSettings.escrivaPointsFeedEnabled) {
+        return escrivaPointsUseCase.call(language: language, now: now);
+      }
+      return quoteUseCase.call(language: language, now: now);
+    };
+
     if (currentSettings.notificationsEnabled && permissionGranted) {
+      final immediateQuote = await quoteFetcher(
+        language: currentSettings.language,
+        now: DateTime.now(),
+      );
+      await lastDeliveredCardRepo.save(
+        LastDeliveredCard.fromQuote(
+          immediateQuote,
+          deliveredAt: DateTime.now(),
+        ),
+      );
+
       unawaited(Future(() async {
         try {
           final currentSeason =
               await liturgicalSeasonService.getCurrentSeason();
           await ScheduleCoreRemindersUseCase(
             scheduler,
-            quoteFetcher: ({required String language, required DateTime now}) {
-              if (currentSettings.escrivaPointsFeedEnabled) {
-                return escrivaPointsUseCase.call(language: language, now: now);
-              }
-
-              return quoteUseCase.call(language: language, now: now);
-            },
+            quoteFetcher: quoteFetcher,
             notificationHistoryRepository: notificationHistoryRepo,
+            lastDeliveredCardRepository: lastDeliveredCardRepo,
           ).call(
             currentSettings,
+            immediateQuote: immediateQuote,
             isEasterSeason: currentSeason == LiturgicalSeason.easter,
           );
           await SchedulePhraseNotificationsUseCase(
