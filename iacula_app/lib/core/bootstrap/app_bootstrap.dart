@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'dart:io' show Platform;
 
 import 'package:cronet_http/cronet_http.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +23,6 @@ import '../../features/leituras/data/sources/leitura_local_source.dart';
 import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
-import '../../features/notifications/domain/entities/last_delivered_card.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_notification_history_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
@@ -58,6 +58,7 @@ final class AppBootstrap {
   const AppBootstrap._();
 
   static Future<List<Override>> createProductionOverrides() async {
+   try {
     final env = AppEnv.fromDartDefines();
 
     final db = AppDatabase.instance;
@@ -121,10 +122,20 @@ final class AppBootstrap {
 
     final scheduler = LocalNotificationSchedulerRepository();
     final currentSettings = await settingsRepo.load();
-    final permissionGranted = await scheduler.initialize(
-      requestPermission: currentSettings.onboardingCompleted,
-    );
-    await scheduler.cancelAll();
+    bool permissionGranted;
+    try {
+      permissionGranted = await scheduler.initialize(
+        requestPermission: currentSettings.onboardingCompleted,
+      );
+    } catch (e) {
+      debugPrint('[Bootstrap] Notification init failed: $e');
+      permissionGranted = false;
+    }
+    try {
+      await scheduler.cancelAll();
+    } catch (e) {
+      debugPrint('[Bootstrap] Notification cancelAll failed: $e');
+    }
 
     final QuoteFetcher quoteFetcher = ({
       required String language,
@@ -143,12 +154,6 @@ final class AppBootstrap {
         language: currentSettings.language,
         now: DateTime.now(),
       );
-      await lastDeliveredCardRepo.save(
-        LastDeliveredCard.fromQuote(
-          immediateQuote,
-          deliveredAt: DateTime.now(),
-        ),
-      );
 
       unawaited(Future(() async {
         try {
@@ -163,6 +168,7 @@ final class AppBootstrap {
             currentSettings,
             immediateQuote: immediateQuote,
             isEasterSeason: currentSeason == LiturgicalSeason.easter,
+            showImmediate: false,
           );
           await SchedulePhraseNotificationsUseCase(
             scheduler,
@@ -185,7 +191,15 @@ final class AppBootstrap {
             stackTrace: st,
           );
         }
-      }));
+      }).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          developer.log(
+            'Notification scheduling timed out after 15s.',
+            name: 'AppBootstrap',
+          );
+        },
+      ));
     }
 
     AuthRepository authRepository = InMemoryAuthRepository();
@@ -307,6 +321,15 @@ final class AppBootstrap {
     }
 
     return overrides;
+   } catch (e, st) {
+      developer.log(
+        'Bootstrap failed unexpectedly. Returning empty overrides to avoid splash freeze.',
+        name: 'AppBootstrap',
+        error: e,
+        stackTrace: st,
+      );
+      return <Override>[];
+   }
   }
 
   static Future<void> _seedMediaCatalog(

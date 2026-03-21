@@ -34,6 +34,7 @@ final class ScheduleCoreRemindersUseCase {
     DateTime? now,
     bool isEasterSeason = false,
     Quote? immediateQuote,
+    bool showImmediate = true,
   }) async {
     final current = now ?? DateTime.now();
     await _notificationHistoryRepository.clearFrom(current);
@@ -44,23 +45,25 @@ final class ScheduleCoreRemindersUseCase {
           now: current,
         );
 
-    const immediateId = quoteScheduleIdBase - 1;
-    await _scheduler.showNow(
-      immediateId,
-      ReminderEvent(
-        type: ReminderEventType.quoteInterval,
-        title: 'Iacula',
-        body: resolvedImmediate.text,
-        scheduledAt: current,
-        withVibration: true,
-        isAlarm: false,
-        routeTarget: NotificationRouteTarget.home,
-        scheduledId: immediateId,
-        quoteTheme: resolvedImmediate.theme,
-        quoteSeason: resolvedImmediate.season.name,
-        quoteFeastName: resolvedImmediate.feastName,
-      ),
-    );
+    if (showImmediate) {
+      const immediateId = quoteScheduleIdBase - 1;
+      await _scheduler.showNow(
+        immediateId,
+        ReminderEvent(
+          type: ReminderEventType.quoteInterval,
+          title: 'Iacula',
+          body: resolvedImmediate.text,
+          scheduledAt: current,
+          withVibration: true,
+          isAlarm: false,
+          routeTarget: NotificationRouteTarget.home,
+          scheduledId: immediateId,
+          quoteTheme: resolvedImmediate.theme,
+          quoteSeason: resolvedImmediate.season.name,
+          quoteFeastName: resolvedImmediate.feastName,
+        ),
+      );
+    }
 
     await _lastDeliveredCardRepository.save(
       LastDeliveredCard.fromQuote(resolvedImmediate, deliveredAt: current),
