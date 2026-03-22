@@ -9,18 +9,30 @@ import '../../domain/repositories/quote_content_repository.dart';
 final class AssetQuoteContentRepository implements QuoteContentRepository {
   const AssetQuoteContentRepository();
 
+  static AssetManifest? _manifestCache;
+  static final Map<(String, LiturgicalSeason), Map<String, DayQuotes>> _quotesCache = {};
+  static final Map<(int, LiturgicalSeason), List<String>> _dayImagesCache = {};
+
+  static Future<AssetManifest> _getManifest() async {
+    return _manifestCache ??= await AssetManifest.loadFromAssetBundle(rootBundle);
+  }
+
   @override
   Future<Map<String, DayQuotes>> loadQuotes({
     required String language,
     required LiturgicalSeason season,
   }) async {
+    final key = (language, season);
+    final cached = _quotesCache[key];
+    if (cached != null) return cached;
+
     final path = await _resolveQuotePath(language: language, season: season);
 
     try {
       final jsonString = await rootBundle.loadString(path);
       final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
 
-      return jsonMap.map((key, value) {
+      final result = jsonMap.map((key, value) {
         final data = value as Map<String, dynamic>;
         final quotes = (data['quotes'] as List<dynamic>).map((e) => e.toString()).toList(growable: false);
         return MapEntry(
@@ -32,6 +44,9 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
           ),
         );
       });
+
+      _quotesCache[key] = result;
+      return result;
     } catch (_) {
       return const <String, DayQuotes>{};
     }
@@ -42,7 +57,11 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
     required int dayOfWeek,
     required LiturgicalSeason season,
   }) async {
-    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final key = (dayOfWeek, season);
+    final cached = _dayImagesCache[key];
+    if (cached != null) return cached;
+
+    final manifest = await _getManifest();
     final assets = manifest.listAssets();
 
     final seasonFolder = season == LiturgicalSeason.ordinary ? 'ordinary/$dayOfWeek' : _seasonFolder(season);
@@ -51,19 +70,23 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
     final imageKeys = assets.where((k) => _isSupportedImage(k) && k.startsWith(prefix)).toList()..sort();
 
     if (imageKeys.isNotEmpty) {
+      _dayImagesCache[key] = imageKeys;
       return imageKeys;
     }
 
     if (season != LiturgicalSeason.ordinary) {
-      return listDayImages(dayOfWeek: dayOfWeek, season: LiturgicalSeason.ordinary);
+      final fallback = await listDayImages(dayOfWeek: dayOfWeek, season: LiturgicalSeason.ordinary);
+      _dayImagesCache[key] = fallback;
+      return fallback;
     }
 
+    _dayImagesCache[key] = const <String>[];
     return const <String>[];
   }
 
   @override
   Future<List<String>> loadFeastQuotes(String feastSlug) async {
-    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final manifest = await _getManifest();
     final assets = manifest.listAssets().toSet();
 
     final path = 'assets/seed/quotes/pt-br/feasts/$feastSlug.json';
@@ -94,7 +117,7 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
 
   @override
   Future<String?> getFeastImagePath(String feastSlug) async {
-    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final manifest = await _getManifest();
     final assets = manifest.listAssets();
     final prefix = 'assets/seed/images/feasts/$feastSlug/';
 
@@ -107,7 +130,7 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
     required String language,
     required LiturgicalSeason season,
   }) async {
-    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final manifest = await _getManifest();
     final assets = manifest.listAssets().toSet();
 
     final preferred = _quotePath(language: language, season: season);

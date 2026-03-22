@@ -30,7 +30,6 @@ import '../../features/premium/domain/entities/premium_status.dart';
 import '../../features/premium/domain/repositories/premium_repository.dart';
 import '../../features/premium/infrastructure/always_unlocked_premium_repository.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
-import '../../features/premium/infrastructure/supabase_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_quote_indices_repository.dart';
@@ -147,16 +146,29 @@ final class AppBootstrap {
       return quoteUseCase.call(language: language, now: now);
     };
 
+    final QuoteBatchFetcher? batchFetcher = currentSettings.escrivaPointsFeedEnabled
+        ? null
+        : ({
+            required String language,
+            required int count,
+            required DateTime startTime,
+            required int intervalMinutes,
+          }) => quoteUseCase.fetchBatch(
+            language: language,
+            count: count,
+            startTime: startTime,
+            intervalMinutes: intervalMinutes,
+          );
+
     if (currentSettings.onboardingCompleted &&
         currentSettings.notificationsEnabled &&
         permissionGranted) {
-      final immediateQuote = await quoteFetcher(
-        language: currentSettings.language,
-        now: DateTime.now(),
-      );
-
       unawaited(Future(() async {
         try {
+          final immediateQuote = await quoteFetcher(
+            language: currentSettings.language,
+            now: DateTime.now(),
+          );
           final currentSeason =
               await liturgicalSeasonService.getCurrentSeason();
           await ScheduleCoreRemindersUseCase(
@@ -164,18 +176,21 @@ final class AppBootstrap {
             quoteFetcher: quoteFetcher,
             notificationHistoryRepository: notificationHistoryRepo,
             lastDeliveredCardRepository: lastDeliveredCardRepo,
+            batchFetcher: batchFetcher,
           ).call(
             currentSettings,
             immediateQuote: immediateQuote,
             isEasterSeason: currentSeason == LiturgicalSeason.easter,
             showImmediate: false,
           );
-          await SchedulePhraseNotificationsUseCase(
-            scheduler,
-            localCustomPhraseRepo,
-          ).call();
-          await ScheduleLiturgyRemindersUseCase(scheduler)
-              .call(currentSettings);
+          await Future.wait([
+            SchedulePhraseNotificationsUseCase(
+              scheduler,
+              localCustomPhraseRepo,
+            ).call(),
+            ScheduleLiturgyRemindersUseCase(scheduler)
+                .call(currentSettings),
+          ]);
         } on PlatformException catch (e, st) {
           developer.log(
             'Notification scheduling skipped: ${e.code} ${e.message}',
@@ -198,6 +213,7 @@ final class AppBootstrap {
             'Notification scheduling timed out after 15s.',
             name: 'AppBootstrap',
           );
+          scheduler.cancelAll();
         },
       ));
     }
@@ -218,11 +234,6 @@ final class AppBootstrap {
 
         supabaseClient = Supabase.instance.client;
         authRepository = SupabaseAuthRepository(supabaseClient);
-        SyncedPremiumRepository(
-          localRepository: localPremiumRepo,
-          authRepository: authRepository,
-          remoteGateway: SupabasePremiumGateway(supabaseClient),
-        );
         developer.log(
           'Premium runtime is in free-access mode; synced premium repository kept dormant for later restoration.',
           name: 'AppBootstrap',

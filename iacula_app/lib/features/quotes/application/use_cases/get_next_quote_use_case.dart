@@ -19,6 +19,86 @@ final class GetNextQuoteUseCase {
   final QuoteIndicesRepository _indicesRepository;
   final LiturgicalSeasonService _liturgicalSeasonService;
 
+  /// Fetches [count] quotes in sequence, loading indices once and saving once
+  /// at the end. Much more efficient than calling [call] in a loop.
+  Future<List<Quote>> fetchBatch({
+    required String language,
+    required int count,
+    required DateTime startTime,
+    required int intervalMinutes,
+  }) async {
+    if (count <= 0) return const [];
+
+    final quotes = <Quote>[];
+    final firstDate = startTime;
+    final dayOfWeek = _dayOfWeek1to7(firstDate);
+    final context = await _liturgicalSeasonService.getCurrentContext(date: firstDate);
+
+    final seasonalCollection = await _contentRepository.loadQuotes(
+      language: language,
+      season: context.season,
+    );
+    final seasonalImages = await _contentRepository.listDayImages(
+      dayOfWeek: dayOfWeek,
+      season: context.season,
+    );
+
+    final quotePool = seasonalCollection;
+    final dayData = quotePool[dayOfWeek.toString()];
+
+    var indices = await _indicesRepository.load(dayOfWeek: dayOfWeek);
+
+    for (var i = 0; i < count; i++) {
+      final quoteAt = startTime.add(Duration(minutes: intervalMinutes * (i + 1)));
+      final qDayOfWeek = _dayOfWeek1to7(quoteAt);
+
+      if (dayData == null || dayData.quotes.isEmpty) {
+        quotes.add(Quote(
+          text: 'Conteudo indisponivel para hoje.',
+          dayOfWeek: qDayOfWeek,
+          theme: dayData?.theme ?? 'Sem tema',
+          season: context.season,
+        ));
+        continue;
+      }
+
+      final currentQuoteIndex = indices.quoteIndices[qDayOfWeek] ?? 0;
+      final quoteStep = QuoteSelector.getNextIndex(dayData.quotes.length, currentQuoteIndex);
+
+      final currentImageIndex = indices.imageIndices[qDayOfWeek] ?? 0;
+      String? imagePath;
+      var nextImageIndex = 0;
+      if (seasonalImages.isNotEmpty) {
+        final imageStep = QuoteSelector.getNextIndex(seasonalImages.length, currentImageIndex);
+        imagePath = seasonalImages[imageStep.currentIndex];
+        nextImageIndex = imageStep.nextIndex;
+      }
+
+      final text = QuoteSelector.selectQuote(
+        collection: quotePool,
+        dayOfWeek: qDayOfWeek,
+        index: currentQuoteIndex,
+      );
+
+      indices = QuoteIndices(
+        quoteIndices: {...indices.quoteIndices, qDayOfWeek: quoteStep.nextIndex},
+        imageIndices: {...indices.imageIndices, qDayOfWeek: nextImageIndex},
+        lastDay: qDayOfWeek,
+      );
+
+      quotes.add(Quote(
+        text: text ?? dayData.quotes.first,
+        dayOfWeek: qDayOfWeek,
+        theme: dayData.theme,
+        season: context.season,
+        imagePath: imagePath,
+      ));
+    }
+
+    await _indicesRepository.save(indices);
+    return quotes;
+  }
+
   Future<Quote> call({
     required String language,
     DateTime? now,

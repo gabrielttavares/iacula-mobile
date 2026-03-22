@@ -500,10 +500,12 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     return lastCard.toQuote();
   }
 
-  final quote = await ref
+  // Fallback: fetch a quote but accept it may advance the index.
+  // This only triggers when lastDeliveredCard is absent (first launch
+  // or bootstrap hasn't completed yet), which is rare.
+  return ref
       .watch(getNextQuoteUseCaseProvider)
       .call(language: settings.language);
-  return quote;
 });
 
 bool _isSameDay(DateTime a, DateTime b) =>

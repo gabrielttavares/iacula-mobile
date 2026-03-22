@@ -11,6 +11,13 @@ import '../../domain/repositories/notification_scheduler_repository.dart';
 typedef QuoteFetcher =
     Future<Quote> Function({required String language, required DateTime now});
 
+typedef QuoteBatchFetcher = Future<List<Quote>> Function({
+  required String language,
+  required int count,
+  required DateTime startTime,
+  required int intervalMinutes,
+});
+
 final class ScheduleCoreRemindersUseCase {
   static const int quoteScheduleIdBase = 9000;
   static const int maxQueuedQuoteReminders = 64;
@@ -20,12 +27,15 @@ final class ScheduleCoreRemindersUseCase {
     required QuoteFetcher quoteFetcher,
     required NotificationHistoryRepository notificationHistoryRepository,
     required LastDeliveredCardRepository lastDeliveredCardRepository,
+    QuoteBatchFetcher? batchFetcher,
   }) : _quoteFetcher = quoteFetcher,
        _notificationHistoryRepository = notificationHistoryRepository,
-       _lastDeliveredCardRepository = lastDeliveredCardRepository;
+       _lastDeliveredCardRepository = lastDeliveredCardRepository,
+       _batchFetcher = batchFetcher;
 
   final NotificationSchedulerRepository _scheduler;
   final QuoteFetcher _quoteFetcher;
+  final QuoteBatchFetcher? _batchFetcher;
   final NotificationHistoryRepository _notificationHistoryRepository;
   final LastDeliveredCardRepository _lastDeliveredCardRepository;
 
@@ -80,14 +90,33 @@ final class ScheduleCoreRemindersUseCase {
       ),
     );
 
-    for (var i = 0; i < maxQueuedQuoteReminders; i++) {
+    // Use batch fetcher if available (1 DB read + 1 DB write instead of 64+64)
+    final List<Quote> scheduledQuotes;
+    if (_batchFetcher != null) {
+      scheduledQuotes = await _batchFetcher(
+        language: settings.language,
+        count: maxQueuedQuoteReminders,
+        startTime: current,
+        intervalMinutes: settings.intervalMinutes,
+      );
+    } else {
+      scheduledQuotes = <Quote>[];
+      for (var i = 0; i < maxQueuedQuoteReminders; i++) {
+        final quoteAt = current.add(
+          Duration(minutes: settings.intervalMinutes * (i + 1)),
+        );
+        scheduledQuotes.add(await _quoteFetcher(
+          language: settings.language,
+          now: quoteAt,
+        ));
+      }
+    }
+
+    for (var i = 0; i < scheduledQuotes.length; i++) {
       final quoteAt = current.add(
         Duration(minutes: settings.intervalMinutes * (i + 1)),
       );
-      final quote = await _quoteFetcher(
-        language: settings.language,
-        now: quoteAt,
-      );
+      final quote = scheduledQuotes[i];
 
       await _scheduler.scheduleWithId(
         quoteScheduleIdBase + i,

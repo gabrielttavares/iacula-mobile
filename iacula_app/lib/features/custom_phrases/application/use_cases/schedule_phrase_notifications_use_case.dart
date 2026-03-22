@@ -64,8 +64,9 @@ class SchedulePhraseNotificationsUseCase {
   }
 
   int _deriveId(String phraseId, int timeIndex) {
-    // 1000 + (phraseId.hashCode.abs() % 90) * 10 + timeIndex
-    return 1000 + (phraseId.hashCode.abs() % 90) * 10 + timeIndex;
+    // ID space: 1000-1999 (1000 slots). With 10 time slots per phrase,
+    // we support up to 100 unique phrases: phraseHash % 100 * 10 + timeIndex.
+    return 1000 + (phraseId.hashCode.abs() % 100) * 10 + timeIndex;
   }
 
   DateTime? _calculateNextOccurrence(

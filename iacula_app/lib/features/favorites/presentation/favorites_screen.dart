@@ -61,9 +61,10 @@ class FavoritesScreen extends ConsumerWidget {
                               padding: const EdgeInsets.only(bottom: 8),
                               child: _FavoriteCard(
                                 item: favorites[i],
-                                onRemove: () {
+                                onRemove: () async {
                                   HapticFeedback.mediumImpact();
-                                  ref.read(favoriteRepositoryProvider).remove(favorites[i].id);
+                                  await ref.read(favoriteRepositoryProvider).remove(favorites[i].id);
+                                  ref.invalidate(favoritesProvider);
                                 },
                                 onTap: favorites[i].prayerSlug != null
                                     ? () async {
