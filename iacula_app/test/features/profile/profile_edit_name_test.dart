@@ -67,7 +67,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Sincronização entre dispositivos'), findsOneWidget);
+    expect(find.text('Sincronização entre dispositivos'), findsNothing);
     expect(find.text('Editar'), findsNothing);
   });
 }
