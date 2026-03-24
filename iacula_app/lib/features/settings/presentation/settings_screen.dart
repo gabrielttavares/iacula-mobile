@@ -30,6 +30,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _angelusEnabled = true;
   int _intervalMinutes = 15;
   bool _permissionGranted = true;
+  bool _escrivaPointsFeedOptionVisible = false;
 
   bool _loading = true;
   bool _saving = false;
@@ -54,6 +55,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _notificationsEnabled = settings.notificationsEnabled;
     _angelusEnabled = settings.angelusEnabled;
     _intervalMinutes = settings.intervalMinutes;
+    _escrivaPointsFeedOptionVisible = settings.escrivaPointsFeedOptionVisible;
 
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
     if (scheduler is LocalNotificationSchedulerRepository) {
@@ -297,34 +299,86 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: IaculaSpacing.sm),
                   IaculaSoftCard(
                     padding: EdgeInsets.zero,
-                    child: CupertinoButton(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: IaculaRadius.innerPadding,
-                        vertical: 16,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const CustomPhrasesScreen(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CupertinoButton(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: IaculaRadius.innerPadding,
+                            vertical: 16,
                           ),
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          Text(
-                            'Minhas frases',
-                            style: context.textStyles.cardTitle.copyWith(
-                              fontSize: 16,
-                            ),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (_) => const CustomPhrasesScreen(),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                'Minhas frases',
+                                style: context.textStyles.cardTitle.copyWith(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const Spacer(),
+                              Icon(
+                                CupertinoIcons.chevron_right,
+                                color: context.colors.textSecondary,
+                                size: 18,
+                              ),
+                            ],
                           ),
-                          const Spacer(),
-                          Icon(
-                            CupertinoIcons.chevron_right,
-                            color: context.colors.textSecondary,
-                            size: 18,
+                        ),
+                        Container(
+                          height: 1,
+                          color: context.colors.separator,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: IaculaRadius.innerPadding,
+                            vertical: 12,
                           ),
-                        ],
-                      ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Pontos de Caminho/Sulco/Forja',
+                                      style: context.textStyles.cardTitle
+                                          .copyWith(fontSize: 16),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Exibe em Minhas frases a opção de usar estes conteúdos no lugar das jaculatórias.',
+                                      style:
+                                          context.textStyles.secondary.copyWith(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              CupertinoSwitch(
+                                value: _escrivaPointsFeedOptionVisible,
+                                activeTrackColor: context.colors.primaryButton,
+                                onChanged: (value) {
+                                  HapticFeedback.selectionClick();
+                                  setState(
+                                    () => _escrivaPointsFeedOptionVisible =
+                                        value,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
@@ -432,6 +486,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       themeMode: _themeMode,
       notificationsEnabled: _notificationsEnabled,
       angelusEnabled: _angelusEnabled,
+      escrivaPointsFeedOptionVisible: _escrivaPointsFeedOptionVisible,
+      escrivaPointsFeedEnabled: _escrivaPointsFeedOptionVisible
+          ? _loadedSettings.escrivaPointsFeedEnabled
+          : false,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);

@@ -23,6 +23,7 @@ class CustomPhrasesScreen extends ConsumerStatefulWidget {
 
 class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
   bool _escrivaPointsFeedEnabled = false;
+  bool _escrivaPointsFeedOptionVisible = false;
   bool _settingsLoaded = false;
 
   @override
@@ -39,6 +40,7 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
 
     setState(() {
       _escrivaPointsFeedEnabled = settings.escrivaPointsFeedEnabled;
+      _escrivaPointsFeedOptionVisible = settings.escrivaPointsFeedOptionVisible;
       _settingsLoaded = true;
     });
   }
@@ -125,48 +127,49 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
               await Future.delayed(const Duration(milliseconds: 500));
             },
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: IaculaSoftCard(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Pontos de Caminho/Sulco/Forja',
-                            style: context.textStyles.cardTitle.copyWith(
-                              fontSize: 15,
+          if (_escrivaPointsFeedOptionVisible)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                child: IaculaSoftCard(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pontos de Caminho/Sulco/Forja',
+                              style: context.textStyles.cardTitle.copyWith(
+                                fontSize: 15,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Usa estes conteúdos no lugar das jaculatórias.',
-                            style: context.textStyles.secondary.copyWith(
-                              fontSize: 12,
+                            const SizedBox(height: 4),
+                            Text(
+                              'Usa estes conteúdos no lugar das jaculatórias.',
+                              style: context.textStyles.secondary.copyWith(
+                                fontSize: 12,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    CupertinoSwitch(
-                      value: _escrivaPointsFeedEnabled,
-                      onChanged: _settingsLoaded
-                          ? (value) {
-                              HapticFeedback.selectionClick();
-                              _toggleEscrivaFeed(value);
-                            }
-                          : null,
-                      activeTrackColor: context.colors.primaryButton,
-                    ),
-                  ],
+                      const SizedBox(width: 12),
+                      CupertinoSwitch(
+                        value: _escrivaPointsFeedEnabled,
+                        onChanged: _settingsLoaded
+                            ? (value) {
+                                HapticFeedback.selectionClick();
+                                _toggleEscrivaFeed(value);
+                              }
+                            : null,
+                        activeTrackColor: context.colors.primaryButton,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
           SliverPadding(
             padding: EdgeInsets.fromLTRB(
               16,

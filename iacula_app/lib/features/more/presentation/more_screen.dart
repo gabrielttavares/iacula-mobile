@@ -9,7 +9,6 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../../auth/presentation/auth_action_sheet.dart';
 import '../../favorites/presentation/favorites_screen.dart';
 import '../../notifications/presentation/notifications_screen.dart';
-import '../../profile/presentation/profile_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 
@@ -32,12 +31,13 @@ class MoreScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(IaculaSpacing.md),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                _MoreItem(
-                  label: 'Perfil',
-                  icon: CupertinoIcons.person,
-                  onTap: () => _navigate(context, const ProfileScreen(), 'Perfil'),
-                ),
-                const SizedBox(height: IaculaSpacing.sm),
+                // Perfil (navegação para ProfileScreen) — desativado temporariamente
+                // _MoreItem(
+                //   label: 'Perfil',
+                //   icon: CupertinoIcons.person,
+                //   onTap: () => _navigate(context, const ProfileScreen(), 'Perfil'),
+                // ),
+                // const SizedBox(height: IaculaSpacing.sm),
                 _MoreItem(
                   label: 'Configurações',
                   icon: CupertinoIcons.settings,

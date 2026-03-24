@@ -19,6 +19,7 @@ final class Settings {
     this.prayerFontSize = 15.0,
     this.themeMode = 'dark',
     this.escrivaPointsFeedEnabled = false,
+    this.escrivaPointsFeedOptionVisible = false,
     this.notificationsEnabled = true,
     this.angelusEnabled = true,
   });
@@ -42,6 +43,7 @@ final class Settings {
   final double prayerFontSize;
   final String themeMode;
   final bool escrivaPointsFeedEnabled;
+  final bool escrivaPointsFeedOptionVisible;
   final bool notificationsEnabled;
   final bool angelusEnabled;
 
@@ -63,6 +65,7 @@ final class Settings {
     onboardingCompleted: false,
     prayerFontSize: 15.0,
     escrivaPointsFeedEnabled: false,
+    escrivaPointsFeedOptionVisible: false,
     notificationsEnabled: true,
     angelusEnabled: true,
   );
@@ -87,6 +90,7 @@ final class Settings {
     double? prayerFontSize,
     String? themeMode,
     bool? escrivaPointsFeedEnabled,
+    bool? escrivaPointsFeedOptionVisible,
     bool? notificationsEnabled,
     bool? angelusEnabled,
   }) {
@@ -113,6 +117,8 @@ final class Settings {
       themeMode: themeMode ?? this.themeMode,
       escrivaPointsFeedEnabled:
           escrivaPointsFeedEnabled ?? this.escrivaPointsFeedEnabled,
+      escrivaPointsFeedOptionVisible: escrivaPointsFeedOptionVisible ??
+          this.escrivaPointsFeedOptionVisible,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       angelusEnabled: angelusEnabled ?? this.angelusEnabled,
     );

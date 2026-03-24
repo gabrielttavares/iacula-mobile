@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 10,
+      version: 11,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -44,6 +44,7 @@ final class AppDatabase {
             prayer_font_size REAL NOT NULL DEFAULT 15.0,
             theme_mode TEXT NOT NULL DEFAULT 'dark',
             escriva_points_feed_enabled INTEGER NOT NULL DEFAULT 0,
+            escriva_points_feed_option_visible INTEGER NOT NULL DEFAULT 0,
             notifications_enabled INTEGER NOT NULL DEFAULT 1,
             angelus_enabled INTEGER NOT NULL DEFAULT 1
           )
@@ -159,6 +160,11 @@ final class AppDatabase {
         if (oldVersion < 10) {
           await db.execute(
             'ALTER TABLE settings ADD COLUMN angelus_enabled INTEGER NOT NULL DEFAULT 1',
+          );
+        }
+        if (oldVersion < 11) {
+          await db.execute(
+            'ALTER TABLE settings ADD COLUMN escriva_points_feed_option_visible INTEGER NOT NULL DEFAULT 0',
           );
         }
       },

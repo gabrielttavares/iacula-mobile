@@ -49,6 +49,7 @@ void main() {
     expect(find.text('Tamanho da fonte'), findsOneWidget);
     await expectVisible('Personalização');
     await expectVisible('Minhas frases');
+    await expectVisible('Pontos de Caminho/Sulco/Forja');
     await expectVisible('Salvar');
   });
 

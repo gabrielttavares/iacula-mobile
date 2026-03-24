@@ -41,6 +41,8 @@ final class SqliteSettingsRepository implements SettingsRepository {
       themeMode: row['theme_mode'] as String? ?? 'dark',
       escrivaPointsFeedEnabled:
           (row['escriva_points_feed_enabled'] as int? ?? 0) == 1,
+      escrivaPointsFeedOptionVisible:
+          (row['escriva_points_feed_option_visible'] as int? ?? 0) == 1,
       notificationsEnabled:
           (row['notifications_enabled'] as int? ?? 1) == 1,
       angelusEnabled: (row['angelus_enabled'] as int? ?? 1) == 1,
@@ -71,6 +73,8 @@ final class SqliteSettingsRepository implements SettingsRepository {
       'prayer_font_size': settings.prayerFontSize,
       'theme_mode': settings.themeMode,
       'escriva_points_feed_enabled': settings.escrivaPointsFeedEnabled ? 1 : 0,
+      'escriva_points_feed_option_visible':
+          settings.escrivaPointsFeedOptionVisible ? 1 : 0,
       'notifications_enabled': settings.notificationsEnabled ? 1 : 0,
       'angelus_enabled': settings.angelusEnabled ? 1 : 0,
     }, conflictAlgorithm: ConflictAlgorithm.replace);

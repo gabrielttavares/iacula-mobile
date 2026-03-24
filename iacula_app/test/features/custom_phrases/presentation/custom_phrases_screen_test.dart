@@ -45,7 +45,9 @@ void main() {
       ProviderScope(
         overrides: [
           settingsRepositoryProvider.overrideWithValue(
-            _FakeSettingsRepository(Settings.defaults),
+            _FakeSettingsRepository(
+              Settings.defaults.copyWith(escrivaPointsFeedOptionVisible: true),
+            ),
           ),
           customPhraseRepositoryProvider.overrideWithValue(
             _FakeCustomPhraseRepository(),
