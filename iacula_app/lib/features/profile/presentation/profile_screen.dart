@@ -6,7 +6,6 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../auth/presentation/auth_action_sheet.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -16,10 +15,9 @@ class ProfileScreen extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
     final user = authState.valueOrNull;
     final isConnected = user != null;
-    
-    // If not connected, show login options
+
+    // If not connected, keep profile blank until auth providers are configured.
     if (!isConnected) {
-      final authRepo = ref.read(authRepositoryProvider);
       return CupertinoPageScaffold(
         backgroundColor: context.colors.background,
         navigationBar: CupertinoNavigationBar(
@@ -28,21 +26,16 @@ class ProfileScreen extends ConsumerWidget {
           border: null,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(IaculaSpacing.md),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: AuthActionSheet(
-                title: 'Sincronização entre dispositivos',
-                subtitle:
-                    'Faça login para manter suas frases e intenções sincronizadas entre dispositivos. A sincronização acontece automaticamente.',
-                onGoogle: () => authRepo.signInWithGoogle(),
-                onMicrosoft: () => authRepo.signInWithMicrosoft(),
-                onApple: () => authRepo.signInWithApple(),
-                onSignOut: () => authRepo.signOut(),
-              ),
-            ),
-          ),
+          // TODO(gabrielttav): restore the sync/auth section once provider
+          // configuration is finished for both Android and iOS.
+          // child: Padding(
+          //   padding: const EdgeInsets.all(IaculaSpacing.md),
+          //   child: Align(
+          //     alignment: Alignment.topCenter,
+          //     child: AuthActionSheet(...),
+          //   ),
+          // ),
+          child: const SizedBox.shrink(),
         ),
       );
     }
