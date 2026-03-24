@@ -74,7 +74,7 @@ void main() {
     final repository = _MutableFakeExaminationReflectionRepository([
       ExaminationReflectionItem(
         id: '1',
-        sectionTitle: 'Acto de Presença de Deus',
+        sectionTitle: 'Ato de Presença de Deus',
         text: 'Meu Deus, dai-me luz.',
         sortOrder: 0,
         createdAt: DateTime(2026, 3, 11),
@@ -92,7 +92,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Acto de Presença de Deus'), findsOneWidget);
+    expect(find.text('Ato de Presença de Deus'), findsOneWidget);
 
     await tester.tap(find.byIcon(CupertinoIcons.add));
     await tester.pumpAndSettle();

@@ -10,11 +10,11 @@ import 'package:path/path.dart' as p;
 
 const _defaultSeedJson = '''
 [
-  {"id":"1","section_title":"Acto de Presença de Deus","text":"Texto 1","sort_order":0},
+  {"id":"1","section_title":"Ato de Presença de Deus","text":"Texto 1","sort_order":0},
   {"id":"2","section_title":"Deveres para com Deus","text":"Texto 2","sort_order":1},
   {"id":"3","section_title":"Deveres para com o próximo","text":"Texto 3","sort_order":2},
   {"id":"4","section_title":"Deveres para comigo mesmo","text":"Texto 4","sort_order":3},
-  {"id":"5","section_title":"Acto de contrição","text":"Texto 5","sort_order":4}
+  {"id":"5","section_title":"Ato de contrição","text":"Texto 5","sort_order":4}
 ]
 ''';
 
@@ -70,11 +70,11 @@ void main() {
         expect(
           firstSeed.map((item) => item.sectionTitle),
           containsAll(<String>[
-            'Acto de Presença de Deus',
+            'Ato de Presença de Deus',
             'Deveres para com Deus',
             'Deveres para com o próximo',
             'Deveres para comigo mesmo',
-            'Acto de contrição',
+            'Ato de contrição',
           ]),
         );
         expect(secondSeed, hasLength(5));

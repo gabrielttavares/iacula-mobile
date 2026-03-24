@@ -49,7 +49,7 @@ void main() {
     final repository = _FakeExaminationReflectionRepository([
       ExaminationReflectionItem(
         id: '1',
-        sectionTitle: 'Acto de Presença de Deus',
+        sectionTitle: 'Ato de Presença de Deus',
         text: 'Meu Deus, dai-me luz para conhecer os pecados que hoje cometi.',
         sortOrder: 0,
         createdAt: DateTime(2026, 3, 11),
@@ -77,7 +77,7 @@ void main() {
 
     expect(find.text('Exame de Consciência Diário'), findsAtLeast(1));
     expect(find.text('Para fazer ao final do dia'), findsOneWidget);
-    expect(find.text('Acto de Presença de Deus'), findsOneWidget);
+    expect(find.text('Ato de Presença de Deus'), findsOneWidget);
     expect(find.text('Deveres para com Deus'), findsOneWidget);
     expect(find.byType(CupertinoTextField), findsNothing);
     expect(find.text('Começar'), findsNothing);
