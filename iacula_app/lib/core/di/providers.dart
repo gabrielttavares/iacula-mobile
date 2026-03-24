@@ -77,6 +77,7 @@ import '../../features/confession/domain/entities/confession_examination_item.da
 import '../../features/confession/domain/repositories/confession_examination_repository.dart';
 import '../../features/confession/domain/services/native_share_service.dart';
 import '../../features/confession/infrastructure/repositories/asset_confession_examination_repository.dart';
+import '../../features/confession/infrastructure/services/hero_card_share_image_renderer.dart';
 import '../../features/confession/infrastructure/services/share_plus_native_share_service.dart';
 import '../../features/journal/domain/entities/journal_entry.dart';
 import '../../features/journal/domain/repositories/journal_repository.dart';
@@ -433,6 +434,12 @@ final confessionExaminationItemsProvider =
 
 final nativeShareServiceProvider = Provider<NativeShareService>((ref) {
   return const SharePlusNativeShareService();
+});
+
+final heroCardShareImageRendererProvider = Provider<HeroCardShareImageRenderer>((
+  ref,
+) {
+  return const HeroCardShareImageRenderer();
 });
 
 final examinationReflectionRepositoryProvider =

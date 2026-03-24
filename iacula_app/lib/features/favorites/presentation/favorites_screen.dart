@@ -7,6 +7,7 @@ import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../confession/infrastructure/services/hero_card_share_image_renderer.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../domain/entities/favorite_item.dart';
 
@@ -63,15 +64,38 @@ class FavoritesScreen extends ConsumerWidget {
                                 item: favorites[i],
                                onRemove: () async {
                                  HapticFeedback.mediumImpact();
-                                 await ref.read(favoriteRepositoryProvider).remove(favorites[i].id);
-                                 ref.invalidate(favoritesProvider);
-                                },
-                                onShare: () async {
-                                  HapticFeedback.selectionClick();
-                                  await ref
-                                      .read(nativeShareServiceProvider)
-                                      .shareText('${favorites[i].quoteText}\n\n- Iacula');
-                                },
+                                  await ref.read(favoriteRepositoryProvider).remove(favorites[i].id);
+                                  ref.invalidate(favoritesProvider);
+                                 },
+                                 onShare: () async {
+                                   HapticFeedback.selectionClick();
+                                   final favorite = favorites[i];
+                                   final shareText = '${favorite.quoteText}\n\n- Iacula';
+                                   final imageBytes = await ref
+                                       .read(heroCardShareImageRendererProvider)
+                                       .renderPng(
+                                         context: context,
+                                         payload: HeroCardSharePayload(
+                                           text: favorite.quoteText,
+                                           labelText: favorite.feastName ?? favorite.theme,
+                                           imagePath: favorite.imagePath,
+                                         ),
+                                       );
+
+                                   final shareService = ref.read(
+                                     nativeShareServiceProvider,
+                                   );
+                                   if (imageBytes != null) {
+                                     await shareService.shareTextWithImage(
+                                       text: shareText,
+                                       imageBytes: imageBytes,
+                                       fileName: 'iacula-favorite-card.png',
+                                     );
+                                     return;
+                                   }
+
+                                   await shareService.shareText(shareText);
+                                 },
                                 onTap: favorites[i].prayerSlug != null
                                     ? () async {
                                         final entry = await ref.read(

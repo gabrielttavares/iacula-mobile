@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../confession/infrastructure/services/hero_card_share_image_renderer.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../domain/entities/prayer.dart';
 import 'widgets/font_size_controls.dart';
@@ -93,9 +94,32 @@ class PrayerScreen extends ConsumerWidget {
                                 minimumSize: const Size(28, 28),
                                 onPressed: () async {
                                   HapticFeedback.selectionClick();
-                                  await ref
-                                      .read(nativeShareServiceProvider)
-                                      .shareText(_buildShareText());
+                                  final shareText = _buildShareText();
+                                  final imageBytes = await ref
+                                      .read(heroCardShareImageRendererProvider)
+                                      .renderPng(
+                                        context: context,
+                                        payload: HeroCardSharePayload(
+                                          text: prayer.title,
+                                          labelText: prayer.type,
+                                          imagePath: prayer.imagePath,
+                                        ),
+                                      );
+
+                                  final shareService = ref.read(
+                                    nativeShareServiceProvider,
+                                  );
+
+                                  if (imageBytes != null) {
+                                    await shareService.shareTextWithImage(
+                                      text: shareText,
+                                      imageBytes: imageBytes,
+                                      fileName: 'iacula-prayer-card.png',
+                                    );
+                                    return;
+                                  }
+
+                                  await shareService.shareText(shareText);
                                 },
                                 child: Icon(
                                   CupertinoIcons.share,

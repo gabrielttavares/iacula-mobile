@@ -28,6 +28,26 @@ final _settingsProvider = FutureProvider((ref) {
   return ref.watch(getSettingsUseCaseProvider).call();
 });
 
+final _availableHistoryDatesProvider = FutureProvider<List<DateTime>>((ref) async {
+  final now = ref.watch(notificationHistoryNowProvider);
+  final today = DateTime(now.year, now.month, now.day);
+  final candidates = List.generate(
+    7,
+    (index) => today.subtract(Duration(days: index)),
+    growable: false,
+  );
+  final repository = ref.watch(notificationHistoryRepositoryProvider);
+
+  final dates = <DateTime>[today];
+  for (final day in candidates.skip(1)) {
+    final entries = await repository.listForDay(day);
+    if (entries.isNotEmpty) {
+      dates.add(day);
+    }
+  }
+  return dates;
+});
+
 class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
@@ -46,27 +66,17 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     _selectedDate = DateTime(now.year, now.month, now.day);
   }
 
-  List<DateTime> _lastSevenDays() {
-    final today = DateTime.now();
-    final start = DateTime(today.year, today.month, today.day);
-    return List.generate(
-      7,
-      (index) => start.subtract(Duration(days: index)),
-      growable: false,
-    );
-  }
-
   bool _isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   @override
   Widget build(BuildContext context) {
-    final historyAsync = ref.watch(_historyForDayProvider(_selectedDate));
     final now = ref.watch(notificationHistoryNowProvider);
+    final today = DateTime(now.year, now.month, now.day);
     final settingsAsync = ref.watch(_settingsProvider);
+    final availableDatesAsync = ref.watch(_availableHistoryDatesProvider);
     final permissionGranted = ref.watch(notificationPermissionProvider);
-    final isTodaySelected = _isSameDay(_selectedDate, now);
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
@@ -76,117 +86,142 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       child: SafeArea(
         child: settingsAsync.when(
           data: (settings) {
-            return ListView(
-              padding: EdgeInsets.fromLTRB(
-                IaculaSpacing.md,
-                IaculaSpacing.md,
-                IaculaSpacing.md,
-                IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
-              ),
-              children: [
-                // -- STATUS --
-                _NotificationStatusCard(
-                  enabled: settings.notificationsEnabled,
-                  permissionGranted: permissionGranted,
-                  intervalMinutes: settings.intervalMinutes,
-                  onToggle: (value) async {
-                    HapticFeedback.selectionClick();
-                    final updated = settings.copyWith(
-                      notificationsEnabled: value,
-                    );
-                    await ref.read(updateSettingsUseCaseProvider).call(updated);
+            return availableDatesAsync.when(
+              data: (availableDates) {
+                final selectedDate = availableDates.any(
+                      (date) => _isSameDay(date, _selectedDate),
+                    )
+                    ? _selectedDate
+                    : today;
+                final isTodaySelected = _isSameDay(selectedDate, today);
+                final historyAsync = ref.watch(
+                  _historyForDayProvider(selectedDate),
+                );
 
-                    final schedulerRepo =
-                        ref.read(notificationSchedulerRepositoryProvider);
-                    await schedulerRepo.cancelAll();
-
-                    if (value) {
-                      final season = await ref
-                          .read(liturgicalSeasonServiceProvider)
-                          .getCurrentSeason();
-                      await ScheduleCoreRemindersUseCase(
-                        schedulerRepo,
-                        quoteFetcher: ({
-                          required String language,
-                          required DateTime now,
-                        }) {
-                          if (updated.escrivaPointsFeedEnabled) {
-                            return ref
-                                .read(getNextEscrivaPointsQuoteUseCaseProvider)
-                                .call(language: language, now: now);
-                          }
-                          return ref
-                              .read(getNextQuoteUseCaseProvider)
-                              .call(language: language, now: now);
-                        },
-                        notificationHistoryRepository: ref.read(
-                          notificationHistoryRepositoryProvider,
-                        ),
-                        lastDeliveredCardRepository: ref.read(
-                          lastDeliveredCardRepositoryProvider,
-                        ),
-                      ).call(
-                        updated,
-                        isEasterSeason: season == LiturgicalSeason.easter,
-                      );
-                      await ScheduleLiturgyRemindersUseCase(schedulerRepo)
-                          .call(updated);
-                    }
-
-                    ref.invalidate(_settingsProvider);
-                  },
-                  onOpenSettings: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => const SettingsScreen(),
-                      ),
-                    );
-                  },
-                ),
-
-                const SizedBox(height: IaculaRadius.cardSpacing),
-
-                _HistoryDateSelector(
-                  dates: _lastSevenDays(),
-                  selectedDate: _selectedDate,
-                  onSelect: (date) => setState(() => _selectedDate = date),
-                ),
-                const SizedBox(height: IaculaSpacing.sm),
-                IaculaSectionHeader(
-                  title: isTodaySelected
-                      ? 'Citações de hoje'
-                      : 'Citações do dia selecionado',
-                ),
-                const SizedBox(height: IaculaSpacing.sm),
-                historyAsync.when(
-                  data: (entries) {
-                    final visibleEntries = isTodaySelected
-                        ? entries
-                              .where((entry) => !entry.deliveredAt.isAfter(now))
-                              .toList(growable: false)
-                        : entries;
-
-                    if (visibleEntries.isEmpty) {
-                      return IaculaSoftCard(
-                        child: Text(
-                          'As citações programadas para hoje aparecerão aqui conforme o dia avança.',
-                          style: context.textStyles.secondary,
-                        ),
-                      );
-                    }
-                    return _NotificationsRail(entries: visibleEntries);
-                  },
-                  loading: () =>
-                      const Center(child: CupertinoActivityIndicator()),
-                  error: (error, stackTrace) => IaculaErrorState(
-                    title: 'Erro ao carregar citacoes',
-                    message: 'Tente novamente para atualizar o historico.',
-                    onRetry: () => ref.invalidate(
-                      _historyForDayProvider(_selectedDate),
-                    ),
+                return ListView(
+                  padding: EdgeInsets.fromLTRB(
+                    IaculaSpacing.md,
+                    IaculaSpacing.md,
+                    IaculaSpacing.md,
+                    IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
                   ),
+                  children: [
+                    // -- STATUS --
+                    _NotificationStatusCard(
+                      enabled: settings.notificationsEnabled,
+                      permissionGranted: permissionGranted,
+                      intervalMinutes: settings.intervalMinutes,
+                      onToggle: (value) async {
+                        HapticFeedback.selectionClick();
+                        final updated = settings.copyWith(
+                          notificationsEnabled: value,
+                        );
+                        await ref.read(updateSettingsUseCaseProvider).call(updated);
+
+                        final schedulerRepo =
+                            ref.read(notificationSchedulerRepositoryProvider);
+                        await schedulerRepo.cancelAll();
+
+                        if (value) {
+                          final season = await ref
+                              .read(liturgicalSeasonServiceProvider)
+                              .getCurrentSeason();
+                          await ScheduleCoreRemindersUseCase(
+                            schedulerRepo,
+                            quoteFetcher: ({
+                              required String language,
+                              required DateTime now,
+                            }) {
+                              if (updated.escrivaPointsFeedEnabled) {
+                                return ref
+                                    .read(getNextEscrivaPointsQuoteUseCaseProvider)
+                                    .call(language: language, now: now);
+                              }
+                              return ref
+                                  .read(getNextQuoteUseCaseProvider)
+                                  .call(language: language, now: now);
+                            },
+                            notificationHistoryRepository: ref.read(
+                              notificationHistoryRepositoryProvider,
+                            ),
+                            lastDeliveredCardRepository: ref.read(
+                              lastDeliveredCardRepositoryProvider,
+                            ),
+                          ).call(
+                            updated,
+                            isEasterSeason: season == LiturgicalSeason.easter,
+                          );
+                          await ScheduleLiturgyRemindersUseCase(schedulerRepo)
+                              .call(updated);
+                        }
+
+                        ref.invalidate(_settingsProvider);
+                        ref.invalidate(_availableHistoryDatesProvider);
+                      },
+                      onOpenSettings: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const SettingsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: IaculaRadius.cardSpacing),
+
+                    _HistoryDateSelector(
+                      dates: availableDates,
+                      selectedDate: selectedDate,
+                      today: today,
+                      onSelect: (date) => setState(() => _selectedDate = date),
+                    ),
+                    const SizedBox(height: IaculaSpacing.sm),
+                    IaculaSectionHeader(
+                      title: isTodaySelected
+                          ? 'Citações de hoje'
+                          : 'Citações do dia selecionado',
+                    ),
+                    const SizedBox(height: IaculaSpacing.sm),
+                    historyAsync.when(
+                      data: (entries) {
+                        final visibleEntries = isTodaySelected
+                            ? entries
+                                  .where((entry) => !entry.deliveredAt.isAfter(now))
+                                  .toList(growable: false)
+                            : entries;
+
+                        if (visibleEntries.isEmpty) {
+                          return IaculaSoftCard(
+                            child: Text(
+                              isTodaySelected
+                                  ? 'As citações programadas para hoje aparecerão aqui conforme o dia avança.'
+                                  : 'Não há citações registradas para este dia.',
+                              style: context.textStyles.secondary,
+                            ),
+                          );
+                        }
+                        return _NotificationsRail(entries: visibleEntries);
+                      },
+                      loading: () =>
+                          const Center(child: CupertinoActivityIndicator()),
+                      error: (error, stackTrace) => IaculaErrorState(
+                        title: 'Erro ao carregar citacoes',
+                        message: 'Tente novamente para atualizar o historico.',
+                        onRetry: () =>
+                            ref.invalidate(_historyForDayProvider(selectedDate)),
+                      ),
+                    ),
+                  ],
+                );
+              },
+              loading: () => const Center(child: CupertinoActivityIndicator()),
+              error: (error, stackTrace) => Center(
+                child: IaculaErrorState(
+                  title: 'Erro ao carregar histórico',
+                  message: 'Tente novamente para atualizar os dias disponíveis.',
+                  onRetry: () => ref.invalidate(_availableHistoryDatesProvider),
                 ),
-              ],
+              ),
             );
           },
           loading: () => const Center(child: CupertinoActivityIndicator()),
@@ -313,11 +348,13 @@ class _HistoryDateSelector extends StatelessWidget {
   const _HistoryDateSelector({
     required this.dates,
     required this.selectedDate,
+    required this.today,
     required this.onSelect,
   });
 
   final List<DateTime> dates;
   final DateTime selectedDate;
+  final DateTime today;
   final ValueChanged<DateTime> onSelect;
 
   bool _isSameDay(DateTime a, DateTime b) {
@@ -325,7 +362,6 @@ class _HistoryDateSelector extends StatelessWidget {
   }
 
   String _labelFor(DateTime date) {
-    final today = DateTime.now();
     final normalizedToday = DateTime(today.year, today.month, today.day);
     final normalizedDate = DateTime(date.year, date.month, date.day);
     final diff = normalizedToday.difference(normalizedDate).inDays;

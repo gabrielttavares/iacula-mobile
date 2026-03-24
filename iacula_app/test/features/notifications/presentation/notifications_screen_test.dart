@@ -8,6 +8,29 @@ import 'package:iacula_app/features/notifications/infrastructure/repositories/in
 import 'package:iacula_app/features/notifications/presentation/notifications_screen.dart';
 
 void main() {
+  testWidgets('shows only Hoje as available day when there is no history', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notificationHistoryRepositoryProvider.overrideWithValue(
+            InMemoryNotificationHistoryRepository(),
+          ),
+          notificationHistoryNowProvider.overrideWith(
+            (ref) => DateTime(2026, 2, 24, 10),
+          ),
+        ],
+        child: const CupertinoApp(home: NotificationsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hoje'), findsOneWidget);
+    expect(find.text('Ontem'), findsNothing);
+    expect(find.text('23/02'), findsNothing);
+  });
+
   testWidgets('shows today scheduled quote history empty state', (tester) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -95,6 +118,44 @@ void main() {
         matching: find.byType(SelectableText),
       ),
       findsWidgets,
+    );
+  });
+
+  testWidgets('shows only past days that have history entries', (tester) async {
+    final repo = InMemoryNotificationHistoryRepository();
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'No dia anterior.',
+        theme: 'Esperança',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 23, 9, 30),
+      ),
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notificationHistoryRepositoryProvider.overrideWithValue(repo),
+          notificationHistoryNowProvider.overrideWith(
+            (ref) => DateTime(2026, 2, 24, 10),
+          ),
+        ],
+        child: const CupertinoApp(home: NotificationsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hoje'), findsOneWidget);
+    expect(find.text('Ontem'), findsOneWidget);
+    expect(find.text('22/02'), findsNothing);
+
+    await tester.tap(find.text('Ontem'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('No dia anterior.'), findsOneWidget);
+    expect(
+      find.textContaining('As citações programadas para hoje aparecerão aqui'),
+      findsNothing,
     );
   });
 }
