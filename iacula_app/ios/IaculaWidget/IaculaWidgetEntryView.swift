@@ -6,35 +6,37 @@ struct IaculaWidgetEntryView: View {
 
     @Environment(\.widgetFamily) var family
 
-    var body: some View {
-        Group {
-            switch family {
-            case .systemSmall:
-                widgetContent(image: entry.smallImage)
-            case .systemMedium:
-                widgetContent(image: entry.mediumImage)
-            case .systemLarge:
-                widgetContent(image: entry.largeImage)
-            @unknown default:
-                widgetContent(image: entry.mediumImage)
-            }
+    private var currentImage: UIImage? {
+        switch family {
+        case .systemSmall:  return entry.smallImage
+        case .systemMedium: return entry.mediumImage
+        case .systemLarge:  return entry.largeImage
+        @unknown default:   return entry.mediumImage
         }
-        .containerBackground(for: .widget) {
-            Color(red: 0.071, green: 0.071, blue: 0.071) // #121212
+    }
+
+    var body: some View {
+        if #available(iOSApplicationExtension 17.0, *) {
+            widgetContent(image: currentImage)
+                .containerBackground(for: .widget) { Color.clear }
+        } else {
+            widgetContent(image: currentImage)
         }
     }
 
     @ViewBuilder
     private func widgetContent(image: UIImage?) -> some View {
         if let uiImage = image {
-            Image(uiImage: uiImage)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .clipShape(ContainerRelativeShape())
+            GeometryReader { geo in
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+            }
         } else {
-            // Fallback when no image is available yet
             ZStack {
-                Color(red: 0.110, green: 0.110, blue: 0.118) // #1C1C1E
+                Color(red: 0.110, green: 0.110, blue: 0.118)
                 VStack(spacing: 8) {
                     Text("Iacula")
                         .font(.system(size: 15, weight: .semibold, design: .serif))
@@ -46,7 +48,6 @@ struct IaculaWidgetEntryView: View {
                 }
                 .padding()
             }
-            .clipShape(ContainerRelativeShape())
         }
     }
 }

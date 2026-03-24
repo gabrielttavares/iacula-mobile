@@ -37,8 +37,6 @@ class WidgetQuoteCard extends StatelessWidget {
   static const _heroTop = Color(0x40000000);
   static const _heroBottom = Color(0x99000000);
   static const _heroFallback = Color(0xFF1C1C1E);
-  static const _borderRadius = 24.0;
-
   bool get _isEscrivaPoints => card.source == 'escrivaPoints';
 
   String get _labelText {
@@ -65,8 +63,7 @@ class WidgetQuoteCard extends StatelessWidget {
     return SizedBox(
       width: size.width,
       height: size.height,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(_borderRadius),
+      child: ClipRect(
         child: Stack(
           children: [
             // Background layer

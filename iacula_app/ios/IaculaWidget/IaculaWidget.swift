@@ -12,11 +12,17 @@ struct IaculaWidget: Widget {
     let kind: String = "IaculaWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: IaculaWidgetProvider()) { entry in
+        let config = StaticConfiguration(kind: kind, provider: IaculaWidgetProvider()) { entry in
             IaculaWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Iacula")
         .description("Frase do dia na tela inicial.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+
+        if #available(iOSApplicationExtension 17.0, *) {
+            return config.contentMarginsDisabled()
+        } else {
+            return config
+        }
     }
 }
