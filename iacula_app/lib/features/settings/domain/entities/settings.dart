@@ -20,6 +20,7 @@ final class Settings {
     this.themeMode = 'dark',
     this.escrivaPointsFeedEnabled = false,
     this.notificationsEnabled = true,
+    this.angelusEnabled = true,
   });
 
   final int intervalMinutes;
@@ -42,6 +43,7 @@ final class Settings {
   final String themeMode;
   final bool escrivaPointsFeedEnabled;
   final bool notificationsEnabled;
+  final bool angelusEnabled;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -62,6 +64,7 @@ final class Settings {
     prayerFontSize: 15.0,
     escrivaPointsFeedEnabled: false,
     notificationsEnabled: true,
+    angelusEnabled: true,
   );
 
   Settings copyWith({
@@ -85,6 +88,7 @@ final class Settings {
     String? themeMode,
     bool? escrivaPointsFeedEnabled,
     bool? notificationsEnabled,
+    bool? angelusEnabled,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
@@ -110,6 +114,7 @@ final class Settings {
       escrivaPointsFeedEnabled:
           escrivaPointsFeedEnabled ?? this.escrivaPointsFeedEnabled,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      angelusEnabled: angelusEnabled ?? this.angelusEnabled,
     );
   }
 }

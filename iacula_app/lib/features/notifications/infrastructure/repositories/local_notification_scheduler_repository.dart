@@ -171,6 +171,8 @@ final class LocalNotificationSchedulerRepository
       playSound: true,
       visibility: NotificationVisibility.public,
       actions: actions,
+      styleInformation: BigTextStyleInformation(event.body),
+      ongoing: event.type == ReminderEventType.quoteInterval,
     );
   }
 

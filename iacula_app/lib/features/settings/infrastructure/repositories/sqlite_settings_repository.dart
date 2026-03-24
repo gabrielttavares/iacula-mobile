@@ -43,6 +43,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
           (row['escriva_points_feed_enabled'] as int? ?? 0) == 1,
       notificationsEnabled:
           (row['notifications_enabled'] as int? ?? 1) == 1,
+      angelusEnabled: (row['angelus_enabled'] as int? ?? 1) == 1,
     );
   }
 
@@ -71,6 +72,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       'theme_mode': settings.themeMode,
       'escriva_points_feed_enabled': settings.escrivaPointsFeedEnabled ? 1 : 0,
       'notifications_enabled': settings.notificationsEnabled ? 1 : 0,
+      'angelus_enabled': settings.angelusEnabled ? 1 : 0,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }

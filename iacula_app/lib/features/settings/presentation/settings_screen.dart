@@ -27,6 +27,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _onboardingCompleted = false;
   String _themeMode = 'dark';
   bool _notificationsEnabled = true;
+  bool _angelusEnabled = true;
   int _intervalMinutes = 15;
   bool _permissionGranted = true;
 
@@ -51,6 +52,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _onboardingCompleted = settings.onboardingCompleted;
     _themeMode = settings.themeMode;
     _notificationsEnabled = settings.notificationsEnabled;
+    _angelusEnabled = settings.angelusEnabled;
     _intervalMinutes = settings.intervalMinutes;
 
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
@@ -117,7 +119,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         const SizedBox(height: 8),
                         Text(
                           _notificationsEnabled
-                              ? 'Jaculatória a cada $_intervalMinutes minutos e Angelus ao meio-dia.'
+                              ? _angelusEnabled
+                                  ? 'Jaculatória a cada $_intervalMinutes minutos e Angelus ao meio-dia.'
+                                  : 'Jaculatória a cada $_intervalMinutes minutos.'
                               : 'As notificações estão desativadas.',
                           style: context.textStyles.secondary,
                         ),
@@ -126,6 +130,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           _buildPermissionWarning(context),
                         ],
                         if (_notificationsEnabled) ...[
+                          const SizedBox(height: IaculaRadius.elementSpacing),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Angelus ao meio-dia',
+                                  style: context.textStyles.cardTitle.copyWith(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              CupertinoSwitch(
+                                value: _angelusEnabled,
+                                activeTrackColor: context.colors.primaryButton,
+                                onChanged: (value) {
+                                  HapticFeedback.selectionClick();
+                                  setState(() => _angelusEnabled = value);
+                                },
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: IaculaRadius.elementSpacing),
                           _fieldLabel(context, 'Intervalo (minutos)'),
                           const SizedBox(height: 8),
@@ -405,6 +431,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       onboardingCompleted: _onboardingCompleted,
       themeMode: _themeMode,
       notificationsEnabled: _notificationsEnabled,
+      angelusEnabled: _angelusEnabled,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);

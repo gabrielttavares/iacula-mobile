@@ -149,24 +149,26 @@ final class ScheduleCoreRemindersUseCase {
       }
     }
 
-    final noonTitle = isEasterSeason ? 'Regina Caeli' : 'Angelus';
-    final noonBody = isEasterSeason
-        ? 'Hora de rezar a Regina Caeli.'
-        : 'Hora de rezar o Angelus.';
+    if (settings.angelusEnabled) {
+      final noonTitle = isEasterSeason ? 'Regina Caeli' : 'Angelus';
+      final noonBody = isEasterSeason
+          ? 'Hora de rezar a Regina Caeli.'
+          : 'Hora de rezar o Angelus.';
 
-    final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
-    await _scheduler.schedule(
-      ReminderEvent(
-        type: ReminderEventType.angelusNoon,
-        title: noonTitle,
-        body: noonBody,
-        scheduledAt: noon,
-        withVibration: true,
-        isAlarm: true,
-        repeatDaily: true,
-        routeTarget: NotificationRouteTarget.prayer,
-      ),
-    );
+      final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
+      await _scheduler.schedule(
+        ReminderEvent(
+          type: ReminderEventType.angelusNoon,
+          title: noonTitle,
+          body: noonBody,
+          scheduledAt: noon,
+          withVibration: true,
+          isAlarm: true,
+          repeatDaily: true,
+          routeTarget: NotificationRouteTarget.prayer,
+        ),
+      );
+    }
   }
 
   bool _isSameDay(DateTime left, DateTime right) {
