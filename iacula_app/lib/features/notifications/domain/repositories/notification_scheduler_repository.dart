@@ -1,5 +1,6 @@
 import '../entities/notification_action_event.dart';
 import '../entities/reminder_event.dart';
+import '../entities/short_interval_reliability.dart';
 
 abstract interface class NotificationSchedulerRepository {
   Stream<NotificationActionEvent> get actions;
@@ -18,4 +19,10 @@ abstract interface class NotificationSchedulerRepository {
   Future<bool?> requestExactAlarmsPermission();
 
   void resetScheduleTelemetry();
+
+  /// Short-interval (<= 15 min) cadence guarantee; irrelevant when notifications off or interval > 15.
+  Future<ShortIntervalReliability> evaluateShortIntervalReliability({
+    required bool notificationsEnabled,
+    required int intervalMinutes,
+  });
 }

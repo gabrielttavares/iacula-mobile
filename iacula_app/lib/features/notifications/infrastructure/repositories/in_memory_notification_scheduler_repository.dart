@@ -2,6 +2,7 @@ import 'dart:async';
 
 import '../../domain/entities/notification_action_event.dart';
 import '../../domain/entities/reminder_event.dart';
+import '../../domain/entities/short_interval_reliability.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
 final class InMemoryNotificationSchedulerRepository
@@ -25,6 +26,9 @@ final class InMemoryNotificationSchedulerRepository
 
   final Map<int, ReminderEvent> _events = {};
   final _controller = StreamController<NotificationActionEvent>.broadcast();
+
+  /// Tests only: override to simulate exact-alarm denial.
+  ShortIntervalReliability? shortIntervalReliabilityOverrideForTest;
 
   List<ReminderEvent> get events => List.unmodifiable(_events.values);
 
@@ -71,4 +75,15 @@ final class InMemoryNotificationSchedulerRepository
 
   @override
   void resetScheduleTelemetry() {}
+
+  @override
+  Future<ShortIntervalReliability> evaluateShortIntervalReliability({
+    required bool notificationsEnabled,
+    required int intervalMinutes,
+  }) async {
+    if (!notificationsEnabled || intervalMinutes > 15) {
+      return ShortIntervalReliability.ok;
+    }
+    return shortIntervalReliabilityOverrideForTest ?? ShortIntervalReliability.ok;
+  }
 }

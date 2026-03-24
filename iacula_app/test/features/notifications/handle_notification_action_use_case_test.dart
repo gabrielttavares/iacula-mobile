@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/handle_notification_action_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
+import 'package:iacula_app/features/notifications/domain/entities/short_interval_reliability.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_scheduler_repository.dart';
 
 final class _FakeNotificationSchedulerRepository
@@ -46,6 +47,14 @@ final class _FakeNotificationSchedulerRepository
 
   @override
   void resetScheduleTelemetry() {}
+
+  @override
+  Future<ShortIntervalReliability> evaluateShortIntervalReliability({
+    required bool notificationsEnabled,
+    required int intervalMinutes,
+  }) async {
+    return ShortIntervalReliability.ok;
+  }
 }
 
 void main() {

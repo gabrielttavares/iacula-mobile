@@ -12,6 +12,7 @@ import 'package:iacula_app/features/notifications/application/use_cases/schedule
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
+import 'package:iacula_app/features/notifications/domain/entities/short_interval_reliability.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_scheduler_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
@@ -72,6 +73,14 @@ final class _FakeNotificationSchedulerRepository
 
   @override
   void resetScheduleTelemetry() {}
+
+  @override
+  Future<ShortIntervalReliability> evaluateShortIntervalReliability({
+    required bool notificationsEnabled,
+    required int intervalMinutes,
+  }) async {
+    return ShortIntervalReliability.ok;
+  }
 }
 
 final class _FakeQuoteContentRepository implements QuoteContentRepository {

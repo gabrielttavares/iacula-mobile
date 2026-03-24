@@ -9,6 +9,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../../domain/entities/notification_action_event.dart';
 import '../../domain/entities/reminder_event.dart';
+import '../../domain/entities/short_interval_reliability.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
 @pragma('vm:entry-point')
@@ -64,17 +65,27 @@ final class LocalNotificationSchedulerRepository
     return androidImpl?.requestExactAlarmsPermission();
   }
 
-  /// Requests exact-alarm permission when [intervalMinutes] is short enough that OS batching would break cadence.
-  Future<void> ensureExactAlarmsForShortIntervals({
+  @override
+  Future<ShortIntervalReliability> evaluateShortIntervalReliability({
     required bool notificationsEnabled,
     required int intervalMinutes,
   }) async {
-    if (!Platform.isAndroid || !notificationsEnabled) return;
-    if (intervalMinutes > 15) return;
-    final can = await canScheduleExactNotifications();
-    if (can == false) {
-      await requestExactAlarmsPermission();
+    if (!Platform.isAndroid || !notificationsEnabled || intervalMinutes > 15) {
+      return ShortIntervalReliability.ok;
     }
+    final before = await canScheduleExactNotifications();
+    if (before == true) {
+      return ShortIntervalReliability.ok;
+    }
+    await requestExactAlarmsPermission();
+    final after = await canScheduleExactNotifications();
+    if (after == true) {
+      return ShortIntervalReliability.ok;
+    }
+    if (after == false) {
+      return ShortIntervalReliability.exactAlarmsUnavailable;
+    }
+    return ShortIntervalReliability.ok;
   }
 
   Future<bool> initialize({bool requestPermission = true}) async {

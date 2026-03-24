@@ -30,6 +30,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _permissionGranted = true;
   bool? _exactAlarmsReliable;
   bool _inexactScheduleFallbackUsed = false;
+  bool _shortIntervalReliabilityNotGuaranteed = false;
   bool _escrivaPointsFeedOptionVisible = false;
 
   bool _loading = true;
@@ -63,8 +64,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final canExact = await scheduler.canScheduleExactNotifications();
       _exactAlarmsReliable = canExact ?? true;
       _inexactScheduleFallbackUsed = scheduler.usedInexactScheduleFallback;
+      _shortIntervalReliabilityNotGuaranteed =
+          settings.notificationsEnabled &&
+          settings.intervalMinutes <= 15 &&
+          (canExact == false);
     } else {
       _exactAlarmsReliable = true;
+      _shortIntervalReliabilityNotGuaranteed = false;
     }
 
     if (mounted) {
@@ -138,7 +144,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         ],
                         if (_notificationsEnabled &&
                             _intervalMinutes <= 15 &&
-                            ((_exactAlarmsReliable == false) ||
+                            (_shortIntervalReliabilityNotGuaranteed ||
+                                (_exactAlarmsReliable == false) ||
                                 _inexactScheduleFallbackUsed)) ...[
                           const SizedBox(height: IaculaSpacing.sm),
                           _buildShortIntervalReliabilityWarning(context),
@@ -482,7 +489,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Intervalos curtos dependem de alarmes exatos no Android. '
+              'Não é possível garantir intervalos curtos (por exemplo, 5 minutos) sem alarmes exatos no Android. '
               'Sem essa permissão, o sistema pode atrasar as jaculatórias. '
               'Abra as configurações do app e ative alarmes e lembretes exatos, se disponível.',
               style: context.textStyles.secondary.copyWith(
@@ -540,7 +547,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     final season =
         await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason();
-    await ref.read(rebuildNotificationsUseCaseProvider).call(
+    final rebuildResult = await ref.read(rebuildNotificationsUseCaseProvider).call(
       settings,
       isEasterSeason: season == LiturgicalSeason.easter,
       showImmediate: false,
@@ -553,6 +560,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         setState(() {
           _exactAlarmsReliable = canExact ?? true;
           _inexactScheduleFallbackUsed = schedulerRepo.usedInexactScheduleFallback;
+          _shortIntervalReliabilityNotGuaranteed =
+              rebuildResult.shortIntervalReliabilityNotGuaranteed;
         });
       }
     }

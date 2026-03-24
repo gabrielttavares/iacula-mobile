@@ -8,6 +8,7 @@ import 'package:iacula_app/features/liturgical/domain/services/liturgical_season
 import 'package:iacula_app/features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
+import 'package:iacula_app/features/notifications/domain/entities/short_interval_reliability.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
@@ -43,18 +44,33 @@ final class _FakeLiturgicalSeasonService implements LiturgicalSeasonService {
   }
 }
 
+RebuildNotificationsUseCase _makeRebuild(
+  InMemoryNotificationSchedulerRepository scheduler, {
+  required Future<Quote> Function({
+    required String language,
+    required DateTime now,
+  })
+  quoteFetcher,
+}) {
+  return RebuildNotificationsUseCase(
+    scheduler: scheduler,
+    notificationHistoryRepository: InMemoryNotificationHistoryRepository(),
+    lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+    scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(scheduler),
+    schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
+      scheduler,
+      _EmptyCustomPhraseRepository(),
+    ),
+    quoteFetcher: quoteFetcher,
+    batchFetcherForSettings: (_) => null,
+  );
+}
+
 void main() {
   test('parallel rebuild calls complete without overlapping duplicate quote ids', () async {
     final scheduler = InMemoryNotificationSchedulerRepository();
-    final rebuild = RebuildNotificationsUseCase(
-      scheduler: scheduler,
-      notificationHistoryRepository: InMemoryNotificationHistoryRepository(),
-      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-      scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(scheduler),
-      schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
-        scheduler,
-        _EmptyCustomPhraseRepository(),
-      ),
+    final rebuild = _makeRebuild(
+      scheduler,
       quoteFetcher: ({required String language, required DateTime now}) async {
         return Quote(
           text: 'x',
@@ -63,7 +79,6 @@ void main() {
           season: LiturgicalSeason.ordinary,
         );
       },
-      batchFetcherForSettings: (_) => null,
     );
 
     final settings = Settings.defaults.copyWith(notificationsEnabled: true);
@@ -84,15 +99,8 @@ void main() {
 
   test('showImmediate true keeps immediate quote channel (id 8999)', () async {
     final scheduler = InMemoryNotificationSchedulerRepository();
-    final rebuild = RebuildNotificationsUseCase(
-      scheduler: scheduler,
-      notificationHistoryRepository: InMemoryNotificationHistoryRepository(),
-      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-      scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(scheduler),
-      schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
-        scheduler,
-        _EmptyCustomPhraseRepository(),
-      ),
+    final rebuild = _makeRebuild(
+      scheduler,
       quoteFetcher: ({required String language, required DateTime now}) async {
         return const Quote(
           text: 'primeira',
@@ -101,7 +109,6 @@ void main() {
           season: LiturgicalSeason.ordinary,
         );
       },
-      batchFetcherForSettings: (_) => null,
     );
 
     final settings = Settings.defaults.copyWith(notificationsEnabled: true);
@@ -119,5 +126,179 @@ void main() {
       ),
       isTrue,
     );
+  });
+
+  test('first rebuild throws but second rebuild still runs successfully', () async {
+    var fetches = 0;
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final rebuild = _makeRebuild(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        fetches++;
+        if (fetches == 1) {
+          throw StateError('boom');
+        }
+        return const Quote(
+          text: 'ok',
+          dayOfWeek: 1,
+          theme: 't',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+    );
+
+    final settings = Settings.defaults.copyWith(notificationsEnabled: true);
+    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+
+    await expectLater(
+      rebuild.call(
+        settings,
+        isEasterSeason: season == LiturgicalSeason.easter,
+        showImmediate: false,
+      ),
+      throwsA(isA<StateError>()),
+    );
+
+    final second = await rebuild.call(
+      settings,
+      isEasterSeason: season == LiturgicalSeason.easter,
+      showImmediate: false,
+    );
+    expect(second.shortIntervalReliabilityNotGuaranteed, isFalse);
+    expect(
+      scheduler.events.where((e) => e.type == ReminderEventType.quoteInterval).length,
+      64,
+    );
+  });
+
+  test('first concurrent rebuild fails but second still schedules', () async {
+    var fetches = 0;
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final rebuild = _makeRebuild(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        fetches++;
+        if (fetches == 1) {
+          throw StateError('boom');
+        }
+        return const Quote(
+          text: 'ok',
+          dayOfWeek: 1,
+          theme: 't',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+    );
+
+    final settings = Settings.defaults.copyWith(notificationsEnabled: true);
+    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+
+    final first = rebuild.call(
+      settings,
+      isEasterSeason: season == LiturgicalSeason.easter,
+      showImmediate: false,
+    );
+    final second = rebuild.call(
+      settings,
+      isEasterSeason: season == LiturgicalSeason.easter,
+      showImmediate: false,
+    );
+
+    await expectLater(first, throwsA(isA<StateError>()));
+    final secondResult = await second;
+    expect(secondResult.shortIntervalReliabilityNotGuaranteed, isFalse);
+    expect(
+      scheduler.events.where((e) => e.type == ReminderEventType.quoteInterval).length,
+      64,
+    );
+  });
+
+  test('short interval with exact reliability ok reports notGuaranteed false', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository()
+      ..shortIntervalReliabilityOverrideForTest = ShortIntervalReliability.ok;
+    final rebuild = _makeRebuild(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return const Quote(
+          text: 'x',
+          dayOfWeek: 1,
+          theme: 't',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+    );
+
+    final settings = Settings.defaults.copyWith(
+      notificationsEnabled: true,
+      intervalMinutes: 5,
+    );
+    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+
+    final r = await rebuild.call(
+      settings,
+      isEasterSeason: season == LiturgicalSeason.easter,
+      showImmediate: false,
+    );
+    expect(r.shortIntervalReliabilityNotGuaranteed, isFalse);
+  });
+
+  test('short interval with exact denied reports notGuaranteed true', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository()
+      ..shortIntervalReliabilityOverrideForTest =
+          ShortIntervalReliability.exactAlarmsUnavailable;
+    final rebuild = _makeRebuild(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return const Quote(
+          text: 'x',
+          dayOfWeek: 1,
+          theme: 't',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+    );
+
+    final settings = Settings.defaults.copyWith(
+      notificationsEnabled: true,
+      intervalMinutes: 5,
+    );
+    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+
+    final r = await rebuild.call(
+      settings,
+      isEasterSeason: season == LiturgicalSeason.easter,
+      showImmediate: false,
+    );
+    expect(r.shortIntervalReliabilityNotGuaranteed, isTrue);
+  });
+
+  test('notifications disabled yields notGuaranteed false even if exact denied', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository()
+      ..shortIntervalReliabilityOverrideForTest =
+          ShortIntervalReliability.exactAlarmsUnavailable;
+    final rebuild = _makeRebuild(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return const Quote(
+          text: 'x',
+          dayOfWeek: 1,
+          theme: 't',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+    );
+
+    final settings = Settings.defaults.copyWith(
+      notificationsEnabled: false,
+      intervalMinutes: 5,
+    );
+    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+
+    final r = await rebuild.call(
+      settings,
+      isEasterSeason: season == LiturgicalSeason.easter,
+      showImmediate: false,
+    );
+    expect(r.shortIntervalReliabilityNotGuaranteed, isFalse);
   });
 }
