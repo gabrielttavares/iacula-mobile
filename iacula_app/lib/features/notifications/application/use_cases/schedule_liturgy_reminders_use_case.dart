@@ -1,4 +1,4 @@
-﻿import '../../../settings/domain/entities/settings.dart';
+import '../../../settings/domain/entities/settings.dart';
 import '../../domain/entities/reminder_event.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 import '../../domain/services/next_occurrence_calculator.dart';
