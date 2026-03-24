@@ -140,24 +140,6 @@ final class LocalNotificationSchedulerRepository
   static AndroidNotificationDetails buildAndroidNotificationDetails(
     ReminderEvent event,
   ) {
-    final actions = event.isAlarm
-        ? <AndroidNotificationAction>[
-            const AndroidNotificationAction(
-              NotificationActionEvent.openAction,
-              'Abrir',
-            ),
-            const AndroidNotificationAction(
-              NotificationActionEvent.snooze10Action,
-              'Adiar 10 min',
-            ),
-          ]
-        : <AndroidNotificationAction>[
-            const AndroidNotificationAction(
-              NotificationActionEvent.openAction,
-              'Abrir',
-            ),
-          ];
-
     return AndroidNotificationDetails(
       _channelIdForType(event.type),
       _channelNameForType(event.type),
@@ -170,7 +152,6 @@ final class LocalNotificationSchedulerRepository
       category: event.isAlarm ? AndroidNotificationCategory.alarm : null,
       playSound: true,
       visibility: NotificationVisibility.public,
-      actions: actions,
       styleInformation: BigTextStyleInformation(event.body),
       ongoing: event.type == ReminderEventType.quoteInterval,
     );
