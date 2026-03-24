@@ -16,7 +16,7 @@ struct IaculaWidget: Widget {
             IaculaWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Iacula")
-        .description("Frase do dia na tela inicial.")
+        .description("Jaculatórias periódicas na tela inicial.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
 
         if #available(iOSApplicationExtension 17.0, *) {
