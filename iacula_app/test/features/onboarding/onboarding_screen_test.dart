@@ -61,21 +61,23 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
+    expect(find.text('Como podemos te chamar?'), findsOneWidget);
+    await reveal('Continuar');
+
+    await tester.enterText(find.byType(CupertinoTextField), 'Gabriel');
+    await tester.tap(find.text('Continuar'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
     expect(find.text('Jaculatórias no seu dia'), findsOneWidget);
     await reveal('Ativar notificações');
     await reveal('Agora não');
 
     await tester.tap(find.text('Agora não'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-
-    expect(find.text('Adicione suas próprias frases'), findsOneWidget);
-    await reveal('Começar');
-
-    await tester.tap(find.text('Começar'));
     await tester.pumpAndSettle();
 
     expect(repo.value.onboardingCompleted, isTrue);
+    expect(repo.value.displayName, 'Gabriel');
     expect(find.byType(ShellScreen), findsOneWidget);
 
     await tester.pumpWidget(_buildApp(repo));

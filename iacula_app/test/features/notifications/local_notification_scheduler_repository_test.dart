@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 
@@ -23,8 +22,7 @@ void main() {
       expect(details.icon, 'ic_notification');
       expect(details.largeIcon, isNull);
       expect(details.channelId, 'quotes_reminder');
-      expect(details.actions, hasLength(1));
-      expect(details.actions!.first.title, 'Abrir');
+      expect(details.actions, isNull);
     });
 
     test('keeps alarm actions and liturgy channel mapping unchanged', () {
@@ -43,11 +41,7 @@ void main() {
           );
 
       expect(details.channelId, 'liturgy_hours_alarm');
-      expect(details.actions, hasLength(2));
-      expect(details.actions!.map((action) => action.id), [
-        NotificationActionEvent.openAction,
-        NotificationActionEvent.snooze10Action,
-      ]);
+      expect(details.actions, isNull);
     });
   });
 }

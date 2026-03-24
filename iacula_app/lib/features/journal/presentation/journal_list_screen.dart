@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../premium/domain/entities/premium_feature.dart';
@@ -55,47 +56,74 @@ class _JournalContent extends ConsumerWidget {
 
     return entriesAsync.when(
       data: (entries) {
-        if (entries.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    CupertinoIcons.book,
-                    size: 48,
-                    color: context.colors.textSecondary,
+        return CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            CupertinoSliverRefreshControl(
+              onRefresh: () async {
+                HapticFeedback.lightImpact();
+                ref.invalidate(journalEntriesProvider);
+                await Future.delayed(const Duration(milliseconds: 500));
+              },
+            ),
+            if (entries.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          CupertinoIcons.book,
+                          size: 48,
+                          color: context.colors.textSecondary,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Seu diário está vazio',
+                          style: context.textStyles.cardTitle,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Comece a escrever suas reflexões espirituais.',
+                          textAlign: TextAlign.center,
+                          style: context.textStyles.secondary,
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Seu diário está vazio',
-                    style: context.textStyles.cardTitle,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Comece a escrever suas reflexões espirituais.',
-                    textAlign: TextAlign.center,
-                    style: context.textStyles.secondary,
-                  ),
-                ],
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    if (index.isOdd) {
+                      return const SizedBox(height: IaculaSpacing.sm);
+                    }
+                    final entryIndex = index ~/ 2;
+                    return _JournalEntryCard(entry: entries[entryIndex]);
+                  }, childCount: entries.length * 2 - 1),
+                ),
+              ),
+            SliverPadding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
               ),
             ),
-          );
-        }
-
-        return ListView.separated(
-          padding: const EdgeInsets.all(16),
-          itemCount: entries.length,
-          separatorBuilder: (_, __) => const SizedBox(height: IaculaSpacing.sm),
-          itemBuilder: (context, index) {
-            return _JournalEntryCard(entry: entries[index]);
-          },
+          ],
         );
       },
       loading: () => const Center(child: CupertinoActivityIndicator()),
       error: (_, __) => Center(
-        child: Text('Erro ao carregar', style: context.textStyles.secondary),
+        child: IaculaErrorState(
+          title: 'Erro ao carregar diario',
+          message: 'Tente novamente para buscar suas entradas.',
+          onRetry: () => ref.invalidate(journalEntriesProvider),
+        ),
       ),
     );
   }

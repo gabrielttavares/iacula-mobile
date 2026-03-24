@@ -153,7 +153,7 @@ class HomeHeroCard extends ConsumerWidget {
                 Positioned(
                   top: 18,
                   right: 18,
-                  child: _HeroBookmarkButton(quote: quote),
+                  child: _HeroActions(quote: quote),
                 ),
                 Positioned.fill(
                   child: Padding(
@@ -242,6 +242,49 @@ class _AutoSizingQuoteText extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _HeroActions extends StatelessWidget {
+  const _HeroActions({required this.quote});
+
+  final Quote quote;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _HeroShareButton(quote: quote),
+        const SizedBox(width: 8),
+        _HeroBookmarkButton(quote: quote),
+      ],
+    );
+  }
+}
+
+class _HeroShareButton extends ConsumerWidget {
+  const _HeroShareButton({required this.quote});
+
+  final Quote quote;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: const Size(32, 32),
+      onPressed: () async {
+        HapticFeedback.selectionClick();
+        await ref
+            .read(nativeShareServiceProvider)
+            .shareText('${quote.text}\n\n- Iacula');
+      },
+      child: Icon(
+        CupertinoIcons.share,
+        color: context.colors.primaryButton,
+        size: 20,
+      ),
     );
   }
 }

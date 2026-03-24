@@ -4,35 +4,69 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/presentation/widgets/iacula_toast.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../favorites/domain/entities/favorite_item.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../application/use_cases/schedule_core_reminders_use_case.dart';
 import '../application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../domain/entities/notification_history_entry.dart';
 
-final _todayHistoryProvider = FutureProvider<List<NotificationHistoryEntry>>((
-  ref,
-) {
-  final now = ref.watch(notificationHistoryNowProvider);
-  return ref.watch(notificationHistoryRepositoryProvider).listForDay(now);
-});
+final _historyForDayProvider =
+    FutureProvider.family<List<NotificationHistoryEntry>, DateTime>((
+      ref,
+      day,
+    ) {
+      return ref.watch(notificationHistoryRepositoryProvider).listForDay(day);
+    });
 
 final _settingsProvider = FutureProvider((ref) {
   return ref.watch(getSettingsUseCaseProvider).call();
 });
 
-class NotificationsScreen extends ConsumerWidget {
+class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final historyAsync = ref.watch(_todayHistoryProvider);
+  ConsumerState<NotificationsScreen> createState() =>
+      _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = ref.read(notificationHistoryNowProvider);
+    _selectedDate = DateTime(now.year, now.month, now.day);
+  }
+
+  List<DateTime> _lastSevenDays() {
+    final today = DateTime.now();
+    final start = DateTime(today.year, today.month, today.day);
+    return List.generate(
+      7,
+      (index) => start.subtract(Duration(days: index)),
+      growable: false,
+    );
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final historyAsync = ref.watch(_historyForDayProvider(_selectedDate));
     final now = ref.watch(notificationHistoryNowProvider);
     final settingsAsync = ref.watch(_settingsProvider);
     final permissionGranted = ref.watch(notificationPermissionProvider);
+    final isTodaySelected = _isSameDay(_selectedDate, now);
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
@@ -112,13 +146,25 @@ class NotificationsScreen extends ConsumerWidget {
 
                 const SizedBox(height: IaculaRadius.cardSpacing),
 
-                const IaculaSectionHeader(title: 'Citações de hoje'),
+                _HistoryDateSelector(
+                  dates: _lastSevenDays(),
+                  selectedDate: _selectedDate,
+                  onSelect: (date) => setState(() => _selectedDate = date),
+                ),
+                const SizedBox(height: IaculaSpacing.sm),
+                IaculaSectionHeader(
+                  title: isTodaySelected
+                      ? 'Citações de hoje'
+                      : 'Citações do dia selecionado',
+                ),
                 const SizedBox(height: IaculaSpacing.sm),
                 historyAsync.when(
                   data: (entries) {
-                    final visibleEntries = entries
-                        .where((entry) => !entry.deliveredAt.isAfter(now))
-                        .toList(growable: false);
+                    final visibleEntries = isTodaySelected
+                        ? entries
+                              .where((entry) => !entry.deliveredAt.isAfter(now))
+                              .toList(growable: false)
+                        : entries;
 
                     if (visibleEntries.isEmpty) {
                       return IaculaSoftCard(
@@ -128,14 +174,15 @@ class NotificationsScreen extends ConsumerWidget {
                         ),
                       );
                     }
-                    return _TodayNotificationsRail(entries: visibleEntries);
+                    return _NotificationsRail(entries: visibleEntries);
                   },
                   loading: () =>
                       const Center(child: CupertinoActivityIndicator()),
-                  error: (error, stackTrace) => IaculaSoftCard(
-                    child: Text(
-                      'Erro ao carregar.',
-                      style: context.textStyles.secondary,
+                  error: (error, stackTrace) => IaculaErrorState(
+                    title: 'Erro ao carregar citacoes',
+                    message: 'Tente novamente para atualizar o historico.',
+                    onRetry: () => ref.invalidate(
+                      _historyForDayProvider(_selectedDate),
                     ),
                   ),
                 ),
@@ -144,9 +191,10 @@ class NotificationsScreen extends ConsumerWidget {
           },
           loading: () => const Center(child: CupertinoActivityIndicator()),
           error: (error, stackTrace) => Center(
-            child: Text(
-              'Erro ao carregar configurações.',
-              style: context.textStyles.secondary,
+            child: IaculaErrorState(
+              title: 'Erro ao carregar configuracoes',
+              message: 'Nao foi possivel abrir as configuracoes de notificacao.',
+              onRetry: () => ref.invalidate(_settingsProvider),
             ),
           ),
         ),
@@ -154,20 +202,21 @@ class NotificationsScreen extends ConsumerWidget {
     );
   }
 
-  static String _formatTime(DateTime dt) {
-    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-  }
 }
 
-class _TodayNotificationsRail extends StatelessWidget {
-  const _TodayNotificationsRail({required this.entries});
+String _formatTime(DateTime dt) {
+  return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+}
+
+class _NotificationsRail extends ConsumerWidget {
+  const _NotificationsRail({required this.entries});
 
   final List<NotificationHistoryEntry> entries;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      height: 176,
+      height: 188,
       child: ListView.separated(
         key: const Key('today_notifications_rail'),
         scrollDirection: Axis.horizontal,
@@ -182,7 +231,7 @@ class _TodayNotificationsRail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    NotificationsScreen._formatTime(entry.deliveredAt),
+                    _formatTime(entry.deliveredAt),
                     style: context.textStyles.secondary,
                   ),
                   const SizedBox(height: 8),
@@ -192,11 +241,126 @@ class _TodayNotificationsRail extends StatelessWidget {
                     style: context.textStyles.cardTitle,
                   ),
                   const Spacer(),
-                  Text(
-                    entry.feastName ?? entry.theme,
-                    style: context.textStyles.secondary,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          entry.feastName ?? entry.theme,
+                          style: context.textStyles.secondary,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(32, 32),
+                        onPressed: () async {
+                          final repo = ref.read(favoriteRepositoryProvider);
+                          final alreadyFavorite = await repo.isFavorite(
+                            entry.quoteText,
+                          );
+                          if (alreadyFavorite) {
+                            if (context.mounted) {
+                              IaculaToast.show(
+                                context,
+                                'Esta citação já está nos favoritos.',
+                                icon: CupertinoIcons.heart_fill,
+                              );
+                            }
+                            return;
+                          }
+
+                          await repo.save(
+                            FavoriteItem(
+                              id: DateTime.now().millisecondsSinceEpoch
+                                  .toString(),
+                              quoteText: entry.quoteText,
+                              theme: entry.theme,
+                              season: entry.season,
+                              savedAt: DateTime.now(),
+                              imagePath: entry.imagePath,
+                              feastName: entry.feastName,
+                            ),
+                          );
+                          ref.invalidate(favoritesProvider);
+                          if (context.mounted) {
+                            IaculaToast.show(
+                              context,
+                              'Citação salva nos favoritos.',
+                              icon: CupertinoIcons.heart_fill,
+                            );
+                          }
+                        },
+                        child: Icon(
+                          CupertinoIcons.heart,
+                          size: 18,
+                          color: context.colors.primaryButton,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _HistoryDateSelector extends StatelessWidget {
+  const _HistoryDateSelector({
+    required this.dates,
+    required this.selectedDate,
+    required this.onSelect,
+  });
+
+  final List<DateTime> dates;
+  final DateTime selectedDate;
+  final ValueChanged<DateTime> onSelect;
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  String _labelFor(DateTime date) {
+    final today = DateTime.now();
+    final normalizedToday = DateTime(today.year, today.month, today.day);
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+    final diff = normalizedToday.difference(normalizedDate).inDays;
+    if (diff == 0) {
+      return 'Hoje';
+    }
+    if (diff == 1) {
+      return 'Ontem';
+    }
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 38,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: dates.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final date = dates[index];
+          final selected = _isSameDay(selectedDate, date);
+          return CupertinoButton(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            minimumSize: const Size(34, 34),
+            color: selected ? context.colors.primaryButton : context.colors.card,
+            borderRadius: BorderRadius.circular(IaculaRadius.small),
+            onPressed: () => onSelect(date),
+            child: Text(
+              _labelFor(date),
+              style: context.textStyles.secondary.copyWith(
+                color: selected
+                    ? CupertinoColors.white
+                    : context.colors.textSecondary,
               ),
             ),
           );

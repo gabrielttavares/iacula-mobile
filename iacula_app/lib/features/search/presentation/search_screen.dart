@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,16 +6,11 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../liturgical/domain/liturgical_season.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../application/app_search_service.dart';
 
-const List<String> _searchSuggestions = [
-  'pai nosso',
-  'perdão',
-  'contrição',
-  'rosário',
-  'gratidão',
-];
+enum _SearchFilter { all, prayers, quotes, readings }
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -31,7 +25,37 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<String> _recentQueries = [];
   bool _loading = false;
+  _SearchFilter _selectedFilter = _SearchFilter.all;
+  List<String> _seasonalSuggestions = const [
+    'pai nosso',
+    'perdao',
+    'contricao',
+    'rosario',
+    'gratidao',
+  ];
   Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSeasonalSuggestions();
+  }
+
+  Future<void> _loadSeasonalSuggestions() async {
+    try {
+      final season = await ref
+          .read(liturgicalSeasonServiceProvider)
+          .getCurrentSeason();
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _seasonalSuggestions = _suggestionsForSeason(season);
+      });
+    } catch (_) {
+      // Keep default suggestions if season lookup fails.
+    }
+  }
 
   @override
   void dispose() {
@@ -97,7 +121,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final groupedResults = _groupResults(_results);
+    final groupedResults = _applyFilter(_groupResults(_results));
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
       navigationBar: const CupertinoNavigationBar(middle: Text('Buscar')),
@@ -126,6 +150,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       ),
                       child: _DiscoveryState(
                         recentQueries: _recentQueries,
+                        suggestions: _seasonalSuggestions,
                         onSuggestionPressed: _onSuggestionPressed,
                       ),
                     )
@@ -145,16 +170,24 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             MediaQuery.paddingOf(context).bottom +
                             IaculaSpacing.md,
                       ),
-                      itemCount: groupedResults.length,
+                      itemCount: groupedResults.length + 1,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 8),
                       itemBuilder: (context, i) {
-                        final section = groupedResults[i];
+                        if (i == 0) {
+                          return _FilterControl(
+                            selectedFilter: _selectedFilter,
+                            onChanged: (filter) {
+                              setState(() => _selectedFilter = filter);
+                            },
+                          );
+                        }
+                        final section = groupedResults[i - 1];
                         return _ResultSection(
                           title: section.$1,
                           results: section.$2,
                           onTap: _openResult,
-                          showSearchLabel: i == 0,
+                          showSearchLabel: i == 1,
                           query: _query,
                         );
                       },
@@ -176,6 +209,46 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           .add(result);
     }
     return grouped.entries.map((entry) => (entry.key, entry.value)).toList();
+  }
+
+  List<(String, List<AppSearchResult>)> _applyFilter(
+    List<(String, List<AppSearchResult>)> grouped,
+  ) {
+    if (_selectedFilter == _SearchFilter.all) {
+      return grouped;
+    }
+    return grouped
+        .where((section) => _matchesFilter(section.$1))
+        .toList(growable: false);
+  }
+
+  bool _matchesFilter(String sectionTitle) {
+    final normalized = sectionTitle.toLowerCase();
+    switch (_selectedFilter) {
+      case _SearchFilter.all:
+        return true;
+      case _SearchFilter.prayers:
+        return normalized == 'orações' || normalized == 'oracoes';
+      case _SearchFilter.quotes:
+        return normalized == 'citações' || normalized == 'citacoes';
+      case _SearchFilter.readings:
+        return normalized == 'leituras';
+    }
+  }
+
+  List<String> _suggestionsForSeason(LiturgicalSeason season) {
+    switch (season) {
+      case LiturgicalSeason.advent:
+        return const ['advento', 'maranata', 'esperanca', 'vigiai', 'encarnacao'];
+      case LiturgicalSeason.lent:
+        return const ['quaresma', 'penitencia', 'jejum', 'conversao', 'contricao'];
+      case LiturgicalSeason.easter:
+        return const ['pascoa', 'ressurreicao', 'aleluia', 'regina caeli', 'vida nova'];
+      case LiturgicalSeason.christmas:
+        return const ['natal', 'encarnacao', 'menino jesus', 'sagrada familia', 'paz'];
+      case LiturgicalSeason.ordinary:
+        return const ['pai nosso', 'gratidao', 'rosario', 'fe', 'caridade'];
+    }
   }
 
   Future<void> _openResult(AppSearchResult result) async {
@@ -260,10 +333,12 @@ class _QuoteDetailSheet extends StatelessWidget {
 class _DiscoveryState extends StatelessWidget {
   const _DiscoveryState({
     required this.recentQueries,
+    required this.suggestions,
     required this.onSuggestionPressed,
   });
 
   final List<String> recentQueries;
+  final List<String> suggestions;
   final ValueChanged<String> onSuggestionPressed;
 
   @override
@@ -282,7 +357,7 @@ class _DiscoveryState extends StatelessWidget {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: _searchSuggestions
+          children: suggestions
               .map(
                 (suggestion) => _SearchChip(
                   label: suggestion,
@@ -335,6 +410,49 @@ class _SearchChip extends StatelessWidget {
   }
 }
 
+class _FilterControl extends StatelessWidget {
+  const _FilterControl({
+    required this.selectedFilter,
+    required this.onChanged,
+  });
+
+  final _SearchFilter selectedFilter;
+  final ValueChanged<_SearchFilter> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: CupertinoSlidingSegmentedControl<_SearchFilter>(
+        groupValue: selectedFilter,
+        children: const {
+          _SearchFilter.all: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Text('Todos'),
+          ),
+          _SearchFilter.prayers: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Text('Orações'),
+          ),
+          _SearchFilter.quotes: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Text('Citações'),
+          ),
+          _SearchFilter.readings: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Text('Leituras'),
+          ),
+        },
+        onValueChanged: (value) {
+          if (value != null) {
+            onChanged(value);
+          }
+        },
+      ),
+    );
+  }
+}
+
 class _ResultSection extends StatelessWidget {
   const _ResultSection({
     required this.title,
@@ -352,9 +470,6 @@ class _ResultSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final countLabel = results.length == 1
-        ? '1 resultado'
-        : '${results.length} resultados';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -368,8 +483,12 @@ class _ResultSection extends StatelessWidget {
           ),
         Row(
           children: [
-            Expanded(child: Text(title, style: context.textStyles.cardTitle)),
-            Text(countLabel, style: context.textStyles.secondary),
+            Expanded(
+              child: Text(
+                '$title (${results.length})',
+                style: context.textStyles.cardTitle,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 8),

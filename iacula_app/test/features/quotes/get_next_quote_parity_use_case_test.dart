@@ -70,7 +70,7 @@ class _FakeIndicesRepository implements QuoteIndicesRepository {
 }
 
 void main() {
-  test('merges curated feast quotes with api quotes and deduplicates', () async {
+  test('uses seasonal pool while feast quotes are disabled', () async {
     final repo = _FakeIndicesRepository();
     final useCase = GetNextQuoteUseCase(
       contentRepository: _FakeQuoteContentRepository(
@@ -96,11 +96,11 @@ void main() {
     final first = await useCase.call(language: 'pt-br', now: DateTime(2026, 2, 22));
     final second = await useCase.call(language: 'pt-br', now: DateTime(2026, 2, 22));
 
-    expect(first.text, 'Amar a Deus.');
-    expect(second.text, 'Confiar em Deus');
-    expect(first.imagePath, 'img-feast');
-    expect(first.feast, 'all-saints');
-    expect(first.feastName, 'todos os santos');
+    expect(first.text, 'Sazonal');
+    expect(second.text, 'Sazonal');
+    expect(first.imagePath, 'img-ordinary-1');
+    expect(first.feast, isNull);
+    expect(first.feastName, isNull);
   });
 
   test('falls back to seasonal quotes when feast pool is empty', () async {
@@ -132,7 +132,7 @@ void main() {
     expect(quote.feast, isNull);
   });
 
-  test('uses canonical feast slug for feast quote and image lookups', () async {
+  test('does not lookup feast quotes or images while feature is disabled', () async {
     final repo = _FakeIndicesRepository();
     final content = _FakeQuoteContentRepository(
       seasonal: {
@@ -158,8 +158,8 @@ void main() {
 
     final quote = await useCase.call(language: 'pt-br', now: DateTime(2026, 5, 24));
 
-    expect(quote.feast, 'pentecost');
-    expect(content.lastFeastQuotesSlug, 'pentecost');
-    expect(content.lastFeastImageSlug, 'pentecost');
+    expect(quote.feast, isNull);
+    expect(content.lastFeastQuotesSlug, isNull);
+    expect(content.lastFeastImageSlug, isNull);
   });
 }

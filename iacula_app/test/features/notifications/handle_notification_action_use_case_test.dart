@@ -32,6 +32,11 @@ final class _FakeNotificationSchedulerRepository
   Future<void> scheduleWithId(int id, ReminderEvent event) async {
     scheduled.add(event.copyWith(scheduledId: id));
   }
+
+  @override
+  Future<void> showNow(int id, ReminderEvent event) async {
+    scheduled.add(event.copyWith(scheduledId: id));
+  }
 }
 
 void main() {

@@ -21,13 +21,29 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _pageController = PageController();
+  final _nameController = TextEditingController();
   int _currentPage = 0;
   bool _saving = false;
   int _selectedInterval = 15;
 
   @override
+  void initState() {
+    super.initState();
+    _preloadName();
+  }
+
+  Future<void> _preloadName() async {
+    final settings = await ref.read(getSettingsUseCaseProvider).call();
+    if (!mounted) {
+      return;
+    }
+    _nameController.text = settings.displayName ?? '';
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -56,6 +72,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   _WelcomePage(
                     onContinue: () => _goToPage(1),
                   ),
+                  _NameInputPage(
+                    controller: _nameController,
+                    saving: _saving,
+                    onContinue: _saveNameAndContinue,
+                  ),
                   _NotificationSetupPage(
                     selectedInterval: _selectedInterval,
                     onIntervalChanged: (v) =>
@@ -63,9 +84,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     saving: _saving,
                     onComplete: _completeWithNotifications,
                     onSkip: _skipWithoutAccount,
-                  ),
-                  _CustomPhrasesPage(
-                    onComplete: _finishOnboarding,
                   ),
                 ],
               ),
@@ -145,6 +163,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
 
     if (!mounted) return;
+    _finishOnboarding();
+  }
+
+  Future<void> _saveNameAndContinue() async {
+    setState(() => _saving = true);
+    final settings = await ref.read(getSettingsUseCaseProvider).call();
+    final trimmed = _nameController.text.trim();
+    await ref.read(updateSettingsUseCaseProvider).call(
+      settings.copyWith(displayName: trimmed.isEmpty ? null : trimmed),
+    );
+    if (!mounted) {
+      return;
+    }
+    setState(() => _saving = false);
     _goToPage(2);
   }
 
@@ -158,7 +190,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           intervalMinutes: _selectedInterval,
         ));
     if (!mounted) return;
-    _goToPage(2);
+    _finishOnboarding();
   }
 
   void _finishOnboarding() {
@@ -389,25 +421,6 @@ class _NotificationSetupPage extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: IaculaSpacing.sm),
-
-            Row(
-              children: [
-                Icon(
-                  CupertinoIcons.pencil,
-                  size: 14,
-                  color: context.colors.textSecondary,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    'Você também pode adicionar frases pessoais que aparecem aqui junto com as jaculatórias.',
-                    style: context.textStyles.secondary.copyWith(fontSize: 13),
-                  ),
-                ),
-              ],
-            ),
-
             const SizedBox(height: IaculaSpacing.xl),
             IaculaPrimaryPillButton(
               label: saving ? 'Configurando...' : 'Ativar notificações',
@@ -425,10 +438,16 @@ class _NotificationSetupPage extends StatelessWidget {
   }
 }
 
-class _CustomPhrasesPage extends StatelessWidget {
-  const _CustomPhrasesPage({required this.onComplete});
+class _NameInputPage extends StatelessWidget {
+  const _NameInputPage({
+    required this.controller,
+    required this.saving,
+    required this.onContinue,
+  });
 
-  final VoidCallback onComplete;
+  final TextEditingController controller;
+  final bool saving;
+  final VoidCallback onContinue;
 
   @override
   Widget build(BuildContext context) {
@@ -445,49 +464,35 @@ class _CustomPhrasesPage extends StatelessWidget {
           ),
           children: [
             Icon(
-              CupertinoIcons.pencil_circle_fill,
+              CupertinoIcons.person_crop_circle_fill,
               size: 48,
               color: context.colors.primaryButton,
             ),
             const SizedBox(height: IaculaSpacing.md),
             Text(
-              'Adicione suas próprias frases',
+              'Como podemos te chamar?',
               textAlign: TextAlign.center,
               style: context.textStyles.sectionTitle,
             ),
             const SizedBox(height: IaculaSpacing.sm),
             Text(
-              'Se quiser que uma frase sua apareça junto com as jaculatórias do tempo, adicione em Minhas Frases.',
+              'Seu nome aparece na saudacao inicial da tela principal.',
               textAlign: TextAlign.center,
               style: context.textStyles.secondary,
             ),
             const SizedBox(height: IaculaSpacing.xl),
-            const _FeatureCard(
-              icon: CupertinoIcons.star_fill,
-              title: 'No destaque da tela inicial',
-              subtitle:
-                  'Aparece no hero card junto com as do tempo litúrgico.',
-              minHeight: 80,
+            IaculaSoftCard(
+              child: CupertinoTextField(
+                controller: controller,
+                placeholder: 'Seu nome',
+                textInputAction: TextInputAction.done,
+                clearButtonMode: OverlayVisibilityMode.editing,
+              ),
             ),
-            const SizedBox(height: IaculaSpacing.sm),
-            const _FeatureCard(
-              icon: CupertinoIcons.bell_fill,
-              title: 'Como notificação',
-              subtitle:
-                  'Horários próprios, independentes das jaculatórias gerais.',
-              minHeight: 80,
-            ),
-            const SizedBox(height: IaculaSpacing.sm),
-            const _FeatureCard(
-              icon: CupertinoIcons.calendar,
-              title: 'Com sua agenda',
-              subtitle: 'Diário, dias da semana, ou datas específicas.',
-              minHeight: 80,
-            ),
-            const SizedBox(height: IaculaSpacing.xl),
+            const SizedBox(height: IaculaSpacing.md),
             IaculaPrimaryPillButton(
-              label: 'Começar',
-              onPressed: onComplete,
+              label: saving ? 'Salvando...' : 'Continuar',
+              onPressed: saving ? null : onContinue,
             ),
           ],
         ),

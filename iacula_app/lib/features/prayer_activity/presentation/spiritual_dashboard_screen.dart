@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -43,7 +44,11 @@ class _DashboardContent extends ConsumerWidget {
       data: (stats) => _DashboardBody(stats: stats),
       loading: () => const Center(child: CupertinoActivityIndicator()),
       error: (e, _) => Center(
-        child: Text('Erro ao carregar dados', style: context.textStyles.secondary),
+        child: IaculaErrorState(
+          title: 'Erro ao carregar dados',
+          message: 'Tente novamente para atualizar o painel espiritual.',
+          onRetry: () => ref.invalidate(dashboardStatsProvider),
+        ),
       ),
     );
   }

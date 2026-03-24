@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/home/presentation/home_screen.dart';
+import 'package:iacula_app/features/notifications/presentation/notifications_screen.dart';
 import 'package:iacula_app/core/presentation/shell_screen.dart';
 
 void main() {
@@ -78,14 +79,14 @@ void main() {
     await tester.tap(find.byKey(const Key('home_notifications_button')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Notificações'), findsOneWidget);
+    expect(find.byType(NotificationsScreen), findsOneWidget);
 
     final tabBar = tester.widget<CupertinoTabBar>(find.byType(CupertinoTabBar));
     tabBar.onTap!(0);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 700));
 
-    expect(find.text('Notificações'), findsNothing);
+    expect(find.byType(NotificationsScreen), findsNothing);
     expect(find.byType(HomeScreen), findsOneWidget);
   });
 

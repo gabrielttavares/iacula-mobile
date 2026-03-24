@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_progress_bar.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -59,10 +60,11 @@ class _NightPrayerContent extends ConsumerWidget {
         return _NightPrayerBody(compline: compline);
       },
       loading: () => const Center(child: CupertinoActivityIndicator()),
-      error: (_, __) => const Center(
-        child: Text(
-          'Erro ao carregar',
-          style: TextStyle(color: CupertinoColors.systemGrey),
+      error: (_, __) => Center(
+        child: IaculaErrorState(
+          title: 'Erro ao carregar completas',
+          message: 'Tente novamente para abrir a oracao da noite.',
+          onRetry: () => ref.invalidate(_complineProvider),
         ),
       ),
     );

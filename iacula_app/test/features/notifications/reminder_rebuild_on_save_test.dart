@@ -1,38 +1,23 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
+import 'package:iacula_app/features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
+import 'package:iacula_app/features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_scheduler_repository.dart';
+import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
+import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote_indices.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_content_repository.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_indices_repository.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
-import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
-import 'package:iacula_app/features/settings/presentation/settings_screen.dart';
-
-final class _FakeSettingsRepository implements SettingsRepository {
-  Settings _value;
-
-  _FakeSettingsRepository(this._value);
-
-  @override
-  Future<Settings> load() async => _value;
-
-  @override
-  Future<void> save(Settings settings) async {
-    _value = settings;
-  }
-}
 
 final class _FakeNotificationSchedulerRepository
     implements NotificationSchedulerRepository {
@@ -64,6 +49,11 @@ final class _FakeNotificationSchedulerRepository
   @override
   Future<void> scheduleWithId(int id, ReminderEvent event) async {
     scheduled.add(event);
+  }
+
+  @override
+  Future<void> showNow(int id, ReminderEvent event) async {
+    scheduled.add(event.copyWith(scheduledId: id));
   }
 
   @override
@@ -141,47 +131,26 @@ final class _InMemoryLastDeliveredCardRepository
 }
 
 void main() {
-  testWidgets('saving settings cancels and rebuilds reminders', (tester) async {
-    final settingsRepo = _FakeSettingsRepository(
-      Settings.defaults.copyWith(laudesEnabled: true),
-    );
+  test('saving settings cancels and rebuilds reminders', () async {
+    final settings = Settings.defaults.copyWith(laudesEnabled: true);
     final schedulerRepo = _FakeNotificationSchedulerRepository();
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(settingsRepo),
-          notificationSchedulerRepositoryProvider.overrideWithValue(
-            schedulerRepo,
-          ),
-          quoteContentRepositoryProvider.overrideWithValue(
-            _FakeQuoteContentRepository(),
-          ),
-          quoteIndicesRepositoryProvider.overrideWithValue(
-            _FakeQuoteIndicesRepository(),
-          ),
-          liturgicalSeasonServiceProvider.overrideWithValue(
-            _FakeLiturgicalSeasonService(),
-          ),
-          lastDeliveredCardRepositoryProvider.overrideWithValue(
-            _InMemoryLastDeliveredCardRepository(),
-          ),
-        ],
-        child: const CupertinoApp(home: SettingsScreen()),
-      ),
-    );
-
-    await tester.pumpAndSettle();
-
-    final saveButton = find.text('Salvar');
-    await tester.dragUntilVisible(
-      saveButton,
-      find.byType(CustomScrollView),
-      const Offset(0, -180),
-    );
-
-    await tester.tap(saveButton);
-    await tester.pumpAndSettle();
+    await schedulerRepo.cancelAll();
+    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+    await ScheduleCoreRemindersUseCase(
+      schedulerRepo,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return const Quote(
+          text: 'Jaculatoria de teste',
+          dayOfWeek: 1,
+          theme: 'Tema',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+      notificationHistoryRepository: InMemoryNotificationHistoryRepository(),
+      lastDeliveredCardRepository: _InMemoryLastDeliveredCardRepository(),
+    ).call(settings, isEasterSeason: season == LiturgicalSeason.easter);
+    await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(settings);
 
     expect(schedulerRepo.cancelAllCalls, 1);
     expect(

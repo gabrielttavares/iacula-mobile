@@ -61,10 +61,16 @@ class FavoritesScreen extends ConsumerWidget {
                               padding: const EdgeInsets.only(bottom: 8),
                               child: _FavoriteCard(
                                 item: favorites[i],
-                                onRemove: () async {
-                                  HapticFeedback.mediumImpact();
-                                  await ref.read(favoriteRepositoryProvider).remove(favorites[i].id);
-                                  ref.invalidate(favoritesProvider);
+                               onRemove: () async {
+                                 HapticFeedback.mediumImpact();
+                                 await ref.read(favoriteRepositoryProvider).remove(favorites[i].id);
+                                 ref.invalidate(favoritesProvider);
+                                },
+                                onShare: () async {
+                                  HapticFeedback.selectionClick();
+                                  await ref
+                                      .read(nativeShareServiceProvider)
+                                      .shareText('${favorites[i].quoteText}\n\n- Iacula');
                                 },
                                 onTap: favorites[i].prayerSlug != null
                                     ? () async {
@@ -118,49 +124,63 @@ class _FavoriteCard extends StatelessWidget {
   const _FavoriteCard({
     required this.item,
     required this.onRemove,
+    required this.onShare,
     this.onTap,
   });
 
   final FavoriteItem item;
   final VoidCallback onRemove;
+  final VoidCallback onShare;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final row = Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: onTap,
-            behavior: HitTestBehavior.opaque,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item.theme, style: context.textStyles.secondary),
-                const SizedBox(height: 4),
-                Text(item.quoteText, style: context.textStyles.cardTitle),
-                if (item.feastName != null) ...[
-                  const SizedBox(height: 4),
-                  Text(item.feastName!, style: context.textStyles.secondary),
-                ],
-              ],
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      onLongPress: () {
+        HapticFeedback.mediumImpact();
+        showCupertinoModalPopup<void>(
+          context: context,
+          builder: (sheetContext) => CupertinoActionSheet(
+            actions: [
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  onShare();
+                },
+                child: const Text('Compartilhar'),
+              ),
+              CupertinoActionSheetAction(
+                isDestructiveAction: true,
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  onRemove();
+                },
+                child: const Text('Remover'),
+              ),
+            ],
+            cancelButton: CupertinoActionSheetAction(
+              onPressed: () => Navigator.of(sheetContext).pop(),
+              child: const Text('Cancelar'),
             ),
           ),
+        );
+      },
+      child: IaculaSoftCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(item.theme, style: context.textStyles.secondary),
+            const SizedBox(height: 4),
+            Text(item.quoteText, style: context.textStyles.cardTitle),
+            if (item.feastName != null) ...[
+              const SizedBox(height: 4),
+              Text(item.feastName!, style: context.textStyles.secondary),
+            ],
+          ],
         ),
-        CupertinoButton(
-          padding: EdgeInsets.zero,
-          minimumSize: const Size(32, 32),
-          onPressed: onRemove,
-          child: const Icon(
-            CupertinoIcons.delete,
-            size: 18,
-            color: CupertinoColors.destructiveRed,
-          ),
-        ),
-      ],
+      ),
     );
-
-    return IaculaSoftCard(child: row);
   }
 }

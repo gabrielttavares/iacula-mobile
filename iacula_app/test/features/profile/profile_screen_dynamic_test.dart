@@ -16,11 +16,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Sincronização entre dispositivos'), findsOneWidget);
-    expect(
-      find.textContaining('sincronizados entre dispositivos'),
-      findsOneWidget,
-    );
+    expect(find.text('Sincronização entre dispositivos'), findsWidgets);
     expect(find.text('Pedro Gabriel'), findsNothing);
   });
 

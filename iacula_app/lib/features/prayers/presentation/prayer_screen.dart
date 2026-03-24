@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
@@ -10,6 +11,22 @@ class PrayerScreen extends ConsumerWidget {
   const PrayerScreen({super.key, required this.prayer});
 
   final Prayer prayer;
+
+  String _buildShareText() {
+    final versesText = prayer.verses
+        .map(
+          (verse) => verse.response.isEmpty
+              ? verse.verse
+              : '${verse.verse}\n${verse.response}',
+        )
+        .join('\n\n');
+    final suffix = prayer.prayer.trim();
+    final body = [
+      if (versesText.isNotEmpty) versesText,
+      if (suffix.isNotEmpty) suffix,
+    ].join('\n\n');
+    return '${prayer.title}\n\n$body\n\n- Iacula';
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,7 +85,27 @@ class PrayerScreen extends ConsumerWidget {
                             ),
                           ),
                           const Spacer(),
-                          const FontSizeControls(isDarkBackground: true),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CupertinoButton(
+                                padding: const EdgeInsets.only(right: 8),
+                                minimumSize: const Size(28, 28),
+                                onPressed: () async {
+                                  HapticFeedback.selectionClick();
+                                  await ref
+                                      .read(nativeShareServiceProvider)
+                                      .shareText(_buildShareText());
+                                },
+                                child: Icon(
+                                  CupertinoIcons.share,
+                                  color: context.colors.primaryButton,
+                                  size: 20,
+                                ),
+                              ),
+                              const FontSizeControls(isDarkBackground: true),
+                            ],
+                          ),
                         ],
                       ),
                       Text(

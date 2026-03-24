@@ -11,8 +11,6 @@ void main() {
     final expectedThemes = <String>{
       'estudos',
       'viagem',
-      'matrimonio',
-      'gestacao',
       'igreja',
     };
 

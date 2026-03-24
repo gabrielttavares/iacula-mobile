@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -252,9 +253,10 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
               ),
               error: (err, stack) => SliverFillRemaining(
                 child: Center(
-                  child: Text(
-                    'Não foi possível carregar suas frases.\nTente novamente em instantes.',
-                    textAlign: TextAlign.center,
+                  child: IaculaErrorState(
+                    title: 'Erro ao carregar frases',
+                    message: 'Tente novamente para atualizar suas frases.',
+                    onRetry: () => ref.invalidate(customPhrasesNotifierProvider),
                   ),
                 ),
               ),

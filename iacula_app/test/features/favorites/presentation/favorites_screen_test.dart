@@ -42,7 +42,7 @@ void main() {
     expect(find.textContaining('Deus é amor.'), findsOneWidget);
   });
 
-  testWidgets('can remove a favorite by tapping delete', (tester) async {
+  testWidgets('can remove a favorite from long-press action sheet', (tester) async {
     final repo = InMemoryFavoriteRepository();
     await repo.save(FavoriteItem(
       id: '1',
@@ -63,8 +63,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('To remove.'), findsOneWidget);
 
-    // Tap remove button
-    await tester.tap(find.byIcon(CupertinoIcons.delete));
+    await tester.longPress(find.text('To remove.'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Remover'));
     await tester.pumpAndSettle();
     expect(find.textContaining('To remove.'), findsNothing);
   });

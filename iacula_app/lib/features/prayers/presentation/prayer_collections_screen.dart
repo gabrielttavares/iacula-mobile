@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_scroll_item_entrance.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
@@ -98,9 +99,10 @@ class PrayerCollectionsScreen extends ConsumerWidget {
                 },
                 loading: () =>
                     const Expanded(child: IaculaShimmerList(itemCount: 6)),
-                error: (error, stackTrace) => Text(
-                  'Erro ao carregar orações',
-                  style: context.textStyles.secondary,
+                error: (error, stackTrace) => IaculaErrorState(
+                  title: 'Erro ao carregar oracoes',
+                  message: 'Tente novamente para abrir as colecoes.',
+                  onRetry: () => ref.invalidate(_catalogProvider),
                 ),
               ),
             ],

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_animated_icon.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -68,7 +69,13 @@ class _PrayerCatalogDetailScreenState
                 ),
               ),
               error: (error, stackTrace) => Center(
-                child: Text('Erro ao carregar oração', style: context.textStyles.secondary),
+                child: IaculaErrorState(
+                  title: 'Erro ao carregar oracao',
+                  message: 'Tente novamente para abrir o conteudo.',
+                  onRetry: () => ref.invalidate(
+                    _prayerDetailProvider(widget.entry.slug),
+                  ),
+                ),
               ),
               data: (detail) {
                 final available = detail.blocksByLanguage.keys.toList(

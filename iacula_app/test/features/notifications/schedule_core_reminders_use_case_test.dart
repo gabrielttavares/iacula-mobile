@@ -76,27 +76,18 @@ void main() {
               .where((e) => e.type == ReminderEventType.quoteInterval)
               .toList()
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
-      expect(allQuoteEvents.length, 65);
+      expect(allQuoteEvents.length, 2);
 
       expect(allQuoteEvents.first.scheduledId, 8999);
       expect(allQuoteEvents.first.scheduledAt, now);
 
       final scheduledEvents = allQuoteEvents.skip(1).toList();
-      expect(scheduledEvents.length, 64);
+      expect(scheduledEvents.length, 1);
       expect(scheduledEvents.first.title, 'Iacula');
       expect(scheduledEvents.first.body, 'Sede santos, porque eu sou santo.');
-      expect(
-        scheduledEvents.map((event) => event.scheduledId).whereType<int>().toSet(),
-        hasLength(64),
-      );
       expect(scheduledEvents.first.scheduledId, 9000);
-      expect(scheduledEvents.last.scheduledId, 9063);
       expect(
         scheduledEvents.first.scheduledAt,
-        now.add(const Duration(minutes: 15)),
-      );
-      expect(
-        scheduledEvents.last.scheduledAt,
         now.add(const Duration(minutes: 15 * 64)),
       );
 

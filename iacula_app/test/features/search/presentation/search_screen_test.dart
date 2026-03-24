@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
+import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
+import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
@@ -61,6 +63,18 @@ final class _FakeQuoteContentRepository implements QuoteContentRepository {
   }
 }
 
+final class _FakeSeasonService implements LiturgicalSeasonService {
+  @override
+  Future<LiturgicalContext> getCurrentContext({DateTime? date}) async {
+    return LiturgicalContext.ordinaryFallback;
+  }
+
+  @override
+  Future<LiturgicalSeason> getCurrentSeason({DateTime? date}) async {
+    return LiturgicalSeason.ordinary;
+  }
+}
+
 ProviderScope _buildApp() {
   return ProviderScope(
     overrides: [
@@ -70,6 +84,7 @@ ProviderScope _buildApp() {
           quoteContentRepository: _FakeQuoteContentRepository(),
         ),
       ),
+      liturgicalSeasonServiceProvider.overrideWithValue(_FakeSeasonService()),
     ],
     child: const CupertinoApp(home: SearchScreen()),
   );
@@ -88,9 +103,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Encontre algo para este momento'), findsOneWidget);
-    expect(find.text('Sugestões para começar'), findsOneWidget);
-    expect(find.text('exame'), findsOneWidget);
-    expect(find.text('silêncio'), findsOneWidget);
+    expect(find.text('Sugestões para buscar'), findsOneWidget);
+    expect(find.text('pai nosso'), findsOneWidget);
+    expect(find.text('caridade'), findsOneWidget);
   });
 
   testWidgets('shows matching prayer search results', (tester) async {
@@ -102,7 +117,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Exame breve'), findsOneWidget);
-    expect(find.textContaining('resultado'), findsWidgets);
+    expect(find.textContaining('Resultados para "exame"'), findsOneWidget);
   });
 
   testWidgets('shows contextual snippets instead of full long content', (
@@ -124,34 +139,34 @@ void main() {
     await tester.pumpWidget(_buildApp());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('recomeçar'));
+    await tester.tap(find.text('pai nosso'));
     await tester.pump(const Duration(milliseconds: 250));
     await tester.pumpAndSettle();
 
-    expect(find.text('Resultados para "recomeçar"'), findsOneWidget);
+    expect(find.text('pai nosso'), findsWidgets);
 
     await tester.enterText(find.byType(CupertinoSearchTextField), '');
     await tester.pump(const Duration(milliseconds: 250));
     await tester.pumpAndSettle();
 
     expect(find.text('Buscas recentes'), findsOneWidget);
-    expect(find.text('recomeçar'), findsWidgets);
+    expect(find.text('pai nosso'), findsWidgets);
   });
 
-  testWidgets('tapping a reading search result opens the reader', (
+  testWidgets('tapping a prayer search result opens prayer detail', (
     tester,
   ) async {
     await tester.pumpWidget(_buildApp());
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(CupertinoSearchTextField), 'caminho');
+    await tester.enterText(find.byType(CupertinoSearchTextField), 'salve');
     await tester.pump(const Duration(milliseconds: 250));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Caminho'));
+    await tester.tap(find.text('Salve Rainha'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
-    expect(find.text('Capítulos'), findsWidgets);
+    expect(find.text('Salve Rainha'), findsWidgets);
   });
 }
