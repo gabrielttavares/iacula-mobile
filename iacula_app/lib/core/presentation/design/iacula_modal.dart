@@ -73,6 +73,8 @@ final class IaculaModal {
     return showCupertinoModalPopup<T>(
       context: context,
       builder: (context) {
+        final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+
         Widget child = Container(
           decoration: BoxDecoration(
             color: context.colors.card,
@@ -92,7 +94,11 @@ final class IaculaModal {
           );
         }
 
-        return Align(alignment: Alignment.bottomCenter, child: child);
+        return AnimatedPadding(
+          duration: const Duration(milliseconds: 100),
+          padding: EdgeInsets.only(bottom: bottomInset),
+          child: Align(alignment: Alignment.bottomCenter, child: child),
+        );
       },
     );
   }
