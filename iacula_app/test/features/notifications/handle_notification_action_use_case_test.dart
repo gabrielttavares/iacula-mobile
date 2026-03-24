@@ -37,6 +37,15 @@ final class _FakeNotificationSchedulerRepository
   Future<void> showNow(int id, ReminderEvent event) async {
     scheduled.add(event.copyWith(scheduledId: id));
   }
+
+  @override
+  Future<bool?> canScheduleExactNotifications() async => true;
+
+  @override
+  Future<bool?> requestExactAlarmsPermission() async => true;
+
+  @override
+  void resetScheduleTelemetry() {}
 }
 
 void main() {

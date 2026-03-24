@@ -9,8 +9,6 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
-import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
-import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -131,32 +129,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
     await ref.read(updateSettingsUseCaseProvider).call(updated);
 
-    final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
     try {
-      await schedulerRepo.cancelAll();
       final season = await ref
           .read(liturgicalSeasonServiceProvider)
           .getCurrentSeason();
-      await ScheduleCoreRemindersUseCase(
-        schedulerRepo,
-        quoteFetcher: ({required String language, required DateTime now}) {
-          if (updated.escrivaPointsFeedEnabled) {
-            return ref
-                .read(getNextEscrivaPointsQuoteUseCaseProvider)
-                .call(language: language, now: now);
-          }
-          return ref
-              .read(getNextQuoteUseCaseProvider)
-              .call(language: language, now: now);
-        },
-        notificationHistoryRepository: ref.read(
-          notificationHistoryRepositoryProvider,
-        ),
-        lastDeliveredCardRepository: ref.read(
-          lastDeliveredCardRepositoryProvider,
-        ),
-      ).call(updated, isEasterSeason: season == LiturgicalSeason.easter);
-      await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(updated);
+      await ref.read(rebuildNotificationsUseCaseProvider).call(
+        updated,
+        isEasterSeason: season == LiturgicalSeason.easter,
+        showImmediate: true,
+      );
     } on PlatformException catch (_) {
       // Scheduling failed (e.g. exact alarms denied) — continue onboarding.
       // Notifications will be retried on next app launch.

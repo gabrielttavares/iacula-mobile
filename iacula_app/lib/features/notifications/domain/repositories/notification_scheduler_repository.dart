@@ -10,4 +10,12 @@ abstract interface class NotificationSchedulerRepository {
   Future<void> cancelByType(ReminderEventType type);
   Future<void> cancelById(int id);
   Future<void> cancelAll();
+
+  /// Android: whether exact alarms are permitted. Null on other platforms or unknown.
+  Future<bool?> canScheduleExactNotifications();
+
+  /// Android: request [SCHEDULE_EXACT_ALARM]. Null when not applicable.
+  Future<bool?> requestExactAlarmsPermission();
+
+  void resetScheduleTelemetry();
 }

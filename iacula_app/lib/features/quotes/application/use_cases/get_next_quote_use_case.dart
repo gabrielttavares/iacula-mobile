@@ -31,26 +31,34 @@ final class GetNextQuoteUseCase {
 
     final quotes = <Quote>[];
     final firstDate = startTime;
-    final dayOfWeek = _dayOfWeek1to7(firstDate);
+    final startDayOfWeek = _dayOfWeek1to7(firstDate);
     final context = await _liturgicalSeasonService.getCurrentContext(date: firstDate);
 
     final seasonalCollection = await _contentRepository.loadQuotes(
       language: language,
       season: context.season,
     );
-    final seasonalImages = await _contentRepository.listDayImages(
-      dayOfWeek: dayOfWeek,
-      season: context.season,
-    );
-
     final quotePool = seasonalCollection;
-    final dayData = quotePool[dayOfWeek.toString()];
 
-    var indices = await _indicesRepository.load(dayOfWeek: dayOfWeek);
+    final imageLists = <int, List<String>>{};
+    Future<List<String>> imagesForDay(int dow) async {
+      final cached = imageLists[dow];
+      if (cached != null) return cached;
+      final list = await _contentRepository.listDayImages(
+        dayOfWeek: dow,
+        season: context.season,
+      );
+      imageLists[dow] = list;
+      return list;
+    }
+
+    var indices = await _indicesRepository.load(dayOfWeek: startDayOfWeek);
 
     for (var i = 0; i < count; i++) {
       final quoteAt = startTime.add(Duration(minutes: intervalMinutes * (i + 1)));
       final qDayOfWeek = _dayOfWeek1to7(quoteAt);
+      final dayData = quotePool[qDayOfWeek.toString()];
+      final seasonalImages = await imagesForDay(qDayOfWeek);
 
       if (dayData == null || dayData.quotes.isEmpty) {
         quotes.add(Quote(

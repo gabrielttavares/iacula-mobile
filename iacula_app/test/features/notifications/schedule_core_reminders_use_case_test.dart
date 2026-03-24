@@ -76,20 +76,27 @@ void main() {
               .where((e) => e.type == ReminderEventType.quoteInterval)
               .toList()
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
-      expect(allQuoteEvents.length, 2);
+      expect(allQuoteEvents.length, 65);
 
       expect(allQuoteEvents.first.scheduledId, 8999);
       expect(allQuoteEvents.first.scheduledAt, now);
 
       final scheduledEvents = allQuoteEvents.skip(1).toList();
-      expect(scheduledEvents.length, 1);
+      expect(scheduledEvents.length, 64);
       expect(scheduledEvents.first.title, 'Iacula');
       expect(scheduledEvents.first.body, 'Sede santos, porque eu sou santo.');
       expect(scheduledEvents.first.scheduledId, 9000);
       expect(
         scheduledEvents.first.scheduledAt,
+        now.add(const Duration(minutes: 15)),
+      );
+      expect(scheduledEvents.last.scheduledId, 9063);
+      expect(
+        scheduledEvents.last.scheduledAt,
         now.add(const Duration(minutes: 15 * 64)),
       );
+      final scheduledIds = scheduledEvents.map((e) => e.scheduledId).toSet();
+      expect(scheduledIds.length, 64);
 
       expect(history.entries, hasLength(56));
       expect(history.entries.first.quoteText, 'Sede santos, porque eu sou santo.');
@@ -135,5 +142,77 @@ void main() {
 
     expect(firstRunCount, 56);
     expect(history.entries.where((entry) => !entry.deliveredAt.isBefore(DateTime(2026, 2, 21, 12))).length, 24);
+  });
+
+  test('showImmediate false does not enqueue immediate notification id 8999', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+
+    final useCase = ScheduleCoreRemindersUseCase(
+      scheduler,
+      quoteFetcher:
+          ({required String language, required DateTime now}) async {
+            return const Quote(
+              text: 'A',
+              dayOfWeek: 1,
+              theme: 't',
+              season: LiturgicalSeason.ordinary,
+            );
+          },
+      notificationHistoryRepository: history,
+      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+    );
+
+    final settings = Settings.defaults.copyWith(intervalMinutes: 5);
+    final now = DateTime(2026, 2, 21, 10, 0);
+
+    await useCase(settings, now: now, showImmediate: false);
+
+    final quoteIds =
+        scheduler.events
+            .where((e) => e.type == ReminderEventType.quoteInterval)
+            .map((e) => e.scheduledId)
+            .toList();
+    expect(quoteIds, isNot(contains(8999)));
+    final firstQueued = scheduler.events
+        .where((e) => e.type == ReminderEventType.quoteInterval)
+        .map((e) => e.scheduledAt)
+        .reduce((a, b) => a.isBefore(b) ? a : b);
+    expect(firstQueued, now.add(const Duration(minutes: 5)));
+  });
+
+  test('earliest queued quote fires at now + intervalMinutes', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+
+    final useCase = ScheduleCoreRemindersUseCase(
+      scheduler,
+      quoteFetcher:
+          ({required String language, required DateTime now}) async {
+            return Quote(
+              text: 'Q',
+              dayOfWeek: 1,
+              theme: 't',
+              season: LiturgicalSeason.ordinary,
+            );
+          },
+      notificationHistoryRepository: history,
+      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+    );
+
+    final now = DateTime(2026, 3, 1, 8, 0);
+    await useCase(
+      Settings.defaults.copyWith(intervalMinutes: 10),
+      now: now,
+      showImmediate: false,
+    );
+
+    final futureQuotes =
+        scheduler.events
+            .where((e) => e.type == ReminderEventType.quoteInterval)
+            .toList()
+          ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+    expect(futureQuotes.first.scheduledAt, now.add(const Duration(minutes: 10)));
+    expect(futureQuotes.first.scheduledId, 9000);
   });
 }

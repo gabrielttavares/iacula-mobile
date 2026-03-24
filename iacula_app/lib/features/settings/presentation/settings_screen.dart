@@ -10,8 +10,6 @@ import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
-import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
-import '../../notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../domain/entities/settings.dart';
 
@@ -30,6 +28,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _angelusEnabled = true;
   int _intervalMinutes = 15;
   bool _permissionGranted = true;
+  bool? _exactAlarmsReliable;
+  bool _inexactScheduleFallbackUsed = false;
   bool _escrivaPointsFeedOptionVisible = false;
 
   bool _loading = true;
@@ -60,6 +60,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
     if (scheduler is LocalNotificationSchedulerRepository) {
       _permissionGranted = await scheduler.checkPermission();
+      final canExact = await scheduler.canScheduleExactNotifications();
+      _exactAlarmsReliable = canExact ?? true;
+      _inexactScheduleFallbackUsed = scheduler.usedInexactScheduleFallback;
+    } else {
+      _exactAlarmsReliable = true;
     }
 
     if (mounted) {
@@ -130,6 +135,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         if (!_permissionGranted) ...[
                           const SizedBox(height: IaculaSpacing.sm),
                           _buildPermissionWarning(context),
+                        ],
+                        if (_notificationsEnabled &&
+                            _intervalMinutes <= 15 &&
+                            ((_exactAlarmsReliable == false) ||
+                                _inexactScheduleFallbackUsed)) ...[
+                          const SizedBox(height: IaculaSpacing.sm),
+                          _buildShortIntervalReliabilityWarning(context),
                         ],
                         if (_notificationsEnabled) ...[
                           const SizedBox(height: IaculaRadius.elementSpacing),
@@ -452,6 +464,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  Widget _buildShortIntervalReliabilityWarning(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(IaculaSpacing.sm),
+      decoration: BoxDecoration(
+        color: context.colors.warning.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(IaculaRadius.small),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            CupertinoIcons.clock_fill,
+            color: context.colors.warning,
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Intervalos curtos dependem de alarmes exatos no Android. '
+              'Sem essa permissão, o sistema pode atrasar as jaculatórias. '
+              'Abra as configurações do app e ative alarmes e lembretes exatos, se disponível.',
+              style: context.textStyles.secondary.copyWith(
+                color: context.colors.textPrimary,
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildNextNotificationEstimate(BuildContext context) {
     final nextAt = DateTime.now().add(Duration(minutes: _intervalMinutes));
     final hh = nextAt.hour.toString().padLeft(2, '0');
@@ -494,34 +538,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);
 
+    final season =
+        await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason();
+    await ref.read(rebuildNotificationsUseCaseProvider).call(
+      settings,
+      isEasterSeason: season == LiturgicalSeason.easter,
+      showImmediate: false,
+    );
+
     final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
-    await schedulerRepo.cancelAll();
-
-    if (_notificationsEnabled) {
-      final season = await ref
-          .read(liturgicalSeasonServiceProvider)
-          .getCurrentSeason();
-      await ScheduleCoreRemindersUseCase(
-        schedulerRepo,
-        quoteFetcher: ({required String language, required DateTime now}) {
-          if (settings.escrivaPointsFeedEnabled) {
-            return ref
-                .read(getNextEscrivaPointsQuoteUseCaseProvider)
-                .call(language: language, now: now);
-          }
-
-          return ref
-              .read(getNextQuoteUseCaseProvider)
-              .call(language: language, now: now);
-        },
-        notificationHistoryRepository: ref.read(
-          notificationHistoryRepositoryProvider,
-        ),
-        lastDeliveredCardRepository: ref.read(
-          lastDeliveredCardRepositoryProvider,
-        ),
-      ).call(settings, isEasterSeason: season == LiturgicalSeason.easter);
-      await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(settings);
+    if (schedulerRepo is LocalNotificationSchedulerRepository) {
+      final canExact = await schedulerRepo.canScheduleExactNotifications();
+      if (mounted) {
+        setState(() {
+          _exactAlarmsReliable = canExact ?? true;
+          _inexactScheduleFallbackUsed = schedulerRepo.usedInexactScheduleFallback;
+        });
+      }
     }
 
     ref.read(notificationPermissionProvider.notifier).state =

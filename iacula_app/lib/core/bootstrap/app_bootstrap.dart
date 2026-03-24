@@ -10,8 +10,6 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/auth/domain/repositories/auth_repository.dart';
-import '../../features/home_widget/home_widget_service.dart';
-import '../../features/notifications/domain/entities/last_delivered_card.dart';
 import '../../features/favorites/infrastructure/repositories/isar_favorite_repository.dart';
 import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
 import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
@@ -22,7 +20,9 @@ import '../../features/liturgical/infrastructure/repositories/isar_liturgical_se
 import '../../features/liturgical/infrastructure/services/remote_liturgical_season_service.dart';
 import '../../features/leituras/data/repositories/leitura_repository.dart';
 import '../../features/leituras/data/sources/leitura_local_source.dart';
-import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
+import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
+import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart'
+    show QuoteFetcher;
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
@@ -148,20 +148,6 @@ final class AppBootstrap {
       return quoteUseCase.call(language: language, now: now);
     };
 
-    final QuoteBatchFetcher? batchFetcher = currentSettings.escrivaPointsFeedEnabled
-        ? null
-        : ({
-            required String language,
-            required int count,
-            required DateTime startTime,
-            required int intervalMinutes,
-          }) => quoteUseCase.fetchBatch(
-            language: language,
-            count: count,
-            startTime: startTime,
-            intervalMinutes: intervalMinutes,
-          );
-
     if (currentSettings.onboardingCompleted &&
         currentSettings.notificationsEnabled &&
         permissionGranted) {
@@ -173,33 +159,36 @@ final class AppBootstrap {
           );
           final currentSeason =
               await liturgicalSeasonService.getCurrentSeason();
-          await ScheduleCoreRemindersUseCase(
-            scheduler,
-            quoteFetcher: quoteFetcher,
+          await RebuildNotificationsUseCase(
+            scheduler: scheduler,
             notificationHistoryRepository: notificationHistoryRepo,
             lastDeliveredCardRepository: lastDeliveredCardRepo,
-            batchFetcher: batchFetcher,
+            scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(scheduler),
+            schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
+              scheduler,
+              localCustomPhraseRepo,
+            ),
+            quoteFetcher: quoteFetcher,
+            batchFetcherForSettings: (settings) => settings.escrivaPointsFeedEnabled
+                ? null
+                : ({
+                    required String language,
+                    required int count,
+                    required DateTime startTime,
+                    required int intervalMinutes,
+                  }) =>
+                    quoteUseCase.fetchBatch(
+                      language: language,
+                      count: count,
+                      startTime: startTime,
+                      intervalMinutes: intervalMinutes,
+                    ),
           ).call(
             currentSettings,
             immediateQuote: immediateQuote,
             isEasterSeason: currentSeason == LiturgicalSeason.easter,
             showImmediate: false,
           );
-          // Update home screen widget with the current quote
-          await HomeWidgetService.instance.updateWidget(
-            LastDeliveredCard.fromQuote(
-              immediateQuote,
-              deliveredAt: DateTime.now(),
-            ),
-          );
-          await Future.wait([
-            SchedulePhraseNotificationsUseCase(
-              scheduler,
-              localCustomPhraseRepo,
-            ).call(),
-            ScheduleLiturgyRemindersUseCase(scheduler)
-                .call(currentSettings),
-          ]);
         } on PlatformException catch (e, st) {
           developer.log(
             'Notification scheduling skipped: ${e.code} ${e.message}',

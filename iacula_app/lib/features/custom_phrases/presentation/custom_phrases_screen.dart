@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
+import '../../liturgical/domain/liturgical_season.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../domain/entities/custom_phrase.dart';
 import 'edit_phrase_screen.dart';
 
@@ -56,28 +56,13 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
       final updated = current.copyWith(escrivaPointsFeedEnabled: value);
       await ref.read(updateSettingsUseCaseProvider).call(updated);
 
-      final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
-      await schedulerRepo.cancelAll();
-      await ScheduleCoreRemindersUseCase(
-        schedulerRepo,
-        quoteFetcher: ({required String language, required DateTime now}) {
-          if (value) {
-            return ref
-                .read(getNextEscrivaPointsQuoteUseCaseProvider)
-                .call(language: language, now: now);
-          }
-
-          return ref
-              .read(getNextQuoteUseCaseProvider)
-              .call(language: language, now: now);
-        },
-        notificationHistoryRepository: ref.read(
-          notificationHistoryRepositoryProvider,
-        ),
-        lastDeliveredCardRepository: ref.read(
-          lastDeliveredCardRepositoryProvider,
-        ),
-      ).call(updated);
+      final season =
+          await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason();
+      await ref.read(rebuildNotificationsUseCaseProvider).call(
+        updated,
+        isEasterSeason: season == LiturgicalSeason.easter,
+        showImmediate: false,
+      );
     } catch (_) {
       if (!mounted) {
         return;

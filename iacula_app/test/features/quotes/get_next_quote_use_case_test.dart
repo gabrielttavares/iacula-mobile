@@ -19,11 +19,16 @@ class _FakeSeasonService implements LiturgicalSeasonService {
 }
 
 class _FakeQuoteContentRepository implements QuoteContentRepository {
+  final Map<String, DayQuotes> _quotes;
+
+  _FakeQuoteContentRepository({Map<String, DayQuotes>? quotes})
+    : _quotes = quotes ?? {
+        '1': const DayQuotes(day: 'Domingo', theme: 'Tema', quotes: ['Q1', 'Q2']),
+      };
+
   @override
   Future<Map<String, DayQuotes>> loadQuotes({required String language, required LiturgicalSeason season}) async {
-    return {
-      '1': const DayQuotes(day: 'Domingo', theme: 'Tema', quotes: ['Q1', 'Q2']),
-    };
+    return _quotes;
   }
 
   @override
@@ -70,5 +75,33 @@ void main() {
     final next = await useCase.call(language: 'pt-br', now: DateTime(2026, 2, 22));
     expect(next.text, 'Q2');
     expect(next.imagePath, 'img2');
+  });
+
+  test('fetchBatch uses day pool per scheduled instant across midnight', () async {
+    final repo = _FakeIndicesRepository();
+    final twoDayRepo = _FakeQuoteContentRepository(
+      quotes: {
+        '1': const DayQuotes(day: 'Domingo', theme: 'Dom', quotes: ['DomA', 'DomB']),
+        '2': const DayQuotes(day: 'Segunda', theme: 'Seg', quotes: ['SegA', 'SegB']),
+      },
+    );
+    final useCase = GetNextQuoteUseCase(
+      contentRepository: twoDayRepo,
+      indicesRepository: repo,
+      liturgicalSeasonService: _FakeSeasonService(),
+    );
+
+    final start = DateTime(2026, 3, 22, 23, 40);
+    final batch = await useCase.fetchBatch(
+      language: 'pt-br',
+      count: 2,
+      startTime: start,
+      intervalMinutes: 15,
+    );
+
+    expect(batch[0].dayOfWeek, 1);
+    expect(batch[0].text, 'DomA');
+    expect(batch[1].dayOfWeek, 2);
+    expect(batch[1].text, 'SegA');
   });
 }

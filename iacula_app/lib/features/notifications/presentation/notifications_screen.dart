@@ -12,8 +12,6 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../settings/presentation/settings_screen.dart';
-import '../application/use_cases/schedule_core_reminders_use_case.dart';
-import '../application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../domain/entities/notification_history_entry.dart';
 
 final _historyForDayProvider =
@@ -118,42 +116,14 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         );
                         await ref.read(updateSettingsUseCaseProvider).call(updated);
 
-                        final schedulerRepo =
-                            ref.read(notificationSchedulerRepositoryProvider);
-                        await schedulerRepo.cancelAll();
-
-                        if (value) {
-                          final season = await ref
-                              .read(liturgicalSeasonServiceProvider)
-                              .getCurrentSeason();
-                          await ScheduleCoreRemindersUseCase(
-                            schedulerRepo,
-                            quoteFetcher: ({
-                              required String language,
-                              required DateTime now,
-                            }) {
-                              if (updated.escrivaPointsFeedEnabled) {
-                                return ref
-                                    .read(getNextEscrivaPointsQuoteUseCaseProvider)
-                                    .call(language: language, now: now);
-                              }
-                              return ref
-                                  .read(getNextQuoteUseCaseProvider)
-                                  .call(language: language, now: now);
-                            },
-                            notificationHistoryRepository: ref.read(
-                              notificationHistoryRepositoryProvider,
-                            ),
-                            lastDeliveredCardRepository: ref.read(
-                              lastDeliveredCardRepositoryProvider,
-                            ),
-                          ).call(
-                            updated,
-                            isEasterSeason: season == LiturgicalSeason.easter,
-                          );
-                          await ScheduleLiturgyRemindersUseCase(schedulerRepo)
-                              .call(updated);
-                        }
+                        final season = await ref
+                            .read(liturgicalSeasonServiceProvider)
+                            .getCurrentSeason();
+                        await ref.read(rebuildNotificationsUseCaseProvider).call(
+                          updated,
+                          isEasterSeason: season == LiturgicalSeason.easter,
+                          showImmediate: false,
+                        );
 
                         ref.invalidate(_settingsProvider);
                         ref.invalidate(_availableHistoryDatesProvider);

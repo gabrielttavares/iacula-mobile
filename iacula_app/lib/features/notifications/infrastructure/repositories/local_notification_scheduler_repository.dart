@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:developer' as developer;
+import 'dart:io' show Platform;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -33,6 +35,47 @@ final class LocalNotificationSchedulerRepository
   bool _permissionGranted = false;
 
   bool get permissionGranted => _permissionGranted;
+
+  /// True after [schedule]/[scheduleWithId] fell back to inexact mode on Android.
+  bool usedInexactScheduleFallback = false;
+
+  @override
+  void resetScheduleTelemetry() {
+    usedInexactScheduleFallback = false;
+  }
+
+  @override
+  Future<bool?> canScheduleExactNotifications() async {
+    if (!Platform.isAndroid) return null;
+    final androidImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    return androidImpl?.canScheduleExactNotifications();
+  }
+
+  @override
+  Future<bool?> requestExactAlarmsPermission() async {
+    if (!Platform.isAndroid) return null;
+    final androidImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    return androidImpl?.requestExactAlarmsPermission();
+  }
+
+  /// Requests exact-alarm permission when [intervalMinutes] is short enough that OS batching would break cadence.
+  Future<void> ensureExactAlarmsForShortIntervals({
+    required bool notificationsEnabled,
+    required int intervalMinutes,
+  }) async {
+    if (!Platform.isAndroid || !notificationsEnabled) return;
+    if (intervalMinutes > 15) return;
+    final can = await canScheduleExactNotifications();
+    if (can == false) {
+      await requestExactAlarmsPermission();
+    }
+  }
 
   Future<bool> initialize({bool requestPermission = true}) async {
     _singleton = this;
@@ -190,11 +233,20 @@ final class LocalNotificationSchedulerRepository
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: repeat,
       );
+      developer.log(
+        'zonedSchedule exactAllowWhileIdle id=$id type=${event.type.name}',
+        name: 'LocalNotificationScheduler',
+      );
     } on PlatformException catch (e) {
       if (e.code != 'exact_alarms_not_permitted') {
         rethrow;
       }
 
+      usedInexactScheduleFallback = true;
+      developer.log(
+        'zonedSchedule fell back to inexactAllowWhileIdle id=$id type=${event.type.name}',
+        name: 'LocalNotificationScheduler',
+      );
       await _plugin.zonedSchedule(
         id,
         event.title,
@@ -238,11 +290,20 @@ final class LocalNotificationSchedulerRepository
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: repeat,
       );
+      developer.log(
+        'scheduleWithId exactAllowWhileIdle id=$id type=${event.type.name}',
+        name: 'LocalNotificationScheduler',
+      );
     } on PlatformException catch (e) {
       if (e.code != 'exact_alarms_not_permitted') {
         rethrow;
       }
 
+      usedInexactScheduleFallback = true;
+      developer.log(
+        'scheduleWithId fell back to inexactAllowWhileIdle id=$id type=${event.type.name}',
+        name: 'LocalNotificationScheduler',
+      );
       await _plugin.zonedSchedule(
         id,
         event.title,

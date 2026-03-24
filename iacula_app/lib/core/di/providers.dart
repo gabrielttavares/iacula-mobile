@@ -16,6 +16,8 @@ import '../../features/liturgical/domain/liturgical_context.dart';
 import '../../features/liturgical/domain/services/liturgical_season_service.dart';
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
+import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
+import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import '../../features/notifications/domain/repositories/notification_history_repository.dart';
 import '../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
@@ -541,6 +543,52 @@ final schedulePhraseNotificationsUseCaseProvider =
       return SchedulePhraseNotificationsUseCase(
         ref.watch(notificationSchedulerRepositoryProvider),
         ref.watch(customPhraseRepositoryProvider),
+      );
+    });
+
+final rebuildNotificationsUseCaseProvider =
+    Provider<RebuildNotificationsUseCase>((ref) {
+      return RebuildNotificationsUseCase(
+        scheduler: ref.watch(notificationSchedulerRepositoryProvider),
+        notificationHistoryRepository: ref.watch(
+          notificationHistoryRepositoryProvider,
+        ),
+        lastDeliveredCardRepository: ref.watch(
+          lastDeliveredCardRepositoryProvider,
+        ),
+        scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(
+          ref.watch(notificationSchedulerRepositoryProvider),
+        ),
+        schedulePhraseNotifications: ref.watch(
+          schedulePhraseNotificationsUseCaseProvider,
+        ),
+        quoteFetcher: ({required String language, required DateTime now}) async {
+          final settings = await ref.read(getSettingsUseCaseProvider).call();
+          if (settings.escrivaPointsFeedEnabled) {
+            return ref
+                .read(getNextEscrivaPointsQuoteUseCaseProvider)
+                .call(language: language, now: now);
+          }
+          return ref
+              .read(getNextQuoteUseCaseProvider)
+              .call(language: language, now: now);
+        },
+        batchFetcherForSettings: (settings) {
+          if (settings.escrivaPointsFeedEnabled) return null;
+          return ({
+            required String language,
+            required int count,
+            required DateTime startTime,
+            required int intervalMinutes,
+          }) {
+            return ref.read(getNextQuoteUseCaseProvider).fetchBatch(
+              language: language,
+              count: count,
+              startTime: startTime,
+              intervalMinutes: intervalMinutes,
+            );
+          };
+        },
       );
     });
 

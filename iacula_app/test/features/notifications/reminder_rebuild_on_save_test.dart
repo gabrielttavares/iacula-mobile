@@ -4,7 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
-import 'package:iacula_app/features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
+import 'package:iacula_app/features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
+import 'package:iacula_app/features/custom_phrases/domain/entities/custom_phrase.dart';
+import 'package:iacula_app/features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
+import 'package:iacula_app/features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
@@ -60,6 +63,15 @@ final class _FakeNotificationSchedulerRepository
   Future<void> cancelById(int id) async {
     scheduled.removeWhere((e) => e.scheduledId == id);
   }
+
+  @override
+  Future<bool?> canScheduleExactNotifications() async => true;
+
+  @override
+  Future<bool?> requestExactAlarmsPermission() async => true;
+
+  @override
+  void resetScheduleTelemetry() {}
 }
 
 final class _FakeQuoteContentRepository implements QuoteContentRepository {
@@ -130,15 +142,38 @@ final class _InMemoryLastDeliveredCardRepository
   }
 }
 
+final class _EmptyCustomPhraseRepository implements CustomPhraseRepository {
+  @override
+  Future<void> delete(String id) async {}
+
+  @override
+  Future<CustomPhrase?> getById(String id) async => null;
+
+  @override
+  Future<List<CustomPhrase>> listAll() async => [];
+
+  @override
+  Future<void> save(CustomPhrase phrase) async {}
+
+  @override
+  Stream<List<CustomPhrase>> watchAll() => const Stream.empty();
+}
+
 void main() {
   test('saving settings cancels and rebuilds reminders', () async {
     final settings = Settings.defaults.copyWith(laudesEnabled: true);
     final schedulerRepo = _FakeNotificationSchedulerRepository();
 
-    await schedulerRepo.cancelAll();
     final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
-    await ScheduleCoreRemindersUseCase(
-      schedulerRepo,
+    await RebuildNotificationsUseCase(
+      scheduler: schedulerRepo,
+      notificationHistoryRepository: InMemoryNotificationHistoryRepository(),
+      lastDeliveredCardRepository: _InMemoryLastDeliveredCardRepository(),
+      scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(schedulerRepo),
+      schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
+        schedulerRepo,
+        _EmptyCustomPhraseRepository(),
+      ),
       quoteFetcher: ({required String language, required DateTime now}) async {
         return const Quote(
           text: 'Jaculatoria de teste',
@@ -147,10 +182,8 @@ void main() {
           season: LiturgicalSeason.ordinary,
         );
       },
-      notificationHistoryRepository: InMemoryNotificationHistoryRepository(),
-      lastDeliveredCardRepository: _InMemoryLastDeliveredCardRepository(),
-    ).call(settings, isEasterSeason: season == LiturgicalSeason.easter);
-    await ScheduleLiturgyRemindersUseCase(schedulerRepo).call(settings);
+      batchFetcherForSettings: (_) => null,
+    ).call(settings, isEasterSeason: season == LiturgicalSeason.easter, showImmediate: false);
 
     expect(schedulerRepo.cancelAllCalls, 1);
     expect(

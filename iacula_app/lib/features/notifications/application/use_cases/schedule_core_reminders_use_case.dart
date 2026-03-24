@@ -120,9 +120,10 @@ final class ScheduleCoreRemindersUseCase {
         Duration(minutes: settings.intervalMinutes * (i + 1)),
       );
       final quote = scheduledQuotes[i];
+      final scheduledId = quoteScheduleIdBase + i;
 
       await _scheduler.scheduleWithId(
-        quoteScheduleIdBase,
+        scheduledId,
         ReminderEvent(
           type: ReminderEventType.quoteInterval,
           title: 'Iacula',
@@ -131,7 +132,7 @@ final class ScheduleCoreRemindersUseCase {
           withVibration: true,
           isAlarm: false,
           routeTarget: NotificationRouteTarget.home,
-          scheduledId: quoteScheduleIdBase,
+          scheduledId: scheduledId,
           quoteTheme: quote.theme,
           quoteSeason: quote.season.name,
           quoteFeastName: quote.feastName,

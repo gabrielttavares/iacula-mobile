@@ -62,4 +62,13 @@ final class InMemoryNotificationSchedulerRepository
   Future<void> cancelAll() async {
     _events.clear();
   }
+
+  @override
+  Future<bool?> canScheduleExactNotifications() async => true;
+
+  @override
+  Future<bool?> requestExactAlarmsPermission() async => true;
+
+  @override
+  void resetScheduleTelemetry() {}
 }
