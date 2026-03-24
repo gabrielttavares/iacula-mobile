@@ -7,16 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		109808004E130E5BE246B6F9 /* IaculaWidgetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903F748E2F88DF3F0CC5124 /* IaculaWidgetProvider.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		149D7F26EAFACECD55602285 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0F0BF6ED27B7541D80FCBD0 /* SwiftUI.framework */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		3EB51E56DD757713DF4C7D5B /* IaculaWidgetEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6923E9746C88378778A25072 /* IaculaWidgetEntryView.swift */; };
 		65E224D1585D022CD7F86245 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFA57BB824983D62D270C7E7 /* Pods_Runner.framework */; };
+		69B5975F354810731FA2A812 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EFCF21A17D08BFCA6B62792 /* WidgetKit.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */; };
 		88682ECD99FA0D890586F266 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85B50E49A3985210F40AD576 /* Pods_RunnerTests.framework */; };
+		94505E7F56FE8589C86250B8 /* IaculaWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AFF46525E7C70081B018442 /* IaculaWidget.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		AD3631719DA95127A01AFC18 /* IaculaWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4EC346F84D8E014E6BB1E16D /* IaculaWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BC141A208FC3B70EA831803B /* Pods_IaculaWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 038FEA228BFEE572388DB863 /* Pods_IaculaWidgetExtension.framework */; };
+		DCB7406A611EAE9718562E8F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAA6EFAAD7615C4CC2D4781A /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,6 +34,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 97C146ED1CF9000F007C117D;
 			remoteInfo = Runner;
+		};
+		F3C95F51FF31931CAE6D4EA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2117EDF06193C4E3CE9F9C88;
+			remoteInfo = IaculaWidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -40,24 +55,43 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BB6855D23DE34535A964EE20 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AD3631719DA95127A01AFC18 /* IaculaWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		038FEA228BFEE572388DB863 /* Pods_IaculaWidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IaculaWidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A34DF9CBEE5F117A0526CFD /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		1DDBC2FDEBF9DDC5CF3E9F3E /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1EFCF21A17D08BFCA6B62792 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
+		23B46FC0B2307FCC7B7433CA /* Pods-IaculaWidgetExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IaculaWidgetExtension.debug.xcconfig"; path = "Target Support Files/Pods-IaculaWidgetExtension/Pods-IaculaWidgetExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		2C9C071F355AB5AA4AA1981D /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33A555C3C25B35756EA3C7EB /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		4EC346F84D8E014E6BB1E16D /* IaculaWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = IaculaWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		52CFACEF0D0743014B969A09 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		5903F748E2F88DF3F0CC5124 /* IaculaWidgetProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IaculaWidgetProvider.swift; sourceTree = "<group>"; };
+		5AFF46525E7C70081B018442 /* IaculaWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IaculaWidget.swift; sourceTree = "<group>"; };
+		6923E9746C88378778A25072 /* IaculaWidgetEntryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IaculaWidgetEntryView.swift; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		85B50E49A3985210F40AD576 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		95236A390650FAC52A8E22D4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,7 +99,12 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B32B6870B922499E45640E17 /* Pods-IaculaWidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IaculaWidgetExtension.release.xcconfig"; path = "Target Support Files/Pods-IaculaWidgetExtension/Pods-IaculaWidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
+		BAA6EFAAD7615C4CC2D4781A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		DD5241EABAADFE19E15CAB81 /* Pods-IaculaWidgetExtension.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IaculaWidgetExtension.profile.xcconfig"; path = "Target Support Files/Pods-IaculaWidgetExtension/Pods-IaculaWidgetExtension.profile.xcconfig"; sourceTree = "<group>"; };
 		EFA57BB824983D62D270C7E7 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0F0BF6ED27B7541D80FCBD0 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
+		F35D1D084864837BF17ED9E4 /* IaculaWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = IaculaWidget.entitlements; sourceTree = "<group>"; };
 		F72F47ED19D0CAB45047F780 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,6 +114,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				88682ECD99FA0D890586F266 /* Pods_RunnerTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5F197C305374FE3B04759C09 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCB7406A611EAE9718562E8F /* Foundation.framework in Frameworks */,
+				69B5975F354810731FA2A812 /* WidgetKit.framework in Frameworks */,
+				149D7F26EAFACECD55602285 /* SwiftUI.framework in Frameworks */,
+				BC141A208FC3B70EA831803B /* Pods_IaculaWidgetExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,12 +139,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		138BFD734E3D7C65DDE93F42 /* IaculaWidget */ = {
+			isa = PBXGroup;
+			children = (
+				5AFF46525E7C70081B018442 /* IaculaWidget.swift */,
+				5903F748E2F88DF3F0CC5124 /* IaculaWidgetProvider.swift */,
+				6923E9746C88378778A25072 /* IaculaWidgetEntryView.swift */,
+				95236A390650FAC52A8E22D4 /* Info.plist */,
+				F35D1D084864837BF17ED9E4 /* IaculaWidget.entitlements */,
+			);
+			name = IaculaWidget;
+			path = IaculaWidget;
+			sourceTree = "<group>";
+		};
 		331C8082294A63A400263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
 				331C807B294A618700263BE5 /* RunnerTests.swift */,
 			);
 			path = RunnerTests;
+			sourceTree = "<group>";
+		};
+		61872349EE26B22BB5CEA114 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				BAA6EFAAD7615C4CC2D4781A /* Foundation.framework */,
+				1EFCF21A17D08BFCA6B62792 /* WidgetKit.framework */,
+				F0F0BF6ED27B7541D80FCBD0 /* SwiftUI.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
@@ -117,6 +190,7 @@
 				331C8082294A63A400263BE5 /* RunnerTests */,
 				F5645974E601539BD6E6C2DA /* Pods */,
 				ED24A32E31B0F8976378402D /* Frameworks */,
+				138BFD734E3D7C65DDE93F42 /* IaculaWidget */,
 			);
 			sourceTree = "<group>";
 		};
@@ -125,6 +199,7 @@
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
+				4EC346F84D8E014E6BB1E16D /* IaculaWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,6 +225,8 @@
 			children = (
 				EFA57BB824983D62D270C7E7 /* Pods_Runner.framework */,
 				85B50E49A3985210F40AD576 /* Pods_RunnerTests.framework */,
+				61872349EE26B22BB5CEA114 /* iOS */,
+				038FEA228BFEE572388DB863 /* Pods_IaculaWidgetExtension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -163,6 +240,9 @@
 				1DDBC2FDEBF9DDC5CF3E9F3E /* Pods-RunnerTests.debug.xcconfig */,
 				33A555C3C25B35756EA3C7EB /* Pods-RunnerTests.release.xcconfig */,
 				0A34DF9CBEE5F117A0526CFD /* Pods-RunnerTests.profile.xcconfig */,
+				B32B6870B922499E45640E17 /* Pods-IaculaWidgetExtension.release.xcconfig */,
+				23B46FC0B2307FCC7B7433CA /* Pods-IaculaWidgetExtension.debug.xcconfig */,
+				DD5241EABAADFE19E15CAB81 /* Pods-IaculaWidgetExtension.profile.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
@@ -171,6 +251,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		2117EDF06193C4E3CE9F9C88 /* IaculaWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1AC000525645999AB1C4939 /* Build configuration list for PBXNativeTarget "IaculaWidgetExtension" */;
+			buildPhases = (
+				E056A7D6E529D510DC5133B4 /* [CP] Check Pods Manifest.lock */,
+				82548B9553D9EA8E4A0BDCCA /* Sources */,
+				5F197C305374FE3B04759C09 /* Frameworks */,
+				22B882FFC9FC5D0900ECC70D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IaculaWidgetExtension;
+			productName = IaculaWidgetExtension;
+			productReference = 4EC346F84D8E014E6BB1E16D /* IaculaWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		331C8080294A63A400263BE5 /* RunnerTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 331C8087294A63A400263BE5 /* Build configuration list for PBXNativeTarget "RunnerTests" */;
@@ -202,10 +300,12 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				4DC667450CA80014E99DDF34 /* [CP] Embed Pods Frameworks */,
+				BB6855D23DE34535A964EE20 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				9DABC1AA233D42F77DD5F51E /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
@@ -222,6 +322,9 @@
 				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
+					2117EDF06193C4E3CE9F9C88 = {
+						CreatedOnToolsVersion = 15.0;
+					};
 					331C8080294A63A400263BE5 = {
 						CreatedOnToolsVersion = 14.0;
 						TestTargetID = 97C146ED1CF9000F007C117D;
@@ -247,11 +350,19 @@
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
+				2117EDF06193C4E3CE9F9C88 /* IaculaWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		22B882FFC9FC5D0900ECC70D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		331C807F294A63A400263BE5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -343,6 +454,28 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
 		};
+		E056A7D6E529D510DC5133B4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-IaculaWidgetExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		E40EF1CF68A8FCEAAC2AD968 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -376,6 +509,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		82548B9553D9EA8E4A0BDCCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				94505E7F56FE8589C86250B8 /* IaculaWidget.swift in Sources */,
+				109808004E130E5BE246B6F9 /* IaculaWidgetProvider.swift in Sources */,
+				3EB51E56DD757713DF4C7D5B /* IaculaWidgetEntryView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EA1CF9000F007C117D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -393,6 +536,12 @@
 			isa = PBXTargetDependency;
 			target = 97C146ED1CF9000F007C117D /* Runner */;
 			targetProxy = 331C8085294A63A400263BE5 /* PBXContainerItemProxy */;
+		};
+		9DABC1AA233D42F77DD5F51E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = IaculaWidgetExtension;
+			target = 2117EDF06193C4E3CE9F9C88 /* IaculaWidgetExtension */;
+			targetProxy = F3C95F51FF31931CAE6D4EA3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -474,6 +623,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -536,6 +686,33 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = Profile;
+		};
+		6AE2621341E633DD4BDECCFA /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD5241EABAADFE19E15CAB81 /* Pods-IaculaWidgetExtension.profile.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = IaculaWidget/IaculaWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = IaculaWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.iaculaApp.IaculaWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Profile;
 		};
@@ -656,6 +833,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -678,6 +856,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -692,6 +871,60 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
+		};
+		CF209BF8B5AD4E504E209AF7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B32B6870B922499E45640E17 /* Pods-IaculaWidgetExtension.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = IaculaWidget/IaculaWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = IaculaWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.iaculaApp.IaculaWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F4613BA972E07AEFB42DDE51 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 23B46FC0B2307FCC7B7433CA /* Pods-IaculaWidgetExtension.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = IaculaWidget/IaculaWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = IaculaWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.iaculaApp.IaculaWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
@@ -722,6 +955,16 @@
 				97C147061CF9000F007C117D /* Debug */,
 				97C147071CF9000F007C117D /* Release */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1AC000525645999AB1C4939 /* Build configuration list for PBXNativeTarget "IaculaWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF209BF8B5AD4E504E209AF7 /* Release */,
+				F4613BA972E07AEFB42DDE51 /* Debug */,
+				6AE2621341E633DD4BDECCFA /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

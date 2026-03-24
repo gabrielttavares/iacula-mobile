@@ -1,3 +1,4 @@
+import '../../../home_widget/home_widget_service.dart';
 import '../../../prayers/domain/services/prayer_scheduler.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../../../settings/domain/entities/settings.dart';
@@ -75,9 +76,11 @@ final class ScheduleCoreRemindersUseCase {
       );
     }
 
-    await _lastDeliveredCardRepository.save(
-      LastDeliveredCard.fromQuote(resolvedImmediate, deliveredAt: current),
-    );
+    final deliveredCard =
+        LastDeliveredCard.fromQuote(resolvedImmediate, deliveredAt: current);
+    await _lastDeliveredCardRepository.save(deliveredCard);
+
+    await HomeWidgetService.instance.updateWidget(deliveredCard);
 
     await _notificationHistoryRepository.add(
       NotificationHistoryEntry(

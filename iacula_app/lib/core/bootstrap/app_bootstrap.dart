@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/home_widget/home_widget_service.dart';
+import '../../features/notifications/domain/entities/last_delivered_card.dart';
 import '../../features/favorites/infrastructure/repositories/isar_favorite_repository.dart';
 import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
 import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
@@ -182,6 +184,13 @@ final class AppBootstrap {
             immediateQuote: immediateQuote,
             isEasterSeason: currentSeason == LiturgicalSeason.easter,
             showImmediate: false,
+          );
+          // Update home screen widget with the current quote
+          await HomeWidgetService.instance.updateWidget(
+            LastDeliveredCard.fromQuote(
+              immediateQuote,
+              deliveredAt: DateTime.now(),
+            ),
           );
           await Future.wait([
             SchedulePhraseNotificationsUseCase(
