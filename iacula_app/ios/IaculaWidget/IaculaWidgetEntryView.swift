@@ -1,16 +1,6 @@
 import SwiftUI
 import WidgetKit
 
-#if canImport(UIKit)
-import UIKit
-typealias WidgetImage = UIImage
-#elseif canImport(AppKit)
-import AppKit
-typealias WidgetImage = NSImage
-#else
-typealias WidgetImage = Data
-#endif
-
 struct QuoteEntry: TimelineEntry {
     let date: Date
     let smallImage: WidgetImage?

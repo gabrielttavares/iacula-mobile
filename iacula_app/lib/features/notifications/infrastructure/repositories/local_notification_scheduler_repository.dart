@@ -207,7 +207,8 @@ final class LocalNotificationSchedulerRepository
       playSound: true,
       visibility: NotificationVisibility.public,
       styleInformation: BigTextStyleInformation(event.body),
-      ongoing: event.type == ReminderEventType.quoteInterval,
+      // Quote reminders must stay user-dismissible on Android.
+      ongoing: false,
     );
   }
 

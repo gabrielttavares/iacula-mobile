@@ -23,6 +23,7 @@ void main() {
       expect(details.largeIcon, isNull);
       expect(details.channelId, 'quotes_reminder');
       expect(details.actions, isNull);
+      expect(details.ongoing, isFalse);
     });
 
     test('keeps alarm actions and liturgy channel mapping unchanged', () {
@@ -42,6 +43,8 @@ void main() {
 
       expect(details.channelId, 'liturgy_hours_alarm');
       expect(details.actions, isNull);
+      expect(details.fullScreenIntent, isTrue);
+      expect(details.ongoing, isFalse);
     });
   });
 }
