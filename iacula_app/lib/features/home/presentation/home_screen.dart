@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,7 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../../auth/domain/entities/auth_user.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
+import '../../notifications/domain/entities/notification_history_entry.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
@@ -34,6 +36,23 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  Timer? _heroRefreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _heroRefreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (!mounted) return;
+      ref.invalidate(_homeQuoteProvider);
+    });
+  }
+
+  @override
+  void dispose() {
+    _heroRefreshTimer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isFallback =
@@ -161,7 +180,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             HapticFeedback.lightImpact();
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (_) => const ExaminationReadingScreen(),
+                                builder: (_) =>
+                                    const ExaminationReadingScreen(),
                               ),
                             );
                           },
@@ -381,13 +401,12 @@ class _FeatureCardsList extends StatelessWidget {
           child: ImageBackgroundCard(
             key: const Key('home_custom_phrases_card'),
             title: 'Minhas frases',
-            imageAsset: 'assets/placeholders/sections/minhas-frases/minhas-frases.jpeg',
+            imageAsset:
+                'assets/placeholders/sections/minhas-frases/minhas-frases.jpeg',
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (_) => const CustomPhrasesScreen(),
-                ),
+                CupertinoPageRoute(builder: (_) => const CustomPhrasesScreen()),
               );
             },
             height: 120,
@@ -422,11 +441,7 @@ class _RailCard extends StatelessWidget {
                   context.colors.textPrimary,
                   BlendMode.srcIn,
                 ),
-                child: Image.asset(
-                  iconPath!,
-                  width: 28,
-                  height: 28,
-                ),
+                child: Image.asset(iconPath!, width: 28, height: 28),
               ),
             const Spacer(),
             Text(
@@ -477,7 +492,7 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
 
   final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
   final phrases = phrasesAsync.valueOrNull ?? [];
-  final now = DateTime.now();
+  final now = ref.watch(homeNowProvider);
   final matching = phrases
       .where((p) => p.isActive && p.displayOnHero && p.schedule.matchesNow(now))
       .toList();
@@ -495,6 +510,21 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     );
   }
 
+  final history = await ref
+      .watch(notificationHistoryRepositoryProvider)
+      .listForDay(now);
+  final dueEntries = history.where((entry) => !entry.deliveredAt.isAfter(now));
+  NotificationHistoryEntry? latestDueEntry;
+  for (final entry in dueEntries) {
+    if (latestDueEntry == null ||
+        entry.deliveredAt.isAfter(latestDueEntry.deliveredAt)) {
+      latestDueEntry = entry;
+    }
+  }
+  if (latestDueEntry != null) {
+    return _quoteFromHistoryEntry(latestDueEntry, now);
+  }
+
   final lastCard = await ref.watch(lastDeliveredCardRepositoryProvider).load();
   if (lastCard != null && _isSameDay(lastCard.deliveredAt, now)) {
     return lastCard.toQuote();
@@ -510,3 +540,18 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
 
 bool _isSameDay(DateTime a, DateTime b) =>
     a.year == b.year && a.month == b.month && a.day == b.day;
+
+Quote _quoteFromHistoryEntry(NotificationHistoryEntry entry, DateTime now) {
+  final season = LiturgicalSeason.values.firstWhere(
+    (candidate) => candidate.name == entry.season,
+    orElse: () => LiturgicalSeason.ordinary,
+  );
+  return Quote(
+    text: entry.quoteText,
+    dayOfWeek: now.weekday,
+    theme: entry.theme,
+    season: season,
+    imagePath: entry.imagePath,
+    feastName: entry.feastName,
+  );
+}
