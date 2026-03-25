@@ -10,23 +10,23 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
   const AssetQuoteContentRepository();
 
   static AssetManifest? _manifestCache;
-  static final Map<(String, LiturgicalSeason), Map<String, DayQuotes>> _quotesCache = {};
+  static final Map<LiturgicalSeason, Map<String, DayQuotes>> _quotesCache = {};
   static final Map<(int, LiturgicalSeason), List<String>> _dayImagesCache = {};
 
   static Future<AssetManifest> _getManifest() async {
     return _manifestCache ??= await AssetManifest.loadFromAssetBundle(rootBundle);
   }
 
+  /// [language] is ignored; bundled quotes are always loaded from the pt-BR JSON assets.
   @override
   Future<Map<String, DayQuotes>> loadQuotes({
     required String language,
     required LiturgicalSeason season,
   }) async {
-    final key = (language, season);
-    final cached = _quotesCache[key];
+    final cached = _quotesCache[season];
     if (cached != null) return cached;
 
-    final path = await _resolveQuotePath(language: language, season: season);
+    final path = await _resolveQuotePath(season: season);
 
     try {
       final jsonString = await rootBundle.loadString(path);
@@ -45,7 +45,7 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
         );
       });
 
-      _quotesCache[key] = result;
+      _quotesCache[season] = result;
       return result;
     } catch (_) {
       return const <String, DayQuotes>{};
@@ -126,23 +126,17 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
     return images.isEmpty ? null : images.first;
   }
 
-  Future<String> _resolveQuotePath({
-    required String language,
-    required LiturgicalSeason season,
-  }) async {
+  Future<String> _resolveQuotePath({required LiturgicalSeason season}) async {
     final manifest = await _getManifest();
     final assets = manifest.listAssets().toSet();
 
-    final preferred = _quotePath(language: language, season: season);
+    final preferred = _quotePath(season: season);
     if (assets.contains(preferred)) {
       return preferred;
     }
 
-    final fallbacks = <String>[
-      'assets/seed/quotes/$language/quotes.json',
+    const fallbacks = <String>[
       'assets/seed/quotes/pt-br/quotes.json',
-      'assets/seed/quotes/en/quotes.json',
-      'assets/seed/quotes/la/quotes.json',
     ];
 
     for (final candidate in fallbacks) {
@@ -154,18 +148,17 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
     return preferred;
   }
 
-  String _quotePath({required String language, required LiturgicalSeason season}) {
+  String _quotePath({required LiturgicalSeason season}) {
     if (season == LiturgicalSeason.ordinary) {
-      return 'assets/seed/quotes/$language/quotes.json';
+      return 'assets/seed/quotes/pt-br/quotes.json';
     }
 
-    // Seasonal corpus exists only in pt-br in source repository.
     return switch (season) {
       LiturgicalSeason.advent => 'assets/seed/quotes/pt-br/advent.json',
       LiturgicalSeason.lent => 'assets/seed/quotes/pt-br/lent.json',
       LiturgicalSeason.easter => 'assets/seed/quotes/pt-br/easter.json',
       LiturgicalSeason.christmas => 'assets/seed/quotes/pt-br/christmas.json',
-      LiturgicalSeason.ordinary => 'assets/seed/quotes/$language/quotes.json',
+      LiturgicalSeason.ordinary => 'assets/seed/quotes/pt-br/quotes.json',
     };
   }
 

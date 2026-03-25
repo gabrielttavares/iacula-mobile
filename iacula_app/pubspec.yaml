@@ -54,8 +54,6 @@ flutter:
   assets:
     - assets/images/
     - assets/images/auth/
-    - assets/seed/quotes/en/
-    - assets/seed/quotes/la/
     - assets/seed/quotes/pt-br/
     - assets/seed/prayers/en/
     - assets/seed/prayers/la/

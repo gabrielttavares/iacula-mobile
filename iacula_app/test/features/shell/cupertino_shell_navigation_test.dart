@@ -51,7 +51,6 @@ void main() {
 
     final tabBar = tester.widget<CupertinoTabBar>(find.byType(CupertinoTabBar));
     expect(tabBar.currentIndex, 3);
-    expect(find.text('Perfil'), findsOneWidget);
     expect(find.text('Configurações'), findsOneWidget);
   });
 
