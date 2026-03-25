@@ -18,7 +18,6 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 }
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
-  final _pageController = PageController();
   final _nameController = TextEditingController();
   int _currentPage = 0;
   bool _saving = false;
@@ -35,81 +34,112 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     if (!mounted) {
       return;
     }
-    _nameController.text = settings.displayName ?? '';
+    if (_nameController.text.isEmpty) {
+      _nameController.text = settings.displayName ?? '';
+    }
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     _nameController.dispose();
     super.dispose();
   }
 
   void _goToPage(int page) {
-    _pageController.animateToPage(
-      page,
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.easeInOut,
-    );
+    if (_currentPage == page) {
+      return;
+    }
+    setState(() => _currentPage = page);
   }
 
   @override
   Widget build(BuildContext context) {
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
+      resizeToAvoidBottomInset: false,
       child: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                onPageChanged: (page) =>
-                    setState(() => _currentPage = page),
-                children: [
-                  _WelcomePage(
-                    onContinue: () => _goToPage(1),
+        child: AnimatedPadding(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+          padding: EdgeInsets.only(bottom: keyboardInset),
+          child: Column(
+            children: [
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  switchInCurve: Curves.easeOut,
+                  switchOutCurve: Curves.easeIn,
+                  transitionBuilder: (child, animation) {
+                    final offsetTween = Tween<Offset>(
+                      begin: const Offset(0.08, 0),
+                      end: Offset.zero,
+                    );
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: offsetTween.animate(animation),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: KeyedSubtree(
+                    key: ValueKey(_currentPage),
+                    child: _buildPage(),
                   ),
-                  _NameInputPage(
-                    controller: _nameController,
-                    saving: _saving,
-                    onContinue: _saveNameAndContinue,
-                  ),
-                  _NotificationSetupPage(
-                    selectedInterval: _selectedInterval,
-                    onIntervalChanged: (v) =>
-                        setState(() => _selectedInterval = v),
-                    saving: _saving,
-                    onComplete: _completeWithNotifications,
-                    onSkip: _skipWithoutAccount,
-                  ),
-                ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(3, (i) {
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: _currentPage == i ? 24 : 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: _currentPage == i
-                          ? context.colors.primaryButton
-                          : context.colors.separator,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  );
-                }),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(3, (i) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: _currentPage == i ? 24 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: _currentPage == i
+                            ? context.colors.primaryButton
+                            : context.colors.separator,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    );
+                  }),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildPage() {
+    switch (_currentPage) {
+      case 0:
+        return _WelcomePage(
+          onContinue: () => _goToPage(1),
+        );
+      case 1:
+        return _NameInputPage(
+          controller: _nameController,
+          saving: _saving,
+          onContinue: _saveNameAndContinue,
+        );
+      case 2:
+        return _NotificationSetupPage(
+          selectedInterval: _selectedInterval,
+          onIntervalChanged: (v) => setState(() => _selectedInterval = v),
+          saving: _saving,
+          onComplete: _completeWithNotifications,
+          onSkip: _skipWithoutAccount,
+        );
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
   Future<void> _completeWithNotifications() async {
@@ -193,11 +223,12 @@ class _WelcomePage extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 460),
         child: ListView(
           physics: const BouncingScrollPhysics(),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: EdgeInsets.fromLTRB(
             IaculaSpacing.md,
             IaculaSpacing.md,
             IaculaSpacing.md,
-            IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+            IaculaSpacing.xl,
           ),
           children: [
             const _BrandBlock(),
@@ -270,11 +301,12 @@ class _NotificationSetupPage extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 460),
         child: ListView(
           physics: const BouncingScrollPhysics(),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: EdgeInsets.fromLTRB(
             IaculaSpacing.md,
             IaculaSpacing.xl,
             IaculaSpacing.md,
-            IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+            IaculaSpacing.xl,
           ),
           children: [
             Icon(
@@ -437,11 +469,12 @@ class _NameInputPage extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 460),
         child: ListView(
           physics: const BouncingScrollPhysics(),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: EdgeInsets.fromLTRB(
             IaculaSpacing.md,
             IaculaSpacing.xl,
             IaculaSpacing.md,
-            IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+            IaculaSpacing.xl,
           ),
           children: [
             Icon(
@@ -468,6 +501,7 @@ class _NameInputPage extends StatelessWidget {
                 placeholder: 'Seu nome',
                 textInputAction: TextInputAction.done,
                 clearButtonMode: OverlayVisibilityMode.editing,
+                onSubmitted: (_) => onContinue(),
               ),
             ),
             const SizedBox(height: IaculaSpacing.md),
