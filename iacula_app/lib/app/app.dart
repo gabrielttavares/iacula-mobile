@@ -14,6 +14,9 @@ import '../features/notifications/presentation/alarm_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/liturgy_hours/presentation/liturgy_hours_landing_screen.dart';
 import '../features/night_prayer/presentation/night_prayer_screen.dart';
+import '../features/home_widget/application/use_cases/get_current_widget_quote_use_case.dart';
+import '../features/home_widget/home_widget_service.dart';
+import '../features/notifications/domain/entities/last_delivered_card.dart';
 import '../features/prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../features/prayers/presentation/prayer_screen.dart';
 import '../features/settings/domain/entities/settings.dart';
@@ -29,6 +32,7 @@ class IaculaApp extends ConsumerStatefulWidget {
 class _IaculaAppState extends ConsumerState<IaculaApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   StreamSubscription? _actionsSub;
+  Timer? _widgetRefreshSub;
   Settings? _settings;
 
   @override
@@ -51,6 +55,11 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
 
       final scheduler = ref.read(notificationSchedulerRepositoryProvider);
       final handler = HandleNotificationActionUseCase(scheduler);
+
+      _widgetRefreshSub = Timer.periodic(const Duration(seconds: 30), (_) {
+        unawaited(_syncWidgetFromTimeline());
+      });
+      unawaited(_syncWidgetFromTimeline());
 
       _actionsSub = scheduler.actions.listen((event) async {
         final shouldOpen = await handler.call(event);
@@ -113,7 +122,6 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
               ),
             );
             return;
-
         }
       });
     });
@@ -122,7 +130,42 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
   @override
   void dispose() {
     _actionsSub?.cancel();
+    _widgetRefreshSub?.cancel();
     super.dispose();
+  }
+
+  Future<void> _syncWidgetFromTimeline() async {
+    final settings = await ref.read(getSettingsUseCaseProvider).call();
+    if (!settings.onboardingCompleted || !settings.notificationsEnabled) {
+      return;
+    }
+
+    final selector = GetCurrentWidgetQuoteUseCase(
+      notificationHistoryRepository: ref.read(
+        notificationHistoryRepositoryProvider,
+      ),
+      lastDeliveredCardRepository: ref.read(
+        lastDeliveredCardRepositoryProvider,
+      ),
+      fallbackQuoteFetcher:
+          ({required String language, required DateTime now}) {
+            if (settings.escrivaPointsFeedEnabled) {
+              return ref
+                  .read(getNextEscrivaPointsQuoteUseCaseProvider)
+                  .call(language: language, now: now);
+            }
+            return ref
+                .read(getNextQuoteUseCaseProvider)
+                .call(language: language, now: now);
+          },
+    );
+
+    final quote = await selector.call(language: settings.language);
+    final card = LastDeliveredCard.fromQuote(
+      quote,
+      deliveredAt: DateTime.now(),
+    );
+    await HomeWidgetService.instance.updateWidgetIfChanged(card);
   }
 
   Future<void> _loadSettings() async {

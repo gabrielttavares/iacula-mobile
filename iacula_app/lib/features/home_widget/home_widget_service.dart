@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:home_widget/home_widget.dart';
 
@@ -21,6 +22,7 @@ final class HomeWidgetService {
   static const _iOSWidgetName = 'IaculaWidget';
 
   bool _initialized = false;
+  final _signatureCache = WidgetCardSignatureCache();
 
   Future<void> _ensureInitialized() async {
     if (_initialized) return;
@@ -33,7 +35,7 @@ final class HomeWidgetService {
   /// 1. Writes key fields to shared storage for native fallback reading.
   /// 2. Renders the Flutter [WidgetQuoteCard] as a PNG for each size variant.
   /// 3. Triggers a native widget refresh.
-  Future<void> updateWidget(LastDeliveredCard card) async {
+  Future<bool> updateWidget(LastDeliveredCard card) async {
     try {
       await _ensureInitialized();
 
@@ -42,18 +44,9 @@ final class HomeWidgetService {
         HomeWidget.saveWidgetData<String>('quote_text', card.quoteText),
         HomeWidget.saveWidgetData<String>('season', card.season),
         HomeWidget.saveWidgetData<String>('theme', card.theme),
-        HomeWidget.saveWidgetData<String?>(
-          'feast_name',
-          card.feastName,
-        ),
-        HomeWidget.saveWidgetData<String?>(
-          'image_path',
-          card.imagePath,
-        ),
-        HomeWidget.saveWidgetData<String?>(
-          'source',
-          card.source,
-        ),
+        HomeWidget.saveWidgetData<String?>('feast_name', card.feastName),
+        HomeWidget.saveWidgetData<String?>('image_path', card.imagePath),
+        HomeWidget.saveWidgetData<String?>('source', card.source),
         HomeWidget.saveWidgetData<String?>(
           'reference_label',
           card.referenceLabel,
@@ -93,6 +86,7 @@ final class HomeWidgetService {
         'Home widget updated successfully.',
         name: 'HomeWidgetService',
       );
+      return true;
     } catch (e, st) {
       developer.log(
         'Failed to update home widget: $e',
@@ -100,7 +94,19 @@ final class HomeWidgetService {
         error: e,
         stackTrace: st,
       );
+      return false;
     }
+  }
+
+  Future<bool> updateWidgetIfChanged(LastDeliveredCard card) async {
+    if (!_signatureCache.shouldPublish(card)) {
+      return false;
+    }
+    final updated = await updateWidget(card);
+    if (updated) {
+      _signatureCache.markPublished(card);
+    }
+    return updated;
   }
 
   Future<void> _renderWidgetImage(
@@ -123,5 +129,30 @@ final class HomeWidgetService {
       logicalSize: logicalSize,
       pixelRatio: ui.PlatformDispatcher.instance.views.first.devicePixelRatio,
     );
+  }
+}
+
+@visibleForTesting
+final class WidgetCardSignatureCache {
+  String? _lastSignature;
+
+  bool shouldPublish(LastDeliveredCard card) {
+    return signatureOf(card) != _lastSignature;
+  }
+
+  void markPublished(LastDeliveredCard card) {
+    _lastSignature = signatureOf(card);
+  }
+
+  String signatureOf(LastDeliveredCard card) {
+    return [
+      card.quoteText,
+      card.theme,
+      card.season,
+      card.imagePath ?? '',
+      card.feastName ?? '',
+      card.source ?? '',
+      card.referenceLabel ?? '',
+    ].join('|');
   }
 }
