@@ -1,12 +1,29 @@
 import SwiftUI
 import WidgetKit
 
+#if canImport(UIKit)
+import UIKit
+typealias WidgetImage = UIImage
+#elseif canImport(AppKit)
+import AppKit
+typealias WidgetImage = NSImage
+#else
+typealias WidgetImage = Data
+#endif
+
+struct QuoteEntry: TimelineEntry {
+    let date: Date
+    let smallImage: WidgetImage?
+    let mediumImage: WidgetImage?
+    let largeImage: WidgetImage?
+}
+
 struct IaculaWidgetEntryView: View {
     var entry: QuoteEntry
 
     @Environment(\.widgetFamily) var family
 
-    private var currentImage: UIImage? {
+    private var currentImage: WidgetImage? {
         switch family {
         case .systemSmall:  return entry.smallImage
         case .systemMedium: return entry.mediumImage
@@ -25,14 +42,24 @@ struct IaculaWidgetEntryView: View {
     }
 
     @ViewBuilder
-    private func widgetContent(image: UIImage?) -> some View {
+    private func widgetContent(image: WidgetImage?) -> some View {
         if let uiImage = image {
             GeometryReader { geo in
+                #if canImport(UIKit)
                 Image(uiImage: uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: geo.size.width, height: geo.size.height)
                     .clipped()
+                #elseif canImport(AppKit)
+                Image(nsImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+                #else
+                Color.clear
+                #endif
             }
         } else {
             ZStack {
