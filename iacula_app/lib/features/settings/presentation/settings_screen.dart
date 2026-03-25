@@ -9,6 +9,7 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
+import '../../home_widget/home_widget_service.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../domain/entities/settings.dart';
@@ -133,8 +134,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         Text(
                           _notificationsEnabled
                               ? _angelusEnabled
-                                  ? 'Jaculatória a cada $_intervalMinutes minutos e Angelus ao meio-dia.'
-                                  : 'Jaculatória a cada $_intervalMinutes minutos.'
+                                    ? 'Jaculatória a cada $_intervalMinutes minutos e Angelus ao meio-dia.'
+                                    : 'Jaculatória a cada $_intervalMinutes minutos.'
                               : 'As notificações estão desativadas.',
                           style: context.textStyles.secondary,
                         ),
@@ -179,8 +180,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: CupertinoSlidingSegmentedControl<int>(
-                              groupValue: _intervalOptions.contains(
-                                      _intervalMinutes)
+                              groupValue:
+                                  _intervalOptions.contains(_intervalMinutes)
                                   ? _intervalMinutes
                                   : 15,
                               padding: const EdgeInsets.all(4),
@@ -262,8 +263,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            const Icon(CupertinoIcons.textformat_size,
-                                size: 14),
+                            const Icon(
+                              CupertinoIcons.textformat_size,
+                              size: 14,
+                            ),
                             Expanded(
                               child: CupertinoSlider(
                                 value: _loadedSettings.prayerFontSize,
@@ -280,8 +283,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 },
                               ),
                             ),
-                            const Icon(CupertinoIcons.textformat_size,
-                                size: 22),
+                            const Icon(
+                              CupertinoIcons.textformat_size,
+                              size: 22,
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -350,10 +355,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ],
                           ),
                         ),
-                        Container(
-                          height: 1,
-                          color: context.colors.separator,
-                        ),
+                        Container(height: 1, color: context.colors.separator),
                         Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: IaculaRadius.innerPadding,
@@ -374,10 +376,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     const SizedBox(height: 4),
                                     Text(
                                       'Exibe em Minhas frases a opção de usar estes conteúdos no lugar das jaculatórias.',
-                                      style:
-                                          context.textStyles.secondary.copyWith(
-                                        fontSize: 12,
-                                      ),
+                                      style: context.textStyles.secondary
+                                          .copyWith(fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -389,8 +389,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 onChanged: (value) {
                                   HapticFeedback.selectionClick();
                                   setState(
-                                    () => _escrivaPointsFeedOptionVisible =
-                                        value,
+                                    () =>
+                                        _escrivaPointsFeedOptionVisible = value,
                                   );
                                 },
                               ),
@@ -425,8 +425,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             SliverPadding(
               padding: EdgeInsets.only(
-                bottom:
-                    MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+                bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
               ),
             ),
           ],
@@ -544,14 +543,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);
+    await HomeWidgetService.instance.saveIntervalMinutes(_intervalMinutes);
 
-    final season =
-        await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason();
-    final rebuildResult = await ref.read(rebuildNotificationsUseCaseProvider).call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
+    final season = await ref
+        .read(liturgicalSeasonServiceProvider)
+        .getCurrentSeason();
+    final rebuildResult = await ref
+        .read(rebuildNotificationsUseCaseProvider)
+        .call(
+          settings,
+          isEasterSeason: season == LiturgicalSeason.easter,
+          showImmediate: false,
+        );
 
     final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
     if (schedulerRepo is LocalNotificationSchedulerRepository) {
@@ -559,7 +562,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (mounted) {
         setState(() {
           _exactAlarmsReliable = canExact ?? true;
-          _inexactScheduleFallbackUsed = schedulerRepo.usedInexactScheduleFallback;
+          _inexactScheduleFallbackUsed =
+              schedulerRepo.usedInexactScheduleFallback;
           _shortIntervalReliabilityNotGuaranteed =
               rebuildResult.shortIntervalReliabilityNotGuaranteed;
         });

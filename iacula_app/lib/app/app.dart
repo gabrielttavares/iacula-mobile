@@ -136,6 +136,9 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
 
   Future<void> _syncWidgetFromTimeline() async {
     final settings = await ref.read(getSettingsUseCaseProvider).call();
+    await HomeWidgetService.instance.saveIntervalMinutes(
+      settings.intervalMinutes,
+    );
     if (!settings.onboardingCompleted || !settings.notificationsEnabled) {
       return;
     }
@@ -165,7 +168,10 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
       quote,
       deliveredAt: DateTime.now(),
     );
-    await HomeWidgetService.instance.updateWidgetIfChanged(card);
+    await HomeWidgetService.instance.updateWidgetIfChanged(
+      card,
+      intervalMinutes: settings.intervalMinutes,
+    );
   }
 
   Future<void> _loadSettings() async {

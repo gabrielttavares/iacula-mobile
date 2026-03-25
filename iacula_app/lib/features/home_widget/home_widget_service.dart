@@ -35,7 +35,10 @@ final class HomeWidgetService {
   /// 1. Writes key fields to shared storage for native fallback reading.
   /// 2. Renders the Flutter [WidgetQuoteCard] as a PNG for each size variant.
   /// 3. Triggers a native widget refresh.
-  Future<bool> updateWidget(LastDeliveredCard card) async {
+  Future<bool> updateWidget(
+    LastDeliveredCard card, {
+    int? intervalMinutes,
+  }) async {
     try {
       await _ensureInitialized();
 
@@ -51,6 +54,8 @@ final class HomeWidgetService {
           'reference_label',
           card.referenceLabel,
         ),
+        if (intervalMinutes != null)
+          HomeWidget.saveWidgetData<int>('interval_minutes', intervalMinutes),
       ]);
 
       // Render Flutter widget as bitmap for each size variant
@@ -98,15 +103,32 @@ final class HomeWidgetService {
     }
   }
 
-  Future<bool> updateWidgetIfChanged(LastDeliveredCard card) async {
+  Future<bool> updateWidgetIfChanged(
+    LastDeliveredCard card, {
+    int? intervalMinutes,
+  }) async {
     if (!_signatureCache.shouldPublish(card)) {
       return false;
     }
-    final updated = await updateWidget(card);
+    final updated = await updateWidget(card, intervalMinutes: intervalMinutes);
     if (updated) {
       _signatureCache.markPublished(card);
     }
     return updated;
+  }
+
+  Future<void> saveIntervalMinutes(int intervalMinutes) async {
+    try {
+      await _ensureInitialized();
+      await HomeWidget.saveWidgetData<int>('interval_minutes', intervalMinutes);
+    } catch (e, st) {
+      developer.log(
+        'Failed to save interval_minutes for widget: $e',
+        name: 'HomeWidgetService',
+        error: e,
+        stackTrace: st,
+      );
+    }
   }
 
   Future<void> _renderWidgetImage(

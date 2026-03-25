@@ -12,12 +12,13 @@ import '../../domain/repositories/notification_scheduler_repository.dart';
 typedef QuoteFetcher =
     Future<Quote> Function({required String language, required DateTime now});
 
-typedef QuoteBatchFetcher = Future<List<Quote>> Function({
-  required String language,
-  required int count,
-  required DateTime startTime,
-  required int intervalMinutes,
-});
+typedef QuoteBatchFetcher =
+    Future<List<Quote>> Function({
+      required String language,
+      required int count,
+      required DateTime startTime,
+      required int intervalMinutes,
+    });
 
 final class ScheduleCoreRemindersUseCase {
   static const int quoteScheduleIdBase = 9000;
@@ -50,11 +51,9 @@ final class ScheduleCoreRemindersUseCase {
     final current = now ?? DateTime.now();
     await _notificationHistoryRepository.clearFrom(current);
 
-    final resolvedImmediate = immediateQuote ??
-        await _quoteFetcher(
-          language: settings.language,
-          now: current,
-        );
+    final resolvedImmediate =
+        immediateQuote ??
+        await _quoteFetcher(language: settings.language, now: current);
 
     if (showImmediate) {
       const immediateId = quoteScheduleIdBase - 1;
@@ -76,11 +75,16 @@ final class ScheduleCoreRemindersUseCase {
       );
     }
 
-    final deliveredCard =
-        LastDeliveredCard.fromQuote(resolvedImmediate, deliveredAt: current);
+    final deliveredCard = LastDeliveredCard.fromQuote(
+      resolvedImmediate,
+      deliveredAt: current,
+    );
     await _lastDeliveredCardRepository.save(deliveredCard);
 
-    await HomeWidgetService.instance.updateWidget(deliveredCard);
+    await HomeWidgetService.instance.updateWidget(
+      deliveredCard,
+      intervalMinutes: settings.intervalMinutes,
+    );
 
     await _notificationHistoryRepository.add(
       NotificationHistoryEntry(
@@ -108,10 +112,9 @@ final class ScheduleCoreRemindersUseCase {
         final quoteAt = current.add(
           Duration(minutes: settings.intervalMinutes * (i + 1)),
         );
-        scheduledQuotes.add(await _quoteFetcher(
-          language: settings.language,
-          now: quoteAt,
-        ));
+        scheduledQuotes.add(
+          await _quoteFetcher(language: settings.language, now: quoteAt),
+        );
       }
     }
 

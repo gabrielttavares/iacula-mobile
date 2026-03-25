@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../../../custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
+import '../../../home_widget/home_widget_service.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../../../settings/domain/entities/settings.dart';
 import '../../domain/entities/notification_rebuild_result.dart';
@@ -10,9 +11,8 @@ import '../../domain/repositories/notification_scheduler_repository.dart';
 import 'schedule_core_reminders_use_case.dart';
 import 'schedule_liturgy_reminders_use_case.dart';
 
-typedef QuoteBatchFetcherForSettings = QuoteBatchFetcher? Function(
-  Settings settings,
-);
+typedef QuoteBatchFetcherForSettings =
+    QuoteBatchFetcher? Function(Settings settings);
 
 final class RebuildNotificationsUseCase {
   RebuildNotificationsUseCase({
@@ -50,6 +50,9 @@ final class RebuildNotificationsUseCase {
   }) async {
     Future<NotificationRebuildResult> run() async {
       final scheduler = _scheduler;
+      await HomeWidgetService.instance.saveIntervalMinutes(
+        settings.intervalMinutes,
+      );
       scheduler.resetScheduleTelemetry();
       final reliability = await scheduler.evaluateShortIntervalReliability(
         notificationsEnabled: settings.notificationsEnabled,
@@ -84,10 +87,11 @@ final class RebuildNotificationsUseCase {
     }
 
     final previous = _queueTail ?? Future<void>.value();
-    final resultFuture = previous
-        .catchError((Object _, StackTrace __) {})
-        .then((_) => run());
-    _queueTail = resultFuture.whenComplete(() {});
+    final resultFuture = previous.then((_) => run());
+    _queueTail = resultFuture.then(
+      (_) {},
+      onError: (Object _, StackTrace __) {},
+    );
     return resultFuture;
   }
 }

@@ -184,4 +184,43 @@ void main() {
       expect(fallbackCalls, 1);
     },
   );
+
+  test(
+    'reflects tighter schedule after interval changes from 15 to 5 minutes',
+    () async {
+      final useCase = GetCurrentWidgetQuoteUseCase(
+        notificationHistoryRepository: _FakeNotificationHistoryRepository([
+          NotificationHistoryEntry(
+            quoteText: '15-min slot',
+            theme: 'T15',
+            season: LiturgicalSeason.lent.name,
+            deliveredAt: DateTime(2026, 3, 24, 10, 0),
+          ),
+          NotificationHistoryEntry(
+            quoteText: '5-min slot',
+            theme: 'T5',
+            season: LiturgicalSeason.lent.name,
+            deliveredAt: DateTime(2026, 3, 24, 10, 5),
+          ),
+        ]),
+        lastDeliveredCardRepository: _FakeLastDeliveredCardRepository(null),
+        fallbackQuoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return const Quote(
+                text: 'fallback',
+                dayOfWeek: 2,
+                theme: 'fallback',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+      );
+
+      final quote = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 3, 24, 10, 6),
+      );
+
+      expect(quote.text, '5-min slot');
+    },
+  );
 }
