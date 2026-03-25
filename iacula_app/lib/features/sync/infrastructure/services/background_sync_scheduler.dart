@@ -50,6 +50,8 @@ final class BackgroundSyncScheduler {
 
   static const String periodicTaskId = 'iacula_sync_periodic_v1';
   static const String periodicTaskName = 'iacula.sync.periodic';
+  static const String widgetTaskId = 'iacula_widget_refresh_periodic_v1';
+  static const String widgetTaskName = 'iacula.widget.refresh.periodic';
 
   static Future<void> Function(String task, Map<String, dynamic>? inputData)?
   _taskRunner;
@@ -78,6 +80,11 @@ final class BackgroundSyncScheduler {
         taskId: periodicTaskId,
         taskName: periodicTaskName,
         requiresNetwork: true,
+      );
+      await _gateway.registerPeriodicTask(
+        taskId: widgetTaskId,
+        taskName: widgetTaskName,
+        requiresNetwork: false,
       );
     } catch (_) {
       // Background scheduling is best-effort and may be unavailable in tests/dev runtimes.

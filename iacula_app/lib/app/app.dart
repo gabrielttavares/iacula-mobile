@@ -8,15 +8,15 @@ import '../core/di/providers.dart';
 import '../core/presentation/shell_screen.dart';
 import '../core/theme/app_theme.dart';
 import '../core/theme/lora_font_loader.dart';
+import '../features/home_widget/application/use_cases/get_current_widget_quote_use_case.dart';
+import '../features/home_widget/application/use_cases/refresh_widget_from_timeline_use_case.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/liturgy_hours/presentation/liturgy_hours_landing_screen.dart';
 import '../features/night_prayer/presentation/night_prayer_screen.dart';
-import '../features/home_widget/application/use_cases/get_current_widget_quote_use_case.dart';
 import '../features/home_widget/home_widget_service.dart';
-import '../features/notifications/domain/entities/last_delivered_card.dart';
 import '../features/prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../features/prayers/presentation/prayer_screen.dart';
 import '../features/settings/domain/entities/settings.dart';
@@ -46,6 +46,10 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
       final syncService = ref.read(connectivitySyncServiceProvider);
       syncService.start();
       BackgroundSyncScheduler.configureTaskRunner((task, inputData) async {
+        if (task == BackgroundSyncScheduler.widgetTaskName) {
+          await _makeWidgetRefreshUseCase().call();
+          return;
+        }
         await ref.read(syncOrchestratorProvider).syncAll();
       });
 
@@ -135,42 +139,37 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
   }
 
   Future<void> _syncWidgetFromTimeline() async {
-    final settings = await ref.read(getSettingsUseCaseProvider).call();
-    await HomeWidgetService.instance.saveIntervalMinutes(
-      settings.intervalMinutes,
-    );
-    if (!settings.onboardingCompleted || !settings.notificationsEnabled) {
-      return;
-    }
+    await _makeWidgetRefreshUseCase().call();
+  }
 
-    final selector = GetCurrentWidgetQuoteUseCase(
-      notificationHistoryRepository: ref.read(
-        notificationHistoryRepositoryProvider,
-      ),
-      lastDeliveredCardRepository: ref.read(
-        lastDeliveredCardRepositoryProvider,
-      ),
-      fallbackQuoteFetcher:
-          ({required String language, required DateTime now}) {
-            if (settings.escrivaPointsFeedEnabled) {
-              return ref
-                  .read(getNextEscrivaPointsQuoteUseCaseProvider)
-                  .call(language: language, now: now);
-            }
-            return ref
-                .read(getNextQuoteUseCaseProvider)
-                .call(language: language, now: now);
-          },
-    );
-
-    final quote = await selector.call(language: settings.language);
-    final card = LastDeliveredCard.fromQuote(
-      quote,
-      deliveredAt: DateTime.now(),
-    );
-    await HomeWidgetService.instance.updateWidgetIfChanged(
-      card,
-      intervalMinutes: settings.intervalMinutes,
+  RefreshWidgetFromTimelineUseCase _makeWidgetRefreshUseCase() {
+    return RefreshWidgetFromTimelineUseCase(
+      loadSettings: () => ref.read(getSettingsUseCaseProvider).call(),
+      selectQuote: ({required settings, required now}) {
+        final selector = GetCurrentWidgetQuoteUseCase(
+          notificationHistoryRepository: ref.read(
+            notificationHistoryRepositoryProvider,
+          ),
+          lastDeliveredCardRepository: ref.read(
+            lastDeliveredCardRepositoryProvider,
+          ),
+          fallbackQuoteFetcher:
+              ({required String language, required DateTime now}) {
+                if (settings.escrivaPointsFeedEnabled) {
+                  return ref
+                      .read(getNextEscrivaPointsQuoteUseCaseProvider)
+                      .call(language: language, now: now);
+                }
+                return ref
+                    .read(getNextQuoteUseCaseProvider)
+                    .call(language: language, now: now);
+              },
+        );
+        return selector.call(language: settings.language, now: now);
+      },
+      updateWidgetIfChanged: HomeWidgetService.instance.updateWidgetIfChanged,
+      saveIntervalMinutes: HomeWidgetService.instance.saveIntervalMinutes,
+      now: DateTime.now,
     );
   }
 

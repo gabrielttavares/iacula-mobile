@@ -2,17 +2,26 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/sync/infrastructure/services/background_sync_scheduler.dart';
 
 void main() {
-  test('registers periodic sync with connected network constraint', () async {
+  test('registers periodic sync and widget refresh tasks', () async {
     final gateway = _FakeBackgroundSyncGateway();
     final scheduler = BackgroundSyncScheduler(gateway: gateway);
 
     await scheduler.register();
 
     expect(gateway.initializeCalls, 1);
-    expect(gateway.registerCalls, 1);
-    expect(gateway.lastTaskName, BackgroundSyncScheduler.periodicTaskName);
-    expect(gateway.lastTaskId, BackgroundSyncScheduler.periodicTaskId);
-    expect(gateway.lastRequiresNetwork, isTrue);
+    expect(gateway.registerCalls, 2);
+    expect(gateway.calls, [
+      (
+        BackgroundSyncScheduler.periodicTaskId,
+        BackgroundSyncScheduler.periodicTaskName,
+        true,
+      ),
+      (
+        BackgroundSyncScheduler.widgetTaskId,
+        BackgroundSyncScheduler.widgetTaskName,
+        false,
+      ),
+    ]);
   });
 }
 
@@ -20,9 +29,7 @@ final class _FakeBackgroundSyncGateway implements BackgroundSyncGateway {
   int initializeCalls = 0;
   int registerCalls = 0;
 
-  String? lastTaskId;
-  String? lastTaskName;
-  bool? lastRequiresNetwork;
+  final List<(String, String, bool)> calls = [];
 
   @override
   Future<void> initialize() async {
@@ -36,8 +43,6 @@ final class _FakeBackgroundSyncGateway implements BackgroundSyncGateway {
     required bool requiresNetwork,
   }) async {
     registerCalls += 1;
-    lastTaskId = taskId;
-    lastTaskName = taskName;
-    lastRequiresNetwork = requiresNetwork;
+    calls.add((taskId, taskName, requiresNetwork));
   }
 }

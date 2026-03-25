@@ -17,4 +17,21 @@ void main() {
 
     expect(calls, 1);
   });
+
+  test('configured task runner receives widget refresh task', () async {
+    var receivedWidgetTask = false;
+
+    BackgroundSyncScheduler.configureTaskRunner((task, inputData) async {
+      if (task == BackgroundSyncScheduler.widgetTaskName) {
+        receivedWidgetTask = true;
+      }
+    });
+
+    await BackgroundSyncScheduler.runBackgroundTask(
+      BackgroundSyncScheduler.widgetTaskName,
+      null,
+    );
+
+    expect(receivedWidgetTask, isTrue);
+  });
 }

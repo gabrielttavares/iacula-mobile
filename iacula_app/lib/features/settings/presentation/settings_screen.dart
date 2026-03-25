@@ -490,7 +490,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: Text(
               'Não é possível garantir intervalos curtos (por exemplo, 5 minutos) sem alarmes exatos no Android. '
               'Sem essa permissão, o sistema pode atrasar as jaculatórias. '
-              'Abra as configurações do app e ative alarmes e lembretes exatos, se disponível.',
+              'Abra as configurações do app e ative alarmes e lembretes exatos, se disponível. '
+              'A atualização do widget em segundo plano também é em melhor esforço e pode atrasar dependendo do sistema.',
               style: context.textStyles.secondary.copyWith(
                 color: context.colors.textPrimary,
                 fontSize: 13,

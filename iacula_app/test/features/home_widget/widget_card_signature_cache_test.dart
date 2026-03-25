@@ -31,4 +31,24 @@ void main() {
     cache.markPublished(first);
     expect(cache.shouldPublish(second), isTrue);
   });
+
+  test('does not republish when only deliveredAt changes', () {
+    final cache = WidgetCardSignatureCache();
+    final first = LastDeliveredCard(
+      quoteText: 'Quote A',
+      theme: 'T',
+      season: LiturgicalSeason.lent.name,
+      deliveredAt: DateTime(2026, 3, 24, 10, 0),
+    );
+    final sameSlot = LastDeliveredCard(
+      quoteText: 'Quote A',
+      theme: 'T',
+      season: LiturgicalSeason.lent.name,
+      deliveredAt: DateTime(2026, 3, 24, 10, 5),
+    );
+
+    expect(cache.shouldPublish(first), isTrue);
+    cache.markPublished(first);
+    expect(cache.shouldPublish(sameSlot), isFalse);
+  });
 }
