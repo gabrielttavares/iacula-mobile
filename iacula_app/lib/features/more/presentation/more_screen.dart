@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/presentation/widgets/iacula_section_header.dart';
@@ -11,6 +12,19 @@ import '../../favorites/presentation/favorites_screen.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
+
+final appVersionProvider = FutureProvider<String>((ref) async {
+  try {
+    final info = await PackageInfo.fromPlatform();
+    final build = info.buildNumber.trim();
+    if (build.isEmpty) {
+      return info.version;
+    }
+    return '${info.version}+$build';
+  } catch (_) {
+    return '-';
+  }
+});
 
 class MoreScreen extends ConsumerWidget {
   const MoreScreen({super.key});
@@ -41,13 +55,21 @@ class MoreScreen extends ConsumerWidget {
                 _MoreItem(
                   label: 'Configurações',
                   icon: CupertinoIcons.settings,
-                  onTap: () => _navigate(context, const SettingsScreen(), 'Configurações'),
+                  onTap: () => _navigate(
+                    context,
+                    const SettingsScreen(),
+                    'Configurações',
+                  ),
                 ),
                 const SizedBox(height: IaculaSpacing.sm),
                 _MoreItem(
                   label: 'Notificações',
                   icon: CupertinoIcons.bell,
-                  onTap: () => _navigate(context, const NotificationsScreen(), 'Notificações'),
+                  onTap: () => _navigate(
+                    context,
+                    const NotificationsScreen(),
+                    'Notificações',
+                  ),
                 ),
                 const SizedBox(height: IaculaSpacing.lg),
                 const IaculaSectionHeader(title: 'Suporte e Sobre'),
@@ -84,38 +106,55 @@ class MoreScreen extends ConsumerWidget {
 
   void _navigate(BuildContext context, Widget screen, String title) {
     HapticFeedback.lightImpact();
-    Navigator.of(context).push(
-      CupertinoPageRoute(
-        builder: (_) => screen,
-        title: title,
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(CupertinoPageRoute(builder: (_) => screen, title: title));
   }
 
   void _showAbout(BuildContext context) {
     HapticFeedback.lightImpact();
     IaculaModal.showSheet<void>(
       context: context,
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(IaculaSpacing.lg),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Sobre o Iacula', style: context.textStyles.cardTitle),
-            const SizedBox(height: IaculaSpacing.md),
-            Text(
-              'O Iacula foi pensado para ajudar você a manter viva a oração breve no meio das tarefas normais do dia.\n\n'
-              'Inspirado na espiritualidade do trabalho santificado, o app procura acompanhar você nos momentos certos.',
-              style: context.textStyles.secondary,
-              textAlign: TextAlign.center,
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          final versionAsync = ref.watch(appVersionProvider);
+          final versionLabel = versionAsync.when(
+            data: (value) => 'Versão $value',
+            loading: () => 'Versão ...',
+            error: (_, __) => 'Versão -',
+          );
+
+          return Padding(
+            padding: const EdgeInsets.all(IaculaSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Sobre o Iacula', style: context.textStyles.cardTitle),
+                const SizedBox(height: IaculaSpacing.md),
+                Text(
+                  'O Iacula foi pensado para ajudar você a manter viva a oração breve no meio das tarefas normais do dia.\n\n'
+                  'Inspirado na espiritualidade do trabalho santificado, o app procura acompanhar você nos momentos certos.',
+                  style: context.textStyles.secondary,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: IaculaSpacing.md),
+                Text(
+                  versionLabel,
+                  style: context.textStyles.secondary.copyWith(fontSize: 13),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: IaculaSpacing.lg),
+                CupertinoButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Fechar',
+                    style: TextStyle(color: context.colors.primaryButton),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: IaculaSpacing.lg),
-            CupertinoButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Fechar', style: TextStyle(color: context.colors.primaryButton)),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -134,7 +173,7 @@ class MoreScreen extends ConsumerWidget {
 
   Future<void> _rateApp() async {
     HapticFeedback.lightImpact();
-    // Simple redirect to store as requested. 
+    // Simple redirect to store as requested.
     // In a real app we might use in_app_review, but following the direct instruction:
     final Uri storeUri = Uri.parse(
       'https://apps.apple.com/app/idYOUR_APP_ID', // Placeholder, user can update later
@@ -167,11 +206,7 @@ class _MoreItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 22,
-              color: context.colors.primaryButton,
-            ),
+            Icon(icon, size: 22, color: context.colors.primaryButton),
             const SizedBox(width: IaculaSpacing.md),
             Expanded(
               child: Text(

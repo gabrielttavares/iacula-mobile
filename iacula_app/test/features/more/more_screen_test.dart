@@ -9,9 +9,7 @@ import 'package:iacula_app/features/favorites/presentation/favorites_screen.dart
 void main() {
   testWidgets('MoreScreen renders all 7 items', (tester) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: CupertinoApp(home: MoreScreen()),
-      ),
+      const ProviderScope(child: CupertinoApp(home: MoreScreen())),
     );
     await tester.pumpAndSettle();
 
@@ -21,16 +19,14 @@ void main() {
     expect(find.text('Sobre'), findsOneWidget);
     expect(find.text('Reportar problema'), findsOneWidget);
     expect(find.text('Avaliar experiência'), findsOneWidget);
-    
+
     expect(find.text('Favoritos'), findsNothing);
     expect(find.text('Bíblia'), findsNothing);
   });
 
   testWidgets('MoreScreen navigates to Configurações', (tester) async {
     await tester.pumpWidget(
-      const ProviderScope(
-        child: CupertinoApp(home: MoreScreen()),
-      ),
+      const ProviderScope(child: CupertinoApp(home: MoreScreen())),
     );
     await tester.pumpAndSettle();
 
@@ -38,5 +34,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SettingsScreen), findsOneWidget);
+  });
+
+  testWidgets('Sobre sheet shows app version', (tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(child: CupertinoApp(home: MoreScreen())),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Sobre'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Versão'), findsOneWidget);
   });
 }
