@@ -1,6 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart'
-    show Colors, Material, Slider, SliderComponentShape, SliderTheme, SliderThemeData;
+    show
+        Colors,
+        Material,
+        Slider,
+        SliderComponentShape,
+        SliderTheme,
+        SliderThemeData;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -58,7 +64,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _themeMode = settings.themeMode;
     _notificationsEnabled = settings.notificationsEnabled;
     _angelusEnabled = settings.angelusEnabled;
-    _intervalMinutes = clampJaculatoriaIntervalMinutes(settings.intervalMinutes);
+    _intervalMinutes = clampJaculatoriaIntervalMinutes(
+      settings.intervalMinutes,
+    );
     _escrivaPointsFeedOptionVisible = settings.escrivaPointsFeedOptionVisible;
     _liturgicalSeasonEnabled = settings.liturgicalSeasonEnabled;
 
@@ -181,7 +189,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           _fieldLabel(context, 'Intervalo entre jaculatórias'),
                           const SizedBox(height: 8),
                           Text(
-                            formatJaculatoriaIntervalShortLabel(_intervalMinutes),
+                            formatJaculatoriaIntervalShortLabel(
+                              _intervalMinutes,
+                            ),
                             style: context.textStyles.cardTitle.copyWith(
                               fontSize: 18,
                             ),
@@ -194,22 +204,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               child: SliderTheme(
                                 data: SliderThemeData(
                                   trackHeight: 4,
-                                  activeTrackColor: context.colors.primaryButton,
+                                  activeTrackColor:
+                                      context.colors.primaryButton,
                                   inactiveTrackColor: context.colors.separator,
                                   thumbColor: CupertinoColors.white,
-                                  overlayShape:
-                                      SliderComponentShape.noOverlay,
+                                  overlayShape: SliderComponentShape.noOverlay,
                                 ),
                                 child: Slider(
-                                  value: _intervalMinutes
-                                      .toDouble()
-                                      .clamp(
-                                        kJaculatoriaIntervalMin.toDouble(),
-                                        kJaculatoriaIntervalMax.toDouble(),
-                                      ),
+                                  value: _intervalMinutes.toDouble().clamp(
+                                    kJaculatoriaIntervalMin.toDouble(),
+                                    kJaculatoriaIntervalMax.toDouble(),
+                                  ),
                                   min: kJaculatoriaIntervalMin.toDouble(),
                                   max: kJaculatoriaIntervalMax.toDouble(),
-                                  divisions: kJaculatoriaIntervalMax -
+                                  divisions:
+                                      kJaculatoriaIntervalMax -
                                       kJaculatoriaIntervalMin,
                                   onChanged: (value) {
                                     setState(
@@ -620,9 +629,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       notificationsEnabled: _notificationsEnabled,
       angelusEnabled: _angelusEnabled,
       escrivaPointsFeedOptionVisible: _escrivaPointsFeedOptionVisible,
-      escrivaPointsFeedEnabled: _escrivaPointsFeedOptionVisible
-          ? _loadedSettings.escrivaPointsFeedEnabled
-          : false,
+      escrivaPointsFeedEnabled: _escrivaPointsFeedOptionVisible,
       liturgicalSeasonEnabled: _liturgicalSeasonEnabled,
     );
 
@@ -630,9 +637,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await HomeWidgetService.instance.saveIntervalMinutes(_intervalMinutes);
 
     final season = _liturgicalSeasonEnabled
-        ? await ref
-            .read(liturgicalSeasonServiceProvider)
-            .getCurrentSeason()
+        ? await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason()
         : LiturgicalSeason.ordinary;
     final rebuildResult = await ref
         .read(rebuildNotificationsUseCaseProvider)
