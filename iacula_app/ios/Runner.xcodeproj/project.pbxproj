@@ -148,7 +148,6 @@
 				95236A390650FAC52A8E22D4 /* Info.plist */,
 				F35D1D084864837BF17ED9E4 /* IaculaWidget.entitlements */,
 			);
-			name = IaculaWidget;
 			path = IaculaWidget;
 			sourceTree = "<group>";
 		};
@@ -244,7 +243,6 @@
 				23B46FC0B2307FCC7B7433CA /* Pods-IaculaWidgetExtension.debug.xcconfig */,
 				DD5241EABAADFE19E15CAB81 /* Pods-IaculaWidgetExtension.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -625,6 +623,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 25NF3LAG4B;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -697,6 +696,7 @@
 				CODE_SIGN_ENTITLEMENTS = IaculaWidget/IaculaWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 25NF3LAG4B;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = IaculaWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -836,6 +836,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 25NF3LAG4B;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -859,6 +860,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 25NF3LAG4B;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -881,6 +883,7 @@
 				CODE_SIGN_ENTITLEMENTS = IaculaWidget/IaculaWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 25NF3LAG4B;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = IaculaWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -909,6 +912,7 @@
 				CODE_SIGN_ENTITLEMENTS = IaculaWidget/IaculaWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 25NF3LAG4B;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = IaculaWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
