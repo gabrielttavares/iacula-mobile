@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 11,
+      version: 12,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -46,7 +46,8 @@ final class AppDatabase {
             escriva_points_feed_enabled INTEGER NOT NULL DEFAULT 0,
             escriva_points_feed_option_visible INTEGER NOT NULL DEFAULT 0,
             notifications_enabled INTEGER NOT NULL DEFAULT 1,
-            angelus_enabled INTEGER NOT NULL DEFAULT 1
+            angelus_enabled INTEGER NOT NULL DEFAULT 1,
+            liturgical_season_enabled INTEGER NOT NULL DEFAULT 1
           )
         ''');
 
@@ -165,6 +166,11 @@ final class AppDatabase {
         if (oldVersion < 11) {
           await db.execute(
             'ALTER TABLE settings ADD COLUMN escriva_points_feed_option_visible INTEGER NOT NULL DEFAULT 0',
+          );
+        }
+        if (oldVersion < 12) {
+          await db.execute(
+            'ALTER TABLE settings ADD COLUMN liturgical_season_enabled INTEGER NOT NULL DEFAULT 1',
           );
         }
       },

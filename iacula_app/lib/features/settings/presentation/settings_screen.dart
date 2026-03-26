@@ -33,6 +33,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _inexactScheduleFallbackUsed = false;
   bool _shortIntervalReliabilityNotGuaranteed = false;
   bool _escrivaPointsFeedOptionVisible = false;
+  bool _liturgicalSeasonEnabled = true;
 
   bool _loading = true;
   bool _saving = false;
@@ -58,6 +59,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _angelusEnabled = settings.angelusEnabled;
     _intervalMinutes = settings.intervalMinutes;
     _escrivaPointsFeedOptionVisible = settings.escrivaPointsFeedOptionVisible;
+    _liturgicalSeasonEnabled = settings.liturgicalSeasonEnabled;
 
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
     if (scheduler is LocalNotificationSchedulerRepository) {
@@ -326,6 +328,49 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: IaculaRadius.innerPadding,
+                            vertical: 12,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Jaculatórias do tempo litúrgico',
+                                      style: context.textStyles.cardTitle
+                                          .copyWith(fontSize: 16),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _liturgicalSeasonEnabled
+                                          ? 'As jaculatórias seguem o tempo litúrgico atual (Advento, Quaresma, Páscoa…).'
+                                          : 'As jaculatórias seguem a ênfase do rito latino por dia da semana.',
+                                      style: context.textStyles.secondary
+                                          .copyWith(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              CupertinoSwitch(
+                                value: _liturgicalSeasonEnabled,
+                                activeTrackColor: context.colors.primaryButton,
+                                onChanged: (value) {
+                                  HapticFeedback.selectionClick();
+                                  setState(
+                                    () => _liturgicalSeasonEnabled = value,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(height: 1, color: context.colors.separator),
                         CupertinoButton(
                           padding: const EdgeInsets.symmetric(
                             horizontal: IaculaRadius.innerPadding,
@@ -541,14 +586,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       escrivaPointsFeedEnabled: _escrivaPointsFeedOptionVisible
           ? _loadedSettings.escrivaPointsFeedEnabled
           : false,
+      liturgicalSeasonEnabled: _liturgicalSeasonEnabled,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);
     await HomeWidgetService.instance.saveIntervalMinutes(_intervalMinutes);
 
-    final season = await ref
-        .read(liturgicalSeasonServiceProvider)
-        .getCurrentSeason();
+    final season = _liturgicalSeasonEnabled
+        ? await ref
+            .read(liturgicalSeasonServiceProvider)
+            .getCurrentSeason()
+        : LiturgicalSeason.ordinary;
     final rebuildResult = await ref
         .read(rebuildNotificationsUseCaseProvider)
         .call(

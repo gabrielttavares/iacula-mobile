@@ -1,3 +1,4 @@
+import '../../../liturgical/domain/liturgical_context.dart';
 import '../../../liturgical/domain/services/liturgical_season_service.dart';
 import '../../domain/entities/day_quotes.dart';
 import '../../domain/entities/quote.dart';
@@ -26,13 +27,16 @@ final class GetNextQuoteUseCase {
     required int count,
     required DateTime startTime,
     required int intervalMinutes,
+    bool liturgicalSeasonEnabled = true,
   }) async {
     if (count <= 0) return const [];
 
     final quotes = <Quote>[];
     final firstDate = startTime;
     final startDayOfWeek = _dayOfWeek1to7(firstDate);
-    final context = await _liturgicalSeasonService.getCurrentContext(date: firstDate);
+    final context = liturgicalSeasonEnabled
+        ? await _liturgicalSeasonService.getCurrentContext(date: firstDate)
+        : LiturgicalContext.ordinaryFallback;
 
     final seasonalCollection = await _contentRepository.loadQuotes(
       language: language,
@@ -110,10 +114,13 @@ final class GetNextQuoteUseCase {
   Future<Quote> call({
     required String language,
     DateTime? now,
+    bool liturgicalSeasonEnabled = true,
   }) async {
     final date = now ?? DateTime.now();
     final dayOfWeek = _dayOfWeek1to7(date);
-    final context = await _liturgicalSeasonService.getCurrentContext(date: date);
+    final context = liturgicalSeasonEnabled
+        ? await _liturgicalSeasonService.getCurrentContext(date: date)
+        : LiturgicalContext.ordinaryFallback;
 
     final seasonalCollection = await _contentRepository.loadQuotes(
       language: language,

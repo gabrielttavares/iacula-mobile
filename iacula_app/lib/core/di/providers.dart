@@ -571,7 +571,11 @@ final rebuildNotificationsUseCaseProvider =
           }
           return ref
               .read(getNextQuoteUseCaseProvider)
-              .call(language: language, now: now);
+              .call(
+                language: language,
+                now: now,
+                liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
+              );
         },
         batchFetcherForSettings: (settings) {
           if (settings.escrivaPointsFeedEnabled) return null;
@@ -586,6 +590,7 @@ final rebuildNotificationsUseCaseProvider =
               count: count,
               startTime: startTime,
               intervalMinutes: intervalMinutes,
+              liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
             );
           };
         },

@@ -46,6 +46,8 @@ final class SqliteSettingsRepository implements SettingsRepository {
       notificationsEnabled:
           (row['notifications_enabled'] as int? ?? 1) == 1,
       angelusEnabled: (row['angelus_enabled'] as int? ?? 1) == 1,
+      liturgicalSeasonEnabled:
+          (row['liturgical_season_enabled'] as int? ?? 1) == 1,
     );
   }
 
@@ -77,6 +79,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
           settings.escrivaPointsFeedOptionVisible ? 1 : 0,
       'notifications_enabled': settings.notificationsEnabled ? 1 : 0,
       'angelus_enabled': settings.angelusEnabled ? 1 : 0,
+      'liturgical_season_enabled': settings.liturgicalSeasonEnabled ? 1 : 0,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }

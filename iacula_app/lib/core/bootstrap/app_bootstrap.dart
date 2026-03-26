@@ -145,7 +145,11 @@ final class AppBootstrap {
       if (currentSettings.escrivaPointsFeedEnabled) {
         return escrivaPointsUseCase.call(language: language, now: now);
       }
-      return quoteUseCase.call(language: language, now: now);
+      return quoteUseCase.call(
+        language: language,
+        now: now,
+        liturgicalSeasonEnabled: currentSettings.liturgicalSeasonEnabled,
+      );
     };
 
     if (currentSettings.onboardingCompleted &&
@@ -157,8 +161,9 @@ final class AppBootstrap {
             language: currentSettings.language,
             now: DateTime.now(),
           );
-          final currentSeason =
-              await liturgicalSeasonService.getCurrentSeason();
+          final currentSeason = currentSettings.liturgicalSeasonEnabled
+              ? await liturgicalSeasonService.getCurrentSeason()
+              : LiturgicalSeason.ordinary;
           await RebuildNotificationsUseCase(
             scheduler: scheduler,
             notificationHistoryRepository: notificationHistoryRepo,
@@ -182,6 +187,7 @@ final class AppBootstrap {
                       count: count,
                       startTime: startTime,
                       intervalMinutes: intervalMinutes,
+                      liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
                     ),
           ).call(
             currentSettings,

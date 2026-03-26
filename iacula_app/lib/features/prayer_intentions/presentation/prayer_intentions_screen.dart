@@ -111,6 +111,14 @@ class PrayerIntentionsScreen extends ConsumerWidget {
                                   style: context.textStyles.secondary,
                                   textAlign: TextAlign.center,
                                 ),
+                                const SizedBox(height: 24),
+                                Text(
+                                  'Suas intenções ficam salvas apenas no seu celular. Ninguém terá acesso ao que você escrever.',
+                                  style: context.textStyles.secondary.copyWith(
+                                    fontSize: 12,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ],
                             ),
                           ),
@@ -122,6 +130,15 @@ class PrayerIntentionsScreen extends ConsumerWidget {
                           child: Column(
                             key: ValueKey<int>(state.openIntentions.length),
                             children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: Text(
+                                  'Suas intenções ficam salvas apenas no seu celular.',
+                                  style: context.textStyles.secondary.copyWith(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
                               for (int i = 0; i < state.openIntentions.length; i++)
                                 Padding(
                                   padding: const EdgeInsets.only(

@@ -55,8 +55,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settingsAsync = ref.watch(_heroSettingsProvider);
+    final liturgicalSeasonEnabled =
+        settingsAsync.valueOrNull?.liturgicalSeasonEnabled ?? true;
     final isFallback =
-        ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false;
+        !liturgicalSeasonEnabled ||
+        (ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false);
 
     final authState = ref.watch(authStateProvider);
     final localName = ref.watch(localDisplayNameProvider).valueOrNull;
@@ -522,12 +526,20 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     }
   }
   if (latestDueEntry != null) {
-    return _quoteFromHistoryEntry(latestDueEntry, now);
+    final quote = _quoteFromHistoryEntry(latestDueEntry, now);
+    if (settings.liturgicalSeasonEnabled ||
+        quote.season == LiturgicalSeason.ordinary) {
+      return quote;
+    }
   }
 
   final lastCard = await ref.watch(lastDeliveredCardRepositoryProvider).load();
   if (lastCard != null && _isSameDay(lastCard.deliveredAt, now)) {
-    return lastCard.toQuote();
+    final quote = lastCard.toQuote();
+    if (settings.liturgicalSeasonEnabled ||
+        quote.season == LiturgicalSeason.ordinary) {
+      return quote;
+    }
   }
 
   // Fallback: fetch a quote but accept it may advance the index.
@@ -535,7 +547,10 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   // or bootstrap hasn't completed yet), which is rare.
   return ref
       .watch(getNextQuoteUseCaseProvider)
-      .call(language: settings.language);
+      .call(
+        language: settings.language,
+        liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
+      );
 });
 
 bool _isSameDay(DateTime a, DateTime b) =>

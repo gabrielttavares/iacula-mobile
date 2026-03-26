@@ -22,6 +22,7 @@ final class Settings {
     this.escrivaPointsFeedOptionVisible = false,
     this.notificationsEnabled = true,
     this.angelusEnabled = true,
+    this.liturgicalSeasonEnabled = true,
   });
 
   final int intervalMinutes;
@@ -46,6 +47,7 @@ final class Settings {
   final bool escrivaPointsFeedOptionVisible;
   final bool notificationsEnabled;
   final bool angelusEnabled;
+  final bool liturgicalSeasonEnabled;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -68,6 +70,7 @@ final class Settings {
     escrivaPointsFeedOptionVisible: false,
     notificationsEnabled: true,
     angelusEnabled: true,
+    liturgicalSeasonEnabled: true,
   );
 
   Settings copyWith({
@@ -93,6 +96,7 @@ final class Settings {
     bool? escrivaPointsFeedOptionVisible,
     bool? notificationsEnabled,
     bool? angelusEnabled,
+    bool? liturgicalSeasonEnabled,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
@@ -121,6 +125,8 @@ final class Settings {
           this.escrivaPointsFeedOptionVisible,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       angelusEnabled: angelusEnabled ?? this.angelusEnabled,
+      liturgicalSeasonEnabled:
+          liturgicalSeasonEnabled ?? this.liturgicalSeasonEnabled,
     );
   }
 }
