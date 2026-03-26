@@ -9,7 +9,11 @@ final class GetNextEscrivaPointsQuoteUseCase {
 
   static const _bookIds = <String>['caminho', 'sulco', 'forja'];
 
-  Future<Quote> call({required String language, DateTime? now}) async {
+  Future<Quote> call({
+    required String language,
+    DateTime? now,
+    int cadenceMinutes = 15,
+  }) async {
     final date = now ?? DateTime.now();
     final dayOfWeek = (date.weekday % 7) + 1;
     final dayOfYear = date.difference(DateTime(date.year, 1, 1)).inDays;
@@ -56,7 +60,13 @@ final class GetNextEscrivaPointsQuoteUseCase {
       );
     }
 
-    final selected = pool[dayOfYear % pool.length];
+    final safeCadenceMinutes = cadenceMinutes <= 0 ? 15 : cadenceMinutes;
+    final minutesSinceMidnight = date.hour * 60 + date.minute;
+    final bucketsPerDay = (24 * 60 / safeCadenceMinutes).ceil();
+    final cadenceBucket = minutesSinceMidnight ~/ safeCadenceMinutes;
+    final sequenceIndex = dayOfYear * bucketsPerDay + cadenceBucket;
+
+    final selected = pool[sequenceIndex % pool.length];
     return Quote(
       text: selected.text,
       dayOfWeek: dayOfWeek,

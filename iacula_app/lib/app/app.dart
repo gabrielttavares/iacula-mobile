@@ -158,7 +158,11 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
                 if (settings.escrivaPointsFeedEnabled) {
                   return ref
                       .read(getNextEscrivaPointsQuoteUseCaseProvider)
-                      .call(language: language, now: now);
+                      .call(
+                        language: language,
+                        now: now,
+                        cadenceMinutes: settings.intervalMinutes,
+                      );
                 }
                 return ref
                     .read(getNextQuoteUseCaseProvider)

@@ -95,7 +95,7 @@ final class GetNextQuoteUseCase {
       indices = QuoteIndices(
         quoteIndices: {...indices.quoteIndices, qDayOfWeek: quoteStep.nextIndex},
         imageIndices: {...indices.imageIndices, qDayOfWeek: nextImageIndex},
-        lastDay: qDayOfWeek,
+        lastDay: startDayOfWeek,
       );
 
       quotes.add(Quote(

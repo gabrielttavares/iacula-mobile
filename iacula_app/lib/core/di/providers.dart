@@ -182,7 +182,9 @@ final notificationHistoryRepositoryProvider =
 
 final notificationHistoryEpochProvider = StateProvider<int>((ref) => 0);
 
-final notificationHistoryNowProvider = Provider<DateTime>((ref) => DateTime.now());
+final notificationHistoryNowProvider = Provider<DateTime>(
+  (ref) => DateTime.now(),
+);
 
 final localDisplayNameProvider = FutureProvider<String?>((ref) async {
   final settings = await ref.read(getSettingsUseCaseProvider).call();
@@ -438,11 +440,11 @@ final nativeShareServiceProvider = Provider<NativeShareService>((ref) {
   return const SharePlusNativeShareService();
 });
 
-final heroCardShareImageRendererProvider = Provider<HeroCardShareImageRenderer>((
-  ref,
-) {
-  return const HeroCardShareImageRenderer();
-});
+final heroCardShareImageRendererProvider = Provider<HeroCardShareImageRenderer>(
+  (ref) {
+    return const HeroCardShareImageRenderer();
+  },
+);
 
 final examinationReflectionRepositoryProvider =
     Provider<ExaminationReflectionRepository>((ref) {
@@ -562,21 +564,28 @@ final rebuildNotificationsUseCaseProvider =
         schedulePhraseNotifications: ref.watch(
           schedulePhraseNotificationsUseCaseProvider,
         ),
-        quoteFetcher: ({required String language, required DateTime now}) async {
-          final settings = await ref.read(getSettingsUseCaseProvider).call();
-          if (settings.escrivaPointsFeedEnabled) {
-            return ref
-                .read(getNextEscrivaPointsQuoteUseCaseProvider)
-                .call(language: language, now: now);
-          }
-          return ref
-              .read(getNextQuoteUseCaseProvider)
-              .call(
-                language: language,
-                now: now,
-                liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-              );
-        },
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              final settings = await ref
+                  .read(getSettingsUseCaseProvider)
+                  .call();
+              if (settings.escrivaPointsFeedEnabled) {
+                return ref
+                    .read(getNextEscrivaPointsQuoteUseCaseProvider)
+                    .call(
+                      language: language,
+                      now: now,
+                      cadenceMinutes: settings.intervalMinutes,
+                    );
+              }
+              return ref
+                  .read(getNextQuoteUseCaseProvider)
+                  .call(
+                    language: language,
+                    now: now,
+                    liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
+                  );
+            },
         batchFetcherForSettings: (settings) {
           if (settings.escrivaPointsFeedEnabled) return null;
           return ({
@@ -585,13 +594,15 @@ final rebuildNotificationsUseCaseProvider =
             required DateTime startTime,
             required int intervalMinutes,
           }) {
-            return ref.read(getNextQuoteUseCaseProvider).fetchBatch(
-              language: language,
-              count: count,
-              startTime: startTime,
-              intervalMinutes: intervalMinutes,
-              liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-            );
+            return ref
+                .read(getNextQuoteUseCaseProvider)
+                .fetchBatch(
+                  language: language,
+                  count: count,
+                  startTime: startTime,
+                  intervalMinutes: intervalMinutes,
+                  liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
+                );
           };
         },
       );

@@ -492,7 +492,10 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   if (settings.escrivaPointsFeedEnabled) {
     return ref
         .watch(getNextEscrivaPointsQuoteUseCaseProvider)
-        .call(language: settings.language);
+        .call(
+          language: settings.language,
+          cadenceMinutes: settings.intervalMinutes,
+        );
   }
 
   final phrasesAsync = ref.watch(customPhrasesNotifierProvider);

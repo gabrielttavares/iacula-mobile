@@ -65,6 +65,27 @@ void main() {
     final quote = await useCase.call(language: 'pt-br');
     expect(quote.text, 'Conteudo indisponivel para hoje.');
   });
+
+  test('rotates point across cadence buckets on same day', () async {
+    final useCase = GetNextEscrivaPointsQuoteUseCase(
+      LeituraRepository(
+        localSource: LeituraLocalSource(loadAsset: _fakeAssetLoader),
+      ),
+    );
+
+    final first = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 1, 1, 14, 24),
+      cadenceMinutes: 15,
+    );
+    final second = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 1, 1, 14, 39),
+      cadenceMinutes: 15,
+    );
+
+    expect(first.referenceLabel, isNot(second.referenceLabel));
+  });
 }
 
 Future<String> _fakeAssetLoader(String path) async {

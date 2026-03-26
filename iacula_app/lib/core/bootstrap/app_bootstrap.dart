@@ -59,284 +59,293 @@ final class AppBootstrap {
   const AppBootstrap._();
 
   static Future<List<Override>> createProductionOverrides() async {
-   try {
-    final env = AppEnv.fromDartDefines();
-
-    final db = AppDatabase.instance;
-    final isarStore = IsarStore.instance;
-
-    // Single spiritual Isar store (same path/name) — must not be instantiated twice
-    final localKeyProvider = SpiritualDataEncryptionKeyProvider(
-      store: FlutterSecureKvStore(),
-    );
-    final spiritualStore = SpiritualDataIsarStore(
-      keyProvider: localKeyProvider,
-    );
-
-    final settingsRepo = SqliteSettingsRepository(db);
-    final indicesRepo = SqliteQuoteIndicesRepository(db);
-    final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
-    final notificationHistoryRepo = SqliteNotificationHistoryRepository(db);
-    final mediaRepo = IsarMediaCatalogRepository(isarStore);
-    final favoriteRepo = IsarFavoriteRepository(store: isarStore);
-    final readingAnnotationRepo = IsarReadingAnnotationRepository(
-      store: isarStore,
-    );
-    final localPremiumRepo = IsarPremiumRepository(store: isarStore);
-    final localCustomPhraseRepo = IsarCustomPhraseRepository(spiritualStore);
-    const devPremiumOverride =
-        String.fromEnvironment('DEV_PREMIUM_OVERRIDE') == 'true';
-    if (devPremiumOverride) {
-      await localPremiumRepo.unlockPremium(
-        PremiumStatus(
-          isPremium: true,
-          purchaseDate: DateTime.now(),
-          storeTransactionId: 'dev-override',
-        ),
-      );
-    }
-    final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(isarStore);
-    final http.Client httpClient;
-    if (Platform.isAndroid) {
-      final engine = CronetEngine.build(
-        cacheMode: CacheMode.memory,
-        cacheMaxSize: 1024 * 1024,
-      );
-      httpClient = CronetClient.fromCronetEngine(engine, closeEngine: true);
-    } else {
-      httpClient = http.Client();
-    }
-    final liturgicalSeasonService = RemoteLiturgicalSeasonService(
-      httpClient: httpClient,
-      cacheRepository: liturgicalCacheRepo,
-    );
-    final quoteUseCase = GetNextQuoteUseCase(
-      contentRepository: const AssetQuoteContentRepository(),
-      indicesRepository: indicesRepo,
-      liturgicalSeasonService: liturgicalSeasonService,
-    );
-    final escrivaPointsUseCase = GetNextEscrivaPointsQuoteUseCase(
-      LeituraRepository(localSource: LeituraLocalSource()),
-    );
-
-    await _seedMediaCatalog(mediaRepo);
-
-    final scheduler = LocalNotificationSchedulerRepository();
-    final currentSettings = await settingsRepo.load();
-    bool permissionGranted;
     try {
-      permissionGranted = await scheduler.initialize(
-        requestPermission: currentSettings.onboardingCompleted,
-      );
-    } catch (e) {
-      debugPrint('[Bootstrap] Notification init failed: $e');
-      permissionGranted = false;
-    }
-    try {
-      await scheduler.cancelAll();
-    } catch (e) {
-      debugPrint('[Bootstrap] Notification cancelAll failed: $e');
-    }
+      final env = AppEnv.fromDartDefines();
 
-    final QuoteFetcher quoteFetcher = ({
-      required String language,
-      required DateTime now,
-    }) {
-      if (currentSettings.escrivaPointsFeedEnabled) {
-        return escrivaPointsUseCase.call(language: language, now: now);
+      final db = AppDatabase.instance;
+      final isarStore = IsarStore.instance;
+
+      // Single spiritual Isar store (same path/name) — must not be instantiated twice
+      final localKeyProvider = SpiritualDataEncryptionKeyProvider(
+        store: FlutterSecureKvStore(),
+      );
+      final spiritualStore = SpiritualDataIsarStore(
+        keyProvider: localKeyProvider,
+      );
+
+      final settingsRepo = SqliteSettingsRepository(db);
+      final indicesRepo = SqliteQuoteIndicesRepository(db);
+      final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
+      final notificationHistoryRepo = SqliteNotificationHistoryRepository(db);
+      final mediaRepo = IsarMediaCatalogRepository(isarStore);
+      final favoriteRepo = IsarFavoriteRepository(store: isarStore);
+      final readingAnnotationRepo = IsarReadingAnnotationRepository(
+        store: isarStore,
+      );
+      final localPremiumRepo = IsarPremiumRepository(store: isarStore);
+      final localCustomPhraseRepo = IsarCustomPhraseRepository(spiritualStore);
+      const devPremiumOverride =
+          String.fromEnvironment('DEV_PREMIUM_OVERRIDE') == 'true';
+      if (devPremiumOverride) {
+        await localPremiumRepo.unlockPremium(
+          PremiumStatus(
+            isPremium: true,
+            purchaseDate: DateTime.now(),
+            storeTransactionId: 'dev-override',
+          ),
+        );
       }
-      return quoteUseCase.call(
-        language: language,
-        now: now,
-        liturgicalSeasonEnabled: currentSettings.liturgicalSeasonEnabled,
+      final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(
+        isarStore,
       );
-    };
+      final http.Client httpClient;
+      if (Platform.isAndroid) {
+        final engine = CronetEngine.build(
+          cacheMode: CacheMode.memory,
+          cacheMaxSize: 1024 * 1024,
+        );
+        httpClient = CronetClient.fromCronetEngine(engine, closeEngine: true);
+      } else {
+        httpClient = http.Client();
+      }
+      final liturgicalSeasonService = RemoteLiturgicalSeasonService(
+        httpClient: httpClient,
+        cacheRepository: liturgicalCacheRepo,
+      );
+      final quoteUseCase = GetNextQuoteUseCase(
+        contentRepository: const AssetQuoteContentRepository(),
+        indicesRepository: indicesRepo,
+        liturgicalSeasonService: liturgicalSeasonService,
+      );
+      final escrivaPointsUseCase = GetNextEscrivaPointsQuoteUseCase(
+        LeituraRepository(localSource: LeituraLocalSource()),
+      );
 
-    if (currentSettings.onboardingCompleted &&
-        currentSettings.notificationsEnabled &&
-        permissionGranted) {
-      unawaited(Future(() async {
+      await _seedMediaCatalog(mediaRepo);
+
+      final scheduler = LocalNotificationSchedulerRepository();
+      final currentSettings = await settingsRepo.load();
+      bool permissionGranted;
+      try {
+        permissionGranted = await scheduler.initialize(
+          requestPermission: currentSettings.onboardingCompleted,
+        );
+      } catch (e) {
+        debugPrint('[Bootstrap] Notification init failed: $e');
+        permissionGranted = false;
+      }
+      try {
+        await scheduler.cancelAll();
+      } catch (e) {
+        debugPrint('[Bootstrap] Notification cancelAll failed: $e');
+      }
+
+      final QuoteFetcher quoteFetcher =
+          ({required String language, required DateTime now}) {
+            if (currentSettings.escrivaPointsFeedEnabled) {
+              return escrivaPointsUseCase.call(
+                language: language,
+                now: now,
+                cadenceMinutes: currentSettings.intervalMinutes,
+              );
+            }
+            return quoteUseCase.call(
+              language: language,
+              now: now,
+              liturgicalSeasonEnabled: currentSettings.liturgicalSeasonEnabled,
+            );
+          };
+
+      if (currentSettings.onboardingCompleted &&
+          currentSettings.notificationsEnabled &&
+          permissionGranted) {
+        unawaited(
+          Future(() async {
+            try {
+              final immediateQuote = await quoteFetcher(
+                language: currentSettings.language,
+                now: DateTime.now(),
+              );
+              final currentSeason = currentSettings.liturgicalSeasonEnabled
+                  ? await liturgicalSeasonService.getCurrentSeason()
+                  : LiturgicalSeason.ordinary;
+              await RebuildNotificationsUseCase(
+                scheduler: scheduler,
+                notificationHistoryRepository: notificationHistoryRepo,
+                lastDeliveredCardRepository: lastDeliveredCardRepo,
+                scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(
+                  scheduler,
+                ),
+                schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
+                  scheduler,
+                  localCustomPhraseRepo,
+                ),
+                quoteFetcher: quoteFetcher,
+                batchFetcherForSettings: (settings) =>
+                    settings.escrivaPointsFeedEnabled
+                    ? null
+                    : ({
+                        required String language,
+                        required int count,
+                        required DateTime startTime,
+                        required int intervalMinutes,
+                      }) => quoteUseCase.fetchBatch(
+                        language: language,
+                        count: count,
+                        startTime: startTime,
+                        intervalMinutes: intervalMinutes,
+                        liturgicalSeasonEnabled:
+                            settings.liturgicalSeasonEnabled,
+                      ),
+              ).call(
+                currentSettings,
+                immediateQuote: immediateQuote,
+                isEasterSeason: currentSeason == LiturgicalSeason.easter,
+                showImmediate: false,
+              );
+            } on PlatformException catch (e, st) {
+              developer.log(
+                'Notification scheduling skipped: ${e.code} ${e.message}',
+                name: 'AppBootstrap',
+                error: e,
+                stackTrace: st,
+              );
+            } catch (e, st) {
+              developer.log(
+                'Notification scheduling failed during bootstrap.',
+                name: 'AppBootstrap',
+                error: e,
+                stackTrace: st,
+              );
+            }
+          }).timeout(
+            const Duration(seconds: 15),
+            onTimeout: () {
+              developer.log(
+                'Notification scheduling timed out after 15s.',
+                name: 'AppBootstrap',
+              );
+              scheduler.cancelAll();
+            },
+          ),
+        );
+      }
+
+      AuthRepository authRepository = InMemoryAuthRepository();
+      // TODO(gabrielttav): restore local/synced premium repositories when paid access returns.
+      PremiumRepository premiumRepository = AlwaysUnlockedPremiumRepository();
+      SyncOrchestrator syncOrchestrator = const NoopSyncOrchestrator();
+      var bootstrapStatus = const BootstrapStatus();
+      SupabaseClient? supabaseClient;
+
+      if (env.authSyncEnabled && env.hasSupabase) {
         try {
-          final immediateQuote = await quoteFetcher(
-            language: currentSettings.language,
-            now: DateTime.now(),
+          await Supabase.initialize(
+            url: env.supabaseUrl!,
+            anonKey: env.supabaseAnonKey!,
           );
-          final currentSeason = currentSettings.liturgicalSeasonEnabled
-              ? await liturgicalSeasonService.getCurrentSeason()
-              : LiturgicalSeason.ordinary;
-          await RebuildNotificationsUseCase(
-            scheduler: scheduler,
-            notificationHistoryRepository: notificationHistoryRepo,
-            lastDeliveredCardRepository: lastDeliveredCardRepo,
-            scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(scheduler),
-            schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
-              scheduler,
-              localCustomPhraseRepo,
-            ),
-            quoteFetcher: quoteFetcher,
-            batchFetcherForSettings: (settings) => settings.escrivaPointsFeedEnabled
-                ? null
-                : ({
-                    required String language,
-                    required int count,
-                    required DateTime startTime,
-                    required int intervalMinutes,
-                  }) =>
-                    quoteUseCase.fetchBatch(
-                      language: language,
-                      count: count,
-                      startTime: startTime,
-                      intervalMinutes: intervalMinutes,
-                      liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-                    ),
-          ).call(
-            currentSettings,
-            immediateQuote: immediateQuote,
-            isEasterSeason: currentSeason == LiturgicalSeason.easter,
-            showImmediate: false,
-          );
-        } on PlatformException catch (e, st) {
+
+          supabaseClient = Supabase.instance.client;
+          authRepository = SupabaseAuthRepository(supabaseClient);
           developer.log(
-            'Notification scheduling skipped: ${e.code} ${e.message}',
+            'Premium runtime is in free-access mode; synced premium repository kept dormant for later restoration.',
             name: 'AppBootstrap',
-            error: e,
+          );
+
+          final gateway = SupabaseSpiritualSyncGateway(supabaseClient);
+
+          syncOrchestrator = DefaultSyncOrchestrator(
+            authRepository: authRepository,
+            syncStateRepository: IsarSyncStateRepository(spiritualStore),
+            modules: [
+              SyncModuleAdapter(
+                module: SpiritualModule.examination,
+                localRepository: IsarExaminationSpiritualEntryRepository(
+                  spiritualStore,
+                ),
+                remoteRepository: SupabaseSpiritualSyncRepository(
+                  module: SpiritualModule.examination,
+                  table: 'examination_entries',
+                  gateway: gateway,
+                ),
+              ),
+              SyncModuleAdapter(
+                module: SpiritualModule.prayerIntention,
+                localRepository: IsarPrayerIntentionSpiritualEntryRepository(
+                  spiritualStore,
+                ),
+                remoteRepository: SupabaseSpiritualSyncRepository(
+                  module: SpiritualModule.prayerIntention,
+                  table: 'prayer_intention_entries',
+                  gateway: gateway,
+                ),
+              ),
+            ],
+          );
+
+          bootstrapStatus = const BootstrapStatus(
+            supabaseAvailable: true,
+            authMode: AuthMode.supabase,
+            syncEnabled: true,
+          );
+        } catch (error, st) {
+          developer.log(
+            'Supabase auth/sync bootstrap failed. Falling back to local-only mode.',
+            name: 'AppBootstrap',
+            error: error,
             stackTrace: st,
           );
-        } catch (e, st) {
-          developer.log(
-            'Notification scheduling failed during bootstrap.',
-            name: 'AppBootstrap',
-            error: e,
-            stackTrace: st,
+          authRepository = InMemoryAuthRepository();
+          premiumRepository = AlwaysUnlockedPremiumRepository();
+          syncOrchestrator = const NoopSyncOrchestrator();
+          bootstrapStatus = BootstrapStatus(
+            errorMessage: 'Supabase initialization failed: $error',
           );
         }
-      }).timeout(
-        const Duration(seconds: 15),
-        onTimeout: () {
-          developer.log(
-            'Notification scheduling timed out after 15s.',
-            name: 'AppBootstrap',
-          );
-          scheduler.cancelAll();
-        },
-      ));
-    }
-
-    AuthRepository authRepository = InMemoryAuthRepository();
-    // TODO(gabrielttav): restore local/synced premium repositories when paid access returns.
-    PremiumRepository premiumRepository = AlwaysUnlockedPremiumRepository();
-    SyncOrchestrator syncOrchestrator = const NoopSyncOrchestrator();
-    var bootstrapStatus = const BootstrapStatus();
-    SupabaseClient? supabaseClient;
-
-    if (env.authSyncEnabled && env.hasSupabase) {
-      try {
-        await Supabase.initialize(
-          url: env.supabaseUrl!,
-          anonKey: env.supabaseAnonKey!,
-        );
-
-        supabaseClient = Supabase.instance.client;
-        authRepository = SupabaseAuthRepository(supabaseClient);
-        developer.log(
-          'Premium runtime is in free-access mode; synced premium repository kept dormant for later restoration.',
-          name: 'AppBootstrap',
-        );
-
-        final gateway = SupabaseSpiritualSyncGateway(supabaseClient);
-
-        syncOrchestrator = DefaultSyncOrchestrator(
-          authRepository: authRepository,
-          syncStateRepository: IsarSyncStateRepository(spiritualStore),
-          modules: [
-            SyncModuleAdapter(
-              module: SpiritualModule.examination,
-              localRepository: IsarExaminationSpiritualEntryRepository(
-                spiritualStore,
-              ),
-              remoteRepository: SupabaseSpiritualSyncRepository(
-                module: SpiritualModule.examination,
-                table: 'examination_entries',
-                gateway: gateway,
-              ),
-            ),
-            SyncModuleAdapter(
-              module: SpiritualModule.prayerIntention,
-              localRepository: IsarPrayerIntentionSpiritualEntryRepository(
-                spiritualStore,
-              ),
-              remoteRepository: SupabaseSpiritualSyncRepository(
-                module: SpiritualModule.prayerIntention,
-                table: 'prayer_intention_entries',
-                gateway: gateway,
-              ),
-            ),
-          ],
-        );
-
-        bootstrapStatus = const BootstrapStatus(
-          supabaseAvailable: true,
-          authMode: AuthMode.supabase,
-          syncEnabled: true,
-        );
-      } catch (error, st) {
-        developer.log(
-          'Supabase auth/sync bootstrap failed. Falling back to local-only mode.',
-          name: 'AppBootstrap',
-          error: error,
-          stackTrace: st,
-        );
-        authRepository = InMemoryAuthRepository();
-        premiumRepository = AlwaysUnlockedPremiumRepository();
-        syncOrchestrator = const NoopSyncOrchestrator();
-        bootstrapStatus = BootstrapStatus(
-          errorMessage: 'Supabase initialization failed: $error',
-        );
       }
-    }
 
-    final overrides = <Override>[
-      appEnvProvider.overrideWithValue(env),
-      settingsRepositoryProvider.overrideWithValue(settingsRepo),
-      quoteIndicesRepositoryProvider.overrideWithValue(indicesRepo),
-      lastDeliveredCardRepositoryProvider.overrideWithValue(
-        lastDeliveredCardRepo,
-      ),
-      notificationHistoryRepositoryProvider.overrideWithValue(
-        notificationHistoryRepo,
-      ),
-      mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
-      favoriteRepositoryProvider.overrideWithValue(favoriteRepo),
-      readingAnnotationRepositoryProvider.overrideWithValue(
-        readingAnnotationRepo,
-      ),
-      premiumRepositoryProvider.overrideWithValue(premiumRepository),
-      customPhraseRepositoryProvider.overrideWithValue(localCustomPhraseRepo),
-      liturgicalSeasonCacheRepositoryProvider.overrideWithValue(
-        liturgicalCacheRepo,
-      ),
-      notificationSchedulerRepositoryProvider.overrideWithValue(scheduler),
-      notificationPermissionProvider.overrideWith((ref) => permissionGranted),
-      httpClientProvider.overrideWithValue(httpClient),
-      authRepositoryProvider.overrideWithValue(authRepository),
-      syncOrchestratorProvider.overrideWithValue(syncOrchestrator),
-      bootstrapStatusProvider.overrideWithValue(bootstrapStatus),
-      spiritualDataKeyProvider.overrideWithValue(localKeyProvider),
-      spiritualDataIsarStoreProvider.overrideWithValue(spiritualStore),
-      liturgicalSeasonServiceProvider.overrideWith((ref) {
-        return RemoteLiturgicalSeasonService(
-          httpClient: ref.watch(httpClientProvider),
-          cacheRepository: ref.watch(liturgicalSeasonCacheRepositoryProvider),
-        );
-      }),
-    ];
+      final overrides = <Override>[
+        appEnvProvider.overrideWithValue(env),
+        settingsRepositoryProvider.overrideWithValue(settingsRepo),
+        quoteIndicesRepositoryProvider.overrideWithValue(indicesRepo),
+        lastDeliveredCardRepositoryProvider.overrideWithValue(
+          lastDeliveredCardRepo,
+        ),
+        notificationHistoryRepositoryProvider.overrideWithValue(
+          notificationHistoryRepo,
+        ),
+        mediaCatalogRepositoryProvider.overrideWithValue(mediaRepo),
+        favoriteRepositoryProvider.overrideWithValue(favoriteRepo),
+        readingAnnotationRepositoryProvider.overrideWithValue(
+          readingAnnotationRepo,
+        ),
+        premiumRepositoryProvider.overrideWithValue(premiumRepository),
+        customPhraseRepositoryProvider.overrideWithValue(localCustomPhraseRepo),
+        liturgicalSeasonCacheRepositoryProvider.overrideWithValue(
+          liturgicalCacheRepo,
+        ),
+        notificationSchedulerRepositoryProvider.overrideWithValue(scheduler),
+        notificationPermissionProvider.overrideWith((ref) => permissionGranted),
+        httpClientProvider.overrideWithValue(httpClient),
+        authRepositoryProvider.overrideWithValue(authRepository),
+        syncOrchestratorProvider.overrideWithValue(syncOrchestrator),
+        bootstrapStatusProvider.overrideWithValue(bootstrapStatus),
+        spiritualDataKeyProvider.overrideWithValue(localKeyProvider),
+        spiritualDataIsarStoreProvider.overrideWithValue(spiritualStore),
+        liturgicalSeasonServiceProvider.overrideWith((ref) {
+          return RemoteLiturgicalSeasonService(
+            httpClient: ref.watch(httpClientProvider),
+            cacheRepository: ref.watch(liturgicalSeasonCacheRepositoryProvider),
+          );
+        }),
+      ];
 
-    if (supabaseClient != null) {
-      overrides.add(supabaseClientProvider.overrideWithValue(supabaseClient));
-    }
+      if (supabaseClient != null) {
+        overrides.add(supabaseClientProvider.overrideWithValue(supabaseClient));
+      }
 
-    return overrides;
-   } catch (e, st) {
+      return overrides;
+    } catch (e, st) {
       developer.log(
         'Bootstrap failed unexpectedly. Returning empty overrides to avoid splash freeze.',
         name: 'AppBootstrap',
@@ -344,7 +353,7 @@ final class AppBootstrap {
         stackTrace: st,
       );
       return <Override>[];
-   }
+    }
   }
 
   static Future<void> _seedMediaCatalog(
