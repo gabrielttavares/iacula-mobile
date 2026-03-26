@@ -23,6 +23,7 @@ import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../../confession/presentation/confession_flow_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
+import '../../settings/domain/jaculatoria_interval.dart';
 import '../../examination/presentation/examination_reading_screen.dart';
 import 'home_prayer_groups.dart';
 import 'hero_reflection_sheet.dart';
@@ -364,7 +365,7 @@ class _NotificationContextLabel extends StatelessWidget {
         const SizedBox(width: 5),
         Expanded(
           child: Text(
-            'Jaculatórias a cada ${intervalMinutes}min \u00B7 Angelus ao meio-dia',
+            'Jaculatórias a cada ${formatJaculatoriaIntervalCompactForBadge(intervalMinutes)} \u00B7 Angelus ao meio-dia',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: context.textStyles.secondary.copyWith(fontSize: 12),

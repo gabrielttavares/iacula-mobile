@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart'
+    show Colors, Material, Slider, SliderComponentShape, SliderTheme, SliderThemeData;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,6 +15,7 @@ import '../../home_widget/home_widget_service.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../domain/entities/settings.dart';
+import '../domain/jaculatoria_interval.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -41,8 +44,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   late Settings _loadedSettings;
 
-  static const _intervalOptions = [5, 10, 15, 30, 60];
-
   @override
   void initState() {
     super.initState();
@@ -57,7 +58,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _themeMode = settings.themeMode;
     _notificationsEnabled = settings.notificationsEnabled;
     _angelusEnabled = settings.angelusEnabled;
-    _intervalMinutes = settings.intervalMinutes;
+    _intervalMinutes = clampJaculatoriaIntervalMinutes(settings.intervalMinutes);
     _escrivaPointsFeedOptionVisible = settings.escrivaPointsFeedOptionVisible;
     _liturgicalSeasonEnabled = settings.liturgicalSeasonEnabled;
 
@@ -136,8 +137,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         Text(
                           _notificationsEnabled
                               ? _angelusEnabled
-                                    ? 'Jaculatória a cada $_intervalMinutes minutos e Angelus ao meio-dia.'
-                                    : 'Jaculatória a cada $_intervalMinutes minutos.'
+                                    ? 'Jaculatória ${formatJaculatoriaIntervalEveryPhrase(_intervalMinutes)} e Angelus ao meio-dia.'
+                                    : 'Jaculatória ${formatJaculatoriaIntervalEveryPhrase(_intervalMinutes)}.'
                               : 'As notificações estão desativadas.',
                           style: context.textStyles.secondary,
                         ),
@@ -177,33 +178,69 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ],
                           ),
                           const SizedBox(height: IaculaRadius.elementSpacing),
-                          _fieldLabel(context, 'Intervalo (minutos)'),
+                          _fieldLabel(context, 'Intervalo entre jaculatórias'),
                           const SizedBox(height: 8),
+                          Text(
+                            formatJaculatoriaIntervalShortLabel(_intervalMinutes),
+                            style: context.textStyles.cardTitle.copyWith(
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
                           SizedBox(
                             width: double.infinity,
-                            child: CupertinoSlidingSegmentedControl<int>(
-                              groupValue:
-                                  _intervalOptions.contains(_intervalMinutes)
-                                  ? _intervalMinutes
-                                  : 15,
-                              padding: const EdgeInsets.all(4),
-                              children: {
-                                for (final opt in _intervalOptions)
-                                  opt: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 10,
-                                    ),
-                                    child: Text('$opt'),
-                                  ),
-                              },
-                              onValueChanged: (value) {
-                                if (value != null) {
-                                  HapticFeedback.selectionClick();
-                                  setState(() => _intervalMinutes = value);
-                                }
-                              },
+                            child: Material(
+                              color: Colors.transparent,
+                              child: SliderTheme(
+                                data: SliderThemeData(
+                                  trackHeight: 4,
+                                  activeTrackColor: context.colors.primaryButton,
+                                  inactiveTrackColor: context.colors.separator,
+                                  thumbColor: CupertinoColors.white,
+                                  overlayShape:
+                                      SliderComponentShape.noOverlay,
+                                ),
+                                child: Slider(
+                                  value: _intervalMinutes
+                                      .toDouble()
+                                      .clamp(
+                                        kJaculatoriaIntervalMin.toDouble(),
+                                        kJaculatoriaIntervalMax.toDouble(),
+                                      ),
+                                  min: kJaculatoriaIntervalMin.toDouble(),
+                                  max: kJaculatoriaIntervalMax.toDouble(),
+                                  divisions: kJaculatoriaIntervalMax -
+                                      kJaculatoriaIntervalMin,
+                                  onChanged: (value) {
+                                    setState(
+                                      () => _intervalMinutes = value.round(),
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                formatJaculatoriaIntervalShortLabel(
+                                  kJaculatoriaIntervalMin,
+                                ),
+                                style: context.textStyles.secondary.copyWith(
+                                  fontSize: 13,
+                                ),
+                              ),
+                              Text(
+                                formatJaculatoriaIntervalShortLabel(
+                                  kJaculatoriaIntervalMax,
+                                ),
+                                style: context.textStyles.secondary.copyWith(
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: IaculaSpacing.sm),
                           _buildNextNotificationEstimate(context),

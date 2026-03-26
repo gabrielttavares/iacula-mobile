@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart'
+    show Colors, Material, Slider, SliderComponentShape, SliderTheme, SliderThemeData;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,6 +11,7 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
+import '../../settings/domain/jaculatoria_interval.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -154,7 +157,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final settings = await ref.read(getSettingsUseCaseProvider).call();
     final updated = settings.copyWith(
       onboardingCompleted: true,
-      intervalMinutes: _selectedInterval,
+      intervalMinutes: clampJaculatoriaIntervalMinutes(_selectedInterval),
       notificationsEnabled: true,
     );
     await ref.read(updateSettingsUseCaseProvider).call(updated);
@@ -198,7 +201,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         .read(updateSettingsUseCaseProvider)
         .call(settings.copyWith(
           onboardingCompleted: true,
-          intervalMinutes: _selectedInterval,
+          intervalMinutes: clampJaculatoriaIntervalMinutes(_selectedInterval),
         ));
     if (!mounted) return;
     _finishOnboarding();
@@ -287,13 +290,6 @@ class _NotificationSetupPage extends StatelessWidget {
   final VoidCallback onComplete;
   final VoidCallback onSkip;
 
-  static const _intervalOptions = [5, 10, 15, 30, 60];
-
-  String _intervalDescription(int minutes) {
-    if (minutes < 60) return 'a cada $minutes minutos';
-    return 'a cada hora';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -338,36 +334,70 @@ class _NotificationSetupPage extends StatelessWidget {
                   ),
                   const SizedBox(height: IaculaSpacing.sm),
                   Text(
-                    'Você vai receber uma notificação ${_intervalDescription(selectedInterval)} com uma jaculatória diferente.',
+                    'Você vai receber uma notificação ${formatJaculatoriaIntervalEveryPhrase(selectedInterval)} com uma jaculatória diferente.',
                     textAlign: TextAlign.center,
                     style: context.textStyles.secondary,
                   ),
                   const SizedBox(height: IaculaSpacing.md),
+                  Text(
+                    formatJaculatoriaIntervalShortLabel(selectedInterval),
+                    textAlign: TextAlign.center,
+                    style: context.textStyles.cardTitle.copyWith(
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   SizedBox(
                     width: double.infinity,
-                    child: CupertinoSlidingSegmentedControl<int>(
-                      groupValue: selectedInterval,
-                      padding: const EdgeInsets.all(4),
-                      children: {
-                        for (final opt in _intervalOptions)
-                          opt: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 10,
-                            ),
-                            child: Text(
-                              opt < 60 ? '${opt}m' : '1h',
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                      },
-                      onValueChanged: (value) {
-                        if (value != null) {
-                          HapticFeedback.selectionClick();
-                          onIntervalChanged(value);
-                        }
-                      },
+                    child: Material(
+                      color: Colors.transparent,
+                      child: SliderTheme(
+                        data: SliderThemeData(
+                          trackHeight: 4,
+                          activeTrackColor: context.colors.primaryButton,
+                          inactiveTrackColor: context.colors.separator,
+                          thumbColor: CupertinoColors.white,
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: selectedInterval
+                              .toDouble()
+                              .clamp(
+                                kJaculatoriaIntervalMin.toDouble(),
+                                kJaculatoriaIntervalMax.toDouble(),
+                              ),
+                          min: kJaculatoriaIntervalMin.toDouble(),
+                          max: kJaculatoriaIntervalMax.toDouble(),
+                          divisions: kJaculatoriaIntervalMax -
+                              kJaculatoriaIntervalMin,
+                          onChanged: (value) {
+                            onIntervalChanged(value.round());
+                          },
+                        ),
+                      ),
                     ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        formatJaculatoriaIntervalShortLabel(
+                          kJaculatoriaIntervalMin,
+                        ),
+                        style: context.textStyles.secondary.copyWith(
+                          fontSize: 13,
+                        ),
+                      ),
+                      Text(
+                        formatJaculatoriaIntervalShortLabel(
+                          kJaculatoriaIntervalMax,
+                        ),
+                        style: context.textStyles.secondary.copyWith(
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

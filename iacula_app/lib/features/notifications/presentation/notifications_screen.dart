@@ -11,6 +11,7 @@ import '../../../core/presentation/widgets/iacula_toast.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../../liturgical/domain/liturgical_season.dart';
+import '../../settings/domain/jaculatoria_interval.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../domain/entities/notification_history_entry.dart';
 
@@ -411,7 +412,7 @@ class _NotificationStatusCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       enabled
-                          ? 'Jaculatória a cada $intervalMinutes min \u00B7 Angelus ao meio-dia'
+                          ? 'Jaculatória a cada ${formatJaculatoriaIntervalCompactForBadge(intervalMinutes)} \u00B7 Angelus ao meio-dia'
                           : 'Nenhuma notificação será enviada',
                       style: context.textStyles.secondary,
                     ),

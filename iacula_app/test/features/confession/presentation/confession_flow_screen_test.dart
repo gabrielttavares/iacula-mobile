@@ -82,7 +82,8 @@ void main() {
           repository: const _FakeConfessionExaminationRepository(items),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(
         find.text('Exame de Consciência para Confissão'),
@@ -109,15 +110,18 @@ void main() {
         repository: const _FakeConfessionExaminationRepository(items),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     await tester.tap(find.text('Abrir'));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(ConfessionFlowScreen), findsOneWidget);
 
     await tester.tap(find.byIcon(CupertinoIcons.chevron_back));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(ConfessionFlowScreen), findsNothing);
     expect(find.text('Abrir'), findsOneWidget);

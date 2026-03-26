@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import '../../../../core/storage/sqlite/app_database.dart';
 import '../../domain/entities/settings.dart';
+import '../../domain/jaculatoria_interval.dart';
 import '../../domain/repositories/settings_repository.dart';
 
 final class SqliteSettingsRepository implements SettingsRepository {
@@ -20,7 +21,9 @@ final class SqliteSettingsRepository implements SettingsRepository {
 
     final row = rows.first;
     return Settings(
-      intervalMinutes: row['interval_minutes'] as int,
+      intervalMinutes: clampJaculatoriaIntervalMinutes(
+        row['interval_minutes'] as int,
+      ),
       durationSeconds: row['duration_seconds'] as int,
       autostart: (row['autostart'] as int) == 1,
       language: row['language'] as String,
@@ -54,9 +57,12 @@ final class SqliteSettingsRepository implements SettingsRepository {
   @override
   Future<void> save(Settings settings) async {
     final db = await _database.database;
+    final intervalMinutes = clampJaculatoriaIntervalMinutes(
+      settings.intervalMinutes,
+    );
     await db.insert('settings', {
       'id': 1,
-      'interval_minutes': settings.intervalMinutes,
+      'interval_minutes': intervalMinutes,
       'duration_seconds': settings.durationSeconds,
       'autostart': settings.autostart ? 1 : 0,
       'language': settings.language,

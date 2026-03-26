@@ -44,7 +44,7 @@ void main() {
     expect(find.text('Notificações'), findsOneWidget);
     expect(find.text('Aparência'), findsOneWidget);
     expect(find.text('Notificações ativas'), findsOneWidget);
-    expect(find.text('Intervalo (minutos)'), findsOneWidget);
+    expect(find.text('Intervalo entre jaculatórias'), findsOneWidget);
     expect(find.text('Tema'), findsOneWidget);
     expect(find.text('Tamanho da fonte'), findsOneWidget);
     await expectVisible('Personalização');
