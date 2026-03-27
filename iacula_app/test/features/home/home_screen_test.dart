@@ -85,7 +85,7 @@ Widget _buildApp({
               LastDeliveredCard(
                 quoteText: 'Permanecei em mim.',
                 theme: 'Conversao',
-                season: 'lent',
+                season: 'ordinary',
                 deliveredAt: DateTime(2026, 2, 21, 11),
               ),
         ),
@@ -154,20 +154,20 @@ void main() {
         lastCard: LastDeliveredCard(
           quoteText: 'Stale card',
           theme: 'Conversao',
-          season: 'lent',
+          season: 'ordinary',
           deliveredAt: DateTime(2026, 2, 21, 8, 0),
         ),
         history: [
           NotificationHistoryEntry(
             quoteText: 'Quote 10:00',
             theme: 'Conversao',
-            season: 'lent',
+            season: 'ordinary',
             deliveredAt: DateTime(2026, 2, 21, 10, 0),
           ),
           NotificationHistoryEntry(
             quoteText: 'Quote 10:15',
             theme: 'Conversao',
-            season: 'lent',
+            season: 'ordinary',
             deliveredAt: DateTime(2026, 2, 21, 10, 15),
           ),
         ],
@@ -197,7 +197,7 @@ void main() {
             LastDeliveredCard(
               quoteText: 'Stale card',
               theme: 'Conversao',
-              season: 'lent',
+              season: 'ordinary',
               deliveredAt: DateTime(2026, 2, 21, 8, 0),
             ),
           ),
@@ -207,13 +207,13 @@ void main() {
             NotificationHistoryEntry(
               quoteText: 'Quote 10:00',
               theme: 'Conversao',
-              season: 'lent',
+              season: 'ordinary',
               deliveredAt: DateTime(2026, 2, 21, 10, 0),
             ),
             NotificationHistoryEntry(
               quoteText: 'Quote 10:15',
               theme: 'Conversao',
-              season: 'lent',
+              season: 'ordinary',
               deliveredAt: DateTime(2026, 2, 21, 10, 15),
             ),
           ]),

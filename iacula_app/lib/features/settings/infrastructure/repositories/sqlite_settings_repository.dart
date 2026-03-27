@@ -41,7 +41,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       onboardingCompleted: (row['onboarding_completed'] as int? ?? 0) == 1,
       displayName: row['display_name'] as String?,
       prayerFontSize: (row['prayer_font_size'] as num? ?? 15.0).toDouble(),
-      themeMode: row['theme_mode'] as String? ?? 'dark',
+      themeMode: row['theme_mode'] as String? ?? 'system',
       escrivaPointsFeedEnabled:
           (row['escriva_points_feed_enabled'] as int? ?? 0) == 1,
       escrivaPointsFeedOptionVisible:
@@ -50,7 +50,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
           (row['notifications_enabled'] as int? ?? 1) == 1,
       angelusEnabled: (row['angelus_enabled'] as int? ?? 1) == 1,
       liturgicalSeasonEnabled:
-          (row['liturgical_season_enabled'] as int? ?? 1) == 1,
+          (row['liturgical_season_enabled'] as int? ?? 0) == 1,
     );
   }
 

@@ -27,7 +27,7 @@ final class GetNextQuoteUseCase {
     required int count,
     required DateTime startTime,
     required int intervalMinutes,
-    bool liturgicalSeasonEnabled = true,
+    bool liturgicalSeasonEnabled = false,
   }) async {
     if (count <= 0) return const [];
 
@@ -114,7 +114,7 @@ final class GetNextQuoteUseCase {
   Future<Quote> call({
     required String language,
     DateTime? now,
-    bool liturgicalSeasonEnabled = true,
+    bool liturgicalSeasonEnabled = false,
   }) async {
     final date = now ?? DateTime.now();
     final dayOfWeek = _dayOfWeek1to7(date);

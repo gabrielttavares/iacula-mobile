@@ -42,12 +42,12 @@ final class AppDatabase {
             onboarding_completed INTEGER NOT NULL DEFAULT 0,
             display_name TEXT,
             prayer_font_size REAL NOT NULL DEFAULT 15.0,
-            theme_mode TEXT NOT NULL DEFAULT 'dark',
+            theme_mode TEXT NOT NULL DEFAULT 'system',
             escriva_points_feed_enabled INTEGER NOT NULL DEFAULT 0,
             escriva_points_feed_option_visible INTEGER NOT NULL DEFAULT 0,
             notifications_enabled INTEGER NOT NULL DEFAULT 1,
             angelus_enabled INTEGER NOT NULL DEFAULT 1,
-            liturgical_season_enabled INTEGER NOT NULL DEFAULT 1
+            liturgical_season_enabled INTEGER NOT NULL DEFAULT 0
           )
         ''');
 

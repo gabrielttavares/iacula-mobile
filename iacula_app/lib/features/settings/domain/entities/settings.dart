@@ -17,12 +17,12 @@ final class Settings {
     required this.onboardingCompleted,
     this.displayName,
     this.prayerFontSize = 15.0,
-    this.themeMode = 'dark',
+    this.themeMode = 'system',
     this.escrivaPointsFeedEnabled = false,
     this.escrivaPointsFeedOptionVisible = false,
     this.notificationsEnabled = true,
     this.angelusEnabled = true,
-    this.liturgicalSeasonEnabled = true,
+    this.liturgicalSeasonEnabled = false,
   });
 
   final int intervalMinutes;
@@ -66,11 +66,12 @@ final class Settings {
     oraMediaTime: '12:30',
     onboardingCompleted: false,
     prayerFontSize: 15.0,
+    themeMode: 'system',
     escrivaPointsFeedEnabled: false,
     escrivaPointsFeedOptionVisible: false,
     notificationsEnabled: true,
     angelusEnabled: true,
-    liturgicalSeasonEnabled: true,
+    liturgicalSeasonEnabled: false,
   );
 
   Settings copyWith({

@@ -177,7 +177,12 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
                 }
                 return ref
                     .read(getNextQuoteUseCaseProvider)
-                    .call(language: language, now: now);
+                    .call(
+                      language: language,
+                      now: now,
+                      liturgicalSeasonEnabled:
+                          settings.liturgicalSeasonEnabled,
+                    );
               },
         );
         return selector.call(language: settings.language, now: now);

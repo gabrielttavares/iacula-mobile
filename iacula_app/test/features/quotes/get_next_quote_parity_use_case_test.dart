@@ -93,8 +93,16 @@ void main() {
       ),
     );
 
-    final first = await useCase.call(language: 'pt-br', now: DateTime(2026, 2, 22));
-    final second = await useCase.call(language: 'pt-br', now: DateTime(2026, 2, 22));
+    final first = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 2, 22),
+      liturgicalSeasonEnabled: true,
+    );
+    final second = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 2, 22),
+      liturgicalSeasonEnabled: true,
+    );
 
     expect(first.text, 'Sazonal');
     expect(second.text, 'Sazonal');
@@ -125,7 +133,11 @@ void main() {
       ),
     );
 
-    final quote = await useCase.call(language: 'pt-br', now: DateTime(2026, 2, 22));
+    final quote = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 2, 22),
+      liturgicalSeasonEnabled: true,
+    );
 
     expect(quote.text, 'Sazonal');
     expect(quote.imagePath, 'img-ordinary-1');
@@ -156,7 +168,11 @@ void main() {
       ),
     );
 
-    final quote = await useCase.call(language: 'pt-br', now: DateTime(2026, 5, 24));
+    final quote = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 5, 24),
+      liturgicalSeasonEnabled: true,
+    );
 
     expect(quote.feast, isNull);
     expect(content.lastFeastQuotesSlug, isNull);

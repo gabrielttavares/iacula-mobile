@@ -48,7 +48,7 @@ Widget _buildGoldenApp() {
           LastDeliveredCard(
             quoteText: 'Permanecei em mim.',
             theme: 'Conversao',
-            season: 'lent',
+            season: 'ordinary',
             deliveredAt: DateTime(2026, 2, 21, 11, 0),
           ),
         ),

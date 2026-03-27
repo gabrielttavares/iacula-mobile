@@ -18,6 +18,18 @@ class _FakeSeasonService implements LiturgicalSeasonService {
   }
 }
 
+class _ThrowingSeasonService implements LiturgicalSeasonService {
+  @override
+  Future<LiturgicalSeason> getCurrentSeason({DateTime? date}) async {
+    throw StateError('liturgical service should not be used');
+  }
+
+  @override
+  Future<LiturgicalContext> getCurrentContext({DateTime? date}) async {
+    throw StateError('liturgical service should not be used');
+  }
+}
+
 class _FakeQuoteContentRepository implements QuoteContentRepository {
   final Map<String, DayQuotes> _quotes;
 
@@ -77,6 +89,39 @@ class _ResettingIndicesRepository implements QuoteIndicesRepository {
 }
 
 void main() {
+  test('call omits liturgicalSeasonEnabled does not touch liturgical service', () async {
+    final useCase = GetNextQuoteUseCase(
+      contentRepository: _FakeQuoteContentRepository(),
+      indicesRepository: _FakeIndicesRepository(),
+      liturgicalSeasonService: _ThrowingSeasonService(),
+    );
+
+    final result = await useCase.call(language: 'pt-br', now: DateTime(2026, 2, 22));
+    expect(result.text, 'Q1');
+    expect(result.season, LiturgicalSeason.ordinary);
+  });
+
+  test('fetchBatch omits liturgicalSeasonEnabled does not touch liturgical service', () async {
+    final useCase = GetNextQuoteUseCase(
+      contentRepository: _FakeQuoteContentRepository(
+        quotes: {
+          '1': const DayQuotes(day: 'Domingo', theme: 'Tema', quotes: ['Q1']),
+        },
+      ),
+      indicesRepository: _FakeIndicesRepository(),
+      liturgicalSeasonService: _ThrowingSeasonService(),
+    );
+
+    final batch = await useCase.fetchBatch(
+      language: 'pt-br',
+      count: 1,
+      startTime: DateTime(2026, 2, 22, 10),
+      intervalMinutes: 15,
+    );
+    expect(batch, hasLength(1));
+    expect(batch.single.season, LiturgicalSeason.ordinary);
+  });
+
   test('returns sequential quote and updates indices', () async {
     final repo = _FakeIndicesRepository();
     final useCase = GetNextQuoteUseCase(

@@ -58,7 +58,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(_heroSettingsProvider);
     final liturgicalSeasonEnabled =
-        settingsAsync.valueOrNull?.liturgicalSeasonEnabled ?? true;
+        settingsAsync.valueOrNull?.liturgicalSeasonEnabled ?? false;
     final isFallback =
         !liturgicalSeasonEnabled ||
         (ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false);

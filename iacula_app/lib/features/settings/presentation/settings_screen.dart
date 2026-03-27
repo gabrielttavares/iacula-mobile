@@ -33,7 +33,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String _language = 'pt-br';
   bool _onboardingCompleted = false;
-  String _themeMode = 'dark';
+  String _themeMode = 'system';
   bool _notificationsEnabled = true;
   bool _angelusEnabled = true;
   int _intervalMinutes = 15;
@@ -42,7 +42,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _inexactScheduleFallbackUsed = false;
   bool _shortIntervalReliabilityNotGuaranteed = false;
   bool _escrivaPointsFeedOptionVisible = false;
-  bool _liturgicalSeasonEnabled = true;
+  bool _liturgicalSeasonEnabled = false;
 
   bool _loading = true;
   bool _saving = false;
