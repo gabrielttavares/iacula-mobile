@@ -117,6 +117,10 @@ final class HomeWidgetService {
     return updated;
   }
 
+  void resetSignatureCache() {
+    _signatureCache.reset();
+  }
+
   Future<void> saveIntervalMinutes(int intervalMinutes) async {
     try {
       await _ensureInitialized();
@@ -164,6 +168,10 @@ final class WidgetCardSignatureCache {
 
   void markPublished(LastDeliveredCard card) {
     _lastSignature = signatureOf(card);
+  }
+
+  void reset() {
+    _lastSignature = null;
   }
 
   String signatureOf(LastDeliveredCard card) {

@@ -29,7 +29,8 @@ class IaculaApp extends ConsumerStatefulWidget {
   ConsumerState<IaculaApp> createState() => _IaculaAppState();
 }
 
-class _IaculaAppState extends ConsumerState<IaculaApp> {
+class _IaculaAppState extends ConsumerState<IaculaApp>
+    with WidgetsBindingObserver {
   final _navigatorKey = GlobalKey<NavigatorState>();
   StreamSubscription? _actionsSub;
   Timer? _widgetRefreshSub;
@@ -38,6 +39,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadSettings();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final connectivity = ref.read(connectivityProvider);
@@ -133,9 +135,18 @@ class _IaculaAppState extends ConsumerState<IaculaApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _actionsSub?.cancel();
     _widgetRefreshSub?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      HomeWidgetService.instance.resetSignatureCache();
+      unawaited(_syncWidgetFromTimeline());
+    }
   }
 
   Future<void> _syncWidgetFromTimeline() async {

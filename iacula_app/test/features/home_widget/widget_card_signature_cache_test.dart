@@ -32,6 +32,17 @@ void main() {
     expect(cache.shouldPublish(second), isTrue);
   });
 
+  test('reset clears cache so same card is published again', () {
+    final cache = WidgetCardSignatureCache();
+    final card = buildCard('Quote A');
+
+    cache.markPublished(card);
+    expect(cache.shouldPublish(card), isFalse);
+
+    cache.reset();
+    expect(cache.shouldPublish(card), isTrue);
+  });
+
   test('does not republish when only deliveredAt changes', () {
     final cache = WidgetCardSignatureCache();
     final first = LastDeliveredCard(
