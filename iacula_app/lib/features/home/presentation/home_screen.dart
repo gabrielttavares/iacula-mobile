@@ -487,6 +487,27 @@ final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
 });
 
 final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
+  final tappedAt = ref.read(tappedNotificationScheduledAtProvider);
+  if (tappedAt != null) {
+    final now = ref.watch(homeNowProvider);
+    final history = await ref
+        .watch(notificationHistoryRepositoryProvider)
+        .listForDay(now);
+    NotificationHistoryEntry? tappedEntry;
+    for (final e in history) {
+      if (e.deliveredAt == tappedAt) {
+        tappedEntry = e;
+        break;
+      }
+    }
+    Future<void>.microtask(() {
+      ref.read(tappedNotificationScheduledAtProvider.notifier).state = null;
+    });
+    if (tappedEntry != null) {
+      return _quoteFromHistoryEntry(tappedEntry, now);
+    }
+  }
+
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
 
   if (settings.escrivaPointsFeedEnabled) {

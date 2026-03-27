@@ -76,6 +76,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
 
         switch (event.event.routeTarget) {
           case NotificationRouteTarget.home:
+            ref.read(tappedNotificationScheduledAtProvider.notifier).state =
+                event.event.scheduledAt;
             nav.pushAndRemoveUntil(
               CupertinoPageRoute(builder: (_) => const ShellScreen()),
               (route) => false,

@@ -201,7 +201,7 @@ final class AppBootstrap {
                 currentSettings,
                 immediateQuote: immediateQuote,
                 isEasterSeason: currentSeason == LiturgicalSeason.easter,
-                showImmediate: false,
+                showImmediate: true,
               );
             } on PlatformException catch (e, st) {
               developer.log(
@@ -225,7 +225,6 @@ final class AppBootstrap {
                 'Notification scheduling timed out after 15s.',
                 name: 'AppBootstrap',
               );
-              scheduler.cancelAll();
             },
           ),
         );

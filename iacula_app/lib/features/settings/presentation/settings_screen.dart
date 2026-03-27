@@ -634,6 +634,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);
+    ref.invalidate(getSettingsUseCaseProvider);
     await HomeWidgetService.instance.saveIntervalMinutes(_intervalMinutes);
 
     final season = _liturgicalSeasonEnabled

@@ -182,6 +182,9 @@ final notificationHistoryRepositoryProvider =
 
 final notificationHistoryEpochProvider = StateProvider<int>((ref) => 0);
 
+final tappedNotificationScheduledAtProvider =
+    StateProvider<DateTime?>((ref) => null);
+
 final notificationHistoryNowProvider = Provider<DateTime>(
   (ref) => DateTime.now(),
 );

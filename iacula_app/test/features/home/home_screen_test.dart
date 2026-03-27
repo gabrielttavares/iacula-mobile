@@ -72,10 +72,15 @@ Widget _buildApp({
   DateTime? now,
   LastDeliveredCard? lastCard,
   List<NotificationHistoryEntry> history = const [],
+  DateTime? tappedNotificationScheduledAt,
 }) {
   final fixedNow = now ?? DateTime(2026, 2, 21, 11);
   return ProviderScope(
     overrides: [
+      if (tappedNotificationScheduledAt != null)
+        tappedNotificationScheduledAtProvider.overrideWith(
+          (ref) => tappedNotificationScheduledAt,
+        ),
       settingsRepositoryProvider.overrideWithValue(
         _FakeSettingsRepository(Settings.defaults),
       ),
@@ -179,6 +184,51 @@ void main() {
     expect(find.text('Quote 10:15'), findsNothing);
     expect(find.text('Stale card'), findsNothing);
   });
+
+  testWidgets(
+    'home hero shows tapped notification quote when multiple are due',
+    (tester) async {
+      final tappedAt = DateTime(2026, 2, 21, 10, 0);
+      await tester.pumpWidget(
+        _buildApp(
+          now: DateTime(2026, 2, 21, 10, 35),
+          lastCard: LastDeliveredCard(
+            quoteText: 'Stale card',
+            theme: 'Conversao',
+            season: 'ordinary',
+            deliveredAt: DateTime(2026, 2, 21, 8, 0),
+          ),
+          tappedNotificationScheduledAt: tappedAt,
+          history: [
+            NotificationHistoryEntry(
+              quoteText: 'Quote 10:00',
+              theme: 'Conversao',
+              season: 'ordinary',
+              deliveredAt: tappedAt,
+            ),
+            NotificationHistoryEntry(
+              quoteText: 'Quote 10:15',
+              theme: 'Conversao',
+              season: 'ordinary',
+              deliveredAt: DateTime(2026, 2, 21, 10, 15),
+            ),
+            NotificationHistoryEntry(
+              quoteText: 'Quote 10:30',
+              theme: 'Conversao',
+              season: 'ordinary',
+              deliveredAt: DateTime(2026, 2, 21, 10, 30),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Quote 10:00'), findsOneWidget);
+      expect(find.text('Quote 10:15'), findsNothing);
+      expect(find.text('Quote 10:30'), findsNothing);
+      expect(find.text('Stale card'), findsNothing);
+    },
+  );
 
   testWidgets('home hero refreshes to next due quote while screen stays open', (
     tester,
