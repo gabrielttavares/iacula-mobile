@@ -92,6 +92,7 @@ void main() {
       expect(find.text('Começar'), findsNothing);
       expect(find.text('Como se confessar?'), findsNothing);
       expect(find.text('Neguei ou abandonei a minha fé.'), findsOneWidget);
+      expect(find.text('Meus pontos particulares de exame'), findsNothing);
       expect(
         find.text(
           'Faltei voluntariamente à Missa aos domingos ou dias de preceito.',

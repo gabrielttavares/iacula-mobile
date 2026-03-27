@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../domain/examination_reflection_constants.dart';
 import 'examination_management_screen.dart';
+import 'widgets/personal_examination_points_section.dart';
 
 class ExaminationReadingScreen extends ConsumerStatefulWidget {
   const ExaminationReadingScreen({super.key});
@@ -45,35 +47,49 @@ class _ExaminationReadingScreenState
       ),
       child: SafeArea(
         child: itemsAsync.when(
-          data: (items) => ListView(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-            children: [
-              Text(
-                'Exame de Consciência Diário',
-                style: context.textStyles.largeTitle.copyWith(
-                  color: const Color(0xFF8F2830),
+          data: (items) {
+            final standardItems = items
+                .where(
+                  (i) => i.sectionTitle != kPersonalExaminationSectionTitle,
+                )
+                .toList();
+            final personalItems = items
+                .where(
+                  (i) => i.sectionTitle == kPersonalExaminationSectionTitle,
+                )
+                .toList();
+
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+              children: [
+                Text(
+                  'Exame de Consciência Diário',
+                  style: context.textStyles.largeTitle.copyWith(
+                    color: const Color(0xFF8F2830),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Para fazer ao final do dia',
-                style: context.textStyles.secondary.copyWith(
-                  fontSize: 18,
-                  color: context.colors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 24),
-              for (final item in items) ...[
-                Text(item.sectionTitle, style: context.textStyles.sectionTitle),
                 const SizedBox(height: 8),
                 Text(
-                  item.text,
-                  style: context.textStyles.readingBody,
+                  'Para fazer ao final do dia',
+                  style: context.textStyles.secondary.copyWith(
+                    fontSize: 18,
+                    color: context.colors.textPrimary,
+                  ),
                 ),
                 const SizedBox(height: 24),
+                for (final item in standardItems) ...[
+                  Text(item.sectionTitle, style: context.textStyles.sectionTitle),
+                  const SizedBox(height: 8),
+                  Text(
+                    item.text,
+                    style: context.textStyles.readingBody,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                PersonalExaminationPointsSection(items: personalItems),
               ],
-            ],
-          ),
+            );
+          },
           loading: () => const Center(child: CupertinoActivityIndicator()),
           error: (error, stackTrace) => Center(
             child: Text(

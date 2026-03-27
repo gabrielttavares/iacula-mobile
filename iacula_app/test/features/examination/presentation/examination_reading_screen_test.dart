@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/examination/domain/entities/examination_reflection_item.dart';
+import 'package:iacula_app/features/examination/domain/examination_reflection_constants.dart';
 import 'package:iacula_app/features/examination/domain/repositories/examination_reflection_repository.dart';
 import 'package:iacula_app/features/examination/presentation/examination_reading_screen.dart';
 
@@ -79,7 +80,54 @@ void main() {
     expect(find.text('Para fazer ao final do dia'), findsOneWidget);
     expect(find.text('Ato de Presença de Deus'), findsOneWidget);
     expect(find.text('Deveres para com Deus'), findsOneWidget);
-    expect(find.byType(CupertinoTextField), findsNothing);
+    expect(find.byType(CupertinoTextField), findsOneWidget);
     expect(find.text('Começar'), findsNothing);
   });
+
+  testWidgets(
+    'daily reading lists standard prompts only in main body and personal points in dedicated section',
+    (tester) async {
+      const personalLine = 'Evitei fofocas no trabalho?';
+      final repository = _FakeExaminationReflectionRepository([
+        ExaminationReflectionItem(
+          id: '1',
+          sectionTitle: 'Ato de Presença de Deus',
+          text: 'Meu Deus, dai-me luz para conhecer os pecados que hoje cometi.',
+          sortOrder: 0,
+          createdAt: DateTime(2026, 3, 11),
+          updatedAt: DateTime(2026, 3, 11),
+        ),
+        ExaminationReflectionItem(
+          id: 'p1',
+          sectionTitle: kPersonalExaminationSectionTitle,
+          text: personalLine,
+          sortOrder: 1,
+          createdAt: DateTime(2026, 3, 11),
+          updatedAt: DateTime(2026, 3, 11),
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            examinationReflectionRepositoryProvider.overrideWithValue(
+              repository,
+            ),
+          ],
+          child: const CupertinoApp(home: ExaminationReadingScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(personalLine), findsOneWidget);
+      expect(find.text(kPersonalExaminationSectionTitle), findsNothing);
+      expect(find.text('Meus pontos particulares de exame'), findsOneWidget);
+      expect(
+        find.text(
+          'Seus pontos particulares de exame ficam salvos apenas no seu celular.',
+        ),
+        findsOneWidget,
+      );
+    },
+  );
 }
