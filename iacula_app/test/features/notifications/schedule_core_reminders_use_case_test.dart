@@ -25,11 +25,11 @@ final class _InMemoryNotificationHistoryRepository
 
   @override
   Future<void> clearFrom(DateTime instant) async {
-    final start = DateTime(instant.year, instant.month, instant.day);
-    final end = start.add(const Duration(days: 1));
+    final end = DateTime(instant.year, instant.month, instant.day)
+        .add(const Duration(days: 1));
     entries.removeWhere(
       (entry) =>
-          !entry.deliveredAt.isBefore(start) &&
+          !entry.deliveredAt.isBefore(instant) &&
           entry.deliveredAt.isBefore(end),
     );
   }
@@ -214,5 +214,48 @@ void main() {
           ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
     expect(futureQuotes.first.scheduledAt, now.add(const Duration(minutes: 10)));
     expect(futureQuotes.first.scheduledId, 9000);
+  });
+
+  test('rebuilding preserves history entries delivered before current time', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+
+    final useCase = ScheduleCoreRemindersUseCase(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return Quote(
+          text: 'Quote ${now.hour}:${now.minute.toString().padLeft(2, '0')}',
+          dayOfWeek: 1,
+          theme: 'Tema',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+      notificationHistoryRepository: history,
+      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+    );
+
+    // First run at 08:00 with 30-minute interval
+    await useCase(
+      Settings.defaults.copyWith(intervalMinutes: 30),
+      now: DateTime(2026, 2, 21, 8),
+    );
+
+    // Should have entries from 08:00 through 23:30
+    expect(history.entries.length, 32);
+
+    // Second run at 12:00 (simulating app reopen)
+    await useCase(
+      Settings.defaults.copyWith(intervalMinutes: 30),
+      now: DateTime(2026, 2, 21, 12),
+    );
+
+    // Entries before 12:00 from first run must be preserved
+    final preservedEntries = history.entries
+        .where((e) => e.deliveredAt.isBefore(DateTime(2026, 2, 21, 12)))
+        .toList();
+    expect(preservedEntries, hasLength(8)); // 08:00, 08:30, ..., 11:30
+
+    expect(preservedEntries.first.quoteText, 'Quote 8:00');
+    expect(preservedEntries.last.quoteText, 'Quote 11:30');
   });
 }

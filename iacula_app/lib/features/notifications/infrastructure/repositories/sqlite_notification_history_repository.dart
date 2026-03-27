@@ -31,13 +31,13 @@ final class SqliteNotificationHistoryRepository
 
   @override
   Future<void> clearFrom(DateTime instant) async {
-    final start = DateTime(instant.year, instant.month, instant.day);
-    final end = start.add(const Duration(days: 1));
+    final end = DateTime(instant.year, instant.month, instant.day)
+        .add(const Duration(days: 1));
     final db = await _database.database;
     await db.delete(
       'notification_history_entries',
       where: 'delivered_at >= ? AND delivered_at < ?',
-      whereArgs: [start.toIso8601String(), end.toIso8601String()],
+      whereArgs: [instant.toIso8601String(), end.toIso8601String()],
     );
   }
 
