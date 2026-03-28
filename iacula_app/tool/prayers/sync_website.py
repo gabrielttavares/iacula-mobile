@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """
 Sync prayer content from scraped website data into app JSON files.
+
+Usage:
+    python3 sync_website.py            # Add/update only (no deletions)
+    python3 sync_website.py --rebuild  # Full rebuild: remove extras, delete orphans
 """
 
 import json
 import os
 import re
+import sys
 import unicodedata
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -53,6 +58,7 @@ SECTION_TO_THEME = {
     "oracoes-a-nossa-senhora": ["mariano"],
     "preparacao-santa-missa": ["missa-preparacao"],
     "acao-de-gracas-santa-missa": ["missa-acao-de-gracas"],
+    "oracoes-diversas": ["diversos"],
     "outras-devocoes": ["devocoes"],
     "hinos": ["hinos"],
     "oracoes-pelos-defuntos": ["defuntos"],
@@ -67,15 +73,62 @@ TITLE_FIXES_LA = {
     "Rorate coeli": "Rorate caeli",
 }
 
+# Extra prayers to keep in oracoes-diversas (not from the website but user wants them)
+KEEP_EXTRA_SLUGS = {
+    "oracao-ao-anjo-da-guarda": ("oracoes-diversas", "Orações Diversas"),
+    "oracao-para-boa-morte": ("oracoes-diversas", "Orações Diversas"),
+    "aceitacao-da-morte": ("oracoes-diversas", "Orações Diversas"),
+    "oracao-momento-da-morte": ("oracoes-diversas", "Orações Diversas"),
+    "oracao-antes-do-estudo": ("oracoes-diversas", "Orações Diversas"),
+    "oracao-pela-igreja-e-pela-patria": ("oracoes-diversas", "Orações Diversas"),
+    "oracao-de-sao-bento": ("oracoes-diversas", "Orações Diversas"),
+}
+
+
+def convert_versicle_response(blocks):
+    """
+    Convert blocks starting with '. ' (scraped convention) to proper
+    ℣ / ℟ Unicode markers, alternating versicle/response within each sequence.
+
+    Special case: a single '. ' block after a break (like "Amen" after "Oremos")
+    is treated as ℟ (response), not ℣.
+    """
+    # First pass: identify which blocks are versicle/response markers
+    is_dot = [b.startswith(". ") or b.startswith(".") and len(b) > 1 and b[1] != '.' for b in blocks]
+
+    result = []
+    in_vr_sequence = False
+    is_versicle = True
+
+    for i, block in enumerate(blocks):
+        if is_dot[i]:
+            text = block.lstrip(". ")
+            if not in_vr_sequence:
+                in_vr_sequence = True
+                # Check if this is a lone marker (no next dot block follows immediately)
+                # If so, it's a response (e.g., "Amen" after "Oremos" prayer)
+                next_is_dot = (i + 1 < len(blocks) and is_dot[i + 1])
+                if not next_is_dot:
+                    is_versicle = False  # lone marker = response
+                else:
+                    is_versicle = True
+
+            marker = "℣" if is_versicle else "℟"
+            result.append(f"{marker} {text}")
+            is_versicle = not is_versicle
+        else:
+            in_vr_sequence = False
+            is_versicle = True
+            result.append(block)
+
+    return result
+
 
 def build_slug_table():
     """
     Build a complete mapping: (section_name, prayer_index) -> slug
     This uses the exact ordering from the scraped data to assign slugs deterministically.
     """
-    with open(SCRAPED_PATH) as f:
-        scraped = json.load(f)
-
     mapping = {}
 
     # Orações comuns (9 prayers)
@@ -84,7 +137,7 @@ def build_slug_table():
     mapping[("Orações comuns", 2)] = "ave-maria"
     mapping[("Orações comuns", 3)] = "gloria"
     mapping[("Orações comuns", 4)] = "ato-de-contricao"
-    mapping[("Orações comuns", 5)] = "confesso"  # NEW
+    mapping[("Orações comuns", 5)] = "confesso"
     mapping[("Orações comuns", 6)] = "credo"
     mapping[("Orações comuns", 7)] = "credo-apostolico"
     mapping[("Orações comuns", 8)] = "ao-anjo-da-guarda"
@@ -92,7 +145,7 @@ def build_slug_table():
     # Ssma. Trindade (6 prayers)
     mapping[("Ssma. Trindade", 0)] = "simbolo-atanasiano"
     mapping[("Ssma. Trindade", 1)] = "te-deum"
-    mapping[("Ssma. Trindade", 2)] = "trisagio-angelico"  # NEW
+    mapping[("Ssma. Trindade", 2)] = "trisagio-angelico"
     mapping[("Ssma. Trindade", 3)] = "ato-de-fe"
     mapping[("Ssma. Trindade", 4)] = "ato-de-esperanca"
     mapping[("Ssma. Trindade", 5)] = "ato-de-caridade"
@@ -101,10 +154,10 @@ def build_slug_table():
     mapping[("Adoração Eucarística", 0)] = "visita-ao-santissimo"
     mapping[("Adoração Eucarística", 1)] = "adoro-te-devote"
     mapping[("Adoração Eucarística", 2)] = "pange-lingua"
-    mapping[("Adoração Eucarística", 3)] = "sacris-solemniis"  # NEW
-    mapping[("Adoração Eucarística", 4)] = "lauda-sion"  # NEW
-    mapping[("Adoração Eucarística", 5)] = "iesu-dulcis-memoria"  # NEW
-    mapping[("Adoração Eucarística", 6)] = "verbum-supernum"  # NEW
+    mapping[("Adoração Eucarística", 3)] = "sacris-solemniis"
+    mapping[("Adoração Eucarística", 4)] = "lauda-sion"
+    mapping[("Adoração Eucarística", 5)] = "iesu-dulcis-memoria"
+    mapping[("Adoração Eucarística", 6)] = "verbum-supernum"
 
     # Espírito Santo (3 prayers)
     mapping[("Espírito Santo", 0)] = "veni-sancte-spiritus"
@@ -118,11 +171,11 @@ def build_slug_table():
     mapping[("Nossa Senhora", 3)] = "rosario-portugues"
     mapping[("Nossa Senhora", 4)] = "sob-a-tua-protecao"
     mapping[("Nossa Senhora", 5)] = "stabat-mater"
-    mapping[("Nossa Senhora", 6)] = "consagracao-a-nossa-senhora"  # NEW
+    mapping[("Nossa Senhora", 6)] = "consagracao-a-nossa-senhora"
     mapping[("Nossa Senhora", 7)] = "bendita-seja-a-tua-pureza"
     mapping[("Nossa Senhora", 8)] = "alma-redemptoris-mater"
     mapping[("Nossa Senhora", 9)] = "ave-regina-coelorum"
-    mapping[("Nossa Senhora", 10)] = "magnificat"  # NEW
+    mapping[("Nossa Senhora", 10)] = "magnificat"
     mapping[("Nossa Senhora", 11)] = "salve-rainha"
 
     # Antes da Missa (4 prayers)
@@ -132,7 +185,7 @@ def build_slug_table():
     mapping[("Antes da Missa", 3)] = "oracao-santo-ambrosio"
 
     # Depois da Missa (9 prayers)
-    mapping[("Depois da Missa", 0)] = "oracao-sao-miguel-arcanjo"  # NEW
+    mapping[("Depois da Missa", 0)] = "oracao-sao-miguel-arcanjo"
     mapping[("Depois da Missa", 1)] = "oracao-sao-tomas-acao-de-gracas"
     mapping[("Depois da Missa", 2)] = "oracao-sao-boaventura"
     mapping[("Depois da Missa", 3)] = "oracao-papa-clemente-xi"
@@ -145,27 +198,27 @@ def build_slug_table():
     # Outras devoções (9 prayers)
     mapping[("Outras devoções", 0)] = "salmo-2"
     mapping[("Outras devoções", 1)] = "salmo-50"
-    mapping[("Outras devoções", 2)] = "salve-santa-cruz"  # NEW
-    mapping[("Outras devoções", 3)] = "via-sacra"  # NEW
+    mapping[("Outras devoções", 2)] = "salve-santa-cruz"
+    mapping[("Outras devoções", 3)] = "via-sacra"
     mapping[("Outras devoções", 4)] = "antes-da-oracao-mental"
-    mapping[("Outras devoções", 5)] = "leitura-espiritual"  # NEW
+    mapping[("Outras devoções", 5)] = "leitura-espiritual"
     mapping[("Outras devoções", 6)] = "bencao-dos-alimentos"
-    mapping[("Outras devoções", 7)] = "bencao-de-viagem"  # NEW
-    mapping[("Outras devoções", 8)] = "preces"  # NEW
+    mapping[("Outras devoções", 7)] = "bencao-de-viagem"
+    mapping[("Outras devoções", 8)] = "preces"
 
     # Hinos (12 prayers)
     mapping[("Hinos", 0)] = "ubi-caritas"
-    mapping[("Hinos", 1)] = "pax-in-caelo"  # NEW
-    mapping[("Hinos", 2)] = "rorate-caeli"  # NEW
-    mapping[("Hinos", 3)] = "te-ioseph"  # NEW
+    mapping[("Hinos", 1)] = "pax-in-caelo"
+    mapping[("Hinos", 2)] = "rorate-caeli"
+    mapping[("Hinos", 3)] = "te-ioseph"
     mapping[("Hinos", 4)] = "benedictus"
-    mapping[("Hinos", 5)] = "media-vita"  # NEW
-    mapping[("Hinos", 6)] = "ave-verum"  # NEW
+    mapping[("Hinos", 5)] = "media-vita"
+    mapping[("Hinos", 6)] = "ave-verum"
     mapping[("Hinos", 7)] = "ave-maris-stella"
-    mapping[("Hinos", 8)] = "lux-aeterna"  # NEW
-    mapping[("Hinos", 9)] = "vexilla-regis"  # NEW
-    mapping[("Hinos", 10)] = "oremus-pro-pontifice"  # NEW
-    mapping[("Hinos", 11)] = "adeste-fideles"  # NEW
+    mapping[("Hinos", 8)] = "lux-aeterna"
+    mapping[("Hinos", 9)] = "vexilla-regis"
+    mapping[("Hinos", 10)] = "oremus-pro-pontifice"
+    mapping[("Hinos", 11)] = "adeste-fideles"
 
     # Falecidos (3 prayers)
     mapping[("Falecidos", 0)] = "responso-portugues"
@@ -175,7 +228,7 @@ def build_slug_table():
     # Doutrina (13 prayers)
     mapping[("Doutrina", 0)] = "mandamentos-da-caridade"
     mapping[("Doutrina", 1)] = "regra-de-ouro"
-    mapping[("Doutrina", 2)] = "dez-mandamentos"  # NEW
+    mapping[("Doutrina", 2)] = "dez-mandamentos"
     mapping[("Doutrina", 3)] = "bem-aventurancas"
     mapping[("Doutrina", 4)] = "virtudes-teologais-formula"
     mapping[("Doutrina", 5)] = "virtudes-cardeais"
@@ -199,6 +252,8 @@ def fix_prayer(prayer):
 
 
 def main():
+    rebuild = "--rebuild" in sys.argv
+
     # Load data
     with open(SCRAPED_PATH) as f:
         scraped = json.load(f)
@@ -207,6 +262,7 @@ def main():
         catalog = json.load(f)
 
     slug_table = build_slug_table()
+    all_valid_slugs = set(slug_table.values()) | set(KEEP_EXTRA_SLUGS.keys())
     existing_ids = {entry["id"] for entry in catalog}
     existing_detail_files = set(os.listdir(DETAILS_DIR))
 
@@ -214,8 +270,12 @@ def main():
     updated_prayers = []
     new_catalog_entries = []
 
-    # Process each section
+    # Process each section from scraped data
     for section_name, prayers in scraped.items():
+        if section_name not in SECTION_MAP:
+            print(f"  SKIP: Unknown section '{section_name}'")
+            continue
+
         section_id, section_title = SECTION_MAP[section_name]
         print(f"\n--- {section_name} ({section_id}) ---")
 
@@ -234,6 +294,10 @@ def main():
             pt_blocks = prayer.get("ptBrBlocks", [])
             la_blocks = prayer.get("laBlocks", [])
 
+            # Convert '. ' markers to ℣/℟
+            pt_blocks = convert_versicle_response([norm(b) for b in pt_blocks])
+            la_blocks = convert_versicle_response([norm(b) for b in la_blocks])
+
             # Build detail data
             detail = {
                 "slug": slug,
@@ -246,9 +310,9 @@ def main():
             if la_title:
                 detail["titles"]["la"] = la_title
             if pt_blocks:
-                detail["blocks"]["pt-br"] = [norm(b) for b in pt_blocks]
+                detail["blocks"]["pt-br"] = pt_blocks
             if la_blocks:
-                detail["blocks"]["la"] = [norm(b) for b in la_blocks]
+                detail["blocks"]["la"] = la_blocks
 
             detail_path = os.path.join(DETAILS_DIR, f"{slug}.json")
 
@@ -268,7 +332,7 @@ def main():
                             existing.setdefault("titles", {})[lang] = new
                             changed = True
 
-                # Update blocks
+                # Update blocks (always overwrite with scraped data)
                 for lang in ["pt-br", "la"]:
                     if lang in detail["blocks"]:
                         existing.setdefault("blocks", {})[lang] = detail["blocks"][lang]
@@ -290,7 +354,7 @@ def main():
                 new_prayers.append(slug)
                 print(f"  NEW: {slug}")
 
-            # Update catalog
+            # Update or create catalog entry
             if slug not in existing_ids:
                 content = ""
                 if pt_blocks:
@@ -323,15 +387,15 @@ def main():
                 new_catalog_entries.append(entry)
                 existing_ids.add(slug)
             else:
-                # Update existing catalog entry: section moves, language updates
+                # Update existing catalog entry: section assignment, languages
                 for existing_entry in catalog:
                     if existing_entry["id"] == slug:
-                        # Section moves for Hinos
-                        if section_id == "hinos" and existing_entry["section_id"] != "hinos":
+                        # Always update section to match scraped source
+                        if existing_entry["section_id"] != section_id:
                             old = existing_entry["section_id"]
                             existing_entry["section_id"] = section_id
                             existing_entry["section_title"] = section_title
-                            existing_entry["theme"] = ["hinos"]
+                            existing_entry["theme"] = SECTION_TO_THEME.get(section_id, [])
                             print(f"    MOVED: {slug} from {old} -> {section_id}")
 
                         # Update languages
@@ -339,33 +403,89 @@ def main():
                             existing_entry["languages"] = list(set(existing_entry.get("languages", [])) | set(languages))
                         break
 
-    # Insert new catalog entries in proper positions
-    section_order_ids = [s[0] for s in SECTION_MAP.values()]
+    # --- REBUILD MODE: Remove extras ---
+    if rebuild:
+        print(f"\n=== REBUILD MODE ===")
 
-    for new_entry in new_catalog_entries:
-        target_section = new_entry["section_id"]
-        insert_idx = len(catalog)
+        # Fix section assignments for KEEP_EXTRA_SLUGS
+        for slug, (section_id, section_title) in KEEP_EXTRA_SLUGS.items():
+            for entry in catalog:
+                if entry["id"] == slug:
+                    if entry["section_id"] != section_id:
+                        old = entry["section_id"]
+                        entry["section_id"] = section_id
+                        entry["section_title"] = section_title
+                        entry["theme"] = SECTION_TO_THEME.get(section_id, [])
+                        print(f"  MOVED EXTRA: {slug} from {old} -> {section_id}")
+                    break
 
-        # Find last entry of same section
-        last_same = -1
-        for i, entry in enumerate(catalog):
-            if entry["section_id"] == target_section:
-                last_same = i
+        # Remove catalog entries not in valid slugs
+        removed_entries = []
+        new_catalog = []
+        for entry in catalog:
+            if entry["id"] in all_valid_slugs:
+                new_catalog.append(entry)
+            else:
+                removed_entries.append(entry["id"])
+                print(f"  REMOVED from catalog: {entry['id']} (was in {entry['section_id']})")
 
-        if last_same >= 0:
-            insert_idx = last_same + 1
-        else:
-            # New section - find position based on section order
-            if target_section in section_order_ids:
-                target_order = section_order_ids.index(target_section)
-                for i, entry in enumerate(catalog):
-                    if entry["section_id"] in section_order_ids:
-                        entry_order = section_order_ids.index(entry["section_id"])
-                        if entry_order > target_order:
-                            insert_idx = i
-                            break
+        # Also add new entries
+        for new_entry in new_catalog_entries:
+            # Find insert position
+            target_section = new_entry["section_id"]
+            insert_idx = len(new_catalog)
 
-        catalog.insert(insert_idx, new_entry)
+            last_same = -1
+            for i, entry in enumerate(new_catalog):
+                if entry["section_id"] == target_section:
+                    last_same = i
+            if last_same >= 0:
+                insert_idx = last_same + 1
+
+            new_catalog.insert(insert_idx, new_entry)
+
+        catalog = new_catalog
+
+        # Delete orphan detail files
+        deleted_files = []
+        for filename in os.listdir(DETAILS_DIR):
+            if not filename.endswith('.json'):
+                continue
+            slug = filename.replace('.json', '')
+            if slug not in all_valid_slugs:
+                filepath = os.path.join(DETAILS_DIR, filename)
+                os.remove(filepath)
+                deleted_files.append(slug)
+                print(f"  DELETED file: {filename}")
+
+        print(f"\n  Removed {len(removed_entries)} catalog entries")
+        print(f"  Deleted {len(deleted_files)} detail files")
+    else:
+        # Non-rebuild mode: just insert new catalog entries
+        section_order_ids = [s[0] for s in SECTION_MAP.values()]
+
+        for new_entry in new_catalog_entries:
+            target_section = new_entry["section_id"]
+            insert_idx = len(catalog)
+
+            last_same = -1
+            for i, entry in enumerate(catalog):
+                if entry["section_id"] == target_section:
+                    last_same = i
+
+            if last_same >= 0:
+                insert_idx = last_same + 1
+            else:
+                if target_section in section_order_ids:
+                    target_order = section_order_ids.index(target_section)
+                    for i, entry in enumerate(catalog):
+                        if entry["section_id"] in section_order_ids:
+                            entry_order = section_order_ids.index(entry["section_id"])
+                            if entry_order > target_order:
+                                insert_idx = i
+                                break
+
+            catalog.insert(insert_idx, new_entry)
 
     # Save catalog
     with open(CATALOG_PATH, "w") as f:
@@ -393,6 +513,10 @@ def main():
     missing_files = set(all_catalog_ids) - all_detail_files
     if missing_files:
         print(f"\nWARN: Catalog entries without detail files: {missing_files}")
+
+    orphan_files = all_detail_files - set(all_catalog_ids)
+    if orphan_files:
+        print(f"\nWARN: Detail files without catalog entries: {orphan_files}")
 
     dupes = [id for id in all_catalog_ids if all_catalog_ids.count(id) > 1]
     if dupes:

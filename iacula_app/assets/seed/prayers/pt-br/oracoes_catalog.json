@@ -66,8 +66,8 @@
     "id": "salve-rainha",
     "title": "Salve Rainha",
     "content": "Salve Rainha, Mãe de misericórdia, vida, doçura, esperança nossa, salve! A vós bradamos, os degredados filhos de Eva, a vós suspiramos, gemendo e chorando neste vale de lágrimas. Eia, pois, Advogada nossa, esses vossos olhos misericordiosos a nós volvei, e depois deste desterro mostr-nos Jesus, bendito fruto de vosso ventre, ó clemente, ó piedosa, ó doce sempre Virgem Maria.",
-    "section_id": "oracoes-comuns",
-    "section_title": "Orações Comuns",
+    "section_id": "oracoes-a-nossa-senhora",
+    "section_title": "Orações a Nossa Senhora",
     "languages": [
       "pt-br",
       "la"
@@ -391,43 +391,9 @@
     "saints": []
   },
   {
-    "id": "anjo-do-senhor",
-    "title": "Anjo do Senhor",
-    "content": "V/. O anjo do Senhor anunciou a Maria. R/. E Ela concebeu do Espírito Santo. Ave Maria. V/. Eis aqui a escrava do Senhor. R/. Faça-se em mim segundo a vossa palavra. Ave Maria. V/. E o Verbo divino se fez carne. R/. E habitou entre nós. Ave Maria. V/. Rogai por nós Santa Mãe de Deus. R/. Para que sejamos dignos das graças de Cristo.",
-    "section_id": "oracoes-a-nossa-senhora",
-    "section_title": "Orações a Nossa Senhora",
-    "languages": [
-      "la",
-      "pt-br"
-    ],
-    "theme": [
-      "mariano"
-    ],
-    "saints": [
-      "virgem-maria"
-    ]
-  },
-  {
     "id": "angelus",
     "title": "Ângelus",
     "content": "V/. Angelus Dómini nuntiávit Maríæ. R/. Et concépit de Spíritu Sancto. Ave, Maria. V/. Ecce ancílla Dómini. R/. Fiat mihi secúndum verbum tuum. Ave, María. V/. Et Verbum caro factum est. R/. Et habitávit in nobis. Ave, María.",
-    "section_id": "oracoes-a-nossa-senhora",
-    "section_title": "Orações a Nossa Senhora",
-    "languages": [
-      "la",
-      "pt-br"
-    ],
-    "theme": [
-      "mariano"
-    ],
-    "saints": [
-      "virgem-maria"
-    ]
-  },
-  {
-    "id": "rainha-do-ceu",
-    "title": "Rainha do Céu",
-    "content": "V/. Rainha do Céu, alegrai-Vos, aleluia. R/. Porque quem merecestes trazer em vosso seio, aleluia. V/. Ressuscitou como disse, aleluia. R/. Rogai a Deus por nós, aleluia. V/. Exultai e alegrai-vos, ó Virgem Maria, aleluia. R/. Porque o Senhor ressuscitou verdadeiramente, aleluia.",
     "section_id": "oracoes-a-nossa-senhora",
     "section_title": "Orações a Nossa Senhora",
     "languages": [
@@ -462,23 +428,6 @@
     "id": "lembrai-vos",
     "title": "Lembrai-Vos",
     "content": "Lembrai-vos, ó piíssima Virgem Maria, que nunca se ouviu dizer que algum daqueles que recorreram à vossa proteção, imploraram a vossa assistência e reclamaram o vosso socorro, fosse por vós desamparado. Animado eu, pois, com igual confiança, a vós, Virgem, entre todas singular, como à minha Mãe recorro; de vós me valho e, gemendo sob o peso de meus pecados, me prostro aos vossos pés.",
-    "section_id": "oracoes-a-nossa-senhora",
-    "section_title": "Orações a Nossa Senhora",
-    "languages": [
-      "la",
-      "pt-br"
-    ],
-    "theme": [
-      "mariano"
-    ],
-    "saints": [
-      "virgem-maria"
-    ]
-  },
-  {
-    "id": "memorare",
-    "title": "Memorare",
-    "content": "Memorare, O piissima Virgo Maria, non esse auditum a saeculo, quemquam ad tua currentem praesidia, tua implorantem auxilia, tua petentem suffragia, esse derelictum. Ego tali animato confidentia, ad te, Virgo Virginum, Mater, curro, ad te venio, coram te gemens peccator assisto.",
     "section_id": "oracoes-a-nossa-senhora",
     "section_title": "Orações a Nossa Senhora",
     "languages": [
@@ -612,40 +561,6 @@
     ]
   },
   {
-    "id": "rosario-latim",
-    "title": "Santo Rosário (Latim)",
-    "content": "Gaudii Mystéria (feria secunda et sábbato): Annuntiatio, Visitatio, Nativitas, Presentatio, Inventio. Lucis Mystéria (feria quinta): Baptismus, Cana, Regnum, Transfiguratio, Eucharistia. Doloris Mystéria (feria tertia et sexta): Agonia, Flagellatio, Coronatio, Via Crucis, Mors. Glóriae Mystéria (feria quarta et dominica): Resurrectio, Ascensio, Pentecostes, Assumptio, Coronatio.",
-    "section_id": "oracoes-a-nossa-senhora",
-    "section_title": "Orações a Nossa Senhora",
-    "languages": [
-      "la",
-      "pt-br"
-    ],
-    "theme": [
-      "rosario"
-    ],
-    "saints": [
-      "virgem-maria"
-    ]
-  },
-  {
-    "id": "ladainha-nossa-senhora",
-    "title": "Ladainha a Nossa Senhora",
-    "content": "Santa Maria, rogai por nós. Santa Mãe de Deus, rogai por nós. Santa Virgem das virgens, rogai por nós. Mãe de Jesus Cristo, rogai por nós. Mãe da Igreja, rogai por nós. Mãe da divina graça, rogai por nós. Mãe puríssima, rogai por nós. Mãe castíssima, rogai por nós. Mãe imaculada, rogai por nós. Mãe intacta, rogai por nós. Mãe amável, rogai por nós. Mãe admirável, rogai por nós. Mãe do bom conselho, rogai por nós. Mãe do Criador, rogai por nós. Mãe do Salvador, rogai por nós. Virgem prudentíssima, rogai por nós. Virgem veneranda, rogai por nós. Virgem digna de louvor, rogai por nós. Virgem poderosa, rogai por nós. Virgem clemente, rogai por nós. Virgem fiel, rogai por nós. Espelho da justiça, rogai por nós. Sede da Sabedoria, rogai por nós. Causa da nossa alegria, rogai por nós. Rosa mística, rogai por nós. Torre de Davi, rogai por nós. Torre de marfim, rogai por nós. Casa de ouro, rogai por nós. Arca da aliança, rogai por nós. Porta do céu, rogai por nós. Estrela da manhã, rogai por nós. Saúde dos enfermos, rogai por nós. Refúgio dos pecadores, rogai por nós. Consoladora dos aflitos, rogai por nós. Auxílio dos cristianos, rogai por nós. Rainha dos Anjos, rogai por nós. Rainha dos Patriarcas, rogai por nós. Rainha dos Profetas, rogai por nós. Rainha dos Apóstolos, rogai por nós. Rainha dos Mártires, rogai por nós. Rainha dos Confessores, rogai por nós. Rainha das Virgens, rogai por todos os Santos, rogai por nós. Rainha concebida sem pecado original, rogai por nós. Rainha assumta aos céus, rogai por nós. Rainha do Santíssimo Rosário, rogai por nós. Rainha da Família, rogai por nós. Rainha da Paz, rogai por nós.",
-    "section_id": "oracoes-a-nossa-senhora",
-    "section_title": "Orações a Nossa Senhora",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "rosario",
-      "mariano"
-    ],
-    "saints": [
-      "virgem-maria"
-    ]
-  },
-  {
     "id": "consagracao-a-nossa-senhora",
     "title": "Consagração a Nossa Senhora",
     "content": "Ó Senhora minha, ó minha Mãe, eu me ofereço todo a Vós e, em prova da minha devoção para convosco, Vos consagro neste dia meus olhos, meus ouvidos, minha boca, meu coração e inteiramente todo o meu se",
@@ -729,78 +644,6 @@
     ]
   },
   {
-    "id": "ato-de-fe-missa",
-    "title": "Ato de Fé (Missa)",
-    "content": "Ó Jesus, Deus e homem verdadeiro, creio firmemente que, por nosso amor e para ser o alimento da nossa alma, estais no Santíssimo Sacramento do Altar, tão real e perfeitamente como estais no Céu.",
-    "section_id": "preparacao-santa-missa",
-    "section_title": "Preparação para a Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-preparacao"
-    ],
-    "saints": []
-  },
-  {
-    "id": "ato-de-adoracao",
-    "title": "Ato de Adoração",
-    "content": "Ó Jesus, adoro-Vos profundamente neste diviníssimo Sacramento, onde estais presente como na glória dos céus. Creio que estais realmente presente no Altar, sob as aparências do Pão e do Vinho, Vós que criastes todas as coisas e redeemistes o mundo com o vosso Sangue.",
-    "section_id": "preparacao-santa-missa",
-    "section_title": "Preparação para a Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-preparacao"
-    ],
-    "saints": []
-  },
-  {
-    "id": "ato-de-esperanca-missa",
-    "title": "Ato de Esperança (Missa)",
-    "content": "Ó Jesus, esperança minha, confio na vossa bondade e infinita misericórdia. Venho a Vós com a certeza de que me haveis de dar a graça da salvação e a vida eterna, pois Vós o haveis promise a todos os que Vos receberem dignamente.",
-    "section_id": "preparacao-santa-missa",
-    "section_title": "Preparação para a Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-preparacao"
-    ],
-    "saints": []
-  },
-  {
-    "id": "ato-de-amor-missa",
-    "title": "Ato de Amor (Missa)",
-    "content": "Ó Jesus, meu amor, eu Vos amo de todo o meu coração e sobre todas as coisas, porque fostes Vós que primeiro me amastes e Vos entregastes por mim na Cruz. Que o meu coração se abra para Vos receber com fervor e devoção.",
-    "section_id": "preparacao-santa-missa",
-    "section_title": "Preparação para a Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-preparacao"
-    ],
-    "saints": []
-  },
-  {
-    "id": "palavras-sao-josemaria",
-    "title": "Palavras de São Josemaria",
-    "content": "Ó meu Jesus, fazei que eu me aproxime de Vós comovidamente, com o desejo de Vos amar e servir, de fazer a Vossa vontade em todas as coisas, deVos acompanhar com fervor durante toda a Santa Missa.",
-    "section_id": "preparacao-santa-missa",
-    "section_title": "Preparação para a Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-preparacao"
-    ],
-    "saints": [
-      "sao-josemaria"
-    ]
-  },
-  {
     "id": "oracao-santo-ambrosio",
     "title": "Oração de Santo Ambrosio",
     "content": "Ó Deus, que preparastes o vosso povo redimido para a glória eterna, fazei que as almas dos fiéis que dormem no Senhor descansem em paz e na luz da vossa face. Por Jesus Cristo, Senhor nosso.",
@@ -816,34 +659,6 @@
     "saints": [
       "santo-ambrosio"
     ]
-  },
-  {
-    "id": "ao-espirito-santo-missa",
-    "title": "Ao Espírito Santo (Missa)",
-    "content": "Vinde, Espírito Criador, visitai a alma dos vossos fiéis; enchei de graça celestial os corações que Vós criastes. Dai-me a compreender a grandeza do sacrifício que vou offererece e a participar dos seus frutos eternos.",
-    "section_id": "preparacao-santa-missa",
-    "section_title": "Preparação para a Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-preparacao"
-    ],
-    "saints": []
-  },
-  {
-    "id": "comunhoes-espirituais",
-    "title": "Comunhões Espirituais",
-    "content": "Creio, meu Jesus, que estais presente no Santíssimo Sacramento. Venho a Vós com fervor, desejando receber-Vos espiritualmente, pois não posso receber-Vos Sacramentalmente neste momento. Fazei que esta comunhão espiritual me seja proveitosa.",
-    "section_id": "preparacao-santa-missa",
-    "section_title": "Preparação para a Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-preparacao"
-    ],
-    "saints": []
   },
   {
     "id": "invocacoes-santisimo-redentor",
@@ -896,14 +711,14 @@
     "id": "oracao-sao-boaventura",
     "title": "Oração de São Boaventura",
     "content": "Ó Deus, que iluminastes São Boaventura com a luz da sabedoria divina, concedei-me que, seguindo os seus ensinamentos, eu caminhe em vossos caminhos e alcance a glória eterna.",
-    "section_id": "oracoes-diversas",
-    "section_title": "Orações Diversas",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
     "languages": [
       "pt-br",
       "la"
     ],
     "theme": [
-      "devocoes"
+      "missa-acao-de-gracas"
     ],
     "saints": [
       "sao-boaventura"
@@ -959,95 +774,6 @@
     ]
   },
   {
-    "id": "oferecimento-de-si-mesmo",
-    "title": "Oferecimento de Si Mesmo",
-    "content": "Senhor Jesus, ofereço-Vos todas as minhas ações, trabalhos e sofrimentos de hoje, pela glória de Deus, pela salvação das almas e em desagravo pelos meus pecados.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-acao-de-gracas"
-    ],
-    "saints": []
-  },
-  {
-    "id": "oracao-sao-francisco",
-    "title": "Oração de São Francisco",
-    "content": "Ó Deus, que fizestes de São Francisco um espelho de pobreza e humildade, concedei-me que, seguindo o seu exemplo, eu caminhe em vossa presença com coração puro e simples.",
-    "section_id": "oracoes-diversas",
-    "section_title": "Orações Diversas",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "devocoes"
-    ],
-    "saints": [
-      "sao-francisco"
-    ]
-  },
-  {
-    "id": "oracao-a-sao-paulo",
-    "title": "Oração a São Paulo",
-    "content": "São Paulo, apóstolo de Cristo, que tanto trabalhastes pela propagação da fé, rogai por mim para que eu possa ser um bom católico e propagar a boa doutrina.",
-    "section_id": "oracoes-diversas",
-    "section_title": "Orações Diversas",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "devocoes"
-    ],
-    "saints": [
-      "sao-paulo"
-    ]
-  },
-  {
-    "id": "oracao-aos-pastores-de-fatima",
-    "title": "Oração aos Pastores de Fátima",
-    "content": "São Francisco e Santa Jacinta, pastorinhos de Fátima, que vistes a Virgem Maria e difundistes as suas mensagens, rogai por mim e por todos os fiéis.",
-    "section_id": "oracoes-diversas",
-    "section_title": "Orações Diversas",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "devocoes",
-      "mariano"
-    ],
-    "saints": []
-  },
-  {
-    "id": "oracao-santissima-trindade-acao",
-    "title": "Oração à Santíssima Trindade",
-    "content": "Ó Santíssima Trindade, Pai, Filho e Espírito Santo, infinitamente bom e perfeito, eu Vos adoro e amo com todo o meu coração. Graças Vos dou por todos os benefícios que recebi de vossa mão.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-acao-de-gracas"
-    ],
-    "saints": []
-  },
-  {
-    "id": "eis-me-aqui",
-    "title": "Eis-me Aqui",
-    "content": "Senhor, eis-me aqui para cumprir a vossa vontade, com fidelidade no ordinário. Fazei que eu ofereça cada momento do meu dia como sacrifício de amor.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-acao-de-gracas"
-    ],
-    "saints": []
-  },
-  {
     "id": "cântico-dos-três-jovens",
     "title": "Cântico dos Três Jovens",
     "content": "Bendizei, todas as obras do Senhor, ao Senhor, louvai-O e exaltai-O para sempre. Anjos do Senhor, bendizei ao Senhor. Céus, bendizei ao Senhor. Águas todas que estais sobre os céus, bendizei ao Senhor. Sol e lua, bendizei ao Senhor. Estrelas do céu, bendizei ao Senhor. Chuva e orvalho, bendizei ao Senhor. Todos os ventos, bendizei ao Senhor.",
@@ -1066,14 +792,14 @@
     "id": "salmo-2",
     "title": "Salmo 2",
     "content": "Por que se amotinam as nações, e os povos tramam em vão? Levantam-se os reis da terra e os príncipes conspiram unidos contra o Senhor e contra o seu Ungido. Rompamos as suas cadeias e lancemos de nós os seus grilhões. Aquele que habita nos céus os escarnecerá, e o Senhor zombará deles. Então lhes falará em sua ira e em seu furor os confundirá.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
     "languages": [
       "la",
       "pt-br"
     ],
     "theme": [
-      "missa-acao-de-gracas"
+      "devocoes"
     ],
     "saints": []
   },
@@ -1096,39 +822,6 @@
     ]
   },
   {
-    "id": "para-o-trabalho",
-    "title": "Para o Trabalho",
-    "content": "São José, varão feliz, que tivestes a dita de ver e ouvir o próprio Deus, a quem muitos reis quiseram ver e não viram, ouvir e não ouviram; e não só ver e ouvir, mas ainda trazê-lo em vossos braços, beijá-lo, vesti-lo e guardá-lo! Rogai por nós, bem-aventurado São José, para que sirvamos a Deus com coração limpo e boas obras.",
-    "section_id": "oracoes-a-sao-jose",
-    "section_title": "Orações a São José",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "sao-jose",
-      "trabalho"
-    ],
-    "saints": [
-      "sao-jose"
-    ]
-  },
-  {
-    "id": "ave-jose",
-    "title": "Ave José",
-    "content": "Ave José, bendito entre todos os esposos, guarda de Virgens, pai putativo do Salvador, que fostes escolhido por Deus para ser o guardião de Jesus e de Maria, rogai por nós.",
-    "section_id": "oracoes-a-sao-jose",
-    "section_title": "Orações a São José",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "sao-jose"
-    ],
-    "saints": [
-      "sao-jose"
-    ]
-  },
-  {
     "id": "oracao-ao-anjo-da-guarda",
     "title": "Oração ao Anjo da Guarda",
     "content": "Santo Anjo do Senhor, meu zeloso guardador, pois que a ti me confiou a Piedade divina, hoje e sempre me governa, rege, guarda e ilumina. Amém.",
@@ -1148,7 +841,7 @@
   {
     "id": "oracao-para-boa-morte",
     "title": "Oração para obter uma Boa Morte",
-    "content": "Ó meu Deus, quando chegar a minha última hora, dai-me a graça de morrer em vossa graça, com a mente清醒 e o coração cheio de confiança em vossa misericórdia. Que eu possa receber os últimos sacramentos e partir em paz.",
+    "content": "Ó meu Deus, quando chegar a minha última hora, dai-me a graça de morrer em vossa graça, com a mente lúcida e o coração cheio de confiança em vossa misericórdia. Que eu possa receber os últimos sacramentos e partir em paz.",
     "section_id": "oracoes-diversas",
     "section_title": "Orações Diversas",
     "languages": [
@@ -1188,35 +881,6 @@
     "saints": []
   },
   {
-    "id": "oracao-a-sagrada-familia",
-    "title": "Oração à Sagrada Família",
-    "content": "Ó Sagrada Família de Nazaré, exemplo de amor, de paz e de santidade, ensinai-me a viver em harmonia com os meus, a praticar a virtues da paciência e da compreensão.",
-    "section_id": "oracoes-diversas",
-    "section_title": "Orações Diversas",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "diversos",
-      "familia"
-    ],
-    "saints": []
-  },
-  {
-    "id": "consagracao-sagrado-coracao",
-    "title": "Consagração ao Sagrado Coração de Jesus",
-    "content": "Ó Sagrado Coração de Jesus, que tanto amastes a humanidade ao ponto de Vos entregar completamente na Cruz, eu me consagro ao vosso Corazóne. Receivei-me como filho e guardai-me.",
-    "section_id": "oracoes-diversas",
-    "section_title": "Orações Diversas",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "diversos"
-    ],
-    "saints": []
-  },
-  {
     "id": "ubi-caritas",
     "title": "Ubi caritas",
     "content": "Ubi cáritas et amor, Deus ibi est. Congregavit nos in unum Christi amor. Exsultemus et in ipso iucundemur. Timeamus et amemus Deum vivum. Et ex corde diligamus nos sincero.",
@@ -1228,20 +892,6 @@
     ],
     "theme": [
       "hinos"
-    ],
-    "saints": []
-  },
-  {
-    "id": "salmo-22",
-    "title": "Salmo 22",
-    "content": "O Senhor é meu pastor: nada me faltará. Deitar-me faz em verdes pastos, junto a águas de descanso me conduz. Restaura a minha alma, guia-me pelas sendas da justiça, por amor do seu nome. Ainda que eu walk no vale da morte, não temerei mal algum, porque Vós estais comigo.",
-    "section_id": "outras-devocoes",
-    "section_title": "Outras Devoções, Hinos e Salmos",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "devocoes"
     ],
     "saints": []
   },
@@ -1530,36 +1180,6 @@
     "saints": []
   },
   {
-    "id": "salmo-ii-latim",
-    "title": "Salmo II (Latim)",
-    "content": "Quare fremuerunt gentes, et populi meditati sunt inania? Astiterunt reges terrae, et principes convenerunt in unum adversus Dominum et adversus Christum eius.",
-    "section_id": "outras-devocoes",
-    "section_title": "Outras Devoções, Hinos e Salmos",
-    "languages": [
-      "la",
-      "pt-br"
-    ],
-    "theme": [
-      "devocoes"
-    ],
-    "saints": []
-  },
-  {
-    "id": "psalmus-miserere-50",
-    "title": "Psalmus Miserere (50)",
-    "content": "Miserere mei, Deus, secundum magnam misericordiam tuam. Et secundum multitudinem miserationum tuarum, dele iniquitates meas.",
-    "section_id": "outras-devocoes",
-    "section_title": "Outras Devoções, Hinos e Salmos",
-    "languages": [
-      "la",
-      "pt-br"
-    ],
-    "theme": [
-      "devocoes"
-    ],
-    "saints": []
-  },
-  {
     "id": "salve-santa-cruz",
     "title": "Salve Santa Cruz",
     "content": "Atribuída a Santo Andrés Apóstolo Salve Santa Cruz, tão desejada, tão amada. Tira-me do meio dos homens e entrega-me ao meu Mestre e Senhor, para que eu de ti receba o que por ti me salvou!",
@@ -1616,6 +1236,21 @@
     "theme": [
       "devocoes",
       "viagem"
+    ],
+    "saints": []
+  },
+  {
+    "id": "preces",
+    "title": "Preces",
+    "content": "Servirei! ℣ À Santíssima Trindade.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "devocoes"
     ],
     "saints": []
   },
@@ -1809,40 +1444,6 @@
     ],
     "saints": [
       "sao-bento"
-    ]
-  },
-  {
-    "id": "oracao-do-padre-pio",
-    "title": "Oração do Padre Pio",
-    "content": "Que a união de minha alma com Jesus Eucarístico seja a luz que dissipa as trevas, a força que me sustenta e a única alegria em meu coração.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-acao-de-gracas",
-      "devocoes"
-    ],
-    "saints": [
-      "padre-pio"
-    ]
-  },
-  {
-    "id": "fica-comigo-senhor",
-    "title": "Fica Comigo, Senhor",
-    "content": "Fica Senhor comigo, pois preciso da tua presença para não te esquecer.",
-    "section_id": "acao-de-gracas-santa-missa",
-    "section_title": "Ação de Graças depois da Santa Missa",
-    "languages": [
-      "pt-br"
-    ],
-    "theme": [
-      "missa-acao-de-gracas",
-      "eucaristica"
-    ],
-    "saints": [
-      "padre-pio"
     ]
   }
 ]

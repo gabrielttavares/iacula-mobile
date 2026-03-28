@@ -151,8 +151,35 @@ class _PrayerCatalogDetailScreenState
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: IaculaSpacing.md),
                       itemBuilder: (context, index) {
+                        final block = contentBlocks[index];
+                        if (block.startsWith('℣ ') || block.startsWith('℟ ')) {
+                          final marker = block.substring(0, 1);
+                          final text = block.substring(2);
+                          return Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '$marker. ',
+                                  style:
+                                      context.textStyles.readingBody.copyWith(
+                                        fontSize: fontSize,
+                                        color: CupertinoColors.systemRed,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                TextSpan(
+                                  text: text,
+                                  style:
+                                      context.textStyles.readingBody.copyWith(
+                                        fontSize: fontSize,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                         return Text(
-                          contentBlocks[index],
+                          block,
                           style: context.textStyles.readingBody.copyWith(
                             fontSize: fontSize,
                           ),

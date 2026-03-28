@@ -28,10 +28,11 @@ const _sectionOrder = [
   'oracoes-a-nossa-senhora',
   'preparacao-santa-missa',
   'acao-de-gracas-santa-missa',
-  'oracoes-a-sao-jose',
   'oracoes-diversas',
   'outras-devocoes',
+  'hinos',
   'oracoes-pelos-defuntos',
+  'formulas-doutrina-catolica',
 ];
 
 class PrayerCollectionsScreen extends ConsumerWidget {
