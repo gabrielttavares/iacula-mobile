@@ -40,6 +40,7 @@ final class _FakeLastDeliveredCardRepository
 Widget _buildGoldenApp() {
   return ProviderScope(
     overrides: [
+      authStateProvider.overrideWith((ref) => Stream.value(null)),
       settingsRepositoryProvider.overrideWithValue(
         _FakeSettingsRepository(Settings.defaults),
       ),

@@ -529,6 +529,16 @@ class _NameInputPage extends StatelessWidget {
               child: CupertinoTextField(
                 controller: controller,
                 placeholder: 'Seu nome',
+                style: context.textStyles.sectionTitle.copyWith(
+                  fontWeight: FontWeight.w400,
+                  height: 1.35,
+                ),
+                placeholderStyle: context.textStyles.sectionTitle.copyWith(
+                  fontWeight: FontWeight.w400,
+                  height: 1.35,
+                  color: context.colors.placeholder,
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 6),
                 textInputAction: TextInputAction.done,
                 clearButtonMode: OverlayVisibilityMode.editing,
                 onSubmitted: (_) => onContinue(),

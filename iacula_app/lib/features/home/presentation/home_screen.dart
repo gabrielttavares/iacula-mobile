@@ -13,7 +13,6 @@ import '../../../core/presentation/widgets/iacula_stagger_entrance.dart';
 import '../../../core/presentation/widgets/image_background_card.dart';
 import '../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../auth/domain/entities/auth_user.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/domain/entities/notification_history_entry.dart';
@@ -25,6 +24,7 @@ import '../../confession/presentation/confession_flow_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../settings/domain/jaculatoria_interval.dart';
 import '../../examination/presentation/examination_reading_screen.dart';
+import 'home_greeting.dart';
 import 'home_prayer_groups.dart';
 import 'widgets/home_hero_card.dart';
 
@@ -62,18 +62,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         !liturgicalSeasonEnabled ||
         (ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false);
 
-    final authState = ref.watch(authStateProvider);
+    final authUser = ref.watch(authStateProvider).valueOrNull;
     final localName = ref.watch(localDisplayNameProvider).valueOrNull;
-    final greeting =
-        authState.whenData((user) {
-          final name = user?.displayName ?? localName;
-          final isFemale = user?.gender == Gender.female;
-          final welcome = isFemale ? 'Bem vinda' : 'Bem vindo';
-          return name != null && name.isNotEmpty
-              ? '$welcome, $name!'
-              : '$welcome!';
-        }).value ??
-        'Bem vindo!';
+    final greeting = homeLargeTitleGreeting(
+      user: authUser,
+      localDisplayName: localName,
+    );
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,

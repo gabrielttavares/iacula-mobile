@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -69,7 +71,9 @@ void main() {
     return text.data ?? '';
   }
 
-  testWidgets('shows generic greeting when unauthenticated', (tester) async {
+  testWidgets('shows neutral Olá when unauthenticated without local name', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       _buildApp(
         extraOverrides: [
@@ -80,13 +84,75 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     final greeting = _largeTitleText(tester);
-    expect(greeting, contains('Bem vindo'));
+    expect(greeting, 'Olá!');
     expect(greeting, isNot(contains('Pedro')));
   });
 
-  testWidgets('shows user name in greeting when authenticated (female)', (
+  testWidgets('shows Olá with local name when unauthenticated', (
     tester,
   ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          settingsRepositoryProvider.overrideWithValue(
+            _FakeSettingsRepository(
+              Settings.defaults.copyWith(displayName: 'Pedro'),
+            ),
+          ),
+          lastDeliveredCardRepositoryProvider.overrideWithValue(
+            _FakeLastDeliveredCardRepository(
+              LastDeliveredCard(
+                quoteText: 'Permanecei em mim.',
+                theme: 'Conversao',
+                season: 'lent',
+                deliveredAt: DateTime(2026, 2, 21, 11, 0),
+              ),
+            ),
+          ),
+          authStateProvider.overrideWith((ref) => Stream.value(null)),
+        ],
+        child: const CupertinoApp(home: HomeScreen()),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(_largeTitleText(tester), 'Olá, Pedro!');
+  });
+
+  testWidgets('uses local name while auth stream has not emitted yet', (
+    tester,
+  ) async {
+    final controller = StreamController<AuthUser?>();
+    addTearDown(() async => controller.close());
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          settingsRepositoryProvider.overrideWithValue(
+            _FakeSettingsRepository(
+              Settings.defaults.copyWith(displayName: 'Local'),
+            ),
+          ),
+          lastDeliveredCardRepositoryProvider.overrideWithValue(
+            _FakeLastDeliveredCardRepository(
+              LastDeliveredCard(
+                quoteText: 'Permanecei em mim.',
+                theme: 'Conversao',
+                season: 'lent',
+                deliveredAt: DateTime(2026, 2, 21, 11, 0),
+              ),
+            ),
+          ),
+          authStateProvider.overrideWith((ref) => controller.stream),
+        ],
+        child: const CupertinoApp(home: HomeScreen()),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(_largeTitleText(tester), 'Olá, Local!');
+  });
+
+  testWidgets('shows Olá with account name when authenticated', (tester) async {
     const user = AuthUser(
       id: '1',
       email: 'test@test.com',
@@ -102,10 +168,10 @@ void main() {
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(_largeTitleText(tester), 'Bem vinda, Maria!');
+    expect(_largeTitleText(tester), 'Olá, Maria!');
   });
 
-  testWidgets('shows user name in greeting when authenticated (male)', (
+  testWidgets('shows Olá with account name when authenticated (male)', (
     tester,
   ) async {
     const user = AuthUser(
@@ -123,10 +189,10 @@ void main() {
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(_largeTitleText(tester), 'Bem vindo, Pedro!');
+    expect(_largeTitleText(tester), 'Olá, Pedro!');
   });
 
-  testWidgets('shows generic greeting when user has no displayName', (
+  testWidgets('shows Olá! when user has no displayName and no local', (
     tester,
   ) async {
     const user = AuthUser(id: '1', email: 'test@test.com');
@@ -139,6 +205,42 @@ void main() {
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(_largeTitleText(tester), 'Bem vindo!');
+    expect(_largeTitleText(tester), 'Olá!');
+  });
+
+  testWidgets('falls back to local name when auth displayName is empty', (
+    tester,
+  ) async {
+    const user = AuthUser(
+      id: '1',
+      email: 'test@test.com',
+      displayName: '',
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          settingsRepositoryProvider.overrideWithValue(
+            _FakeSettingsRepository(
+              Settings.defaults.copyWith(displayName: 'Ana'),
+            ),
+          ),
+          lastDeliveredCardRepositoryProvider.overrideWithValue(
+            _FakeLastDeliveredCardRepository(
+              LastDeliveredCard(
+                quoteText: 'Permanecei em mim.',
+                theme: 'Conversao',
+                season: 'lent',
+                deliveredAt: DateTime(2026, 2, 21, 11, 0),
+              ),
+            ),
+          ),
+          authStateProvider.overrideWith((ref) => Stream.value(user)),
+        ],
+        child: const CupertinoApp(home: HomeScreen()),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(_largeTitleText(tester), 'Olá, Ana!');
   });
 }

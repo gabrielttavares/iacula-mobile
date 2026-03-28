@@ -29,7 +29,10 @@ final class InMemoryAuthRepository implements AuthRepository {
   Future<AuthUser?> currentUser() async => _value;
 
   @override
-  Stream<AuthUser?> authStateChanges() => _controller.stream;
+  Stream<AuthUser?> authStateChanges() async* {
+    yield _value;
+    yield* _controller.stream;
+  }
 
   @override
   Future<void> signInWithGoogle() async {
