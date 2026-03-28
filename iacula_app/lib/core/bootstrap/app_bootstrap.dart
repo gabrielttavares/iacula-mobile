@@ -134,12 +134,6 @@ final class AppBootstrap {
         debugPrint('[Bootstrap] Notification init failed: $e');
         permissionGranted = false;
       }
-      try {
-        await scheduler.cancelAll();
-      } catch (e) {
-        debugPrint('[Bootstrap] Notification cancelAll failed: $e');
-      }
-
       final QuoteFetcher quoteFetcher =
           ({required String language, required DateTime now}) {
             if (currentSettings.escrivaPointsFeedEnabled) {
@@ -157,6 +151,14 @@ final class AppBootstrap {
           };
 
       if (currentSettings.onboardingCompleted &&
+          !currentSettings.notificationsEnabled) {
+        // Notifications explicitly disabled — cancel any stale leftovers.
+        try {
+          await scheduler.cancelAll();
+        } catch (e) {
+          debugPrint('[Bootstrap] Notification cancelAll failed: $e');
+        }
+      } else if (currentSettings.onboardingCompleted &&
           currentSettings.notificationsEnabled &&
           permissionGranted) {
         unawaited(

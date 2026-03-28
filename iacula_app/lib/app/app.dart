@@ -8,6 +8,7 @@ import '../core/di/providers.dart';
 import '../core/presentation/shell_screen.dart';
 import '../core/theme/app_theme.dart';
 import '../core/theme/lora_font_loader.dart';
+import '../features/liturgical/domain/liturgical_season.dart';
 import '../features/home_widget/application/use_cases/get_current_widget_quote_use_case.dart';
 import '../features/home_widget/application/use_cases/refresh_widget_from_timeline_use_case.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
@@ -148,6 +149,34 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     if (state == AppLifecycleState.resumed) {
       HomeWidgetService.instance.resetSignatureCache();
       unawaited(_syncWidgetFromTimeline());
+      unawaited(_ensureNotificationsScheduled());
+    }
+  }
+
+  Future<void> _ensureNotificationsScheduled() async {
+    try {
+      final settings = await ref.read(getSettingsUseCaseProvider).call();
+      if (!settings.onboardingCompleted || !settings.notificationsEnabled) {
+        return;
+      }
+      final scheduler = ref.read(notificationSchedulerRepositoryProvider);
+      final pendingIds = await scheduler.pendingNotificationIds();
+      // Angelus (200) and at least one quote (100) should be pending.
+      final hasAngelus = !settings.angelusEnabled || pendingIds.contains(200);
+      final hasQuotes = pendingIds.contains(100) ||
+          pendingIds.any((id) => id >= 101 && id <= 164);
+      if (hasAngelus && hasQuotes) return;
+
+      final rebuildUseCase = ref.read(rebuildNotificationsUseCaseProvider);
+      final liturgicalService = ref.read(liturgicalSeasonServiceProvider);
+      final currentSeason = await liturgicalService.getCurrentSeason();
+      await rebuildUseCase.call(
+        settings,
+        isEasterSeason: currentSeason == LiturgicalSeason.easter,
+        showImmediate: false,
+      );
+    } catch (e) {
+      debugPrint('[IaculaApp] Notification health check failed: $e');
     }
   }
 

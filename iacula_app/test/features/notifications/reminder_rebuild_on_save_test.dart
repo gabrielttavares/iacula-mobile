@@ -72,6 +72,11 @@ final class _FakeNotificationSchedulerRepository
   Future<bool?> requestExactAlarmsPermission() async => true;
 
   @override
+  Future<List<int>> pendingNotificationIds() async {
+    return scheduled.where((e) => e.scheduledId != null).map((e) => e.scheduledId!).toList();
+  }
+
+  @override
   void resetScheduleTelemetry() {}
 
   @override

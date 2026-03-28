@@ -40,6 +40,9 @@ final class _FakeNotificationSchedulerRepository
   }
 
   @override
+  Future<List<int>> pendingNotificationIds() async => [];
+
+  @override
   Future<bool?> canScheduleExactNotifications() async => true;
 
   @override

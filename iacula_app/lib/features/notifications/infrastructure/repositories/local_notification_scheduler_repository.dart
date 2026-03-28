@@ -378,6 +378,12 @@ final class LocalNotificationSchedulerRepository
     return _plugin.cancelAll();
   }
 
+  @override
+  Future<List<int>> pendingNotificationIds() async {
+    final pending = await _plugin.pendingNotificationRequests();
+    return pending.map((r) => r.id).toList();
+  }
+
   int _idForType(ReminderEventType type) {
     return switch (type) {
       ReminderEventType.quoteInterval => 100,

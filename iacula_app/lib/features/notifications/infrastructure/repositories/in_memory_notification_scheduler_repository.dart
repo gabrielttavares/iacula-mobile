@@ -68,6 +68,11 @@ final class InMemoryNotificationSchedulerRepository
   }
 
   @override
+  Future<List<int>> pendingNotificationIds() async {
+    return _events.keys.toList();
+  }
+
+  @override
   Future<bool?> canScheduleExactNotifications() async => true;
 
   @override

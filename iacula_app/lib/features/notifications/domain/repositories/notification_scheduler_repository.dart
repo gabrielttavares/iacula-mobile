@@ -12,6 +12,9 @@ abstract interface class NotificationSchedulerRepository {
   Future<void> cancelById(int id);
   Future<void> cancelAll();
 
+  /// Returns the list of notification IDs currently pending in the OS.
+  Future<List<int>> pendingNotificationIds();
+
   /// Android: whether exact alarms are permitted. Null on other platforms or unknown.
   Future<bool?> canScheduleExactNotifications();
 
