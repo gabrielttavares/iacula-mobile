@@ -142,6 +142,35 @@ class MoreScreen extends ConsumerWidget {
                   style: context.textStyles.secondary.copyWith(fontSize: 13),
                   textAlign: TextAlign.center,
                 ),
+                const SizedBox(height: IaculaSpacing.sm),
+                Text.rich(
+                  TextSpan(
+                    text: 'Desenvolvido por ',
+                    style: context.textStyles.secondary.copyWith(fontSize: 13),
+                    children: [
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.baseline,
+                        baseline: TextBaseline.alphabetic,
+                        child: GestureDetector(
+                          onTap: () => launchUrl(
+                            Uri.parse('https://gabrielttavares.com.br/'),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                          child: Text(
+                            'Gabriel Tavares',
+                            style: context.textStyles.secondary.copyWith(
+                              fontSize: 13,
+                              color: context.colors.primaryButton,
+                              decoration: TextDecoration.underline,
+                              decorationColor: context.colors.primaryButton,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: IaculaSpacing.lg),
                 CupertinoButton(
                   onPressed: () => Navigator.pop(context),
