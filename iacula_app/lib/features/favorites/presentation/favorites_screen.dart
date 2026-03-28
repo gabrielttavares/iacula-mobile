@@ -293,7 +293,6 @@ class _FavoriteQuoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final imagePath = _resolveFavoriteAssetPath(item.imagePath);
-    final contextLine = item.feastName ?? item.theme;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -322,23 +321,19 @@ class _FavoriteQuoteCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Expanded(child: _quoteTexts(context, contextLine)),
+                  Expanded(child: _quoteTexts(context)),
                 ],
               )
-            : _quoteTexts(context, contextLine),
+            : _quoteTexts(context),
       ),
     );
   }
 
-  Widget _quoteTexts(BuildContext context, String contextLine) {
+  Widget _quoteTexts(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(item.quoteText, style: context.textStyles.cardTitle),
-        if (contextLine.isNotEmpty) ...[
-          const SizedBox(height: 4),
-          Text(contextLine, style: context.textStyles.secondary),
-        ],
         const SizedBox(height: 4),
         Text(
           _savedAtCaption(item.savedAt),

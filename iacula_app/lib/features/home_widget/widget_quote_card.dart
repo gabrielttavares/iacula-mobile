@@ -23,14 +23,6 @@ class WidgetQuoteCard extends StatelessWidget {
   final bool showLabel;
   final double fontSize;
 
-  static const _seasonLabels = <String, String>{
-    'ordinary': 'tempo comum',
-    'advent': 'tempo do advento',
-    'lent': 'tempo da quaresma',
-    'easter': 'tempo pascal',
-    'christmas': 'tempo do natal',
-  };
-
   // Matches HomeHeroCard colors (dark mode — widget always renders dark)
   static const _heroText = Color(0xFFFFFFFF);
   static const _heroLabel = Color(0x47FFFFFF);
@@ -40,13 +32,17 @@ class WidgetQuoteCard extends StatelessWidget {
   bool get _isEscrivaPoints => card.source == 'escrivaPoints';
 
   String get _labelText {
-    return card.feastName ??
-        (_isEscrivaPoints
-            ? card.referenceLabel
-            : card.theme == 'personal'
-                ? 'frase pessoal'
-                : _seasonLabels[card.season]) ??
-        '';
+    final feast = card.feastName?.trim();
+    if (feast != null && feast.isNotEmpty) {
+      return feast;
+    }
+    if (_isEscrivaPoints) {
+      return card.referenceLabel?.trim() ?? '';
+    }
+    if (card.theme == 'personal') {
+      return 'frase pessoal';
+    }
+    return '';
   }
 
   String? _resolveAssetPath(String? path) {
@@ -160,7 +156,7 @@ class WidgetQuoteCard extends StatelessWidget {
               ),
             ),
 
-            // Season / feast label — bottom left
+            // Feast / reference / personal label — bottom left (no liturgical season)
             if (showLabel && _labelText.isNotEmpty)
               Positioned(
                 left: 18,
