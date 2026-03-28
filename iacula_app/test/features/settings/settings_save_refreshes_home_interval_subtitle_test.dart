@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Slider;
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
+import 'package:iacula_app/core/presentation/shell_screen.dart';
+import 'package:iacula_app/features/home/presentation/home_screen.dart'
+    show homeNowProvider;
 import 'package:iacula_app/features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import 'package:iacula_app/features/custom_phrases/domain/entities/custom_phrase.dart';
 import 'package:iacula_app/features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
-import 'package:iacula_app/features/home/presentation/home_screen.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
@@ -142,7 +145,15 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const CupertinoApp(home: HomeScreen()),
+          child: const CupertinoApp(
+            localizationsDelegates: [
+              GlobalCupertinoLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: [Locale('pt', 'BR'), Locale('en')],
+            home: ShellScreen(),
+          ),
         ),
       );
       await tester.pumpAndSettle();
@@ -156,7 +167,12 @@ void main() {
           'Jaculatórias a cada 15min \u00B7 Angelus ao meio-dia';
       expect(find.text(initialSubtitle), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('home_notifications_button')));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(CupertinoTabBar),
+          matching: find.text('Notificações'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Configurar intervalo'));

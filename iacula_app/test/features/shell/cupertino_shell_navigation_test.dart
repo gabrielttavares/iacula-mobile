@@ -3,8 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/home/presentation/home_screen.dart';
-import 'package:iacula_app/features/notifications/presentation/notifications_screen.dart';
 import 'package:iacula_app/core/presentation/shell_screen.dart';
+import 'package:iacula_app/features/search/presentation/search_screen.dart';
 
 void main() {
   testWidgets('shell uses CupertinoTabScaffold with four tabs', (tester) async {
@@ -25,7 +25,7 @@ void main() {
 
     expect(find.byType(CupertinoTabScaffold), findsOneWidget);
     expect(find.text('Início'), findsOneWidget);
-    expect(find.text('Exame Diário'), findsOneWidget);
+    expect(find.text('Notificações'), findsOneWidget);
     expect(find.text('Favoritos'), findsOneWidget);
     expect(find.text('Mais'), findsOneWidget);
   });
@@ -75,17 +75,17 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 350));
 
-    await tester.tap(find.byKey(const Key('home_notifications_button')));
+    await tester.tap(find.byKey(const Key('home_search_button')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(NotificationsScreen), findsOneWidget);
+    expect(find.byType(SearchScreen), findsOneWidget);
 
     final tabBar = tester.widget<CupertinoTabBar>(find.byType(CupertinoTabBar));
     tabBar.onTap!(0);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 700));
 
-    expect(find.byType(NotificationsScreen), findsNothing);
+    expect(find.byType(SearchScreen), findsNothing);
     expect(find.byType(HomeScreen), findsOneWidget);
   });
 

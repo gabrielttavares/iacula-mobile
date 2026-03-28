@@ -16,7 +16,6 @@ import '../../../core/theme/cupertino_tokens.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/domain/entities/notification_history_entry.dart';
-import '../../notifications/presentation/notifications_screen.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
@@ -91,44 +90,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 largeTitle: Text(greeting),
                 middle: const SizedBox.shrink(),
                 alwaysShowMiddle: false,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CupertinoButton(
-                      key: const Key('home_notifications_button'),
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(32, 32),
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => NotificationsScreen(),
-                          ),
-                        );
-                      },
-                      child: Icon(
-                        CupertinoIcons.bell,
-                        color: context.colors.textSecondary,
+                trailing: CupertinoButton(
+                  key: const Key('home_search_button'),
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(32, 32),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (_) => const SearchScreen(),
                       ),
-                    ),
-                    CupertinoButton(
-                      key: const Key('home_search_button'),
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(32, 32),
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const SearchScreen(),
-                          ),
-                        );
-                      },
-                      child: Icon(
-                        CupertinoIcons.search,
-                        color: context.colors.textSecondary,
-                      ),
-                    ),
-                  ],
+                    );
+                  },
+                  child: Icon(
+                    CupertinoIcons.search,
+                    color: context.colors.textSecondary,
+                  ),
                 ),
               ),
               CupertinoSliverRefreshControl(
