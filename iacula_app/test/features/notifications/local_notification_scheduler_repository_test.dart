@@ -1,9 +1,62 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  group('notificationTitleForPlugin', () {
+    final quoteEvent = ReminderEvent(
+      type: ReminderEventType.quoteInterval,
+      title: 'Iacula',
+      body: 'Quote text',
+      scheduledAt: DateTime(2026, 4, 10, 8),
+      withVibration: true,
+      isAlarm: false,
+    );
+
+    test('quote interval on Android uses empty title for plugin', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+      expect(
+        LocalNotificationSchedulerRepository.notificationTitleForPlugin(quoteEvent),
+        '',
+      );
+    });
+
+    test('quote interval on iOS keeps event title', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+      expect(
+        LocalNotificationSchedulerRepository.notificationTitleForPlugin(quoteEvent),
+        'Iacula',
+      );
+    });
+
+    test('non-quote types on Android keep event title', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+      final event = ReminderEvent(
+        type: ReminderEventType.angelusNoon,
+        title: 'Angelus',
+        body: 'Hora de rezar o Angelus.',
+        scheduledAt: DateTime(2026, 4, 10, 12),
+        withVibration: true,
+        isAlarm: true,
+      );
+
+      expect(
+        LocalNotificationSchedulerRepository.notificationTitleForPlugin(event),
+        'Angelus',
+      );
+    });
+  });
+
   group('LocalNotificationSchedulerRepository iOS details', () {
     test('alarm events use timeSensitive interruption and custom sound', () {
       final event = ReminderEvent(

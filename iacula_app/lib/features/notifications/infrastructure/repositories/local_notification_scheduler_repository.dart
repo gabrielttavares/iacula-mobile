@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -191,6 +192,17 @@ final class LocalNotificationSchedulerRepository
     }
   }
 
+  /// Title passed to [FlutterLocalNotificationsPlugin] show/zonedSchedule.
+  /// On Android, jaculatória notifications use an empty title so the shade shows
+  /// only the app name (system) plus [ReminderEvent.body]; iOS keeps [ReminderEvent.title].
+  static String notificationTitleForPlugin(ReminderEvent event) {
+    if (event.type == ReminderEventType.quoteInterval &&
+        defaultTargetPlatform == TargetPlatform.android) {
+      return '';
+    }
+    return event.title;
+  }
+
   static AndroidNotificationDetails buildAndroidNotificationDetails(
     ReminderEvent event,
   ) {
@@ -250,10 +262,12 @@ final class LocalNotificationSchedulerRepository
     ).toPayload();
     final repeat = event.repeatDaily ? DateTimeComponents.time : null;
 
+    final title = notificationTitleForPlugin(event);
+
     try {
       await _plugin.zonedSchedule(
         id,
-        event.title,
+        title,
         event.body,
         scheduled,
         details,
@@ -277,7 +291,7 @@ final class LocalNotificationSchedulerRepository
       );
       await _plugin.zonedSchedule(
         id,
-        event.title,
+        title,
         event.body,
         scheduled,
         details,
@@ -303,10 +317,12 @@ final class LocalNotificationSchedulerRepository
         NotificationActionEvent(actionId: null, event: event).toPayload();
     final repeat = event.repeatDaily ? DateTimeComponents.time : null;
 
+    final title = notificationTitleForPlugin(event);
+
     try {
       await _plugin.zonedSchedule(
         id,
-        event.title,
+        title,
         event.body,
         scheduled,
         details,
@@ -330,7 +346,7 @@ final class LocalNotificationSchedulerRepository
       );
       await _plugin.zonedSchedule(
         id,
-        event.title,
+        title,
         event.body,
         scheduled,
         details,
@@ -356,7 +372,7 @@ final class LocalNotificationSchedulerRepository
 
     await _plugin.show(
       id,
-      event.title,
+      notificationTitleForPlugin(event),
       event.body,
       details,
       payload: payload,
