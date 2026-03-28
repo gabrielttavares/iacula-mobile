@@ -162,10 +162,22 @@ final class AppBootstrap {
         unawaited(
           Future(() async {
             try {
-              final immediateQuote = await quoteFetcher(
-                language: currentSettings.language,
-                now: DateTime.now(),
-              );
+              final bootstrapNow = DateTime.now();
+              final lastCard = await lastDeliveredCardRepo.load();
+              final recentlyDelivered = lastCard != null &&
+                  lastCard.deliveredAt.year == bootstrapNow.year &&
+                  lastCard.deliveredAt.month == bootstrapNow.month &&
+                  lastCard.deliveredAt.day == bootstrapNow.day &&
+                  bootstrapNow
+                          .difference(lastCard.deliveredAt)
+                          .inMinutes <
+                      currentSettings.intervalMinutes;
+              final immediateQuote = recentlyDelivered
+                  ? lastCard!.toQuote()
+                  : await quoteFetcher(
+                      language: currentSettings.language,
+                      now: bootstrapNow,
+                    );
               final currentSeason =
                   await liturgicalSeasonService.getCurrentSeason();
               await RebuildNotificationsUseCase(
@@ -200,7 +212,7 @@ final class AppBootstrap {
                 currentSettings,
                 immediateQuote: immediateQuote,
                 isEasterSeason: currentSeason == LiturgicalSeason.easter,
-                showImmediate: true,
+                showImmediate: !recentlyDelivered,
               );
             } on PlatformException catch (e, st) {
               developer.log(

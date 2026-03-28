@@ -16,12 +16,10 @@ class HomeHeroCard extends ConsumerWidget {
   const HomeHeroCard({
     super.key,
     required this.quote,
-    required this.onTap,
     this.isFallback = false,
   });
 
   final Quote quote;
-  final ValueChanged<Quote> onTap;
   final bool isFallback;
 
   static const _seasonLabels = <LiturgicalSeason, String>{
@@ -57,7 +55,6 @@ class HomeHeroCard extends ConsumerWidget {
         '';
 
     return PremiumTouchableCard(
-      onTap: () => onTap(quote),
       borderRadius: IaculaRadius.banner,
       child: Container(
         key: const Key('home_hero_card'),

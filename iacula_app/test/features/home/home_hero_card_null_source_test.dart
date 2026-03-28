@@ -27,7 +27,7 @@ void main() {
           ),
         ],
         child: CupertinoApp(
-          home: HomeHeroCard(quote: quote, onTap: (_) {}),
+          home: HomeHeroCard(quote: quote),
         ),
       ),
     );

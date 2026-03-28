@@ -26,7 +26,6 @@ import '../../quotes/domain/entities/quote.dart';
 import '../../settings/domain/jaculatoria_interval.dart';
 import '../../examination/presentation/examination_reading_screen.dart';
 import 'home_prayer_groups.dart';
-import 'hero_reflection_sheet.dart';
 import 'widgets/home_hero_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -160,8 +159,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         _PermissionBanner(),
                         _HomeHeroSection(
                           isFallback: isFallback,
-                          onHeroTap: (quote) =>
-                              HeroReflectionSheet.show(context, quote: quote),
                         ),
                         const SizedBox(height: IaculaSpacing.lg),
                         _HomeShortcutsRail(
@@ -260,10 +257,9 @@ class _HomeShortcutsRail extends StatelessWidget {
 }
 
 class _HomeHeroSection extends ConsumerWidget {
-  const _HomeHeroSection({required this.isFallback, required this.onHeroTap});
+  const _HomeHeroSection({required this.isFallback});
 
   final bool isFallback;
-  final ValueChanged<Quote> onHeroTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -280,7 +276,6 @@ class _HomeHeroSection extends ConsumerWidget {
           data: (quote) => HomeHeroCard(
             quote: quote,
             isFallback: isFallback,
-            onTap: onHeroTap,
           ),
           loading: () => const SizedBox(
             height: 240,

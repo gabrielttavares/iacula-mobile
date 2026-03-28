@@ -7,8 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../auth/presentation/auth_action_sheet.dart';
-import '../../favorites/presentation/favorites_screen.dart';
+import '../infrastructure/app_store_review.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
@@ -121,7 +120,7 @@ class MoreScreen extends ConsumerWidget {
           final versionLabel = versionAsync.when(
             data: (value) => 'Versão $value',
             loading: () => 'Versão ...',
-            error: (_, __) => 'Versão -',
+            error: (e, _) => 'Versão -',
           );
 
           return Padding(
@@ -173,14 +172,7 @@ class MoreScreen extends ConsumerWidget {
 
   Future<void> _rateApp() async {
     HapticFeedback.lightImpact();
-    // Simple redirect to store as requested.
-    // In a real app we might use in_app_review, but following the direct instruction:
-    final Uri storeUri = Uri.parse(
-      'https://apps.apple.com/app/idYOUR_APP_ID', // Placeholder, user can update later
-    );
-    if (await canLaunchUrl(storeUri)) {
-      await launchUrl(storeUri, mode: LaunchMode.externalApplication);
-    }
+    await openAppStoreReview();
   }
 }
 

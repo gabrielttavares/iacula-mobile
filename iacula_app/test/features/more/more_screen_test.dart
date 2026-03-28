@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/more/presentation/more_screen.dart';
 import 'package:iacula_app/features/settings/presentation/settings_screen.dart';
-import 'package:iacula_app/features/notifications/presentation/notifications_screen.dart';
-import 'package:iacula_app/features/favorites/presentation/favorites_screen.dart';
 
 void main() {
   testWidgets('MoreScreen renders all 7 items', (tester) async {
