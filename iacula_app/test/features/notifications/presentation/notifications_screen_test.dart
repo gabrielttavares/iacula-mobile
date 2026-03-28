@@ -3,6 +3,7 @@ import 'package:flutter/material.dart' show SelectableText;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
+import 'package:iacula_app/features/favorites/infrastructure/repositories/in_memory_favorite_repository.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_history_entry.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/notifications/presentation/notifications_screen.dart';
@@ -157,5 +158,143 @@ void main() {
       find.textContaining('As citações programadas para hoje aparecerão aqui'),
       findsNothing,
     );
+  });
+
+  testWidgets(
+    'notification history rail does not show theme or feast subtitle',
+    (tester) async {
+      final repo = InMemoryNotificationHistoryRepository();
+      await repo.add(
+        NotificationHistoryEntry(
+          quoteText: 'Citação sem eco do subtítulo.',
+          theme: 'TemaSecretoXYZ',
+          season: 'ordinary',
+          feastName: 'FestaSecretaABC',
+          deliveredAt: DateTime(2026, 2, 24, 8, 30),
+        ),
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            notificationHistoryRepositoryProvider.overrideWithValue(repo),
+            notificationHistoryNowProvider.overrideWith(
+              (ref) => DateTime(2026, 2, 24, 10),
+            ),
+            favoriteRepositoryProvider.overrideWithValue(
+              InMemoryFavoriteRepository(),
+            ),
+          ],
+          child: const CupertinoApp(home: NotificationsScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('TemaSecretoXYZ'), findsNothing);
+      expect(find.text('FestaSecretaABC'), findsNothing);
+    },
+  );
+
+  testWidgets('notification history rail uses bookmark icon not heart', (
+    tester,
+  ) async {
+    final repo = InMemoryNotificationHistoryRepository();
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Uma citação.',
+        theme: 'tema',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 8, 30),
+      ),
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notificationHistoryRepositoryProvider.overrideWithValue(repo),
+          notificationHistoryNowProvider.overrideWith(
+            (ref) => DateTime(2026, 2, 24, 10),
+          ),
+          favoriteRepositoryProvider.overrideWithValue(
+            InMemoryFavoriteRepository(),
+          ),
+        ],
+        child: const CupertinoApp(home: NotificationsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final rail = find.byKey(const Key('today_notifications_rail'));
+    expect(
+      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.heart)),
+      findsNothing,
+    );
+    expect(
+      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.bookmark)),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('notification history bookmark toggles favorite', (tester) async {
+    final favRepo = InMemoryFavoriteRepository();
+    final repo = InMemoryNotificationHistoryRepository();
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Toggle me.',
+        theme: 'tema',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 8, 30),
+      ),
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notificationHistoryRepositoryProvider.overrideWithValue(repo),
+          notificationHistoryNowProvider.overrideWith(
+            (ref) => DateTime(2026, 2, 24, 10),
+          ),
+          favoriteRepositoryProvider.overrideWithValue(favRepo),
+        ],
+        child: const CupertinoApp(home: NotificationsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final rail = find.byKey(const Key('today_notifications_rail'));
+    expect(
+      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.bookmark)),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.bookmark_fill)),
+      findsNothing,
+    );
+
+    await tester.tap(
+      find.descendant(of: rail, matching: find.byType(CupertinoButton)).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.bookmark_fill)),
+      findsOneWidget,
+    );
+    expect((await favRepo.listAll()).length, 1);
+
+    await tester.tap(
+      find.descendant(of: rail, matching: find.byType(CupertinoButton)).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.bookmark)),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.bookmark_fill)),
+      findsNothing,
+    );
+    expect((await favRepo.listAll()).length, 0);
   });
 }

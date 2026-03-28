@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
+import '../../../core/presentation/widgets/iacula_animated_icon.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
-import '../../../core/presentation/widgets/iacula_toast.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../../liturgical/domain/liturgical_season.dart';
@@ -214,13 +214,13 @@ String _formatTime(DateTime dt) {
   return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
 }
 
-class _NotificationsRail extends ConsumerWidget {
+class _NotificationsRail extends StatelessWidget {
   const _NotificationsRail({required this.entries});
 
   final List<NotificationHistoryEntry> entries;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 188,
       child: ListView.separated(
@@ -247,69 +247,60 @@ class _NotificationsRail extends ConsumerWidget {
                     style: context.textStyles.cardTitle,
                   ),
                   const Spacer(),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          entry.feastName ?? entry.theme,
-                          style: context.textStyles.secondary,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(32, 32),
-                        onPressed: () async {
-                          final repo = ref.read(favoriteRepositoryProvider);
-                          final alreadyFavorite = await repo.isFavorite(
-                            entry.quoteText,
-                          );
-                          if (alreadyFavorite) {
-                            if (context.mounted) {
-                              IaculaToast.show(
-                                context,
-                                'Esta citação já está nos favoritos.',
-                                icon: CupertinoIcons.heart_fill,
-                              );
-                            }
-                            return;
-                          }
-
-                          await repo.save(
-                            FavoriteItem(
-                              id: DateTime.now().millisecondsSinceEpoch
-                                  .toString(),
-                              quoteText: entry.quoteText,
-                              theme: entry.theme,
-                              season: entry.season,
-                              savedAt: DateTime.now(),
-                              imagePath: entry.imagePath,
-                              feastName: entry.feastName,
-                            ),
-                          );
-                          ref.invalidate(favoritesProvider);
-                          if (context.mounted) {
-                            IaculaToast.show(
-                              context,
-                              'Citação salva nos favoritos.',
-                              icon: CupertinoIcons.heart_fill,
-                            );
-                          }
-                        },
-                        child: Icon(
-                          CupertinoIcons.heart,
-                          size: 18,
-                          color: context.colors.primaryButton,
-                        ),
-                      ),
-                    ],
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: _NotificationHistoryBookmarkButton(entry: entry),
                   ),
                 ],
               ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _NotificationHistoryBookmarkButton extends ConsumerWidget {
+  const _NotificationHistoryBookmarkButton({required this.entry});
+
+  final NotificationHistoryEntry entry;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteAsync = ref.watch(
+      favoriteItemByQuoteTextProvider(entry.quoteText),
+    );
+    final isSaved = favoriteAsync.valueOrNull != null;
+    final savedItem = favoriteAsync.valueOrNull;
+
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: const Size(32, 32),
+      onPressed: () async {
+        HapticFeedback.selectionClick();
+        final repo = ref.read(favoriteRepositoryProvider);
+        if (savedItem != null) {
+          await repo.remove(savedItem.id);
+        } else {
+          await repo.save(
+            FavoriteItem(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              quoteText: entry.quoteText,
+              theme: entry.theme,
+              season: entry.season,
+              savedAt: DateTime.now(),
+              imagePath: entry.imagePath,
+              feastName: entry.feastName,
+            ),
+          );
+        }
+      },
+      child: IaculaAnimatedIcon(
+        icon: isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
+        color: context.colors.primaryButton,
+        size: 20,
+        enableHaptics: false,
       ),
     );
   }
