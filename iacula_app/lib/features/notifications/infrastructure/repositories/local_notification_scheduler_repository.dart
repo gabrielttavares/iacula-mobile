@@ -209,6 +209,7 @@ final class LocalNotificationSchedulerRepository
       styleInformation: BigTextStyleInformation(event.body),
       // Quote reminders must stay user-dismissible on Android.
       ongoing: false,
+      groupKey: _groupKeyForType(event.type),
     );
   }
 
@@ -380,6 +381,19 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.oraMedia => 304,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
+    };
+  }
+
+  static String _groupKeyForType(ReminderEventType type) {
+    return switch (type) {
+      ReminderEventType.quoteInterval => 'iacula_quotes',
+      ReminderEventType.angelusNoon => 'iacula_angelus',
+      ReminderEventType.laudes ||
+      ReminderEventType.vespers ||
+      ReminderEventType.compline ||
+      ReminderEventType.oraMedia => 'iacula_liturgy',
+      ReminderEventType.customPhrase => 'iacula_phrases',
+      ReminderEventType.prayerIntentionReminder => 'iacula_intentions',
     };
   }
 
