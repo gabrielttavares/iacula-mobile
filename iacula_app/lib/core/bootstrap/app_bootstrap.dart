@@ -166,9 +166,8 @@ final class AppBootstrap {
                 language: currentSettings.language,
                 now: DateTime.now(),
               );
-              final currentSeason = currentSettings.liturgicalSeasonEnabled
-                  ? await liturgicalSeasonService.getCurrentSeason()
-                  : LiturgicalSeason.ordinary;
+              final currentSeason =
+                  await liturgicalSeasonService.getCurrentSeason();
               await RebuildNotificationsUseCase(
                 scheduler: scheduler,
                 notificationHistoryRepository: notificationHistoryRepo,

@@ -258,4 +258,49 @@ void main() {
     expect(preservedEntries.first.quoteText, 'Quote 8:00');
     expect(preservedEntries.last.quoteText, 'Quote 11:30');
   });
+
+  test('Angelus shows Regina Caeli during Easter even when liturgical toggle is off', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+
+    final useCase = ScheduleCoreRemindersUseCase(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return const Quote(
+          text: 'Q',
+          dayOfWeek: 1,
+          theme: 't',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+      notificationHistoryRepository: history,
+      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+    );
+
+    // The liturgical season toggle is OFF, but it IS Easter.
+    // isEasterSeason must always reflect the real season for the Angelus,
+    // regardless of the toggle (which only controls quote theming).
+    const liturgicalSeasonEnabled = false;
+    const actualSeason = LiturgicalSeason.easter;
+    // Fixed: always use the real season for isEasterSeason
+    final isEasterSeason = actualSeason == LiturgicalSeason.easter;
+
+    await useCase(
+      Settings.defaults.copyWith(
+        intervalMinutes: 30,
+        angelusEnabled: true,
+        liturgicalSeasonEnabled: liturgicalSeasonEnabled,
+      ),
+      now: DateTime(2026, 4, 10, 8),
+      isEasterSeason: isEasterSeason,
+      showImmediate: false,
+    );
+
+    final angelus = scheduler.events.firstWhere(
+      (e) => e.type == ReminderEventType.angelusNoon,
+    );
+    // During Easter, the notification MUST say Regina Caeli
+    expect(angelus.title, 'Regina Caeli');
+    expect(angelus.body, 'Hora de rezar a Regina Caeli.');
+  });
 }

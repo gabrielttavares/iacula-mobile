@@ -637,9 +637,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.invalidate(getSettingsUseCaseProvider);
     await HomeWidgetService.instance.saveIntervalMinutes(_intervalMinutes);
 
-    final season = _liturgicalSeasonEnabled
-        ? await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason()
-        : LiturgicalSeason.ordinary;
+    final season =
+        await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason();
     final rebuildResult = await ref
         .read(rebuildNotificationsUseCaseProvider)
         .call(
