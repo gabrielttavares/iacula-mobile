@@ -213,16 +213,31 @@ final class LocalNotificationSchedulerRepository
     );
   }
 
+  static DarwinNotificationDetails buildDarwinNotificationDetails(
+    ReminderEvent event,
+  ) {
+    if (event.isAlarm) {
+      return const DarwinNotificationDetails(
+        presentAlert: true,
+        presentSound: true,
+        presentBadge: true,
+        interruptionLevel: InterruptionLevel.timeSensitive,
+        sound: 'liturgy-reminder-soft.wav',
+      );
+    }
+    return const DarwinNotificationDetails(
+      presentAlert: true,
+      presentSound: true,
+      presentBadge: true,
+    );
+  }
+
   @override
   Future<void> schedule(ReminderEvent event) async {
     final id = event.scheduledId ?? _idForType(event.type);
     final androidDetails = buildAndroidNotificationDetails(event);
 
-    const iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentSound: true,
-      presentBadge: true,
-    );
+    final iosDetails = buildDarwinNotificationDetails(event);
 
     final details = NotificationDetails(
       android: androidDetails,
@@ -277,11 +292,7 @@ final class LocalNotificationSchedulerRepository
   Future<void> scheduleWithId(int id, ReminderEvent event) async {
     final androidDetails = buildAndroidNotificationDetails(event);
 
-    const iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentSound: true,
-      presentBadge: true,
-    );
+    final iosDetails = buildDarwinNotificationDetails(event);
 
     final details = NotificationDetails(
       android: androidDetails,
@@ -334,11 +345,7 @@ final class LocalNotificationSchedulerRepository
   Future<void> showNow(int id, ReminderEvent event) async {
     final androidDetails = buildAndroidNotificationDetails(event);
 
-    const iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentSound: true,
-      presentBadge: true,
-    );
+    final iosDetails = buildDarwinNotificationDetails(event);
 
     final details = NotificationDetails(
       android: androidDetails,

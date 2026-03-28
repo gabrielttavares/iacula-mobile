@@ -25,6 +25,7 @@
 		AD3631719DA95127A01AFC18 /* IaculaWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4EC346F84D8E014E6BB1E16D /* IaculaWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BC141A208FC3B70EA831803B /* Pods_IaculaWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 038FEA228BFEE572388DB863 /* Pods_IaculaWidgetExtension.framework */; };
 		DCB7406A611EAE9718562E8F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAA6EFAAD7615C4CC2D4781A /* Foundation.framework */; };
+		A1B2C3D4E5F60001DEADBEEF /* liturgy-reminder-soft.wav in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002DEADBEEF /* liturgy-reminder-soft.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002DEADBEEF /* liturgy-reminder-soft.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "liturgy-reminder-soft.wav"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		85B50E49A3985210F40AD576 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95236A390650FAC52A8E22D4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
+				A1B2C3D4E5F60002DEADBEEF /* liturgy-reminder-soft.wav */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				A1B2C3D4E5F60001DEADBEEF /* liturgy-reminder-soft.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
