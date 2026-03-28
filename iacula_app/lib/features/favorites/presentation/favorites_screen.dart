@@ -11,6 +11,31 @@ import '../../confession/infrastructure/services/hero_card_share_image_renderer.
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../domain/entities/favorite_item.dart';
 
+String? _resolveFavoriteAssetPath(String? path) {
+  if (path == null) {
+    return null;
+  }
+  final value = path.trim();
+  if (value.isEmpty) {
+    return null;
+  }
+  return value.startsWith('/') ? value.substring(1) : value;
+}
+
+String _savedAtCaption(DateTime savedAt) {
+  final now = DateTime.now();
+  final savedDay = DateTime(savedAt.year, savedAt.month, savedAt.day);
+  final today = DateTime(now.year, now.month, now.day);
+  final diffDays = today.difference(savedDay).inDays;
+  if (diffDays == 0) {
+    return 'Salvo hoje';
+  }
+  if (diffDays == 1) {
+    return 'Salvo ontem';
+  }
+  return 'Salvo em ${savedAt.day.toString().padLeft(2, '0')}/${savedAt.month.toString().padLeft(2, '0')}';
+}
+
 class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});
 
@@ -34,7 +59,6 @@ class FavoritesScreen extends ConsumerWidget {
                 onRefresh: () async {
                   HapticFeedback.lightImpact();
                   ref.invalidate(favoritesProvider);
-                  // Allow time for the animation and reload
                   await Future.delayed(const Duration(milliseconds: 500));
                 },
               ),
@@ -44,7 +68,8 @@ class FavoritesScreen extends ConsumerWidget {
                   child: Center(
                     child: IaculaEmptyState(
                       title: 'Nenhum favorito ainda',
-                      message: 'As orações que você salvar aparecerão aqui.',
+                      message:
+                          'Citações e orações que você salvar pelo ícone de favorito aparecem aqui.',
                     ),
                   ),
                 )
@@ -62,45 +87,50 @@ class FavoritesScreen extends ConsumerWidget {
                               padding: const EdgeInsets.only(bottom: 8),
                               child: _FavoriteCard(
                                 item: favorites[i],
-                               onRemove: () async {
-                                 HapticFeedback.mediumImpact();
-                                  await ref.read(favoriteRepositoryProvider).remove(favorites[i].id);
+                                onRemove: () async {
+                                  HapticFeedback.mediumImpact();
+                                  await ref
+                                      .read(favoriteRepositoryProvider)
+                                      .remove(favorites[i].id);
                                   ref.invalidate(favoritesProvider);
-                                 },
-                                 onShare: () async {
-                                   HapticFeedback.selectionClick();
-                                   final favorite = favorites[i];
-                                   final shareText = '${favorite.quoteText}\n\n- Iacula';
-                                   final imageBytes = await ref
-                                       .read(heroCardShareImageRendererProvider)
-                                       .renderPng(
-                                         context: context,
-                                         payload: HeroCardSharePayload(
-                                           text: favorite.quoteText,
-                                           labelText: favorite.feastName ?? favorite.theme,
-                                           imagePath: favorite.imagePath,
-                                         ),
-                                       );
+                                },
+                                onShare: () async {
+                                  HapticFeedback.selectionClick();
+                                  final favorite = favorites[i];
+                                  final shareText =
+                                      '${favorite.quoteText}\n\n- Iacula';
+                                  final imageBytes = await ref
+                                      .read(heroCardShareImageRendererProvider)
+                                      .renderPng(
+                                        context: context,
+                                        payload: HeroCardSharePayload(
+                                          text: favorite.quoteText,
+                                          labelText:
+                                              favorite.feastName ?? favorite.theme,
+                                          imagePath: favorite.imagePath,
+                                        ),
+                                      );
 
-                                   final shareService = ref.read(
-                                     nativeShareServiceProvider,
-                                   );
-                                   if (imageBytes != null) {
-                                     await shareService.shareTextWithImage(
-                                       text: shareText,
-                                       imageBytes: imageBytes,
-                                       fileName: 'iacula-favorite-card.png',
-                                     );
-                                     return;
-                                   }
+                                  final shareService = ref.read(
+                                    nativeShareServiceProvider,
+                                  );
+                                  if (imageBytes != null) {
+                                    await shareService.shareTextWithImage(
+                                      text: shareText,
+                                      imageBytes: imageBytes,
+                                      fileName: 'iacula-favorite-card.png',
+                                    );
+                                    return;
+                                  }
 
-                                   await shareService.shareText(shareText);
-                                 },
+                                  await shareService.shareText(shareText);
+                                },
                                 onTap: favorites[i].prayerSlug != null
                                     ? () async {
                                         final entry = await ref.read(
-                                          prayerEntryBySlugProvider(favorites[i].prayerSlug!)
-                                              .future,
+                                          prayerEntryBySlugProvider(
+                                            favorites[i].prayerSlug!,
+                                          ).future,
                                         );
                                         if (entry != null && context.mounted) {
                                           Navigator.of(context).push(
@@ -123,15 +153,41 @@ class FavoritesScreen extends ConsumerWidget {
                 ),
               SliverPadding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+                  bottom:
+                      MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
                 ),
               ),
             ],
           );
         },
-        loading: () => const Padding(
-          padding: EdgeInsets.all(IaculaSpacing.md),
-          child: IaculaShimmerList(itemCount: 4),
+        loading: () => CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            CupertinoSliverNavigationBar(
+              largeTitle: const Text('Favoritos'),
+              backgroundColor: context.colors.background,
+              border: null,
+            ),
+            CupertinoSliverRefreshControl(
+              onRefresh: () async {
+                HapticFeedback.lightImpact();
+                ref.invalidate(favoritesProvider);
+                await Future.delayed(const Duration(milliseconds: 500));
+              },
+            ),
+            const SliverPadding(
+              padding: EdgeInsets.all(IaculaSpacing.md),
+              sliver: SliverToBoxAdapter(
+                child: IaculaShimmerList(itemCount: 4),
+              ),
+            ),
+            SliverPadding(
+              padding: EdgeInsets.only(
+                bottom:
+                    MediaQuery.paddingOf(context).bottom + IaculaSpacing.md,
+              ),
+            ),
+          ],
         ),
         error: (error, stackTrace) => const Center(
           child: IaculaErrorState(
@@ -159,52 +215,170 @@ class _FavoriteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (item.prayerSlug != null) {
+      return _FavoritePrayerRow(
+        item: item,
+        onRemove: onRemove,
+        onShare: onShare,
+        onTap: onTap,
+      );
+    }
+    return _FavoriteQuoteCard(
+      item: item,
+      onRemove: onRemove,
+      onShare: onShare,
+    );
+  }
+}
+
+class _FavoritePrayerRow extends StatelessWidget {
+  const _FavoritePrayerRow({
+    required this.item,
+    required this.onRemove,
+    required this.onShare,
+    this.onTap,
+  });
+
+  final FavoriteItem item;
+  final VoidCallback onRemove;
+  final VoidCallback onShare;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      onLongPress: () {
-        HapticFeedback.mediumImpact();
-        showCupertinoModalPopup<void>(
-          context: context,
-          builder: (sheetContext) => CupertinoActionSheet(
-            actions: [
-              CupertinoActionSheetAction(
-                onPressed: () {
-                  Navigator.of(sheetContext).pop();
-                  onShare();
-                },
-                child: const Text('Compartilhar'),
-              ),
-              CupertinoActionSheetAction(
-                isDestructiveAction: true,
-                onPressed: () {
-                  Navigator.of(sheetContext).pop();
-                  onRemove();
-                },
-                child: const Text('Remover'),
-              ),
-            ],
-            cancelButton: CupertinoActionSheetAction(
-              onPressed: () => Navigator.of(sheetContext).pop(),
-              child: const Text('Cancelar'),
-            ),
-          ),
-        );
-      },
+      onLongPress: () => _showFavoriteActions(context, onShare, onRemove),
       child: IaculaSoftCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(item.theme, style: context.textStyles.secondary),
-            const SizedBox(height: 4),
-            Text(item.quoteText, style: context.textStyles.cardTitle),
-            if (item.feastName != null) ...[
-              const SizedBox(height: 4),
-              Text(item.feastName!, style: context.textStyles.secondary),
-            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.quoteText, style: context.textStyles.cardTitle),
+                  const SizedBox(height: 4),
+                  Text(
+                    _savedAtCaption(item.savedAt),
+                    style: context.textStyles.secondary,
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              CupertinoIcons.chevron_right,
+              size: 18,
+              color: context.colors.textSecondary,
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+class _FavoriteQuoteCard extends StatelessWidget {
+  const _FavoriteQuoteCard({
+    required this.item,
+    required this.onRemove,
+    required this.onShare,
+  });
+
+  final FavoriteItem item;
+  final VoidCallback onRemove;
+  final VoidCallback onShare;
+
+  @override
+  Widget build(BuildContext context) {
+    final imagePath = _resolveFavoriteAssetPath(item.imagePath);
+    final contextLine = item.feastName ?? item.theme;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onLongPress: () => _showFavoriteActions(context, onShare, onRemove),
+      child: IaculaSoftCard(
+        child: imagePath != null
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(IaculaRadius.small),
+                    child: SizedBox(
+                      width: 72,
+                      height: 72,
+                      child: Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.topCenter,
+                        errorBuilder: (context, error, stackTrace) =>
+                            DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: context.colors.homeHeroFallback,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(child: _quoteTexts(context, contextLine)),
+                ],
+              )
+            : _quoteTexts(context, contextLine),
+      ),
+    );
+  }
+
+  Widget _quoteTexts(BuildContext context, String contextLine) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(item.quoteText, style: context.textStyles.cardTitle),
+        if (contextLine.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Text(contextLine, style: context.textStyles.secondary),
+        ],
+        const SizedBox(height: 4),
+        Text(
+          _savedAtCaption(item.savedAt),
+          style: context.textStyles.secondary,
+        ),
+      ],
+    );
+  }
+}
+
+void _showFavoriteActions(
+  BuildContext context,
+  VoidCallback onShare,
+  VoidCallback onRemove,
+) {
+  HapticFeedback.mediumImpact();
+  showCupertinoModalPopup<void>(
+    context: context,
+    builder: (sheetContext) => CupertinoActionSheet(
+      actions: [
+        CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.of(sheetContext).pop();
+            onShare();
+          },
+          child: const Text('Compartilhar'),
+        ),
+        CupertinoActionSheetAction(
+          isDestructiveAction: true,
+          onPressed: () {
+            Navigator.of(sheetContext).pop();
+            onRemove();
+          },
+          child: const Text('Remover'),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        onPressed: () => Navigator.of(sheetContext).pop(),
+        child: const Text('Cancelar'),
+      ),
+    ),
+  );
 }
