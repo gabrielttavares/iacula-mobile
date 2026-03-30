@@ -42,6 +42,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     _heroRefreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (!mounted) return;
+      ref.invalidate(homeNowProvider);
       ref.invalidate(_homeQuoteProvider);
     });
   }
@@ -111,6 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               CupertinoSliverRefreshControl(
                 onRefresh: () async {
                   HapticFeedback.lightImpact();
+                  ref.invalidate(homeNowProvider);
                   ref.invalidate(_homeQuoteProvider);
 
                   await Future.delayed(const Duration(milliseconds: 500));
@@ -256,7 +258,10 @@ class _HomeHeroSection extends ConsumerWidget {
             title: 'Não conseguimos abrir a reflexão de agora',
             message:
                 'Tente novamente em instantes para retomar seu momento de oração.',
-            onRetry: () => ref.invalidate(_homeQuoteProvider),
+            onRetry: () {
+              ref.invalidate(homeNowProvider);
+              ref.invalidate(_homeQuoteProvider);
+            },
           ),
         ),
         if (notificationsEnabled) ...[
@@ -453,9 +458,9 @@ final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
 });
 
 final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
+  final now = ref.watch(homeNowProvider);
   final tappedAt = ref.read(tappedNotificationScheduledAtProvider);
   if (tappedAt != null) {
-    final now = ref.watch(homeNowProvider);
     final history = await ref
         .watch(notificationHistoryRepositoryProvider)
         .listForDay(now);
@@ -476,18 +481,8 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
 
   final settings = await ref.watch(getSettingsUseCaseProvider).call();
 
-  if (settings.escrivaPointsFeedEnabled) {
-    return ref
-        .watch(getNextEscrivaPointsQuoteUseCaseProvider)
-        .call(
-          language: settings.language,
-          cadenceMinutes: settings.intervalMinutes,
-        );
-  }
-
   final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
   final phrases = phrasesAsync.valueOrNull ?? [];
-  final now = ref.watch(homeNowProvider);
   final matching = phrases
       .where((p) => p.isActive && p.displayOnHero && p.schedule.matchesNow(now))
       .toList();
@@ -549,10 +544,21 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   // Fallback: fetch a quote but accept it may advance the index.
   // This only triggers when lastDeliveredCard is absent (first launch
   // or bootstrap hasn't completed yet), which is rare.
+  if (settings.escrivaPointsFeedEnabled) {
+    return ref
+        .watch(getNextEscrivaPointsQuoteUseCaseProvider)
+        .call(
+          language: settings.language,
+          now: now,
+          cadenceMinutes: settings.intervalMinutes,
+        );
+  }
+
   return ref
       .watch(getNextQuoteUseCaseProvider)
       .call(
         language: settings.language,
+        now: now,
         liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
       );
 });
@@ -566,7 +572,7 @@ bool _matchesHomeQuoteSeason({
   required LiturgicalSeason? currentSeason,
 }) {
   if (!liturgicalSeasonEnabled) {
-    return quote.season == LiturgicalSeason.ordinary;
+    return true;
   }
   return quote.season == currentSeason;
 }

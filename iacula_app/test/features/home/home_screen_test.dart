@@ -253,6 +253,36 @@ void main() {
     expect(find.text('Stale card'), findsNothing);
   });
 
+  testWidgets('home hero prefers timeline quote even when Escriva feed is enabled', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildApp(
+        now: DateTime(2026, 2, 21, 22, 18),
+        settings: Settings.defaults.copyWith(escrivaPointsFeedEnabled: true),
+        lastCard: LastDeliveredCard(
+          quoteText: 'Stale card',
+          theme: 'Conversao',
+          season: 'ordinary',
+          deliveredAt: DateTime(2026, 2, 21, 20, 0),
+        ),
+        history: [
+          NotificationHistoryEntry(
+            quoteText: 'HISTORY_SENTINEL_2214',
+            theme: 'Conversao',
+            season: 'ordinary',
+            deliveredAt: DateTime(2026, 2, 21, 22, 14),
+          ),
+        ],
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('HISTORY_SENTINEL_2214'), findsOneWidget);
+    expect(find.text('Stale card'), findsNothing);
+  });
+
   testWidgets(
     'home hero shows tapped notification quote when multiple are due',
     (tester) async {
@@ -353,6 +383,50 @@ void main() {
     expect(find.text('Quote 10:15'), findsNothing);
 
     container.read(nowProvider.notifier).state = DateTime(2026, 2, 21, 10, 16);
+    await tester.pump(const Duration(seconds: 31));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Quote 10:00'), findsNothing);
+    expect(find.text('Quote 10:15'), findsOneWidget);
+  });
+
+  testWidgets('home hero refresh timer uses a fresh now snapshot', (tester) async {
+    var currentNow = DateTime(2026, 2, 21, 10, 14);
+
+    await tester.pumpWidget(
+      _buildApp(
+        now: currentNow,
+        lastCard: LastDeliveredCard(
+          quoteText: 'Stale card',
+          theme: 'Conversao',
+          season: 'ordinary',
+          deliveredAt: DateTime(2026, 2, 21, 8, 0),
+        ),
+        history: [
+          NotificationHistoryEntry(
+            quoteText: 'Quote 10:00',
+            theme: 'Conversao',
+            season: 'ordinary',
+            deliveredAt: DateTime(2026, 2, 21, 10, 0),
+          ),
+          NotificationHistoryEntry(
+            quoteText: 'Quote 10:15',
+            theme: 'Conversao',
+            season: 'ordinary',
+            deliveredAt: DateTime(2026, 2, 21, 10, 15),
+          ),
+        ],
+        overrides: [
+          homeNowProvider.overrideWith((ref) => currentNow),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Quote 10:00'), findsOneWidget);
+    expect(find.text('Quote 10:15'), findsNothing);
+
+    currentNow = DateTime(2026, 2, 21, 10, 16);
     await tester.pump(const Duration(seconds: 31));
     await tester.pumpAndSettle();
 
