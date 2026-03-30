@@ -1,3 +1,8 @@
+import 'dart:io' show Platform;
+import 'dart:math' show min;
+
+import 'package:flutter/foundation.dart';
+
 import '../../../home_widget/home_widget_service.dart';
 import '../../../prayers/domain/services/prayer_scheduler.dart';
 import '../../../quotes/domain/entities/quote.dart';
@@ -50,6 +55,11 @@ final class ScheduleCoreRemindersUseCase {
     bool showImmediate = true,
   }) async {
     final current = now ?? DateTime.now();
+    debugPrint(
+      '[ScheduleCoreRemindersUseCase] scheduling at ${current.toIso8601String()} '
+      'interval=${settings.intervalMinutes}m lang=${settings.language} '
+      'showImmediate=$showImmediate platform=${Platform.operatingSystem}',
+    );
     await _notificationHistoryRepository.clearFrom(current);
 
     final resolvedImmediate =
@@ -58,6 +68,9 @@ final class ScheduleCoreRemindersUseCase {
 
     if (showImmediate) {
       const immediateId = quoteScheduleIdBase - 1;
+      debugPrint(
+        '[ScheduleCoreRemindersUseCase] show immediate quote id=$immediateId textLen=${resolvedImmediate.text.length}',
+      );
       await _scheduler.showNow(
         immediateId,
         ReminderEvent(
@@ -98,9 +111,21 @@ final class ScheduleCoreRemindersUseCase {
       ),
     );
 
+    // iOS allows at most 64 pending notifications. Reserve slots for
+    // non-quote notifications (Angelus, liturgy hours, custom phrases).
+    const iosScheduledLimit = 64;
+    const reservedSlots = 6; // 1 Angelus + 4 liturgy + 1 buffer
+    final quoteCount = Platform.isIOS
+        ? min(maxQueuedQuoteReminders, iosScheduledLimit - reservedSlots)
+        : maxQueuedQuoteReminders;
+    debugPrint(
+      '[ScheduleCoreRemindersUseCase] quote queue size=$quoteCount (max=$maxQueuedQuoteReminders, '
+      'iosReserved=$reservedSlots, isIOS=${Platform.isIOS})',
+    );
+
     final scheduledTimes = <DateTime>[];
     var cursor = current;
-    for (var i = 0; i < maxQueuedQuoteReminders; i++) {
+    for (var i = 0; i < quoteCount; i++) {
       cursor = cursor.add(Duration(minutes: settings.intervalMinutes));
       if (settings.quietHoursEnabled) {
         while (QuietHoursChecker.isDuringQuietHours(
@@ -122,7 +147,7 @@ final class ScheduleCoreRemindersUseCase {
     if (_batchFetcher != null && !settings.quietHoursEnabled) {
       scheduledQuotes = await _batchFetcher(
         language: settings.language,
-        count: maxQueuedQuoteReminders,
+        count: quoteCount,
         startTime: current,
         intervalMinutes: settings.intervalMinutes,
       );
@@ -171,6 +196,15 @@ final class ScheduleCoreRemindersUseCase {
       }
     }
 
+    if (scheduledQuotes.isNotEmpty) {
+      final firstAt = scheduledTimes.first;
+      final lastAt = scheduledTimes.last;
+      debugPrint(
+        '[ScheduleCoreRemindersUseCase] queued ${scheduledQuotes.length} quote reminders from '
+        '${firstAt.toIso8601String()} to ${lastAt.toIso8601String()}',
+      );
+    }
+
     if (settings.angelusEnabled) {
       final noonTitle = isEasterSeason ? 'Regina Caeli' : 'Angelus';
       final noonBody = isEasterSeason
@@ -186,6 +220,10 @@ final class ScheduleCoreRemindersUseCase {
             settings.quietHoursEnd,
           );
       if (!noonInQuietHours) {
+        debugPrint(
+          '[ScheduleCoreRemindersUseCase] scheduling Angelus/Regina id=200 at ${noon.toIso8601String()} '
+          'title=$noonTitle repeatDaily=true',
+        );
         await _scheduler.schedule(
           ReminderEvent(
             type: ReminderEventType.angelusNoon,
@@ -198,7 +236,15 @@ final class ScheduleCoreRemindersUseCase {
             routeTarget: NotificationRouteTarget.prayer,
           ),
         );
+      } else {
+        debugPrint(
+          '[ScheduleCoreRemindersUseCase] noon trigger falls inside quiet hours; skipping Angelus scheduling.',
+        );
       }
+    } else {
+      debugPrint(
+        '[ScheduleCoreRemindersUseCase] Angelus disabled; skipping noon alarm scheduling.',
+      );
     }
   }
 

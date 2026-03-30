@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
@@ -127,6 +126,11 @@ final class LocalNotificationSchedulerRepository
         await iosImpl?.requestPermissions(alert: true, badge: true, sound: true) ?? true;
 
     _permissionGranted = androidGranted && iosGranted;
+    debugPrint(
+      '[LocalNotificationScheduler] initialize requestPermission=$requestPermission '
+      'androidGranted=$androidGranted iosGranted=$iosGranted '
+      'permissionGranted=$_permissionGranted',
+    );
     return _permissionGranted;
   }
 
@@ -275,9 +279,9 @@ final class LocalNotificationSchedulerRepository
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: repeat,
       );
-      developer.log(
-        'zonedSchedule exactAllowWhileIdle id=$id type=${event.type.name}',
-        name: 'LocalNotificationScheduler',
+      debugPrint(
+        '[LocalNotificationScheduler] zonedSchedule exactAllowWhileIdle id=$id type=${event.type.name} '
+        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily}',
       );
     } on PlatformException catch (e) {
       if (e.code != 'exact_alarms_not_permitted') {
@@ -285,9 +289,9 @@ final class LocalNotificationSchedulerRepository
       }
 
       usedInexactScheduleFallback = true;
-      developer.log(
-        'zonedSchedule fell back to inexactAllowWhileIdle id=$id type=${event.type.name}',
-        name: 'LocalNotificationScheduler',
+      debugPrint(
+        '[LocalNotificationScheduler] zonedSchedule fell back to inexactAllowWhileIdle id=$id type=${event.type.name} '
+        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily}',
       );
       await _plugin.zonedSchedule(
         id,
@@ -330,9 +334,9 @@ final class LocalNotificationSchedulerRepository
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: repeat,
       );
-      developer.log(
-        'scheduleWithId exactAllowWhileIdle id=$id type=${event.type.name}',
-        name: 'LocalNotificationScheduler',
+      debugPrint(
+        '[LocalNotificationScheduler] scheduleWithId exactAllowWhileIdle id=$id type=${event.type.name} '
+        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily}',
       );
     } on PlatformException catch (e) {
       if (e.code != 'exact_alarms_not_permitted') {
@@ -340,9 +344,9 @@ final class LocalNotificationSchedulerRepository
       }
 
       usedInexactScheduleFallback = true;
-      developer.log(
-        'scheduleWithId fell back to inexactAllowWhileIdle id=$id type=${event.type.name}',
-        name: 'LocalNotificationScheduler',
+      debugPrint(
+        '[LocalNotificationScheduler] scheduleWithId fell back to inexactAllowWhileIdle id=$id type=${event.type.name} '
+        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily}',
       );
       await _plugin.zonedSchedule(
         id,
@@ -377,6 +381,9 @@ final class LocalNotificationSchedulerRepository
       details,
       payload: payload,
     );
+    debugPrint(
+      '[LocalNotificationScheduler] showNow id=$id type=${event.type.name} at=${event.scheduledAt.toIso8601String()}',
+    );
   }
 
   @override
@@ -391,13 +398,19 @@ final class LocalNotificationSchedulerRepository
 
   @override
   Future<void> cancelAll() {
+    debugPrint('[LocalNotificationScheduler] cancelAll requested');
     return _plugin.cancelAll();
   }
 
   @override
   Future<List<int>> pendingNotificationIds() async {
     final pending = await _plugin.pendingNotificationRequests();
-    return pending.map((r) => r.id).toList();
+    final ids = pending.map((r) => r.id).toList();
+    ids.sort();
+    debugPrint(
+      '[LocalNotificationScheduler] pendingNotificationIds count=${ids.length} ids=$ids',
+    );
+    return ids;
   }
 
   int _idForType(ReminderEventType type) {

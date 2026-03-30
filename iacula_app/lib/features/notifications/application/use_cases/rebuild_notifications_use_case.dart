@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
 import '../../../custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import '../../../home_widget/home_widget_service.dart';
 import '../../../quotes/domain/entities/quote.dart';
@@ -50,6 +52,11 @@ final class RebuildNotificationsUseCase {
   }) async {
     Future<NotificationRebuildResult> run() async {
       final scheduler = _scheduler;
+      debugPrint(
+        '[RebuildNotificationsUseCase] start notificationsEnabled=${settings.notificationsEnabled} '
+        'interval=${settings.intervalMinutes} showImmediate=$showImmediate '
+        'isEasterSeason=$isEasterSeason',
+      );
       await HomeWidgetService.instance.saveIntervalMinutes(
         settings.intervalMinutes,
       );
@@ -58,8 +65,17 @@ final class RebuildNotificationsUseCase {
         notificationsEnabled: settings.notificationsEnabled,
         intervalMinutes: settings.intervalMinutes,
       );
+      debugPrint(
+        '[RebuildNotificationsUseCase] short-interval reliability guaranteed=${reliability.guaranteed}',
+      );
       await scheduler.cancelAll();
+      debugPrint(
+        '[RebuildNotificationsUseCase] cancelAll completed; proceeding to schedule reminders.',
+      );
       if (!settings.notificationsEnabled) {
+        debugPrint(
+          '[RebuildNotificationsUseCase] finished early because notifications are disabled.',
+        );
         return NotificationRebuildResult(
           shortIntervalReliabilityNotGuaranteed: false,
         );
@@ -81,6 +97,10 @@ final class RebuildNotificationsUseCase {
         _schedulePhraseNotifications.call(settings: settings),
         _scheduleLiturgyReminders.call(settings),
       ]);
+      final pendingAfter = await scheduler.pendingNotificationIds();
+      debugPrint(
+        '[RebuildNotificationsUseCase] complete; pending IDs total=${pendingAfter.length}.',
+      );
       return NotificationRebuildResult(
         shortIntervalReliabilityNotGuaranteed: !reliability.guaranteed,
       );

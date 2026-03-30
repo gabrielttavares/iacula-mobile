@@ -31,13 +31,19 @@ final class SqliteNotificationHistoryRepository
 
   @override
   Future<void> clearFrom(DateTime instant) async {
+    // Truncate to the start of the minute so that sub-second rebuilds
+    // clear entries from the same minute, preventing duplicate history.
+    final truncated = DateTime(
+      instant.year, instant.month, instant.day,
+      instant.hour, instant.minute,
+    );
     final end = DateTime(instant.year, instant.month, instant.day)
         .add(const Duration(days: 1));
     final db = await _database.database;
     await db.delete(
       'notification_history_entries',
       where: 'delivered_at >= ? AND delivered_at < ?',
-      whereArgs: [instant.toIso8601String(), end.toIso8601String()],
+      whereArgs: [truncated.toIso8601String(), end.toIso8601String()],
     );
   }
 

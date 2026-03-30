@@ -12,6 +12,7 @@ import '../features/liturgical/domain/liturgical_season.dart';
 import '../features/home_widget/application/use_cases/get_current_widget_quote_use_case.dart';
 import '../features/home_widget/application/use_cases/refresh_widget_from_timeline_use_case.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
+import '../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
@@ -36,6 +37,11 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   StreamSubscription? _actionsSub;
   Timer? _widgetRefreshSub;
   Settings? _settings;
+  DateTime? _lastRebuildTime;
+
+  void _logNotificationHealth(String message) {
+    debugPrint('[IaculaApp][NotifHealth] $message');
+  }
 
   @override
   void initState() {
@@ -147,6 +153,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      _logNotificationHealth('App resumed; checking notification health.');
       HomeWidgetService.instance.resetSignatureCache();
       unawaited(_syncWidgetFromTimeline());
       unawaited(_ensureNotificationsScheduled());
@@ -154,18 +161,57 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   }
 
   Future<void> _ensureNotificationsScheduled() async {
+    // Debounce: skip if we rebuilt within the last 60 seconds.
+    final now = DateTime.now();
+    if (_lastRebuildTime != null &&
+        now.difference(_lastRebuildTime!).inSeconds < 60) {
+      final secondsSinceRebuild = now.difference(_lastRebuildTime!).inSeconds;
+      _logNotificationHealth(
+        'Skipping health check due to debounce; last rebuild ${secondsSinceRebuild}s ago.',
+      );
+      return;
+    }
     try {
       final settings = await ref.read(getSettingsUseCaseProvider).call();
       if (!settings.onboardingCompleted || !settings.notificationsEnabled) {
+        _logNotificationHealth(
+          'Health check skipped; onboardingCompleted=${settings.onboardingCompleted} '
+          'notificationsEnabled=${settings.notificationsEnabled}.',
+        );
         return;
       }
       final scheduler = ref.read(notificationSchedulerRepositoryProvider);
       final pendingIds = await scheduler.pendingNotificationIds();
-      // Angelus (200) and at least one quote (100) should be pending.
+      // Angelus (200) and at least one quote (9000-9063) should be pending.
       final hasAngelus = !settings.angelusEnabled || pendingIds.contains(200);
-      final hasQuotes = pendingIds.contains(100) ||
-          pendingIds.any((id) => id >= 101 && id <= 164);
+      final hasQuotes = pendingIds.any(
+        (id) =>
+            id >= ScheduleCoreRemindersUseCase.quoteScheduleIdBase &&
+            id <
+                ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
+                    ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders,
+      );
+      final quoteIdsCount = pendingIds
+          .where(
+            (id) =>
+                id >= ScheduleCoreRemindersUseCase.quoteScheduleIdBase &&
+                id <
+                    ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
+                        ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders,
+          )
+          .length;
+      _logNotificationHealth(
+        'Pending IDs count=${pendingIds.length}; quoteIds=$quoteIdsCount; '
+        'angelusPresent=${pendingIds.contains(200)}; '
+        'hasAngelus=$hasAngelus hasQuotes=$hasQuotes.',
+      );
       if (hasAngelus && hasQuotes) return;
+
+      final rebuildReason = <String>[
+        if (!hasAngelus) 'angelus_missing',
+        if (!hasQuotes) 'quotes_missing',
+      ].join(',');
+      _logNotificationHealth('Triggering rebuild; reason=$rebuildReason.');
 
       final rebuildUseCase = ref.read(rebuildNotificationsUseCaseProvider);
       final liturgicalService = ref.read(liturgicalSeasonServiceProvider);
@@ -175,8 +221,13 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
         isEasterSeason: currentSeason == LiturgicalSeason.easter,
         showImmediate: false,
       );
+      _lastRebuildTime = DateTime.now();
+      final pendingAfter = await scheduler.pendingNotificationIds();
+      _logNotificationHealth(
+        'Rebuild finished; pending IDs now=${pendingAfter.length}.',
+      );
     } catch (e) {
-      debugPrint('[IaculaApp] Notification health check failed: $e');
+      _logNotificationHealth('Health check failed: $e');
     }
   }
 
