@@ -78,7 +78,7 @@ final class RebuildNotificationsUseCase {
         showImmediate: showImmediate,
       );
       await Future.wait([
-        _schedulePhraseNotifications.call(),
+        _schedulePhraseNotifications.call(settings: settings),
         _scheduleLiturgyReminders.call(settings),
       ]);
       return NotificationRebuildResult(

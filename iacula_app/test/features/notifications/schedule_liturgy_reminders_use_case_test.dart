@@ -1,4 +1,4 @@
-﻿import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
@@ -22,6 +22,29 @@ void main() {
 
     expect(repo.events.length, 2);
     expect(repo.events.any((e) => e.type == ReminderEventType.laudes), isTrue);
-    expect(repo.events.any((e) => e.type == ReminderEventType.compline), isTrue);
+    expect(
+      repo.events.any((e) => e.type == ReminderEventType.compline),
+      isTrue,
+    );
+  });
+
+  test('skips liturgy reminders that fall within quiet hours', () async {
+    final repo = InMemoryNotificationSchedulerRepository();
+    final useCase = ScheduleLiturgyRemindersUseCase(repo);
+
+    final settings = Settings.defaults.copyWith(
+      laudesEnabled: true,
+      vespersEnabled: true,
+      laudesTime: '06:00',
+      vespersTime: '18:00',
+      quietHoursEnabled: true,
+      quietHoursStart: '05:00',
+      quietHoursEnd: '07:00',
+    );
+
+    await useCase(settings, now: DateTime(2026, 2, 21, 5, 0));
+
+    expect(repo.events.any((e) => e.type == ReminderEventType.laudes), isFalse);
+    expect(repo.events.any((e) => e.type == ReminderEventType.vespers), isTrue);
   });
 }

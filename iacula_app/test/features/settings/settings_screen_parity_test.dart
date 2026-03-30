@@ -109,6 +109,7 @@ void main() {
     expect(find.text('Aparência'), findsOneWidget);
     expect(find.text('Notificações ativas'), findsOneWidget);
     expect(find.text('Intervalo entre jaculatórias'), findsOneWidget);
+    expect(find.text('Horário silencioso'), findsOneWidget);
     expect(find.text('Tema'), findsOneWidget);
     expect(find.text('Tamanho da fonte'), findsOneWidget);
     await expectVisible('Personalização');
@@ -188,6 +189,11 @@ void main() {
       await tester.pumpAndSettle();
 
       final saveButton = find.text('Salvar');
+      for (var i = 0; i < 12 && saveButton.evaluate().isEmpty; i++) {
+        await tester.drag(scrollable, const Offset(0, -250));
+        await tester.pumpAndSettle();
+      }
+      expect(saveButton, findsOneWidget);
       await tester.ensureVisible(saveButton);
       await tester.pumpAndSettle();
       await tester.tap(saveButton);

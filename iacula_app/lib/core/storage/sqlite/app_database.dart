@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 12,
+      version: 13,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -47,7 +47,10 @@ final class AppDatabase {
             escriva_points_feed_option_visible INTEGER NOT NULL DEFAULT 0,
             notifications_enabled INTEGER NOT NULL DEFAULT 1,
             angelus_enabled INTEGER NOT NULL DEFAULT 1,
-            liturgical_season_enabled INTEGER NOT NULL DEFAULT 0
+            liturgical_season_enabled INTEGER NOT NULL DEFAULT 0,
+            quiet_hours_enabled INTEGER NOT NULL DEFAULT 0,
+            quiet_hours_start TEXT NOT NULL DEFAULT '22:00',
+            quiet_hours_end TEXT NOT NULL DEFAULT '07:00'
           )
         ''');
 
@@ -115,9 +118,7 @@ final class AppDatabase {
           ''');
         }
         if (oldVersion < 4) {
-          await db.execute(
-            'ALTER TABLE settings ADD COLUMN display_name TEXT',
-          );
+          await db.execute('ALTER TABLE settings ADD COLUMN display_name TEXT');
         }
         if (oldVersion < 5) {
           await db.execute(
@@ -171,6 +172,17 @@ final class AppDatabase {
         if (oldVersion < 12) {
           await db.execute(
             'ALTER TABLE settings ADD COLUMN liturgical_season_enabled INTEGER NOT NULL DEFAULT 1',
+          );
+        }
+        if (oldVersion < 13) {
+          await db.execute(
+            'ALTER TABLE settings ADD COLUMN quiet_hours_enabled INTEGER NOT NULL DEFAULT 0',
+          );
+          await db.execute(
+            "ALTER TABLE settings ADD COLUMN quiet_hours_start TEXT NOT NULL DEFAULT '22:00'",
+          );
+          await db.execute(
+            "ALTER TABLE settings ADD COLUMN quiet_hours_end TEXT NOT NULL DEFAULT '07:00'",
           );
         }
       },
