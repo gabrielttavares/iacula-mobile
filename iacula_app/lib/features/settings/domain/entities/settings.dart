@@ -23,6 +23,9 @@ final class Settings {
     this.notificationsEnabled = true,
     this.angelusEnabled = true,
     this.liturgicalSeasonEnabled = false,
+    this.quietHoursEnabled = false,
+    this.quietHoursStart = '22:00',
+    this.quietHoursEnd = '07:00',
   });
 
   final int intervalMinutes;
@@ -48,6 +51,9 @@ final class Settings {
   final bool notificationsEnabled;
   final bool angelusEnabled;
   final bool liturgicalSeasonEnabled;
+  final bool quietHoursEnabled;
+  final String quietHoursStart;
+  final String quietHoursEnd;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -72,6 +78,9 @@ final class Settings {
     notificationsEnabled: true,
     angelusEnabled: true,
     liturgicalSeasonEnabled: false,
+    quietHoursEnabled: false,
+    quietHoursStart: '22:00',
+    quietHoursEnd: '07:00',
   );
 
   Settings copyWith({
@@ -98,6 +107,9 @@ final class Settings {
     bool? notificationsEnabled,
     bool? angelusEnabled,
     bool? liturgicalSeasonEnabled,
+    bool? quietHoursEnabled,
+    String? quietHoursStart,
+    String? quietHoursEnd,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
@@ -122,12 +134,15 @@ final class Settings {
       themeMode: themeMode ?? this.themeMode,
       escrivaPointsFeedEnabled:
           escrivaPointsFeedEnabled ?? this.escrivaPointsFeedEnabled,
-      escrivaPointsFeedOptionVisible: escrivaPointsFeedOptionVisible ??
-          this.escrivaPointsFeedOptionVisible,
+      escrivaPointsFeedOptionVisible:
+          escrivaPointsFeedOptionVisible ?? this.escrivaPointsFeedOptionVisible,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       angelusEnabled: angelusEnabled ?? this.angelusEnabled,
       liturgicalSeasonEnabled:
           liturgicalSeasonEnabled ?? this.liturgicalSeasonEnabled,
+      quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
+      quietHoursStart: quietHoursStart ?? this.quietHoursStart,
+      quietHoursEnd: quietHoursEnd ?? this.quietHoursEnd,
     );
   }
 }

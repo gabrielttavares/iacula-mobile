@@ -43,6 +43,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _shortIntervalReliabilityNotGuaranteed = false;
   bool _escrivaPointsFeedOptionVisible = false;
   bool _liturgicalSeasonEnabled = false;
+  bool _quietHoursEnabled = false;
+  String _quietHoursStart = '22:00';
+  String _quietHoursEnd = '07:00';
 
   bool _loading = true;
   bool _saving = false;
@@ -69,6 +72,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
     _escrivaPointsFeedOptionVisible = settings.escrivaPointsFeedOptionVisible;
     _liturgicalSeasonEnabled = settings.liturgicalSeasonEnabled;
+    _quietHoursEnabled = settings.quietHoursEnabled;
+    _quietHoursStart = settings.quietHoursStart;
+    _quietHoursEnd = settings.quietHoursEnd;
 
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
     if (scheduler is LocalNotificationSchedulerRepository) {
@@ -253,6 +259,75 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                           const SizedBox(height: IaculaSpacing.sm),
                           _buildNextNotificationEstimate(context),
+                          const SizedBox(height: IaculaRadius.elementSpacing),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Horário silencioso',
+                                  style: context.textStyles.cardTitle.copyWith(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              CupertinoSwitch(
+                                value: _quietHoursEnabled,
+                                activeTrackColor: context.colors.primaryButton,
+                                onChanged: (value) {
+                                  HapticFeedback.selectionClick();
+                                  setState(() => _quietHoursEnabled = value);
+                                },
+                              ),
+                            ],
+                          ),
+                          if (_quietHoursEnabled) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              'Notificações pausadas das $_quietHoursStart às $_quietHoursEnd.',
+                              style: context.textStyles.secondary,
+                            ),
+                            const SizedBox(height: IaculaSpacing.sm),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildQuietTimeButton(
+                                    context,
+                                    label: 'Início',
+                                    value: _quietHoursStart,
+                                    onTap: () async {
+                                      final selected = await _pickTime(
+                                        _quietHoursStart,
+                                      );
+                                      if (selected != null) {
+                                        setState(() {
+                                          _quietHoursStart = selected;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: IaculaSpacing.sm),
+                                Expanded(
+                                  child: _buildQuietTimeButton(
+                                    context,
+                                    label: 'Fim',
+                                    value: _quietHoursEnd,
+                                    onTap: () async {
+                                      final selected = await _pickTime(
+                                        _quietHoursEnd,
+                                      );
+                                      if (selected != null) {
+                                        setState(() {
+                                          _quietHoursEnd = selected;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ],
                       ],
                     ),
@@ -615,6 +690,79 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  Widget _buildQuietTimeButton(
+    BuildContext context, {
+    required String label,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    return CupertinoButton(
+      padding: const EdgeInsets.symmetric(
+        horizontal: IaculaSpacing.sm,
+        vertical: IaculaSpacing.xs,
+      ),
+      color: context.colors.card,
+      borderRadius: BorderRadius.circular(IaculaRadius.small),
+      onPressed: onTap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: context.textStyles.secondary),
+          Text(value, style: context.textStyles.cardTitle),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> _pickTime(String initialHHMM) async {
+    var selected = initialHHMM;
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (modalContext) {
+        return Container(
+          height: 280,
+          color: CupertinoColors.systemBackground.resolveFrom(modalContext),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: CupertinoButton(
+                  onPressed: () => Navigator.of(modalContext).pop(),
+                  child: const Text('Concluir'),
+                ),
+              ),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.time,
+                  use24hFormat: true,
+                  initialDateTime: _timeToDateTime(initialHHMM),
+                  onDateTimeChanged: (value) {
+                    selected = _formatHHMM(value);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    return selected;
+  }
+
+  DateTime _timeToDateTime(String hhmm) {
+    final parts = hhmm.split(':');
+    final hour = int.tryParse(parts.first) ?? 0;
+    final minute = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, hour, minute);
+  }
+
+  String _formatHHMM(DateTime value) {
+    final hh = value.hour.toString().padLeft(2, '0');
+    final mm = value.minute.toString().padLeft(2, '0');
+    return '$hh:$mm';
+  }
+
   Future<void> _save() async {
     setState(() {
       _validationMessage = null;
@@ -631,14 +779,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       escrivaPointsFeedOptionVisible: _escrivaPointsFeedOptionVisible,
       escrivaPointsFeedEnabled: _escrivaPointsFeedOptionVisible,
       liturgicalSeasonEnabled: _liturgicalSeasonEnabled,
+      quietHoursEnabled: _quietHoursEnabled,
+      quietHoursStart: _quietHoursStart,
+      quietHoursEnd: _quietHoursEnd,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);
     ref.invalidate(getSettingsUseCaseProvider);
     await HomeWidgetService.instance.saveIntervalMinutes(_intervalMinutes);
 
-    final season =
-        await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason();
+    final season = await ref
+        .read(liturgicalSeasonServiceProvider)
+        .getCurrentSeason();
     final rebuildResult = await ref
         .read(rebuildNotificationsUseCaseProvider)
         .call(

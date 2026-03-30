@@ -1,5 +1,7 @@
 import '../../../../features/notifications/domain/entities/reminder_event.dart';
 import '../../../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
+import '../../../../features/notifications/domain/services/quiet_hours_checker.dart';
+import '../../../../features/settings/domain/entities/settings.dart';
 import '../../domain/entities/custom_phrase.dart';
 import '../../domain/entities/phrase_schedule.dart';
 import '../../domain/repositories/custom_phrase_repository.dart';
@@ -10,21 +12,24 @@ class SchedulePhraseNotificationsUseCase {
   final NotificationSchedulerRepository _scheduler;
   final CustomPhraseRepository _repository;
 
-  Future<void> call({String? phraseId}) async {
+  Future<void> call({String? phraseId, Settings? settings}) async {
     if (phraseId != null) {
       final phrase = await _repository.getById(phraseId);
       if (phrase != null) {
-        await _scheduleForPhrase(phrase);
+        await _scheduleForPhrase(phrase, settings: settings);
       }
     } else {
       final phrases = await _repository.listAll();
       for (final phrase in phrases) {
-        await _scheduleForPhrase(phrase);
+        await _scheduleForPhrase(phrase, settings: settings);
       }
     }
   }
 
-  Future<void> _scheduleForPhrase(CustomPhrase phrase) async {
+  Future<void> _scheduleForPhrase(
+    CustomPhrase phrase, {
+    Settings? settings,
+  }) async {
     // 1. Cancel existing notifications for this phrase (IDs 1000-1999)
     for (var i = 0; i < 10; i++) {
       final id = _deriveId(phrase.id, i);
@@ -43,8 +48,22 @@ class SchedulePhraseNotificationsUseCase {
       final hour = int.tryParse(timeParts[0]) ?? 0;
       final minute = int.tryParse(timeParts[1]) ?? 0;
 
-      final nextOccurrence = _calculateNextOccurrence(phrase.schedule, hour, minute, now);
+      final nextOccurrence = _calculateNextOccurrence(
+        phrase.schedule,
+        hour,
+        minute,
+        now,
+      );
       if (nextOccurrence == null) continue;
+      if (settings != null &&
+          settings.quietHoursEnabled &&
+          QuietHoursChecker.isDuringQuietHours(
+            nextOccurrence,
+            settings.quietHoursStart,
+            settings.quietHoursEnd,
+          )) {
+        continue;
+      }
 
       final id = _deriveId(phrase.id, i);
       await _scheduler.scheduleWithId(
@@ -86,7 +105,8 @@ class SchedulePhraseNotificationsUseCase {
       case PhraseScheduleType.weekly:
         if (schedule.daysOfWeek.isEmpty) return null;
         var scheduled = DateTime(now.year, now.month, now.day, hour, minute);
-        while (!schedule.daysOfWeek.contains(scheduled.weekday) || scheduled.isBefore(now)) {
+        while (!schedule.daysOfWeek.contains(scheduled.weekday) ||
+            scheduled.isBefore(now)) {
           scheduled = scheduled.add(const Duration(days: 1));
         }
         return scheduled;

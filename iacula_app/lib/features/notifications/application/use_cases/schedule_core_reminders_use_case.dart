@@ -8,6 +8,7 @@ import '../../domain/entities/reminder_event.dart';
 import '../../domain/repositories/last_delivered_card_repository.dart';
 import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
+import '../../domain/services/quiet_hours_checker.dart';
 
 typedef QuoteFetcher =
     Future<Quote> Function({required String language, required DateTime now});
@@ -97,9 +98,28 @@ final class ScheduleCoreRemindersUseCase {
       ),
     );
 
-    // Use batch fetcher if available (1 DB read + 1 DB write instead of 64+64)
+    final scheduledTimes = <DateTime>[];
+    var cursor = current;
+    for (var i = 0; i < maxQueuedQuoteReminders; i++) {
+      cursor = cursor.add(Duration(minutes: settings.intervalMinutes));
+      if (settings.quietHoursEnabled) {
+        while (QuietHoursChecker.isDuringQuietHours(
+          cursor,
+          settings.quietHoursStart,
+          settings.quietHoursEnd,
+        )) {
+          cursor = QuietHoursChecker.nextActiveTime(
+            cursor,
+            settings.quietHoursEnd,
+          );
+        }
+      }
+      scheduledTimes.add(cursor);
+    }
+
+    // Use batch fetcher only on linear schedule (no quiet-hours jumps).
     final List<Quote> scheduledQuotes;
-    if (_batchFetcher != null) {
+    if (_batchFetcher != null && !settings.quietHoursEnabled) {
       scheduledQuotes = await _batchFetcher(
         language: settings.language,
         count: maxQueuedQuoteReminders,
@@ -108,10 +128,7 @@ final class ScheduleCoreRemindersUseCase {
       );
     } else {
       scheduledQuotes = <Quote>[];
-      for (var i = 0; i < maxQueuedQuoteReminders; i++) {
-        final quoteAt = current.add(
-          Duration(minutes: settings.intervalMinutes * (i + 1)),
-        );
+      for (final quoteAt in scheduledTimes) {
         scheduledQuotes.add(
           await _quoteFetcher(language: settings.language, now: quoteAt),
         );
@@ -119,9 +136,7 @@ final class ScheduleCoreRemindersUseCase {
     }
 
     for (var i = 0; i < scheduledQuotes.length; i++) {
-      final quoteAt = current.add(
-        Duration(minutes: settings.intervalMinutes * (i + 1)),
-      );
+      final quoteAt = scheduledTimes[i];
       final quote = scheduledQuotes[i];
       final scheduledId = quoteScheduleIdBase + i;
 
@@ -163,18 +178,27 @@ final class ScheduleCoreRemindersUseCase {
           : 'Hora de rezar o Angelus.';
 
       final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
-      await _scheduler.schedule(
-        ReminderEvent(
-          type: ReminderEventType.angelusNoon,
-          title: noonTitle,
-          body: noonBody,
-          scheduledAt: noon,
-          withVibration: true,
-          isAlarm: true,
-          repeatDaily: true,
-          routeTarget: NotificationRouteTarget.prayer,
-        ),
-      );
+      final noonInQuietHours =
+          settings.quietHoursEnabled &&
+          QuietHoursChecker.isDuringQuietHours(
+            noon,
+            settings.quietHoursStart,
+            settings.quietHoursEnd,
+          );
+      if (!noonInQuietHours) {
+        await _scheduler.schedule(
+          ReminderEvent(
+            type: ReminderEventType.angelusNoon,
+            title: noonTitle,
+            body: noonBody,
+            scheduledAt: noon,
+            withVibration: true,
+            isAlarm: true,
+            repeatDaily: true,
+            routeTarget: NotificationRouteTarget.prayer,
+          ),
+        );
+      }
     }
   }
 

@@ -10,6 +10,9 @@ void main() {
     expect(Settings.defaults.onboardingCompleted, isFalse);
     expect(Settings.defaults.themeMode, 'system');
     expect(Settings.defaults.liturgicalSeasonEnabled, isFalse);
+    expect(Settings.defaults.quietHoursEnabled, isFalse);
+    expect(Settings.defaults.quietHoursStart, '22:00');
+    expect(Settings.defaults.quietHoursEnd, '07:00');
   });
 
   test('Settings optional constructor defaults for new installs', () {
@@ -32,5 +35,8 @@ void main() {
     );
     expect(partial.themeMode, 'system');
     expect(partial.liturgicalSeasonEnabled, isFalse);
+    expect(partial.quietHoursEnabled, isFalse);
+    expect(partial.quietHoursStart, '22:00');
+    expect(partial.quietHoursEnd, '07:00');
   });
 }
