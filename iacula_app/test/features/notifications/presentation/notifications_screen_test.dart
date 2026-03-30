@@ -93,6 +93,123 @@ void main() {
     expect(find.text('Última notificação'), findsNothing);
   });
 
+  testWidgets('collapses nearby duplicate quotes inside the configured interval', (
+    tester,
+  ) async {
+    final repo = InMemoryNotificationHistoryRepository();
+    await repo.add(NotificationHistoryEntry(
+      quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
+      theme: 'Doxologia',
+      season: 'ordinary',
+      deliveredAt: DateTime(2026, 2, 24, 21, 18),
+    ));
+    await repo.add(NotificationHistoryEntry(
+      quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
+      theme: 'Doxologia',
+      season: 'ordinary',
+      deliveredAt: DateTime(2026, 2, 24, 21, 16),
+    ));
+    await repo.add(NotificationHistoryEntry(
+      quoteText: 'A minha alma tem sede do Deus vivente.',
+      theme: 'Salmo',
+      season: 'ordinary',
+      deliveredAt: DateTime(2026, 2, 24, 21, 33),
+    ));
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notificationHistoryRepositoryProvider.overrideWithValue(repo),
+          notificationHistoryNowProvider.overrideWith(
+            (ref) => DateTime(2026, 2, 24, 21, 35),
+          ),
+        ],
+        child: const CupertinoApp(home: NotificationsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Glória ao Pai, ao Filho e ao Espírito Santo.'),
+      findsOneWidget,
+    );
+    expect(find.text('A minha alma tem sede do Deus vivente.'), findsOneWidget);
+  });
+
+  testWidgets('collapses duplicate quotes exactly one interval apart', (
+    tester,
+  ) async {
+    final repo = InMemoryNotificationHistoryRepository();
+    await repo.add(NotificationHistoryEntry(
+      quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
+      theme: 'Doxologia',
+      season: 'ordinary',
+      deliveredAt: DateTime(2026, 2, 24, 21, 18),
+    ));
+    await repo.add(NotificationHistoryEntry(
+      quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
+      theme: 'Doxologia',
+      season: 'ordinary',
+      deliveredAt: DateTime(2026, 2, 24, 21, 3),
+    ));
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notificationHistoryRepositoryProvider.overrideWithValue(repo),
+          notificationHistoryNowProvider.overrideWith(
+            (ref) => DateTime(2026, 2, 24, 21, 35),
+          ),
+        ],
+        child: const CupertinoApp(home: NotificationsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Glória ao Pai, ao Filho e ao Espírito Santo.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('collapses legacy burst rows with different quotes 1 minute apart', (
+    tester,
+  ) async {
+    final repo = InMemoryNotificationHistoryRepository();
+    await repo.add(NotificationHistoryEntry(
+      quoteText: 'A minha alma tem sede do Deus vivente.',
+      theme: 'Salmo',
+      season: 'ordinary',
+      deliveredAt: DateTime(2026, 2, 24, 21, 35),
+    ));
+    await repo.add(NotificationHistoryEntry(
+      quoteText:
+          'Faça-se, cumpra-se, seja louvada e eternamente glorificada a justíssima e amabilíssima Vontade de Deus sobre todas as coisas. Assim seja.',
+      theme: 'Vontade de Deus',
+      season: 'ordinary',
+      deliveredAt: DateTime(2026, 2, 24, 21, 36),
+    ));
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notificationHistoryRepositoryProvider.overrideWithValue(repo),
+          notificationHistoryNowProvider.overrideWith(
+            (ref) => DateTime(2026, 2, 24, 21, 40),
+          ),
+        ],
+        child: const CupertinoApp(home: NotificationsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('A minha alma tem sede do Deus vivente.'), findsNothing);
+    expect(
+      find.textContaining('Faça-se, cumpra-se, seja louvada e eternamente'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('renders quote text as selectable for copying', (tester) async {
     final repo = InMemoryNotificationHistoryRepository();
     await repo.add(NotificationHistoryEntry(

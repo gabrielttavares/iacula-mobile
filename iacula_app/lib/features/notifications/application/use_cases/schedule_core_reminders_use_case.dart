@@ -66,7 +66,23 @@ final class ScheduleCoreRemindersUseCase {
         immediateQuote ??
         await _quoteFetcher(language: settings.language, now: current);
 
+    var shouldShowImmediate = showImmediate;
     if (showImmediate) {
+      final todayHistory = await _notificationHistoryRepository.listForDay(current);
+      final hasRecentDueQuote = todayHistory.any((entry) {
+        if (entry.deliveredAt.isAfter(current)) return false;
+        final minutesAgo = current.difference(entry.deliveredAt).inMinutes;
+        return minutesAgo >= 0 && minutesAgo < settings.intervalMinutes;
+      });
+      if (hasRecentDueQuote) {
+        shouldShowImmediate = false;
+        debugPrint(
+          '[ScheduleCoreRemindersUseCase] skip immediate quote: recent due history exists within interval.',
+        );
+      }
+    }
+
+    if (shouldShowImmediate) {
       const immediateId = quoteScheduleIdBase - 1;
       debugPrint(
         '[ScheduleCoreRemindersUseCase] show immediate quote id=$immediateId textLen=${resolvedImmediate.text.length}',
@@ -89,27 +105,29 @@ final class ScheduleCoreRemindersUseCase {
       );
     }
 
-    final deliveredCard = LastDeliveredCard.fromQuote(
-      resolvedImmediate,
-      deliveredAt: current,
-    );
-    await _lastDeliveredCardRepository.save(deliveredCard);
-
-    await HomeWidgetService.instance.updateWidget(
-      deliveredCard,
-      intervalMinutes: settings.intervalMinutes,
-    );
-
-    await _notificationHistoryRepository.add(
-      NotificationHistoryEntry(
-        quoteText: resolvedImmediate.text,
-        theme: resolvedImmediate.theme,
-        season: resolvedImmediate.season.name,
+    if (shouldShowImmediate) {
+      final deliveredCard = LastDeliveredCard.fromQuote(
+        resolvedImmediate,
         deliveredAt: current,
-        imagePath: resolvedImmediate.imagePath,
-        feastName: resolvedImmediate.feastName,
-      ),
-    );
+      );
+      await _lastDeliveredCardRepository.save(deliveredCard);
+
+      await HomeWidgetService.instance.updateWidget(
+        deliveredCard,
+        intervalMinutes: settings.intervalMinutes,
+      );
+
+      await _notificationHistoryRepository.add(
+        NotificationHistoryEntry(
+          quoteText: resolvedImmediate.text,
+          theme: resolvedImmediate.theme,
+          season: resolvedImmediate.season.name,
+          deliveredAt: current,
+          imagePath: resolvedImmediate.imagePath,
+          feastName: resolvedImmediate.feastName,
+        ),
+      );
+    }
 
     // iOS allows at most 64 pending notifications. Reserve slots for
     // non-quote notifications (Angelus, liturgy hours, custom phrases).

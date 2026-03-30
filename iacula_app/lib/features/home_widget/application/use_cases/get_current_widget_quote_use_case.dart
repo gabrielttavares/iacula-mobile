@@ -20,7 +20,12 @@ final class GetCurrentWidgetQuoteUseCase {
   final LastDeliveredCardRepository _lastDeliveredCardRepository;
   final WidgetFallbackQuoteFetcher _fallbackQuoteFetcher;
 
-  Future<Quote> call({required String language, DateTime? now}) async {
+  Future<Quote> call({
+    required String language,
+    DateTime? now,
+    bool liturgicalSeasonEnabled = false,
+    LiturgicalSeason? currentSeason,
+  }) async {
     final current = now ?? DateTime.now();
     final history = await _notificationHistoryRepository.listForDay(current);
     final dueEntries = history.where(
@@ -36,15 +41,42 @@ final class GetCurrentWidgetQuoteUseCase {
     }
 
     if (latestDue != null) {
-      return _toQuote(latestDue, current);
+      final dueQuote = _toQuote(latestDue, current);
+      if (
+          _matchesSeason(
+            quote: dueQuote,
+            liturgicalSeasonEnabled: liturgicalSeasonEnabled,
+            currentSeason: currentSeason,
+          )) {
+        return dueQuote;
+      }
     }
 
     final lastCard = await _lastDeliveredCardRepository.load();
     if (lastCard != null && _isSameDay(lastCard.deliveredAt, current)) {
-      return lastCard.toQuote();
+      final lastCardQuote = lastCard.toQuote();
+      if (
+          _matchesSeason(
+            quote: lastCardQuote,
+            liturgicalSeasonEnabled: liturgicalSeasonEnabled,
+            currentSeason: currentSeason,
+          )) {
+        return lastCardQuote;
+      }
     }
 
     return _fallbackQuoteFetcher(language: language, now: current);
+  }
+
+  bool _matchesSeason({
+    required Quote quote,
+    required bool liturgicalSeasonEnabled,
+    required LiturgicalSeason? currentSeason,
+  }) {
+    if (!liturgicalSeasonEnabled) {
+      return true;
+    }
+    return quote.season == currentSeason;
   }
 
   bool _isSameDay(DateTime left, DateTime right) {

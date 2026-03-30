@@ -160,8 +160,14 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                   .where((entry) => !entry.deliveredAt.isAfter(now))
                                   .toList(growable: false)
                             : entries;
+                        final dedupedEntries = _collapseNearbyDuplicateQuotes(
+                          visibleEntries,
+                          intervalMinutes: settings.intervalMinutes,
+                        );
+                        final sanitizedEntries =
+                            _collapseLegacyBurstEntries(dedupedEntries);
 
-                        if (visibleEntries.isEmpty) {
+                        if (sanitizedEntries.isEmpty) {
                           return IaculaSoftCard(
                             child: Text(
                               isTodaySelected
@@ -171,7 +177,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                             ),
                           );
                         }
-                        return _NotificationsRail(entries: visibleEntries);
+                        return _NotificationsRail(entries: sanitizedEntries);
                       },
                       loading: () =>
                           const Center(child: CupertinoActivityIndicator()),
@@ -212,6 +218,53 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
 String _formatTime(DateTime dt) {
   return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+}
+
+List<NotificationHistoryEntry> _collapseNearbyDuplicateQuotes(
+  List<NotificationHistoryEntry> entries, {
+  required int intervalMinutes,
+}) {
+  if (entries.length < 2 || intervalMinutes <= 1) return entries;
+
+  final kept = <NotificationHistoryEntry>[];
+  final latestByQuote = <String, NotificationHistoryEntry>{};
+  for (final entry in entries) {
+    final latestForText = latestByQuote[entry.quoteText];
+    if (latestForText != null) {
+      final diff = latestForText.deliveredAt.difference(entry.deliveredAt).abs();
+      if (diff.inMinutes <= intervalMinutes) {
+        continue;
+      }
+    }
+    kept.add(entry);
+    latestByQuote[entry.quoteText] = entry;
+  }
+  return kept;
+}
+
+List<NotificationHistoryEntry> _collapseLegacyBurstEntries(
+  List<NotificationHistoryEntry> entries,
+) {
+  if (entries.length < 2) return entries;
+
+  // Legacy bug created synthetic rows 1-2 minutes apart. Keep only the latest
+  // card inside these burst windows so historical noise does not dominate UI.
+  const legacyBurstWindowMinutes = 2;
+  final kept = <NotificationHistoryEntry>[];
+  for (final entry in entries) {
+    if (kept.isEmpty) {
+      kept.add(entry);
+      continue;
+    }
+
+    final latestKept = kept.last;
+    final diff = latestKept.deliveredAt.difference(entry.deliveredAt).abs();
+    if (diff.inMinutes <= legacyBurstWindowMinutes) {
+      continue;
+    }
+    kept.add(entry);
+  }
+  return kept;
 }
 
 class _NotificationsRail extends StatelessWidget {

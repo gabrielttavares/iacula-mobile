@@ -186,6 +186,44 @@ void main() {
   );
 
   test(
+    'ignores due history from a different season when liturgical season is enabled',
+    () async {
+      var fallbackCalls = 0;
+      final useCase = GetCurrentWidgetQuoteUseCase(
+        notificationHistoryRepository: _FakeNotificationHistoryRepository([
+          NotificationHistoryEntry(
+            quoteText: 'Lent Quote',
+            theme: 'T1',
+            season: LiturgicalSeason.lent.name,
+            deliveredAt: DateTime(2026, 4, 24, 10, 0),
+          ),
+        ]),
+        lastDeliveredCardRepository: _FakeLastDeliveredCardRepository(null),
+        fallbackQuoteFetcher:
+            ({required String language, required DateTime now}) async {
+              fallbackCalls++;
+              return const Quote(
+                text: 'Easter fallback',
+                dayOfWeek: 5,
+                theme: 'fallback',
+                season: LiturgicalSeason.easter,
+              );
+            },
+      );
+
+      final quote = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 4, 24, 10, 1),
+        liturgicalSeasonEnabled: true,
+        currentSeason: LiturgicalSeason.easter,
+      );
+
+      expect(quote.text, 'Easter fallback');
+      expect(fallbackCalls, 1);
+    },
+  );
+
+  test(
     'reflects tighter schedule after interval changes from 15 to 5 minutes',
     () async {
       final useCase = GetCurrentWidgetQuoteUseCase(

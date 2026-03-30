@@ -160,7 +160,7 @@ void main() {
               (entry) => !entry.deliveredAt.isBefore(DateTime(2026, 2, 21, 12)),
             )
             .length,
-        24,
+        23,
       );
     },
   );
@@ -201,6 +201,95 @@ void main() {
           .map((e) => e.scheduledAt)
           .reduce((a, b) => a.isBefore(b) ? a : b);
       expect(firstQueued, now.add(const Duration(minutes: 5)));
+    },
+  );
+
+  test(
+    'showImmediate false does not add synthetic history entry at current time',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return const Quote(
+                text: 'Q',
+                dayOfWeek: 1,
+                theme: 't',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+      );
+
+      final now = DateTime(2026, 2, 21, 10, 0);
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 15),
+        now: now,
+        showImmediate: false,
+      );
+
+      expect(
+        history.entries.where((entry) => entry.deliveredAt == now),
+        isEmpty,
+      );
+      expect(
+        history.entries.any(
+          (entry) => entry.deliveredAt == now.add(const Duration(minutes: 15)),
+        ),
+        isTrue,
+      );
+    },
+  );
+
+  test(
+    'showImmediate true skips immediate when a recent due quote already exists',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+      history.entries.add(
+        NotificationHistoryEntry(
+          quoteText: 'Recent scheduled quote',
+          theme: 't',
+          season: LiturgicalSeason.ordinary.name,
+          deliveredAt: DateTime(2026, 2, 21, 21, 33),
+        ),
+      );
+
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return const Quote(
+                text: 'Immediate candidate',
+                dayOfWeek: 1,
+                theme: 't',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+      );
+
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 15),
+        now: DateTime(2026, 2, 21, 21, 35),
+        showImmediate: true,
+      );
+
+      final immediateEvents = scheduler.events.where(
+        (e) => e.type == ReminderEventType.quoteInterval && e.scheduledId == 8999,
+      );
+      expect(immediateEvents, isEmpty);
+      expect(
+        history.entries.where(
+          (entry) => entry.deliveredAt == DateTime(2026, 2, 21, 21, 35),
+        ),
+        isEmpty,
+      );
     },
   );
 

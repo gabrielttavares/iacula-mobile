@@ -238,7 +238,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   RefreshWidgetFromTimelineUseCase _makeWidgetRefreshUseCase() {
     return RefreshWidgetFromTimelineUseCase(
       loadSettings: () => ref.read(getSettingsUseCaseProvider).call(),
-      selectQuote: ({required settings, required now}) {
+      selectQuote: ({required settings, required now}) async {
         final selector = GetCurrentWidgetQuoteUseCase(
           notificationHistoryRepository: ref.read(
             notificationHistoryRepositoryProvider,
@@ -267,7 +267,20 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
                     );
               },
         );
-        return selector.call(language: settings.language, now: now);
+        LiturgicalSeason? currentSeason;
+        if (settings.liturgicalSeasonEnabled) {
+          final context = await ref
+              .read(liturgicalSeasonServiceProvider)
+              .getCurrentContext(date: now);
+          currentSeason = context.season;
+        }
+
+        return selector.call(
+          language: settings.language,
+          now: now,
+          liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
+          currentSeason: currentSeason,
+        );
       },
       updateWidgetIfChanged: HomeWidgetService.instance.updateWidgetIfChanged,
       saveIntervalMinutes: HomeWidgetService.instance.saveIntervalMinutes,
