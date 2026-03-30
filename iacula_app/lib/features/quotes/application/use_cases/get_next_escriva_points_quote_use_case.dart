@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../../../leituras/data/repositories/leitura_repository.dart';
 import '../../../liturgical/domain/liturgical_season.dart';
 import '../../domain/entities/quote.dart';
@@ -65,8 +67,9 @@ final class GetNextEscrivaPointsQuoteUseCase {
     final bucketsPerDay = (24 * 60 / safeCadenceMinutes).ceil();
     final cadenceBucket = minutesSinceMidnight ~/ safeCadenceMinutes;
     final sequenceIndex = dayOfYear * bucketsPerDay + cadenceBucket;
+    final shuffledPool = _shuffledPoolForYear(pool, date.year);
 
-    final selected = pool[sequenceIndex % pool.length];
+    final selected = shuffledPool[sequenceIndex % shuffledPool.length];
     return Quote(
       text: selected.text,
       dayOfWeek: dayOfWeek,
@@ -76,6 +79,20 @@ final class GetNextEscrivaPointsQuoteUseCase {
       referenceLabel: selected.referenceLabel,
     );
   }
+}
+
+List<_EscrivaPoint> _shuffledPoolForYear(List<_EscrivaPoint> pool, int year) {
+  final shuffled = List<_EscrivaPoint>.of(pool);
+  final random = Random(year);
+
+  for (var i = shuffled.length - 1; i > 0; i--) {
+    final j = random.nextInt(i + 1);
+    final current = shuffled[i];
+    shuffled[i] = shuffled[j];
+    shuffled[j] = current;
+  }
+
+  return shuffled;
 }
 
 final class _EscrivaPoint {
