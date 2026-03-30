@@ -3,10 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/home/presentation/home_screen.dart';
+import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
+import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
+import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_history_entry.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_history_repository.dart';
+import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
+import 'package:iacula_app/features/quotes/domain/entities/quote_indices.dart';
+import 'package:iacula_app/features/quotes/domain/repositories/quote_content_repository.dart';
+import 'package:iacula_app/features/quotes/domain/repositories/quote_indices_repository.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
 
@@ -68,11 +75,71 @@ final class _FakeNotificationHistoryRepository
   }
 }
 
+final class _FakeLiturgicalSeasonService implements LiturgicalSeasonService {
+  _FakeLiturgicalSeasonService(this.context);
+
+  final LiturgicalContext context;
+
+  @override
+  Future<LiturgicalSeason> getCurrentSeason({DateTime? date}) async {
+    return context.season;
+  }
+
+  @override
+  Future<LiturgicalContext> getCurrentContext({DateTime? date}) async {
+    return context;
+  }
+}
+
+final class _FakeQuoteContentRepository implements QuoteContentRepository {
+  _FakeQuoteContentRepository({required this.quoteText});
+
+  final String quoteText;
+
+  @override
+  Future<String?> getFeastImagePath(String feastSlug) async => null;
+
+  @override
+  Future<List<String>> listDayImages({
+    required int dayOfWeek,
+    required LiturgicalSeason season,
+  }) async {
+    return const [];
+  }
+
+  @override
+  Future<List<String>> loadFeastQuotes(String feastSlug) async => const [];
+
+  @override
+  Future<Map<String, DayQuotes>> loadQuotes({
+    required String language,
+    required LiturgicalSeason season,
+  }) async {
+    return {
+      '7': DayQuotes(day: 'Saturday', theme: 'Seasonal', quotes: [quoteText]),
+    };
+  }
+}
+
+final class _FakeQuoteIndicesRepository implements QuoteIndicesRepository {
+  const _FakeQuoteIndicesRepository();
+
+  @override
+  Future<QuoteIndices> load({required int dayOfWeek}) async {
+    return QuoteIndices.empty(dayOfWeek);
+  }
+
+  @override
+  Future<void> save(QuoteIndices indices) async {}
+}
+
 Widget _buildApp({
   DateTime? now,
+  Settings settings = Settings.defaults,
   LastDeliveredCard? lastCard,
   List<NotificationHistoryEntry> history = const [],
   DateTime? tappedNotificationScheduledAt,
+  List<Override> overrides = const [],
 }) {
   final fixedNow = now ?? DateTime(2026, 2, 21, 11);
   return ProviderScope(
@@ -82,7 +149,7 @@ Widget _buildApp({
           (ref) => tappedNotificationScheduledAt,
         ),
       settingsRepositoryProvider.overrideWithValue(
-        _FakeSettingsRepository(Settings.defaults),
+        _FakeSettingsRepository(settings),
       ),
       lastDeliveredCardRepositoryProvider.overrideWithValue(
         _FakeLastDeliveredCardRepository(
@@ -99,6 +166,7 @@ Widget _buildApp({
         _FakeNotificationHistoryRepository(history),
       ),
       homeNowProvider.overrideWith((ref) => fixedNow),
+      ...overrides,
     ],
     child: const CupertinoApp(home: HomeScreen()),
   );
@@ -291,4 +359,53 @@ void main() {
     expect(find.text('Quote 10:00'), findsNothing);
     expect(find.text('Quote 10:15'), findsOneWidget);
   });
+
+  testWidgets(
+    'home hero ignores stale ordinary history/last card when liturgical season is enabled',
+    (tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          now: DateTime(2026, 2, 21, 10, 14),
+          settings: Settings.defaults.copyWith(liturgicalSeasonEnabled: true),
+          lastCard: LastDeliveredCard(
+            quoteText: 'Stale ordinary last card',
+            theme: 'Conversao',
+            season: 'ordinary',
+            deliveredAt: DateTime(2026, 2, 21, 8, 0),
+          ),
+          history: [
+            NotificationHistoryEntry(
+              quoteText: 'Stale ordinary history',
+              theme: 'Conversao',
+              season: 'ordinary',
+              deliveredAt: DateTime(2026, 2, 21, 10, 0),
+            ),
+          ],
+          overrides: [
+            liturgicalSeasonServiceProvider.overrideWithValue(
+              _FakeLiturgicalSeasonService(
+                const LiturgicalContext(
+                  season: LiturgicalSeason.lent,
+                  rank: LiturgicalRank.weekday,
+                  apiQuotes: [],
+                ),
+              ),
+            ),
+            quoteContentRepositoryProvider.overrideWithValue(
+              _FakeQuoteContentRepository(
+                quoteText: 'Fresh seasonal quote',
+              ),
+            ),
+            quoteIndicesRepositoryProvider.overrideWithValue(
+              const _FakeQuoteIndicesRepository(),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Stale ordinary history'), findsNothing);
+      expect(find.text('Stale ordinary last card'), findsNothing);
+    },
+  );
 }

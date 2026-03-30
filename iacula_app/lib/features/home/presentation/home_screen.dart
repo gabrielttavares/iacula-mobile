@@ -508,6 +508,13 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final history = await ref
       .watch(notificationHistoryRepositoryProvider)
       .listForDay(now);
+  LiturgicalSeason? currentSeason;
+  if (settings.liturgicalSeasonEnabled) {
+    final context = await ref
+        .watch(liturgicalSeasonServiceProvider)
+        .getCurrentContext(date: now);
+    currentSeason = context.season;
+  }
   final dueEntries = history.where((entry) => !entry.deliveredAt.isAfter(now));
   NotificationHistoryEntry? latestDueEntry;
   for (final entry in dueEntries) {
@@ -518,8 +525,11 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   }
   if (latestDueEntry != null) {
     final quote = _quoteFromHistoryEntry(latestDueEntry, now);
-    if (settings.liturgicalSeasonEnabled ||
-        quote.season == LiturgicalSeason.ordinary) {
+    if (_matchesHomeQuoteSeason(
+      quote: quote,
+      liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
+      currentSeason: currentSeason,
+    )) {
       return quote;
     }
   }
@@ -527,8 +537,11 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final lastCard = await ref.watch(lastDeliveredCardRepositoryProvider).load();
   if (lastCard != null && _isSameDay(lastCard.deliveredAt, now)) {
     final quote = lastCard.toQuote();
-    if (settings.liturgicalSeasonEnabled ||
-        quote.season == LiturgicalSeason.ordinary) {
+    if (_matchesHomeQuoteSeason(
+      quote: quote,
+      liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
+      currentSeason: currentSeason,
+    )) {
       return quote;
     }
   }
@@ -546,6 +559,17 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
 
 bool _isSameDay(DateTime a, DateTime b) =>
     a.year == b.year && a.month == b.month && a.day == b.day;
+
+bool _matchesHomeQuoteSeason({
+  required Quote quote,
+  required bool liturgicalSeasonEnabled,
+  required LiturgicalSeason? currentSeason,
+}) {
+  if (!liturgicalSeasonEnabled) {
+    return quote.season == LiturgicalSeason.ordinary;
+  }
+  return quote.season == currentSeason;
+}
 
 Quote _quoteFromHistoryEntry(NotificationHistoryEntry entry, DateTime now) {
   final season = LiturgicalSeason.values.firstWhere(
