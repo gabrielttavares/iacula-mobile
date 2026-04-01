@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 13,
+      version: 14,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -92,7 +92,8 @@ final class AppDatabase {
             season TEXT NOT NULL,
             image_path TEXT,
             feast_name TEXT,
-            delivered_at TEXT NOT NULL
+            delivered_at TEXT NOT NULL,
+            source TEXT
           )
         ''');
       },
@@ -183,6 +184,11 @@ final class AppDatabase {
           );
           await db.execute(
             "ALTER TABLE settings ADD COLUMN quiet_hours_end TEXT NOT NULL DEFAULT '07:00'",
+          );
+        }
+        if (oldVersion < 14) {
+          await db.execute(
+            'ALTER TABLE notification_history_entries ADD COLUMN source TEXT',
           );
         }
       },
