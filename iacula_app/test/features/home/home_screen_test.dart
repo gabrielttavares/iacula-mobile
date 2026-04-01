@@ -11,6 +11,7 @@ import 'package:iacula_app/features/notifications/domain/entities/notification_h
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_history_repository.dart';
 import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
+import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote_indices.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_content_repository.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_indices_repository.dart';
@@ -272,6 +273,7 @@ void main() {
             theme: 'Conversao',
             season: 'ordinary',
             deliveredAt: DateTime(2026, 2, 21, 22, 14),
+            source: QuoteSource.escrivaPoints.name,
           ),
         ],
       ),

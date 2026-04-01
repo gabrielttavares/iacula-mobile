@@ -524,6 +524,7 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
       quote: quote,
       liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
       currentSeason: currentSeason,
+      escrivaPointsFeedEnabled: settings.escrivaPointsFeedEnabled,
     )) {
       return quote;
     }
@@ -536,6 +537,7 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
       quote: quote,
       liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
       currentSeason: currentSeason,
+      escrivaPointsFeedEnabled: settings.escrivaPointsFeedEnabled,
     )) {
       return quote;
     }
@@ -570,10 +572,11 @@ bool _matchesHomeQuoteSeason({
   required Quote quote,
   required bool liturgicalSeasonEnabled,
   required LiturgicalSeason? currentSeason,
+  required bool escrivaPointsFeedEnabled,
 }) {
-  if (!liturgicalSeasonEnabled) {
-    return true;
-  }
+  final isEscrivaQuote = quote.resolvedSource == QuoteSource.escrivaPoints;
+  if (escrivaPointsFeedEnabled != isEscrivaQuote) return false;
+  if (!liturgicalSeasonEnabled) return true;
   return quote.season == currentSeason;
 }
 
@@ -582,6 +585,12 @@ Quote _quoteFromHistoryEntry(NotificationHistoryEntry entry, DateTime now) {
     (candidate) => candidate.name == entry.season,
     orElse: () => LiturgicalSeason.ordinary,
   );
+  final source = entry.source != null
+      ? QuoteSource.values.firstWhere(
+          (s) => s.name == entry.source,
+          orElse: () => QuoteSource.liturgical,
+        )
+      : QuoteSource.liturgical;
   return Quote(
     text: entry.quoteText,
     dayOfWeek: now.weekday,
@@ -589,5 +598,6 @@ Quote _quoteFromHistoryEntry(NotificationHistoryEntry entry, DateTime now) {
     season: season,
     imagePath: entry.imagePath,
     feastName: entry.feastName,
+    source: source,
   );
 }
