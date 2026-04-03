@@ -296,6 +296,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
           now: now,
           liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
           currentSeason: currentSeason,
+          intervalMinutes: settings.intervalMinutes,
         );
       },
       updateWidgetIfChanged: HomeWidgetService.instance.updateWidgetIfChanged,

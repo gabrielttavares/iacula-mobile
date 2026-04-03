@@ -15,6 +15,7 @@ import '../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
+import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../notifications/domain/entities/notification_history_entry.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
@@ -546,23 +547,27 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   // Fallback: fetch a quote but accept it may advance the index.
   // This only triggers when lastDeliveredCard is absent (first launch
   // or bootstrap hasn't completed yet), which is rare.
-  if (settings.escrivaPointsFeedEnabled) {
-    return ref
-        .watch(getNextEscrivaPointsQuoteUseCaseProvider)
-        .call(
-          language: settings.language,
-          now: now,
-          cadenceMinutes: settings.intervalMinutes,
-        );
-  }
+  final Quote fallback = settings.escrivaPointsFeedEnabled
+      ? await ref
+          .watch(getNextEscrivaPointsQuoteUseCaseProvider)
+          .call(
+            language: settings.language,
+            now: now,
+            cadenceMinutes: settings.intervalMinutes,
+          )
+      : await ref
+          .watch(getNextQuoteUseCaseProvider)
+          .call(
+            language: settings.language,
+            now: now,
+            liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
+          );
 
-  return ref
-      .watch(getNextQuoteUseCaseProvider)
-      .call(
-        language: settings.language,
-        now: now,
-        liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-      );
+  await ref
+      .read(lastDeliveredCardRepositoryProvider)
+      .save(LastDeliveredCard.fromQuote(fallback, deliveredAt: now));
+
+  return fallback;
 });
 
 bool _isSameDay(DateTime a, DateTime b) =>

@@ -261,4 +261,56 @@ void main() {
       expect(quote.text, '5-min slot');
     },
   );
+
+  test(
+    'when liturgical season is enabled and last card is old season, fallback is saved and stable',
+    () async {
+      var fallbackCalls = 0;
+      final lastCardRepository = _FakeLastDeliveredCardRepository(
+        LastDeliveredCard(
+          quoteText: 'Ordinary old',
+          theme: 'Old',
+          season: LiturgicalSeason.ordinary.name,
+          deliveredAt: DateTime(2026, 4, 24, 10, 0),
+        ),
+      );
+
+      final useCase = GetCurrentWidgetQuoteUseCase(
+        notificationHistoryRepository: _FakeNotificationHistoryRepository([]),
+        lastDeliveredCardRepository: lastCardRepository,
+        fallbackQuoteFetcher:
+            ({required String language, required DateTime now}) async {
+              fallbackCalls++;
+              return const Quote(
+                text: 'Easter fallback',
+                dayOfWeek: 5,
+                theme: 'fallback',
+                season: LiturgicalSeason.easter,
+              );
+            },
+      );
+
+      final firstQuote = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 4, 24, 10, 1),
+        liturgicalSeasonEnabled: true,
+        currentSeason: LiturgicalSeason.easter,
+        intervalMinutes: 15,
+      );
+
+      expect(firstQuote.text, 'Easter fallback');
+      expect(fallbackCalls, 1);
+
+      final secondQuote = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 4, 24, 10, 2),
+        liturgicalSeasonEnabled: true,
+        currentSeason: LiturgicalSeason.easter,
+        intervalMinutes: 15,
+      );
+
+      expect(secondQuote.text, 'Easter fallback');
+      expect(fallbackCalls, 1);
+    },
+  );
 }

@@ -1,4 +1,5 @@
 import '../../../liturgical/domain/liturgical_season.dart';
+import '../../../notifications/domain/entities/last_delivered_card.dart';
 import '../../../notifications/domain/entities/notification_history_entry.dart';
 import '../../../notifications/domain/repositories/last_delivered_card_repository.dart';
 import '../../../notifications/domain/repositories/notification_history_repository.dart';
@@ -25,6 +26,7 @@ final class GetCurrentWidgetQuoteUseCase {
     DateTime? now,
     bool liturgicalSeasonEnabled = false,
     LiturgicalSeason? currentSeason,
+    int? intervalMinutes,
   }) async {
     final current = now ?? DateTime.now();
     final history = await _notificationHistoryRepository.listForDay(current);
@@ -63,9 +65,26 @@ final class GetCurrentWidgetQuoteUseCase {
           )) {
         return lastCardQuote;
       }
+
+      // If season changed (e.g. enabled while last card is old season), keep
+      // old quote until interval expires (avoid rapid refresh churn).
+      if (intervalMinutes != null &&
+          current.difference(lastCard.deliveredAt).inMinutes < intervalMinutes) {
+        return lastCardQuote;
+      }
     }
 
-    return _fallbackQuoteFetcher(language: language, now: current);
+    final fallbackQuote =
+        await _fallbackQuoteFetcher(language: language, now: current);
+
+    await _lastDeliveredCardRepository.save(
+      LastDeliveredCard.fromQuote(
+        fallbackQuote,
+        deliveredAt: current,
+      ),
+    );
+
+    return fallbackQuote;
   }
 
   bool _matchesSeason({
