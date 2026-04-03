@@ -43,4 +43,26 @@ void main() {
     expect(restored.event.body, event.body);
     expect(restored.event.routeTarget, NotificationRouteTarget.home);
   });
+
+  test('preserves prayer slug through payload roundtrip', () {
+    final event = ReminderEvent(
+      type: ReminderEventType.angelusNoon,
+      title: 'Angelus',
+      body: 'Hora de rezar o Angelus.',
+      scheduledAt: DateTime(2026, 2, 21, 12, 0),
+      withVibration: true,
+      isAlarm: true,
+      repeatDaily: true,
+      routeTarget: NotificationRouteTarget.prayer,
+      prayerSlug: 'angelus',
+    );
+
+    final payload = NotificationActionEvent(actionId: null, event: event).toPayload();
+    final restored = NotificationActionEvent.fromPayload(payload);
+
+    expect(restored, isNotNull);
+    expect(restored!.event.type, ReminderEventType.angelusNoon);
+    expect(restored.event.routeTarget, NotificationRouteTarget.prayer);
+    expect(restored.event.prayerSlug, 'angelus');
+  });
 }

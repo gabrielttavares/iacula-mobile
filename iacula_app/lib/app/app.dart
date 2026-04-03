@@ -20,6 +20,7 @@ import '../features/liturgy_hours/presentation/liturgy_hours_landing_screen.dart
 import '../features/night_prayer/presentation/night_prayer_screen.dart';
 import '../features/home_widget/home_widget_service.dart';
 import '../features/prayer_intentions/presentation/prayer_intentions_screen.dart';
+import '../features/prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../features/prayers/presentation/prayer_screen.dart';
 import '../features/settings/domain/entities/settings.dart';
 import '../features/sync/infrastructure/services/background_sync_scheduler.dart';
@@ -93,6 +94,21 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
 
           case NotificationRouteTarget.prayer:
             final settings = await ref.read(getSettingsUseCaseProvider).call();
+            final prayerSlug = event.event.prayerSlug;
+            if (prayerSlug != null) {
+              final catalogEntry = await ref
+                  .read(getPrayerCatalogUseCaseProvider)
+                  .getBySlug(language: settings.language, slug: prayerSlug);
+              if (catalogEntry != null) {
+                nav.push(
+                  CupertinoPageRoute(
+                    builder: (_) => PrayerCatalogDetailScreen(entry: catalogEntry),
+                  ),
+                );
+                return;
+              }
+            }
+
             final prayer = await ref
                 .read(getPrayerUseCaseProvider)
                 .call(language: settings.language);

@@ -28,6 +28,7 @@ final class ReminderEvent {
     required this.isAlarm,
     this.repeatDaily = false,
     this.routeTarget = NotificationRouteTarget.alarm,
+    this.prayerSlug,
     this.scheduledId,
     this.intentionId,
     this.quoteTheme,
@@ -43,6 +44,8 @@ final class ReminderEvent {
   final bool isAlarm;
   final bool repeatDaily;
   final NotificationRouteTarget routeTarget;
+  /// Optional prayer slug for NotificationRouteTarget.prayer navigation.
+  final String? prayerSlug;
   /// When set, used as the notification id (e.g. for per-intention reminders).
   final int? scheduledId;
   /// Optional intention id for prayer intention reminders (snooze, routing).
@@ -60,6 +63,7 @@ final class ReminderEvent {
     bool? isAlarm,
     bool? repeatDaily,
     NotificationRouteTarget? routeTarget,
+    String? prayerSlug,
     int? scheduledId,
     String? intentionId,
     String? quoteTheme,
@@ -75,6 +79,7 @@ final class ReminderEvent {
       isAlarm: isAlarm ?? this.isAlarm,
       repeatDaily: repeatDaily ?? this.repeatDaily,
       routeTarget: routeTarget ?? this.routeTarget,
+      prayerSlug: prayerSlug ?? this.prayerSlug,
       scheduledId: scheduledId ?? this.scheduledId,
       intentionId: intentionId ?? this.intentionId,
       quoteTheme: quoteTheme ?? this.quoteTheme,
@@ -93,6 +98,7 @@ final class ReminderEvent {
       'isAlarm': isAlarm,
       'repeatDaily': repeatDaily,
       'routeTarget': routeTarget.name,
+      if (prayerSlug != null) 'prayerSlug': prayerSlug,
       if (scheduledId != null) 'scheduledId': scheduledId,
       if (intentionId != null) 'intentionId': intentionId,
       if (quoteTheme != null) 'quoteTheme': quoteTheme,
@@ -116,6 +122,7 @@ final class ReminderEvent {
 
     final scheduledId = map['scheduledId'];
     final intentionId = map['intentionId']?.toString();
+    final prayerSlug = map['prayerSlug']?.toString();
     int? sid;
     if (scheduledId is int) {
       sid = scheduledId;
@@ -132,6 +139,7 @@ final class ReminderEvent {
       isAlarm: map['isAlarm'] == true,
       repeatDaily: map['repeatDaily'] == true,
       routeTarget: routeTarget,
+      prayerSlug: prayerSlug,
       scheduledId: sid,
       intentionId: intentionId,
       quoteTheme: map['quoteTheme']?.toString(),

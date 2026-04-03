@@ -115,6 +115,7 @@ void main() {
         (e) => e.type == ReminderEventType.angelusNoon,
       );
       expect(angelusEvent.scheduledId, 200);
+      expect(angelusEvent.prayerSlug, 'angelus');
     },
   );
 
@@ -510,6 +511,7 @@ void main() {
       // During Easter, the notification MUST say Regina Caeli
       expect(angelus.title, 'Regina Caeli');
       expect(angelus.body, 'Hora de rezar a Regina Caeli.');
+      expect(angelus.prayerSlug, 'regina-coeli');
     },
   );
 }

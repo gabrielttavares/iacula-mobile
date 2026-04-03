@@ -240,9 +240,10 @@ final class ScheduleCoreRemindersUseCase {
             settings.quietHoursEnd,
           );
       if (!noonInQuietHours) {
+        final prayerSlug = isEasterSeason ? 'regina-coeli' : 'angelus';
         debugPrint(
           '[ScheduleCoreRemindersUseCase] scheduling Angelus/Regina id=200 at ${noon.toIso8601String()} '
-          'title=$noonTitle repeatDaily=true',
+          'title=$noonTitle repeatDaily=true slug=$prayerSlug',
         );
         await _scheduler.schedule(
           ReminderEvent(
@@ -254,6 +255,7 @@ final class ScheduleCoreRemindersUseCase {
             isAlarm: true,
             repeatDaily: true,
             routeTarget: NotificationRouteTarget.prayer,
+            prayerSlug: prayerSlug,
           ),
         );
       } else {
