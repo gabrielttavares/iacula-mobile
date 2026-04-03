@@ -202,4 +202,25 @@ void main() {
     );
     expect(nextSameDay.text, 'DomC');
   });
+
+  test('prevents consecutive quote repeats', () async {
+    final repo = _FakeIndicesRepository();
+    // Set initial lastQuote to 'Q1' to simulate previous selection
+    repo.indices = QuoteIndices(
+      quoteIndices: {1: 0},
+      imageIndices: {},
+      lastDay: 1,
+      lastQuote: 'Q1',
+    );
+    final useCase = GetNextQuoteUseCase(
+      contentRepository: _FakeQuoteContentRepository(),
+      indicesRepository: repo,
+      liturgicalSeasonService: _FakeSeasonService(),
+    );
+
+    final result = await useCase.call(language: 'pt-br', now: DateTime(2026, 2, 22)); // Sunday
+    // Should skip Q1 and select Q2
+    expect(result.text, 'Q2');
+    expect(repo.indices.lastQuote, 'Q2');
+  });
 }

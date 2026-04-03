@@ -92,14 +92,34 @@ final class GetNextQuoteUseCase {
         index: currentQuoteIndex,
       );
 
+      var selectedText = text;
+      var selectedIndex = quoteStep.nextIndex;
+
+      // Prevent consecutive repeats
+      if (selectedText != null && selectedText == indices.lastQuote) {
+        // Advance index again to skip the repeat
+        final nextStep = QuoteSelector.getNextIndex(dayData.quotes.length, selectedIndex);
+        selectedText = QuoteSelector.selectQuote(
+          collection: quotePool,
+          dayOfWeek: qDayOfWeek,
+          index: selectedIndex,
+        );
+        selectedIndex = nextStep.nextIndex;
+      }
+
+      if (selectedText == null) {
+        selectedText = dayData.quotes.first;
+      }
+
       indices = QuoteIndices(
-        quoteIndices: {...indices.quoteIndices, qDayOfWeek: quoteStep.nextIndex},
+        quoteIndices: {...indices.quoteIndices, qDayOfWeek: selectedIndex},
         imageIndices: {...indices.imageIndices, qDayOfWeek: nextImageIndex},
         lastDay: startDayOfWeek,
+        lastQuote: selectedText,
       );
 
       quotes.add(Quote(
-        text: text ?? dayData.quotes.first,
+        text: selectedText,
         dayOfWeek: qDayOfWeek,
         theme: dayData.theme,
         season: context.season,
@@ -182,32 +202,42 @@ final class GetNextQuoteUseCase {
       index: currentQuoteIndex,
     );
 
-    if (text == null) {
-      return Quote(
-        text: seasonalQuotes.isNotEmpty ? seasonalQuotes.first : 'Conteudo indisponivel para hoje.',
+    var selectedText = text;
+    var selectedIndex = quoteStep.nextIndex;
+
+    // Prevent consecutive repeats
+    if (selectedText != null && selectedText == indices.lastQuote) {
+      // Advance index again to skip the repeat
+      final nextStep = QuoteSelector.getNextIndex(dayData.quotes.length, selectedIndex);
+      selectedText = QuoteSelector.selectQuote(
+        collection: quotePool,
         dayOfWeek: dayOfWeek,
-        theme: dayData.theme,
-        season: context.season,
-        imagePath: imagePath,
+        index: selectedIndex,
       );
+      selectedIndex = nextStep.nextIndex;
+    }
+
+    if (selectedText == null) {
+      selectedText = seasonalQuotes.isNotEmpty ? seasonalQuotes.first : 'Conteudo indisponivel para hoje.';
     }
 
     await _indicesRepository.save(
       QuoteIndices(
         quoteIndices: {
           ...indices.quoteIndices,
-          dayOfWeek: quoteStep.nextIndex,
+          dayOfWeek: selectedIndex,
         },
         imageIndices: {
           ...indices.imageIndices,
           dayOfWeek: nextImageIndex,
         },
         lastDay: dayOfWeek,
+        lastQuote: selectedText,
       ),
     );
 
     return Quote(
-      text: text,
+      text: selectedText,
       dayOfWeek: dayOfWeek,
       theme: dayData.theme,
       season: context.season,
