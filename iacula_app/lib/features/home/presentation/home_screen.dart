@@ -24,6 +24,7 @@ import '../../confession/presentation/confession_flow_screen.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../settings/domain/jaculatoria_interval.dart';
 import '../../examination/presentation/examination_reading_screen.dart';
+import '../../home_widget/home_widget_service.dart';
 import 'home_greeting.dart';
 import 'home_prayer_groups.dart';
 import 'widgets/home_hero_card.dart';
@@ -242,6 +243,12 @@ class _HomeHeroSection extends ConsumerWidget {
     final intervalMinutes = settingsAsync.valueOrNull?.intervalMinutes ?? 15;
     final notificationsEnabled =
         settingsAsync.valueOrNull?.notificationsEnabled ?? true;
+
+    // Update widget when quote is available
+    if (quoteAsync.hasData) {
+      final card = LastDeliveredCard.fromQuote(quoteAsync.value!, deliveredAt: DateTime.now());
+      HomeWidgetService.instance.updateWidgetIfChanged(card, intervalMinutes: intervalMinutes);
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

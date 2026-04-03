@@ -115,7 +115,7 @@ class WidgetQuoteCard extends StatelessWidget {
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(
-                    alpha: _isEscrivaPoints ? 0.22 : 0.34,
+                    alpha: _isEscrivaPoints ? 0.30 : 0.40,
                   ),
                 ),
               ),

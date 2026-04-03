@@ -128,7 +128,7 @@ class HomeHeroCard extends ConsumerWidget {
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(
-                        alpha: isEscrivaPoints ? 0.22 : 0.34,
+                        alpha: isEscrivaPoints ? 0.30 : 0.40,
                       ),
                     ),
                   ),

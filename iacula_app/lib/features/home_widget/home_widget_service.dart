@@ -62,7 +62,7 @@ final class HomeWidgetService {
       await _renderWidgetImage(
         card,
         key: 'widget_image_small',
-        logicalSize: const Size(170, 170),
+        logicalSize: const Size(200, 200),
         showLabel: false,
         fontSize: 13,
       );
