@@ -245,9 +245,16 @@ class _HomeHeroSection extends ConsumerWidget {
         settingsAsync.valueOrNull?.notificationsEnabled ?? true;
 
     // Update widget when quote is available
-    if (quoteAsync.hasData) {
-      final card = LastDeliveredCard.fromQuote(quoteAsync.value!, deliveredAt: DateTime.now());
-      HomeWidgetService.instance.updateWidgetIfChanged(card, intervalMinutes: intervalMinutes);
+    final currentQuote = quoteAsync.valueOrNull;
+    if (currentQuote != null) {
+      final card = LastDeliveredCard.fromQuote(
+        currentQuote,
+        deliveredAt: DateTime.now(),
+      );
+      HomeWidgetService.instance.updateWidgetIfChanged(
+        card,
+        intervalMinutes: intervalMinutes,
+      );
     }
 
     return Column(
