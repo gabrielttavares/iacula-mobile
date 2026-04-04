@@ -294,6 +294,52 @@ void main() {
     },
   );
 
+  test(
+    'escriva mode avoids three identical quotes in a row across immediate and queued reminders',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher: ({required String language, required DateTime now}) async {
+          final slot = now.minute ~/ 15;
+          final text = slot <= 2 ? 'ESCRIVA_DUPLICATE' : 'ESCRIVA_ALTERNATE';
+          return Quote(
+            text: text,
+            dayOfWeek: 1,
+            theme: 'Escriva',
+            season: LiturgicalSeason.ordinary,
+            source: QuoteSource.escrivaPoints,
+          );
+        },
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+      );
+
+      await useCase(
+        Settings.defaults.copyWith(
+          intervalMinutes: 15,
+          escrivaPointsFeedEnabled: true,
+        ),
+        now: DateTime(2026, 2, 21, 10, 0),
+        showImmediate: true,
+      );
+
+      final quoteEvents = scheduler.events
+          .where((event) => event.type == ReminderEventType.quoteInterval)
+          .toList()
+        ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+
+      final firstThreeBodies = quoteEvents.take(3).map((e) => e.body).toList();
+
+      expect(
+        firstThreeBodies,
+        isNot(everyElement(equals('ESCRIVA_DUPLICATE'))),
+      );
+    },
+  );
+
   test('earliest queued quote fires at now + intervalMinutes', () async {
     final scheduler = InMemoryNotificationSchedulerRepository();
     final history = _InMemoryNotificationHistoryRepository();

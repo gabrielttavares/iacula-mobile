@@ -179,6 +179,23 @@ final class ScheduleCoreRemindersUseCase {
       }
     }
 
+    if (settings.escrivaPointsFeedEnabled && scheduledQuotes.isNotEmpty) {
+      var previousText = shouldShowImmediate ? resolvedImmediate.text : null;
+      for (var i = 0; i < scheduledQuotes.length; i++) {
+        final currentQuote = scheduledQuotes[i];
+        if (previousText != null && currentQuote.text == previousText) {
+          scheduledQuotes[i] = await _fetchDistinctQuoteForSlot(
+            language: settings.language,
+            slotTime: scheduledTimes[i],
+            previousText: previousText,
+            intervalMinutes: settings.intervalMinutes,
+            fallback: currentQuote,
+          );
+        }
+        previousText = scheduledQuotes[i].text;
+      }
+    }
+
     for (var i = 0; i < scheduledQuotes.length; i++) {
       final quoteAt = scheduledTimes[i];
       final quote = scheduledQuotes[i];
@@ -274,5 +291,24 @@ final class ScheduleCoreRemindersUseCase {
     return left.year == right.year &&
         left.month == right.month &&
         left.day == right.day;
+  }
+
+  Future<Quote> _fetchDistinctQuoteForSlot({
+    required String language,
+    required DateTime slotTime,
+    required String previousText,
+    required int intervalMinutes,
+    required Quote fallback,
+  }) async {
+    const maxAttempts = 3;
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+      final candidateTime =
+          slotTime.add(Duration(minutes: intervalMinutes * attempt));
+      final candidate = await _quoteFetcher(language: language, now: candidateTime);
+      if (candidate.text != previousText) {
+        return candidate;
+      }
+    }
+    return fallback;
   }
 }
