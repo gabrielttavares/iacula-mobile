@@ -263,7 +263,7 @@ void main() {
   );
 
   test(
-    'when liturgical season is enabled and last card is old season, fallback is saved and stable',
+    'when liturgical season changes, last card remains until interval expires',
     () async {
       var fallbackCalls = 0;
       final lastCardRepository = _FakeLastDeliveredCardRepository(
@@ -298,8 +298,8 @@ void main() {
         intervalMinutes: 15,
       );
 
-      expect(firstQuote.text, 'Easter fallback');
-      expect(fallbackCalls, 1);
+      expect(firstQuote.text, 'Ordinary old');
+      expect(fallbackCalls, 0);
 
       final secondQuote = await useCase.call(
         language: 'pt-br',
@@ -309,7 +309,18 @@ void main() {
         intervalMinutes: 15,
       );
 
-      expect(secondQuote.text, 'Easter fallback');
+      expect(secondQuote.text, 'Ordinary old');
+      expect(fallbackCalls, 0);
+
+      final thirdQuote = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 4, 24, 10, 16),
+        liturgicalSeasonEnabled: true,
+        currentSeason: LiturgicalSeason.easter,
+        intervalMinutes: 15,
+      );
+
+      expect(thirdQuote.text, 'Easter fallback');
       expect(fallbackCalls, 1);
     },
   );
