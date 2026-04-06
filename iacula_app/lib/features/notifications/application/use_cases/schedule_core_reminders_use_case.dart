@@ -53,8 +53,11 @@ final class ScheduleCoreRemindersUseCase {
     bool isEasterSeason = false,
     Quote? immediateQuote,
     bool showImmediate = true,
+    bool latestOnlyQueuedQuote = false,
   }) async {
     final current = now ?? DateTime.now();
+    final effectiveIsEasterSeason =
+        isEasterSeason || _isDateWithinEasterSeason(current);
     debugPrint(
       '[ScheduleCoreRemindersUseCase] scheduling at ${current.toIso8601String()} '
       'interval=${settings.intervalMinutes}m lang=${settings.language} '
@@ -134,12 +137,13 @@ final class ScheduleCoreRemindersUseCase {
     // non-quote notifications (Angelus, liturgy hours, custom phrases).
     const iosScheduledLimit = 64;
     const reservedSlots = 6; // 1 Angelus + 4 liturgy + 1 buffer
-    final quoteCount = Platform.isIOS
+    final defaultQuoteCount = Platform.isIOS
         ? min(maxQueuedQuoteReminders, iosScheduledLimit - reservedSlots)
         : maxQueuedQuoteReminders;
+    final quoteCount = latestOnlyQueuedQuote ? 1 : defaultQuoteCount;
     debugPrint(
       '[ScheduleCoreRemindersUseCase] quote queue size=$quoteCount (max=$maxQueuedQuoteReminders, '
-      'iosReserved=$reservedSlots, isIOS=${Platform.isIOS})',
+      'iosReserved=$reservedSlots, isIOS=${Platform.isIOS}, latestOnly=$latestOnlyQueuedQuote)',
     );
 
     final scheduledTimes = <DateTime>[];
@@ -243,8 +247,8 @@ final class ScheduleCoreRemindersUseCase {
     }
 
     if (settings.angelusEnabled) {
-      final noonTitle = isEasterSeason ? 'Regina Caeli' : 'Angelus';
-      final noonBody = isEasterSeason
+      final noonTitle = effectiveIsEasterSeason ? 'Regina Caeli' : 'Angelus';
+      final noonBody = effectiveIsEasterSeason
           ? 'Hora de rezar a Regina Caeli.'
           : 'Hora de rezar o Angelus.';
 
@@ -257,7 +261,7 @@ final class ScheduleCoreRemindersUseCase {
             settings.quietHoursEnd,
           );
       if (!noonInQuietHours) {
-        final prayerSlug = isEasterSeason ? 'regina-coeli' : 'angelus';
+        final prayerSlug = effectiveIsEasterSeason ? 'regina-coeli' : 'angelus';
         debugPrint(
           '[ScheduleCoreRemindersUseCase] scheduling Angelus/Regina id=200 at ${noon.toIso8601String()} '
           'title=$noonTitle repeatDaily=true slug=$prayerSlug',
@@ -291,6 +295,31 @@ final class ScheduleCoreRemindersUseCase {
     return left.year == right.year &&
         left.month == right.month &&
         left.day == right.day;
+  }
+
+  bool _isDateWithinEasterSeason(DateTime date) {
+    final day = DateTime(date.year, date.month, date.day);
+    final easterSunday = _calculateGregorianEasterSunday(day.year);
+    final pentecostSunday = easterSunday.add(const Duration(days: 49));
+    return !day.isBefore(easterSunday) && !day.isAfter(pentecostSunday);
+  }
+
+  DateTime _calculateGregorianEasterSunday(int year) {
+    final a = year % 19;
+    final b = year ~/ 100;
+    final c = year % 100;
+    final d = b ~/ 4;
+    final e = b % 4;
+    final f = (b + 8) ~/ 25;
+    final g = (b - f + 1) ~/ 3;
+    final h = (19 * a + b - d - g + 15) % 30;
+    final i = c ~/ 4;
+    final k = c % 4;
+    final l = (32 + 2 * e + 2 * i - h - k) % 7;
+    final m = (a + 11 * h + 22 * l) ~/ 451;
+    final month = (h + l - 7 * m + 114) ~/ 31;
+    final day = ((h + l - 7 * m + 114) % 31) + 1;
+    return DateTime(year, month, day);
   }
 
   Future<Quote> _fetchDistinctQuoteForSlot({

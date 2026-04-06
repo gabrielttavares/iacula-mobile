@@ -7,6 +7,7 @@ import '../../../home_widget/home_widget_service.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../../../settings/domain/entities/settings.dart';
 import '../../domain/entities/notification_rebuild_result.dart';
+import '../../domain/entities/short_interval_reliability.dart';
 import '../../domain/repositories/last_delivered_card_repository.dart';
 import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
@@ -65,6 +66,8 @@ final class RebuildNotificationsUseCase {
         notificationsEnabled: settings.notificationsEnabled,
         intervalMinutes: settings.intervalMinutes,
       );
+      final latestOnlyQueuedQuote =
+          reliability == ShortIntervalReliability.exactAlarmsUnavailable;
       debugPrint(
         '[RebuildNotificationsUseCase] short-interval reliability guaranteed=${reliability.guaranteed}',
       );
@@ -92,6 +95,7 @@ final class RebuildNotificationsUseCase {
         isEasterSeason: isEasterSeason,
         immediateQuote: immediateQuote,
         showImmediate: showImmediate,
+        latestOnlyQueuedQuote: latestOnlyQueuedQuote,
       );
       await Future.wait([
         _schedulePhraseNotifications.call(settings: settings),

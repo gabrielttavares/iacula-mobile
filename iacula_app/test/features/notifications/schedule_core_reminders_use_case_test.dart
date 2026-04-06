@@ -560,4 +560,47 @@ void main() {
       expect(angelus.prayerSlug, 'regina-coeli');
     },
   );
+
+  test(
+    'Angelus uses local Easter fallback when caller passes isEasterSeason false',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return const Quote(
+                text: 'Q',
+                dayOfWeek: 1,
+                theme: 't',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+      );
+
+      await useCase(
+        Settings.defaults.copyWith(
+          intervalMinutes: 30,
+          angelusEnabled: true,
+          liturgicalSeasonEnabled: false,
+          escrivaPointsFeedEnabled: true,
+        ),
+        now: DateTime(2026, 4, 10, 8),
+        // Simulate remote/fallback mismatch while still in real Easter season.
+        isEasterSeason: false,
+        showImmediate: false,
+      );
+
+      final angelus = scheduler.events.firstWhere(
+        (e) => e.type == ReminderEventType.angelusNoon,
+      );
+      expect(angelus.title, 'Regina Caeli');
+      expect(angelus.body, 'Hora de rezar a Regina Caeli.');
+      expect(angelus.prayerSlug, 'regina-coeli');
+    },
+  );
 }

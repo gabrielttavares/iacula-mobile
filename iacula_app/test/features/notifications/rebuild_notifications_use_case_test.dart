@@ -270,6 +270,17 @@ void main() {
       showImmediate: false,
     );
     expect(r.shortIntervalReliabilityNotGuaranteed, isTrue);
+
+    final quoteEvents = scheduler.events
+        .where((event) => event.type == ReminderEventType.quoteInterval)
+        .toList();
+    expect(
+      quoteEvents,
+      hasLength(1),
+      reason:
+          'When exact alarms are unavailable, keep only the latest upcoming quote to avoid Android burst delivery.',
+    );
+    expect(quoteEvents.single.scheduledId, 9000);
   });
 
   test('notifications disabled yields notGuaranteed false even if exact denied', () async {
