@@ -34,6 +34,7 @@ final class ReminderEvent {
     this.quoteTheme,
     this.quoteSeason,
     this.quoteFeastName,
+    this.snoozeCount = 0,
   });
 
   final ReminderEventType type;
@@ -44,15 +45,19 @@ final class ReminderEvent {
   final bool isAlarm;
   final bool repeatDaily;
   final NotificationRouteTarget routeTarget;
+
   /// Optional prayer slug for NotificationRouteTarget.prayer navigation.
   final String? prayerSlug;
+
   /// When set, used as the notification id (e.g. for per-intention reminders).
   final int? scheduledId;
+
   /// Optional intention id for prayer intention reminders (snooze, routing).
   final String? intentionId;
   final String? quoteTheme;
   final String? quoteSeason;
   final String? quoteFeastName;
+  final int snoozeCount;
 
   ReminderEvent copyWith({
     ReminderEventType? type,
@@ -69,6 +74,7 @@ final class ReminderEvent {
     String? quoteTheme,
     String? quoteSeason,
     String? quoteFeastName,
+    int? snoozeCount,
   }) {
     return ReminderEvent(
       type: type ?? this.type,
@@ -85,6 +91,7 @@ final class ReminderEvent {
       quoteTheme: quoteTheme ?? this.quoteTheme,
       quoteSeason: quoteSeason ?? this.quoteSeason,
       quoteFeastName: quoteFeastName ?? this.quoteFeastName,
+      snoozeCount: snoozeCount ?? this.snoozeCount,
     );
   }
 
@@ -104,11 +111,13 @@ final class ReminderEvent {
       if (quoteTheme != null) 'quoteTheme': quoteTheme,
       if (quoteSeason != null) 'quoteSeason': quoteSeason,
       if (quoteFeastName != null) 'quoteFeastName': quoteFeastName,
+      'snoozeCount': snoozeCount,
     };
   }
 
   static ReminderEvent fromMap(Map<String, dynamic> map) {
-    final typeName = map['type']?.toString() ?? ReminderEventType.quoteInterval.name;
+    final typeName =
+        map['type']?.toString() ?? ReminderEventType.quoteInterval.name;
     final type = ReminderEventType.values.firstWhere(
       (e) => e.name == typeName,
       orElse: () => ReminderEventType.quoteInterval,
@@ -123,18 +132,26 @@ final class ReminderEvent {
     final scheduledId = map['scheduledId'];
     final intentionId = map['intentionId']?.toString();
     final prayerSlug = map['prayerSlug']?.toString();
+    final rawSnoozeCount = map['snoozeCount'];
     int? sid;
     if (scheduledId is int) {
       sid = scheduledId;
     } else if (scheduledId is num) {
       sid = scheduledId.toInt();
     }
+    final snoozeCount = rawSnoozeCount is int
+        ? rawSnoozeCount
+        : rawSnoozeCount is num
+        ? rawSnoozeCount.toInt()
+        : int.tryParse(rawSnoozeCount?.toString() ?? '') ?? 0;
 
     return ReminderEvent(
       type: type,
       title: map['title']?.toString() ?? 'Iacula',
       body: map['body']?.toString() ?? '',
-      scheduledAt: DateTime.tryParse(map['scheduledAt']?.toString() ?? '') ?? DateTime.now(),
+      scheduledAt:
+          DateTime.tryParse(map['scheduledAt']?.toString() ?? '') ??
+          DateTime.now(),
       withVibration: map['withVibration'] == true,
       isAlarm: map['isAlarm'] == true,
       repeatDaily: map['repeatDaily'] == true,
@@ -145,6 +162,7 @@ final class ReminderEvent {
       quoteTheme: map['quoteTheme']?.toString(),
       quoteSeason: map['quoteSeason']?.toString(),
       quoteFeastName: map['quoteFeastName']?.toString(),
+      snoozeCount: snoozeCount,
     );
   }
 
@@ -155,9 +173,10 @@ final class ReminderEvent {
       ReminderEventType.laudes ||
       ReminderEventType.vespers => NotificationRouteTarget.liturgyHours,
       ReminderEventType.compline => NotificationRouteTarget.nightPrayer,
-      ReminderEventType.oraMedia || ReminderEventType.customPhrase =>
-        NotificationRouteTarget.home,
-      ReminderEventType.prayerIntentionReminder => NotificationRouteTarget.prayerIntention,
+      ReminderEventType.oraMedia ||
+      ReminderEventType.customPhrase => NotificationRouteTarget.home,
+      ReminderEventType.prayerIntentionReminder =>
+        NotificationRouteTarget.prayerIntention,
     };
   }
 }

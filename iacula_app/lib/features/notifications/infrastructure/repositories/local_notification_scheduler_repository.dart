@@ -24,6 +24,7 @@ final class LocalNotificationSchedulerRepository
   }) : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
   static const _smallIcon = 'ic_notification';
+  static const reminderCategoryIdentifier = 'iacula_reminder';
 
   final FlutterLocalNotificationsPlugin _plugin;
   final _controller = StreamController<NotificationActionEvent>.broadcast();
@@ -97,6 +98,7 @@ final class LocalNotificationSchedulerRepository
       requestAlertPermission: requestPermission,
       requestBadgePermission: requestPermission,
       requestSoundPermission: requestPermission,
+      notificationCategories: darwinNotificationCategories,
     );
 
     await _plugin.initialize(
@@ -123,7 +125,12 @@ final class LocalNotificationSchedulerRepository
           IOSFlutterLocalNotificationsPlugin
         >();
     final iosGranted =
-        await iosImpl?.requestPermissions(alert: true, badge: true, sound: true) ?? true;
+        await iosImpl?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        ) ??
+        true;
 
     _permissionGranted = androidGranted && iosGranted;
     debugPrint(
@@ -140,8 +147,7 @@ final class LocalNotificationSchedulerRepository
           AndroidFlutterLocalNotificationsPlugin
         >();
     if (androidImpl != null) {
-      _permissionGranted =
-          await androidImpl.areNotificationsEnabled() ?? false;
+      _permissionGranted = await androidImpl.areNotificationsEnabled() ?? false;
       return _permissionGranted;
     }
 
@@ -152,7 +158,12 @@ final class LocalNotificationSchedulerRepository
         >();
     if (iosImpl != null) {
       _permissionGranted =
-          await iosImpl.requestPermissions(alert: true, badge: true, sound: true) ?? false;
+          await iosImpl.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
+          false;
       return _permissionGranted;
     }
 
@@ -176,7 +187,12 @@ final class LocalNotificationSchedulerRepository
         >();
     if (iosImpl != null) {
       _permissionGranted =
-          await iosImpl.requestPermissions(alert: true, badge: true, sound: true) ?? false;
+          await iosImpl.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
+          false;
       return _permissionGranted;
     }
 
@@ -222,6 +238,7 @@ final class LocalNotificationSchedulerRepository
   static AndroidNotificationDetails buildAndroidNotificationDetails(
     ReminderEvent event,
   ) {
+    final requiresInteraction = requiresMandatoryInteraction(event.type);
     return AndroidNotificationDetails(
       _channelIdForType(event.type),
       _channelNameForType(event.type),
@@ -229,36 +246,87 @@ final class LocalNotificationSchedulerRepository
       icon: _smallIcon,
       importance: Importance.max,
       priority: Priority.high,
-      fullScreenIntent: event.isAlarm,
+      fullScreenIntent: requiresInteraction || event.isAlarm,
       enableVibration: event.withVibration,
-      category: event.isAlarm ? AndroidNotificationCategory.alarm : null,
+      category: requiresInteraction || event.isAlarm
+          ? AndroidNotificationCategory.alarm
+          : null,
       playSound: true,
       visibility: NotificationVisibility.public,
       styleInformation: BigTextStyleInformation(event.body),
       // Quote reminders must stay user-dismissible on Android.
       ongoing: false,
       groupKey: _groupKeyForType(event.type),
+      actions: requiresInteraction ? androidReminderActions : null,
     );
   }
 
   static DarwinNotificationDetails buildDarwinNotificationDetails(
     ReminderEvent event,
   ) {
-    if (event.isAlarm) {
-      return const DarwinNotificationDetails(
-        presentAlert: true,
-        presentSound: true,
-        presentBadge: true,
-        interruptionLevel: InterruptionLevel.timeSensitive,
-        sound: 'liturgy-reminder-soft.wav',
-      );
-    }
-    return const DarwinNotificationDetails(
+    final requiresInteraction = requiresMandatoryInteraction(event.type);
+    return DarwinNotificationDetails(
       presentAlert: true,
       presentSound: true,
       presentBadge: true,
+      categoryIdentifier: requiresInteraction
+          ? reminderCategoryIdentifier
+          : null,
+      interruptionLevel: requiresInteraction || event.isAlarm
+          ? InterruptionLevel.timeSensitive
+          : null,
+      sound: event.isAlarm ? 'liturgy-reminder-soft.wav' : null,
     );
   }
+
+  static bool requiresMandatoryInteraction(ReminderEventType type) {
+    return switch (type) {
+      ReminderEventType.quoteInterval ||
+      ReminderEventType.angelusNoon ||
+      ReminderEventType.customPhrase ||
+      ReminderEventType.prayerIntentionReminder => true,
+      ReminderEventType.laudes ||
+      ReminderEventType.vespers ||
+      ReminderEventType.compline ||
+      ReminderEventType.oraMedia => false,
+    };
+  }
+
+  static const List<AndroidNotificationAction> androidReminderActions =
+      <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          NotificationActionEvent.prayNowAction,
+          'Rezar agora',
+          showsUserInterface: true,
+        ),
+        AndroidNotificationAction(
+          NotificationActionEvent.snooze1hAction,
+          'Adiar 1h',
+        ),
+      ];
+
+  static final List<DarwinNotificationCategory> darwinNotificationCategories =
+      <DarwinNotificationCategory>[
+        DarwinNotificationCategory(
+          reminderCategoryIdentifier,
+          actions: <DarwinNotificationAction>[
+            DarwinNotificationAction.plain(
+              NotificationActionEvent.prayNowAction,
+              'Rezar agora',
+              options: <DarwinNotificationActionOption>{
+                DarwinNotificationActionOption.foreground,
+              },
+            ),
+            DarwinNotificationAction.plain(
+              NotificationActionEvent.snooze1hAction,
+              'Adiar 1h',
+            ),
+          ],
+          options: <DarwinNotificationCategoryOption>{
+            DarwinNotificationCategoryOption.customDismissAction,
+          },
+        ),
+      ];
 
   @override
   Future<void> schedule(ReminderEvent event) async {
@@ -329,8 +397,10 @@ final class LocalNotificationSchedulerRepository
       iOS: iosDetails,
     );
     final scheduled = tz.TZDateTime.from(event.scheduledAt, tz.local);
-    final payload =
-        NotificationActionEvent(actionId: null, event: event).toPayload();
+    final payload = NotificationActionEvent(
+      actionId: null,
+      event: event,
+    ).toPayload();
     final repeat = event.repeatDaily ? DateTimeComponents.time : null;
 
     final title = notificationTitleForPlugin(event);
@@ -383,8 +453,10 @@ final class LocalNotificationSchedulerRepository
       android: androidDetails,
       iOS: iosDetails,
     );
-    final payload =
-        NotificationActionEvent(actionId: null, event: event).toPayload();
+    final payload = NotificationActionEvent(
+      actionId: null,
+      event: event,
+    ).toPayload();
 
     await _plugin.show(
       id,
@@ -486,7 +558,8 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.compline ||
       ReminderEventType.oraMedia => 'Alarmes da Liturgia das Horas',
       ReminderEventType.customPhrase => 'Notificações de frases personalizadas',
-      ReminderEventType.prayerIntentionReminder => 'Lembretes para rezar por intenções',
+      ReminderEventType.prayerIntentionReminder =>
+        'Lembretes para rezar por intenções',
     };
   }
 }

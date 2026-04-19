@@ -1,27 +1,28 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 import 'reminder_event.dart';
 
 final class NotificationActionEvent {
-  const NotificationActionEvent({
-    required this.actionId,
-    required this.event,
-  });
+  const NotificationActionEvent({required this.actionId, required this.event});
 
   final String? actionId;
   final ReminderEvent event;
+
+  static const String prayNowAction = 'pray_now';
+  static const String snooze1hAction = 'snooze_1h';
+  static const String dismissAction = 'dismiss';
 
   static const String openAction = 'open_now';
   static const String snooze10Action = 'snooze_10';
 
   String toPayload() {
-    return jsonEncode({
-      'actionId': actionId,
-      'event': event.toMap(),
-    });
+    return jsonEncode({'actionId': actionId, 'event': event.toMap()});
   }
 
-  static NotificationActionEvent? fromPayload(String? payload, {String? fallbackActionId}) {
+  static NotificationActionEvent? fromPayload(
+    String? payload, {
+    String? fallbackActionId,
+  }) {
     if (payload == null || payload.isEmpty) return null;
     try {
       final map = jsonDecode(payload) as Map<String, dynamic>;

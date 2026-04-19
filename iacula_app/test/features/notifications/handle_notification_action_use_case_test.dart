@@ -43,6 +43,9 @@ final class _FakeNotificationSchedulerRepository
   Future<List<int>> pendingNotificationIds() async => [];
 
   @override
+  Future<NotificationActionEvent?> getLaunchNotificationAction() async => null;
+
+  @override
   Future<bool?> canScheduleExactNotifications() async => true;
 
   @override
@@ -61,35 +64,39 @@ final class _FakeNotificationSchedulerRepository
 }
 
 void main() {
-  test('does not store quote history when opening quote notification', () async {
-    final scheduler = _FakeNotificationSchedulerRepository();
-    final useCase = HandleNotificationActionUseCase(scheduler);
+  test(
+    'does not store quote history when opening quote notification',
+    () async {
+      final scheduler = _FakeNotificationSchedulerRepository();
+      final useCase = HandleNotificationActionUseCase(scheduler);
 
-    final shouldOpen = await useCase.call(
-      NotificationActionEvent(
-        actionId: NotificationActionEvent.openAction,
-        event: ReminderEvent(
-          type: ReminderEventType.quoteInterval,
-          title: 'Iacula',
-          body: 'Permanecei em mim.',
-          scheduledAt: DateTime(2026, 2, 24, 10),
-          withVibration: true,
-          isAlarm: false,
-          routeTarget: NotificationRouteTarget.home,
+      final shouldOpen = await useCase.call(
+        NotificationActionEvent(
+          actionId: NotificationActionEvent.openAction,
+          event: ReminderEvent(
+            type: ReminderEventType.quoteInterval,
+            title: 'Iacula',
+            body: 'Permanecei em mim.',
+            scheduledAt: DateTime(2026, 2, 24, 10),
+            withVibration: true,
+            isAlarm: false,
+            routeTarget: NotificationRouteTarget.home,
+          ),
         ),
-      ),
-    );
+      );
 
-    expect(shouldOpen, isTrue);
-  });
+      expect(shouldOpen, isTrue);
+    },
+  );
 
-  test('does not store history when snoozing an alarm', () async {
+  test('snooze one hour reschedules without opening app', () async {
     final scheduler = _FakeNotificationSchedulerRepository();
     final useCase = HandleNotificationActionUseCase(scheduler);
+    final before = DateTime.now();
 
     final shouldOpen = await useCase.call(
       NotificationActionEvent(
-        actionId: NotificationActionEvent.snooze10Action,
+        actionId: NotificationActionEvent.snooze1hAction,
         event: ReminderEvent(
           type: ReminderEventType.angelusNoon,
           title: 'Angelus',
@@ -104,5 +111,65 @@ void main() {
 
     expect(shouldOpen, isFalse);
     expect(scheduler.scheduled, hasLength(1));
+    final snoozed = scheduler.scheduled.single;
+    expect(snoozed.repeatDaily, isFalse);
+    expect(snoozed.snoozeCount, 1);
+    expect(
+      snoozed.scheduledAt.difference(before),
+      greaterThanOrEqualTo(const Duration(minutes: 59, seconds: 59)),
+    );
+    expect(
+      snoozed.scheduledAt.difference(before),
+      lessThanOrEqualTo(const Duration(hours: 1, seconds: 1)),
+    );
+  });
+
+  test('dismiss action is treated as implicit one-hour snooze', () async {
+    final scheduler = _FakeNotificationSchedulerRepository();
+    final useCase = HandleNotificationActionUseCase(scheduler);
+
+    final shouldOpen = await useCase.call(
+      NotificationActionEvent(
+        actionId: NotificationActionEvent.dismissAction,
+        event: ReminderEvent(
+          type: ReminderEventType.quoteInterval,
+          title: 'Iacula',
+          body: 'Permanecei em mim.',
+          scheduledAt: DateTime(2026, 2, 24, 10),
+          withVibration: true,
+          isAlarm: false,
+          routeTarget: NotificationRouteTarget.home,
+          snoozeCount: 1,
+        ),
+      ),
+    );
+
+    expect(shouldOpen, isFalse);
+    expect(scheduler.scheduled, hasLength(1));
+    expect(scheduler.scheduled.single.snoozeCount, 2);
+  });
+
+  test('does not reschedule after three consecutive snoozes', () async {
+    final scheduler = _FakeNotificationSchedulerRepository();
+    final useCase = HandleNotificationActionUseCase(scheduler);
+
+    final shouldOpen = await useCase.call(
+      NotificationActionEvent(
+        actionId: NotificationActionEvent.snooze1hAction,
+        event: ReminderEvent(
+          type: ReminderEventType.quoteInterval,
+          title: 'Iacula',
+          body: 'Permanecei em mim.',
+          scheduledAt: DateTime(2026, 2, 24, 10),
+          withVibration: true,
+          isAlarm: false,
+          routeTarget: NotificationRouteTarget.home,
+          snoozeCount: 3,
+        ),
+      ),
+    );
+
+    expect(shouldOpen, isFalse);
+    expect(scheduler.scheduled, isEmpty);
   });
 }

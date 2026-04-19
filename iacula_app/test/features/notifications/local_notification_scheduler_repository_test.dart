@@ -22,7 +22,9 @@ void main() {
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
 
       expect(
-        LocalNotificationSchedulerRepository.notificationTitleForPlugin(quoteEvent),
+        LocalNotificationSchedulerRepository.notificationTitleForPlugin(
+          quoteEvent,
+        ),
         '',
       );
     });
@@ -32,7 +34,9 @@ void main() {
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
 
       expect(
-        LocalNotificationSchedulerRepository.notificationTitleForPlugin(quoteEvent),
+        LocalNotificationSchedulerRepository.notificationTitleForPlugin(
+          quoteEvent,
+        ),
         'Iacula',
       );
     });
@@ -79,26 +83,33 @@ void main() {
       expect(details.presentSound, isTrue);
     });
 
-    test('non-alarm events use default interruption and no custom sound', () {
-      final event = ReminderEvent(
-        type: ReminderEventType.quoteInterval,
-        title: 'Iacula',
-        body: 'Quote text',
-        scheduledAt: DateTime(2026, 4, 10, 8),
-        withVibration: true,
-        isAlarm: false,
-      );
+    test(
+      'quote reminders use time sensitive interruption and reminder category',
+      () {
+        final event = ReminderEvent(
+          type: ReminderEventType.quoteInterval,
+          title: 'Iacula',
+          body: 'Quote text',
+          scheduledAt: DateTime(2026, 4, 10, 8),
+          withVibration: true,
+          isAlarm: false,
+        );
 
-      final details =
-          LocalNotificationSchedulerRepository.buildDarwinNotificationDetails(
-            event,
-          );
+        final details =
+            LocalNotificationSchedulerRepository.buildDarwinNotificationDetails(
+              event,
+            );
 
-      expect(details.interruptionLevel, isNull);
-      expect(details.sound, isNull);
-      expect(details.presentAlert, isTrue);
-      expect(details.presentSound, isTrue);
-    });
+        expect(details.interruptionLevel, InterruptionLevel.timeSensitive);
+        expect(
+          details.categoryIdentifier,
+          LocalNotificationSchedulerRepository.reminderCategoryIdentifier,
+        );
+        expect(details.sound, isNull);
+        expect(details.presentAlert, isTrue);
+        expect(details.presentSound, isTrue);
+      },
+    );
   });
 
   group('LocalNotificationSchedulerRepository Android details', () {
@@ -120,7 +131,14 @@ void main() {
       expect(details.icon, 'ic_notification');
       expect(details.largeIcon, isNull);
       expect(details.channelId, 'quotes_reminder');
-      expect(details.actions, isNull);
+      expect(details.actions, hasLength(2));
+      expect(details.actions![0].id, 'pray_now');
+      expect(details.actions![0].title, 'Rezar agora');
+      expect(details.actions![0].showsUserInterface, isTrue);
+      expect(details.actions![1].id, 'snooze_1h');
+      expect(details.actions![1].title, 'Adiar 1h');
+      expect(details.actions![1].showsUserInterface, isFalse);
+      expect(details.fullScreenIntent, isTrue);
       expect(details.ongoing, isFalse);
     });
 

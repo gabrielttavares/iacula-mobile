@@ -1,4 +1,4 @@
-﻿import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 
@@ -14,8 +14,14 @@ void main() {
       repeatDaily: true,
     );
 
-    final payload = NotificationActionEvent(actionId: null, event: event).toPayload();
-    final restored = NotificationActionEvent.fromPayload(payload, fallbackActionId: NotificationActionEvent.snooze10Action);
+    final payload = NotificationActionEvent(
+      actionId: null,
+      event: event,
+    ).toPayload();
+    final restored = NotificationActionEvent.fromPayload(
+      payload,
+      fallbackActionId: NotificationActionEvent.snooze10Action,
+    );
 
     expect(restored, isNotNull);
     expect(restored!.actionId, NotificationActionEvent.snooze10Action);
@@ -23,26 +29,58 @@ void main() {
     expect(restored.event.repeatDaily, isTrue);
   });
 
-  test('preserves quote banner copy and home route through payload roundtrip', () {
+  test('preserves snooze count and restores one-hour snooze action', () {
     final event = ReminderEvent(
       type: ReminderEventType.quoteInterval,
       title: 'Iacula',
-      body: 'Sede santos, porque eu sou santo.',
-      scheduledAt: DateTime(2026, 2, 21, 10, 15),
+      body: 'Permanecei em mim.',
+      scheduledAt: DateTime(2026, 4, 19, 9),
       withVibration: true,
       isAlarm: false,
       routeTarget: NotificationRouteTarget.home,
+      snoozeCount: 2,
     );
 
-    final payload = NotificationActionEvent(actionId: null, event: event).toPayload();
-    final restored = NotificationActionEvent.fromPayload(payload);
+    final payload = NotificationActionEvent(
+      actionId: null,
+      event: event,
+    ).toPayload();
+    final restored = NotificationActionEvent.fromPayload(
+      payload,
+      fallbackActionId: NotificationActionEvent.snooze1hAction,
+    );
 
     expect(restored, isNotNull);
-    expect(restored!.event.type, ReminderEventType.quoteInterval);
-    expect(restored.event.title, event.title);
-    expect(restored.event.body, event.body);
-    expect(restored.event.routeTarget, NotificationRouteTarget.home);
+    expect(restored!.actionId, NotificationActionEvent.snooze1hAction);
+    expect(restored.event.snoozeCount, 2);
   });
+
+  test(
+    'preserves quote banner copy and home route through payload roundtrip',
+    () {
+      final event = ReminderEvent(
+        type: ReminderEventType.quoteInterval,
+        title: 'Iacula',
+        body: 'Sede santos, porque eu sou santo.',
+        scheduledAt: DateTime(2026, 2, 21, 10, 15),
+        withVibration: true,
+        isAlarm: false,
+        routeTarget: NotificationRouteTarget.home,
+      );
+
+      final payload = NotificationActionEvent(
+        actionId: null,
+        event: event,
+      ).toPayload();
+      final restored = NotificationActionEvent.fromPayload(payload);
+
+      expect(restored, isNotNull);
+      expect(restored!.event.type, ReminderEventType.quoteInterval);
+      expect(restored.event.title, event.title);
+      expect(restored.event.body, event.body);
+      expect(restored.event.routeTarget, NotificationRouteTarget.home);
+    },
+  );
 
   test('preserves prayer slug through payload roundtrip', () {
     final event = ReminderEvent(
@@ -57,7 +95,10 @@ void main() {
       prayerSlug: 'angelus',
     );
 
-    final payload = NotificationActionEvent(actionId: null, event: event).toPayload();
+    final payload = NotificationActionEvent(
+      actionId: null,
+      event: event,
+    ).toPayload();
     final restored = NotificationActionEvent.fromPayload(payload);
 
     expect(restored, isNotNull);

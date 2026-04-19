@@ -1,26 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Colors;
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/di/providers.dart';
-import '../../../../core/presentation/widgets/iacula_animated_icon.dart';
 import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
-import '../../../confession/infrastructure/services/hero_card_share_image_renderer.dart';
-import '../../../favorites/domain/entities/favorite_item.dart';
 import '../../../liturgical/domain/liturgical_season.dart';
 import '../../../quotes/domain/entities/quote.dart';
+import '../pages/quote_full_text_screen.dart';
+import 'hero_action_buttons.dart';
 
-class HomeHeroCard extends ConsumerWidget {
-  const HomeHeroCard({
-    super.key,
-    required this.quote,
-    this.isFallback = false,
-  });
+class HomeHeroCard extends ConsumerStatefulWidget {
+  const HomeHeroCard({super.key, required this.quote, this.isFallback = false});
 
   final Quote quote;
   final bool isFallback;
+
+  @override
+  ConsumerState<HomeHeroCard> createState() => _HomeHeroCardState();
+}
+
+class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
+  bool _isTruncated = false;
 
   static const _seasonLabels = <LiturgicalSeason, String>{
     LiturgicalSeason.ordinary: 'tempo comum',
@@ -41,8 +41,30 @@ class HomeHeroCard extends ConsumerWidget {
     return value.startsWith('/') ? value.substring(1) : value;
   }
 
+  void _handleTruncationChanged(bool value) {
+    if (!mounted) {
+      return;
+    }
+    if (_isTruncated == value) {
+      return;
+    }
+    setState(() {
+      _isTruncated = value;
+    });
+  }
+
+  void _openFullText(BuildContext context, Quote quote, String labelText) {
+    Navigator.of(context).push(
+      CupertinoPageRoute<void>(
+        builder: (context) =>
+            QuoteFullTextScreen(quote: quote, labelText: labelText),
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final quote = widget.quote;
     final isEscrivaPoints = quote.resolvedSource == QuoteSource.escrivaPoints;
     final imagePath = _resolveAssetPath(quote.imagePath);
     final labelText =
@@ -56,6 +78,7 @@ class HomeHeroCard extends ConsumerWidget {
 
     return PremiumTouchableCard(
       borderRadius: IaculaRadius.banner,
+      onTap: () => _openFullText(context, quote, labelText),
       child: Container(
         key: const Key('home_hero_card'),
         decoration: BoxDecoration(
@@ -151,27 +174,67 @@ class HomeHeroCard extends ConsumerWidget {
                 Positioned(
                   top: 18,
                   right: 18,
-                  child: _HeroActions(quote: quote),
+                  child: HeroActionButtons(quote: quote),
                 ),
                 Positioned.fill(
                   child: Padding(
-                    padding: const EdgeInsets.all(18),
+                    padding: isEscrivaPoints
+                        ? const EdgeInsets.fromLTRB(18, 58, 18, 28)
+                        : const EdgeInsets.all(18),
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Expanded(
                             child: Center(
-                              child: _AutoSizingQuoteText(text: quote.text),
+                              child: _isTruncated
+                                  ? ShaderMask(
+                                      key: const Key('home_hero_text_fade'),
+                                      shaderCallback: (bounds) {
+                                        return LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            context.colors.homeHeroText,
+                                            context.colors.homeHeroText,
+                                            context.colors.homeHeroText
+                                                .withValues(alpha: 0.0),
+                                          ],
+                                          stops: const [0.0, 0.78, 1.0],
+                                        ).createShader(bounds);
+                                      },
+                                      blendMode: BlendMode.dstIn,
+                                      child: _AutoSizingQuoteText(
+                                        text: quote.text,
+                                        onTruncationChanged:
+                                            _handleTruncationChanged,
+                                      ),
+                                    )
+                                  : _AutoSizingQuoteText(
+                                      text: quote.text,
+                                      onTruncationChanged:
+                                          _handleTruncationChanged,
+                                    ),
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          if (_isTruncated) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              'Continuar lendo',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: context.colors.primaryButton,
+                              ),
+                            ),
+                          ] else
+                            const SizedBox(height: 12),
                         ],
                       ),
                     ),
                   ),
                 ),
-                if (!isFallback || isEscrivaPoints)
+                if (!widget.isFallback || isEscrivaPoints)
                   Positioned(
                     left: 18,
                     bottom: 8,
@@ -195,9 +258,13 @@ class HomeHeroCard extends ConsumerWidget {
 }
 
 class _AutoSizingQuoteText extends StatelessWidget {
-  const _AutoSizingQuoteText({required this.text});
+  const _AutoSizingQuoteText({
+    required this.text,
+    required this.onTruncationChanged,
+  });
 
   final String text;
+  final ValueChanged<bool> onTruncationChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -208,6 +275,11 @@ class _AutoSizingQuoteText extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         var chosenSize = maxFontSize;
+        var isTruncated = false;
+        final maxLines = (constraints.maxHeight / (minFontSize * lineHeight))
+            .floor()
+            .clamp(1, 20);
+
         for (var size = maxFontSize; size >= minFontSize; size -= 0.5) {
           final painter = TextPainter(
             text: TextSpan(
@@ -221,17 +293,32 @@ class _AutoSizingQuoteText extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
             textDirection: TextDirection.ltr,
+            maxLines: maxLines,
           )..layout(maxWidth: constraints.maxWidth);
 
-          if (painter.height <= constraints.maxHeight) {
+          if (!painter.didExceedMaxLines &&
+              painter.height <= constraints.maxHeight) {
             chosenSize = size;
             break;
           }
+
+          if (size == minFontSize) {
+            chosenSize = minFontSize;
+            isTruncated =
+                painter.didExceedMaxLines ||
+                painter.height > constraints.maxHeight;
+          }
         }
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          onTruncationChanged(isTruncated);
+        });
 
         return Text(
           text,
           textAlign: TextAlign.center,
+          maxLines: maxLines,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: chosenSize,
             fontWeight: FontWeight.w600,
@@ -240,133 +327,6 @@ class _AutoSizingQuoteText extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _HeroActions extends StatelessWidget {
-  const _HeroActions({required this.quote});
-
-  final Quote quote;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _HeroShareButton(quote: quote),
-        const SizedBox(width: 8),
-        _HeroBookmarkButton(quote: quote),
-      ],
-    );
-  }
-}
-
-class _HeroShareButton extends ConsumerWidget {
-  const _HeroShareButton({required this.quote});
-
-  final Quote quote;
-
-  static const _seasonLabels = <LiturgicalSeason, String>{
-    LiturgicalSeason.ordinary: 'tempo comum',
-    LiturgicalSeason.advent: 'tempo do advento',
-    LiturgicalSeason.lent: 'tempo da quaresma',
-    LiturgicalSeason.easter: 'tempo pascal',
-    LiturgicalSeason.christmas: 'tempo do natal',
-  };
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      minimumSize: const Size(32, 32),
-      onPressed: () async {
-        HapticFeedback.selectionClick();
-
-        final isEscrivaPoints = quote.resolvedSource == QuoteSource.escrivaPoints;
-        final labelText =
-            quote.feastName ??
-            (isEscrivaPoints
-                ? quote.referenceLabel
-                : quote.theme == 'personal'
-                ? 'frase pessoal'
-                : _seasonLabels[quote.season]) ??
-            '';
-
-        final renderer = ref.read(heroCardShareImageRendererProvider);
-        final imageBytes = await renderer.renderPng(
-          context: context,
-          payload: HeroCardSharePayload(
-            text: quote.text,
-            labelText: labelText,
-            imagePath: quote.imagePath,
-            isEscrivaPoints: isEscrivaPoints,
-          ),
-        );
-
-        final shareService = ref.read(nativeShareServiceProvider);
-        final shareText = '${quote.text}\n\n- Iacula';
-        if (imageBytes != null) {
-          await shareService.shareTextWithImage(
-            text: shareText,
-            imageBytes: imageBytes,
-            fileName: 'iacula-hero-card.png',
-          );
-          return;
-        }
-
-        await shareService.shareText(shareText);
-      },
-      child: Icon(
-        CupertinoIcons.share,
-        color: context.colors.primaryButton,
-        size: 20,
-      ),
-    );
-  }
-}
-
-class _HeroBookmarkButton extends ConsumerWidget {
-  const _HeroBookmarkButton({required this.quote});
-
-  final Quote quote;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final favoriteAsync = ref.watch(
-      favoriteItemByQuoteTextProvider(quote.text),
-    );
-    final isSaved = favoriteAsync.valueOrNull != null;
-    final savedItem = favoriteAsync.valueOrNull;
-
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      minimumSize: const Size(32, 32),
-      onPressed: () async {
-        HapticFeedback.selectionClick();
-        final repo = ref.read(favoriteRepositoryProvider);
-        if (savedItem != null) {
-          await repo.remove(savedItem.id);
-        } else {
-          await repo.save(
-            FavoriteItem(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              quoteText: quote.text,
-              theme: quote.theme,
-              season: quote.season.name,
-              savedAt: DateTime.now(),
-              imagePath: quote.imagePath,
-              feastName: quote.feastName,
-            ),
-          );
-        }
-      },
-      child: IaculaAnimatedIcon(
-        icon: isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
-        color: context.colors.primaryButton,
-        size: 20,
-        enableHaptics: false,
-      ),
     );
   }
 }
