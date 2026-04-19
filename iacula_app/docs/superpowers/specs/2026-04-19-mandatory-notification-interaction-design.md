@@ -18,21 +18,37 @@ Applies to all active notification types:
 
 **Fullscreen Intent + Action Buttons + Dismiss-as-Snooze** (Approach A from brainstorming).
 
+## Implementation Feasibility Update
+
+The current dependency, `flutter_local_notifications` 19.5.0, supports the explicit-interaction portion of this strategy:
+
+- Android action buttons.
+- Android fullscreen intent.
+- iOS notification categories with action buttons.
+- iOS time-sensitive interruption level.
+
+It does **not** expose the full swipe-dismiss-as-snooze behavior:
+
+- Android has native `deleteIntent`, but `flutter_local_notifications` does not expose a `deleteIntent`/dismiss callback for scheduled notifications.
+- iOS has `customDismissAction`, but the plugin's iOS implementation ignores `UNNotificationDismissActionIdentifier` instead of forwarding it to Dart.
+
+Therefore the current implementation ships the strongest plugin-compatible behavior first: "Rezar agora" + "Adiar 1h" on every in-scope notification, fullscreen/time-sensitive presentation, and one-hour snooze handling. Swipe-dismiss-as-snooze remains a follow-up requiring either a plugin fork, a custom native scheduler, or an in-app unacknowledged fallback.
+
 ## Platform Behavior
 
 ### Android
 
 1. **Fullscreen Intent:** All notifications set `fullScreenIntent: true`. When the phone is locked or idle, Android launches a fullscreen activity. When the phone is unlocked and in use, the notification appears in the shade with heads-up display.
 2. **Action Buttons:** Two notification actions registered: "Rezar agora" and "Adiar 1h".
-3. **Dismiss Detection:** A `BroadcastReceiver` registered via Android `deleteIntent` catches swipe-away events. On dismiss, the receiver reschedules the same notification 1 hour later via platform channel callback to Flutter.
+3. **Dismiss Detection:** Native Android supports `deleteIntent`, but this is not exposed by `flutter_local_notifications` 19.5.0. Implementing swipe-away as implicit snooze requires a plugin fork/custom native scheduler.
 4. **Permission:** `USE_FULL_SCREEN_INTENT` already declared in `AndroidManifest.xml`.
 
 ### iOS
 
 1. **Time-Sensitive Interruption Level:** All notifications use `interruptionLevel: .timeSensitive`. This causes persistent banners and bypasses Focus/DND modes (with user consent at the OS level). True fullscreen takeover is not available on iOS.
 2. **Action Buttons:** UNNotificationCategory with two `UNNotificationAction`s: "Rezar agora" and "Adiar 1h".
-3. **Dismiss Detection:** iOS 16+ provides `UNUserNotificationCenter` delegate method `userNotificationCenter(_:didDismissNotification:)`. For iOS < 16, no dismiss callback exists — fallback is tracking delivery vs. acknowledged state in notification history and showing an in-app modal on next launch for unacknowledged notifications.
-4. **Notification Category:** Must register a `UNNotificationCategory` with the two actions and `customDismissAction` option to receive dismiss callbacks.
+3. **Dismiss Detection:** iOS can request dismiss callbacks through `customDismissAction`, but `flutter_local_notifications` 19.5.0 drops `UNNotificationDismissActionIdentifier`. Implementing swipe-away as implicit snooze requires a plugin fork/custom native scheduler or the in-app fallback.
+4. **Notification Category:** Register a `UNNotificationCategory` with the two actions and `customDismissAction`; the action buttons are active now, and dismiss forwarding is a follow-up plugin/native change.
 
 ## Architecture
 
@@ -68,7 +84,7 @@ DarwinNotificationCategory(
 
 ### Dismiss Detection — Android
 
-A native Kotlin `BroadcastReceiver` (`NotificationDismissReceiver`) is registered as the `deleteIntent` for each notification.
+Follow-up native implementation: a Kotlin `BroadcastReceiver` (`NotificationDismissReceiver`) is registered as the `deleteIntent` for each notification.
 
 When triggered:
 1. Extracts the `ReminderEvent` payload from the intent extras.
@@ -79,10 +95,10 @@ If Flutter engine is not running (app killed), the receiver stores the dismissed
 
 ### Dismiss Detection — iOS
 
-For iOS 16+:
+Follow-up native/plugin implementation:
 - Register the notification category with `customDismissAction`.
 - The `UNUserNotificationCenter` delegate's dismiss callback fires when the user swipes away.
-- `flutter_local_notifications` surfaces this via `onDidReceiveNotificationResponse` with `notificationResponseType == .selectedNotificationAction` and actionId matching the dismiss action identifier.
+- Patch or replace `flutter_local_notifications` so it surfaces dismiss responses via `onDidReceiveNotificationResponse`.
 
 For iOS < 16 (fallback):
 - Add `acknowledged` boolean column to `notification_history_entries` table.
@@ -120,7 +136,7 @@ On app launch / resume, `ShellScreen` checks for unacknowledged notification his
 - Two buttons: "Rezar agora" (navigate to detail) + "Adiar 1h" (reschedule)
 - Modal is not dismissible by tapping outside
 
-This serves as the safety net for:
+This would serve as the safety net for:
 - iOS < 16 where no dismiss callback exists
 - Edge cases where the BroadcastReceiver/delegate didn't fire (process killed, etc.)
 
@@ -137,30 +153,30 @@ To prevent infinite snooze chains:
 
 | File | Change |
 |------|--------|
-| `notification_action_event.dart` | Rename constants, add `dismissAction` |
+| `notification_action_event.dart` | Add `prayNowAction`, `snooze1hAction`, and `dismissAction` |
 | `reminder_event.dart` | Add `snoozeCount` field |
 | `local_notification_scheduler_repository.dart` | Add action buttons to all notifications, register iOS category, set fullScreenIntent for all types |
 | `handle_notification_action_use_case.dart` | Handle `pray_now`, `snooze_1h`, `dismiss` actions; snooze loop prevention |
-| `notification_history_entry.dart` | Add `acknowledged` field |
-| `sqlite_notification_history_repository.dart` | Support `acknowledged` column, query unacknowledged |
-| `notification_history_repository.dart` | Add `markAcknowledged()`, `listUnacknowledged()` |
-| `app_database.dart` | Migration to add `acknowledged` column |
-| `shell_screen.dart` | Check unacknowledged on resume, show modal |
-| `AndroidManifest.xml` | Register `NotificationDismissReceiver` |
-| **New:** `android/.../NotificationDismissReceiver.kt` | BroadcastReceiver for delete intent |
-| **New:** `android/.../NotificationDismissChannel.kt` | Platform channel to relay dismissed events to Flutter |
-| `ios/Runner/AppDelegate.swift` | Register notification category with customDismissAction |
+| `notification_history_entry.dart` | Follow-up: add `acknowledged` field for in-app fallback |
+| `sqlite_notification_history_repository.dart` | Follow-up: support `acknowledged` column, query unacknowledged |
+| `notification_history_repository.dart` | Follow-up: add `markAcknowledged()`, `listUnacknowledged()` |
+| `app_database.dart` | Follow-up: migration to add `acknowledged` column |
+| `shell_screen.dart` | Follow-up: check unacknowledged on resume, show modal |
+| `AndroidManifest.xml` | Follow-up native path: register `NotificationDismissReceiver` |
+| **New:** `android/.../NotificationDismissReceiver.kt` | Follow-up native path: BroadcastReceiver for delete intent |
+| **New:** `android/.../NotificationDismissChannel.kt` | Follow-up native path: platform channel to relay dismissed events to Flutter |
+| `ios/Runner/AppDelegate.swift` | Follow-up native path: forward dismiss callbacks if plugin is patched/replaced |
 
 ## Platform Compliance
 
 ### Android
 - `USE_FULL_SCREEN_INTENT`: Already declared. On Android 14+, apps targeting SDK 34+ need user to grant this in settings — `flutter_local_notifications` handles the permission check.
 - Action buttons: Fully supported, no restrictions.
-- `deleteIntent`: Standard Android API, no policy concerns.
+- `deleteIntent`: Standard Android API, no policy concerns, but not exposed by the current plugin.
 
 ### iOS
 - `timeSensitive` interruption level: Requires the app to have the Time Sensitive Notifications entitlement (automatic for local notifications since iOS 15). User can disable per-app in Settings.
-- `customDismissAction`: Available since iOS 15, dismiss delegate since iOS 16. No App Store review concerns.
+- `customDismissAction`: Available since iOS 15. No App Store review concerns, but the current plugin does not forward dismiss callbacks to Dart.
 - No true fullscreen notification on iOS — this is an OS-level limitation. The combination of time-sensitive + action buttons + in-app modal provides the strongest available enforcement.
 
 ## Acceptance Criteria
