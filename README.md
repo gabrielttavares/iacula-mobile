@@ -22,4 +22,3 @@ O Iacula respeita as diretrizes de privacidade da App Store:
 Para suporte técnico ou dúvidas sobre privacidade, abra uma *Issue* neste repositório.
 
 ---
-© 2026 Aleff Emanuel
