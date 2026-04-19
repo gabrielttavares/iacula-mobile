@@ -28,4 +28,6 @@ abstract interface class NotificationSchedulerRepository {
     required bool notificationsEnabled,
     required int intervalMinutes,
   });
+
+  Future<NotificationActionEvent?> getLaunchNotificationAction();
 }

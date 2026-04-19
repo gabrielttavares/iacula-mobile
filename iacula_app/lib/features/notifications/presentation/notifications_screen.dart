@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show SelectableText;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,6 +13,7 @@ import '../../liturgical/domain/liturgical_season.dart';
 import '../../settings/domain/jaculatoria_interval.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../domain/entities/notification_history_entry.dart';
+import 'notification_detail_screen.dart';
 
 final _historyForDayProvider =
     FutureProvider.family<List<NotificationHistoryEntry>, DateTime>((
@@ -283,28 +283,40 @@ class _NotificationsRail extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(width: IaculaSpacing.sm),
         itemBuilder: (context, index) {
           final entry = entries[index];
-          return SizedBox(
-            width: 280,
-            child: IaculaSoftCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _formatTime(entry.deliveredAt),
-                    style: context.textStyles.secondary,
-                  ),
-                  const SizedBox(height: 8),
-                  SelectableText(
-                    entry.quoteText,
-                    maxLines: 4,
-                    style: context.textStyles.cardTitle,
-                  ),
-                  const Spacer(),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: _NotificationHistoryBookmarkButton(entry: entry),
-                  ),
-                ],
+          return GestureDetector(
+            onTap: () {
+              HapticFeedback.selectionClick();
+              Navigator.of(context, rootNavigator: true).push(
+                CupertinoPageRoute(
+                  builder: (_) =>
+                      NotificationDetailScreen.fromHistoryEntry(entry),
+                ),
+              );
+            },
+            child: SizedBox(
+              width: 280,
+              child: IaculaSoftCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _formatTime(entry.deliveredAt),
+                      style: context.textStyles.secondary,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      entry.quoteText,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textStyles.cardTitle,
+                    ),
+                    const Spacer(),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: _NotificationHistoryBookmarkButton(entry: entry),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

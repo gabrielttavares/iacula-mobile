@@ -9,6 +9,7 @@ final class NotificationHistoryEntry {
     this.imagePath,
     this.feastName,
     this.source,
+    this.referenceLabel,
   });
 
   final String quoteText;
@@ -18,6 +19,7 @@ final class NotificationHistoryEntry {
   final String? imagePath;
   final String? feastName;
   final String? source;
+  final String? referenceLabel;
 
   factory NotificationHistoryEntry.fromLastDeliveredCard(LastDeliveredCard card) {
     return NotificationHistoryEntry(
@@ -28,6 +30,7 @@ final class NotificationHistoryEntry {
       imagePath: card.imagePath,
       feastName: card.feastName,
       source: card.source,
+      referenceLabel: card.referenceLabel,
     );
   }
 }

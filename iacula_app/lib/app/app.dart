@@ -12,9 +12,11 @@ import '../features/liturgical/domain/liturgical_season.dart';
 import '../features/home_widget/application/use_cases/get_current_widget_quote_use_case.dart';
 import '../features/home_widget/application/use_cases/refresh_widget_from_timeline_use_case.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
+import '../features/notifications/domain/repositories/notification_scheduler_repository.dart';
 import '../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
+import '../features/notifications/presentation/notification_detail_screen.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/liturgy_hours/presentation/liturgy_hours_landing_screen.dart';
 import '../features/night_prayer/presentation/night_prayer_screen.dart';
@@ -90,6 +92,16 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
               CupertinoPageRoute(builder: (_) => const ShellScreen()),
               (route) => false,
             );
+            nav.push(
+              CupertinoPageRoute(
+                builder: (_) => NotificationDetailScreen(
+                  quoteText: event.event.body,
+                  theme: event.event.quoteTheme ?? '',
+                  season: event.event.quoteSeason ?? 'ordinary',
+                  feastName: event.event.quoteFeastName,
+                ),
+              ),
+            );
             return;
 
           case NotificationRouteTarget.prayer:
@@ -155,6 +167,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
             return;
         }
       });
+
+      unawaited(_handleLaunchNotification(scheduler, handler));
     });
   }
 
@@ -173,6 +187,32 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
       HomeWidgetService.instance.resetSignatureCache();
       unawaited(_syncWidgetFromTimeline());
       unawaited(_ensureNotificationsScheduled());
+    }
+  }
+
+  Future<void> _handleLaunchNotification(
+    NotificationSchedulerRepository scheduler,
+    HandleNotificationActionUseCase handler,
+  ) async {
+    final event = await scheduler.getLaunchNotificationAction();
+    if (event == null) return;
+    final shouldOpen = await handler.call(event);
+    if (!shouldOpen) return;
+
+    final nav = _navigatorKey.currentState;
+    if (nav == null) return;
+
+    if (event.event.routeTarget == NotificationRouteTarget.home) {
+      nav.push(
+        CupertinoPageRoute(
+          builder: (_) => NotificationDetailScreen(
+            quoteText: event.event.body,
+            theme: event.event.quoteTheme ?? '',
+            season: event.event.quoteSeason ?? 'ordinary',
+            feastName: event.event.quoteFeastName,
+          ),
+        ),
+      );
     }
   }
 

@@ -183,6 +183,18 @@ final class LocalNotificationSchedulerRepository
     return _permissionGranted;
   }
 
+  @override
+  Future<NotificationActionEvent?> getLaunchNotificationAction() async {
+    final details = await _plugin.getNotificationAppLaunchDetails();
+    if (details == null || !details.didNotificationLaunchApp) return null;
+    final response = details.notificationResponse;
+    if (response == null) return null;
+    return NotificationActionEvent.fromPayload(
+      response.payload,
+      fallbackActionId: response.actionId,
+    );
+  }
+
   static void handleNotificationResponse(NotificationResponse response) {
     final repo = _singleton;
     if (repo == null) return;

@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 14,
+      version: 15,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -93,7 +93,8 @@ final class AppDatabase {
             image_path TEXT,
             feast_name TEXT,
             delivered_at TEXT NOT NULL,
-            source TEXT
+            source TEXT,
+            reference_label TEXT
           )
         ''');
       },
@@ -189,6 +190,11 @@ final class AppDatabase {
         if (oldVersion < 14) {
           await db.execute(
             'ALTER TABLE notification_history_entries ADD COLUMN source TEXT',
+          );
+        }
+        if (oldVersion < 15) {
+          await db.execute(
+            'ALTER TABLE notification_history_entries ADD COLUMN reference_label TEXT',
           );
         }
       },

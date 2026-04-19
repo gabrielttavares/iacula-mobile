@@ -91,4 +91,7 @@ final class InMemoryNotificationSchedulerRepository
     }
     return shortIntervalReliabilityOverrideForTest ?? ShortIntervalReliability.ok;
   }
+
+  @override
+  Future<NotificationActionEvent?> getLaunchNotificationAction() async => null;
 }

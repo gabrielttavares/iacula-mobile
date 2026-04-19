@@ -27,6 +27,7 @@ final class SqliteNotificationHistoryRepository
       'feast_name': entry.feastName,
       'delivered_at': entry.deliveredAt.toIso8601String(),
       'source': entry.source,
+      'reference_label': entry.referenceLabel,
     });
   }
 
@@ -72,6 +73,7 @@ final class SqliteNotificationHistoryRepository
             imagePath: row['image_path'] as String?,
             feastName: row['feast_name'] as String?,
             source: row['source'] as String?,
+            referenceLabel: row['reference_label'] as String?,
           ),
         )
         .toList(growable: false);

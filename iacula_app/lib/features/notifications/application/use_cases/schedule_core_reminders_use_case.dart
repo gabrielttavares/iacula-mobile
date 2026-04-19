@@ -129,6 +129,7 @@ final class ScheduleCoreRemindersUseCase {
           imagePath: resolvedImmediate.imagePath,
           feastName: resolvedImmediate.feastName,
           source: resolvedImmediate.resolvedSource.name,
+          referenceLabel: resolvedImmediate.referenceLabel,
         ),
       );
     }
@@ -232,6 +233,7 @@ final class ScheduleCoreRemindersUseCase {
             imagePath: quote.imagePath,
             feastName: quote.feastName,
             source: quote.resolvedSource.name,
+            referenceLabel: quote.referenceLabel,
           ),
         );
       }
