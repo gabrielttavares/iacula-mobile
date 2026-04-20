@@ -4,16 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
-import '../../../liturgical/domain/liturgical_season.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../pages/quote_full_text_screen.dart';
 import 'hero_action_buttons.dart';
 
 class HomeHeroCard extends ConsumerStatefulWidget {
-  const HomeHeroCard({super.key, required this.quote, this.isFallback = false});
+  const HomeHeroCard({super.key, required this.quote});
 
   final Quote quote;
-  final bool isFallback;
 
   @override
   ConsumerState<HomeHeroCard> createState() => _HomeHeroCardState();
@@ -21,14 +19,6 @@ class HomeHeroCard extends ConsumerStatefulWidget {
 
 class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
   bool _isTruncated = false;
-
-  static const _seasonLabels = <LiturgicalSeason, String>{
-    LiturgicalSeason.ordinary: 'tempo comum',
-    LiturgicalSeason.advent: 'tempo do advento',
-    LiturgicalSeason.lent: 'tempo da quaresma',
-    LiturgicalSeason.easter: 'tempo pascal',
-    LiturgicalSeason.christmas: 'tempo do natal',
-  };
 
   String? _resolveAssetPath(String? path) {
     if (path == null) {
@@ -73,7 +63,7 @@ class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
             ? quote.referenceLabel
             : quote.theme == 'personal'
             ? 'frase pessoal'
-            : _seasonLabels[quote.season]) ??
+            : quote.theme) ??
         '';
 
     return PremiumTouchableCard(
@@ -234,7 +224,7 @@ class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
                     ),
                   ),
                 ),
-                if (!widget.isFallback || isEscrivaPoints)
+                if (labelText.isNotEmpty)
                   Positioned(
                     left: 18,
                     bottom: 8,

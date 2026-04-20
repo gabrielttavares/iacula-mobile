@@ -18,7 +18,6 @@ import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
 import '../../home_widget/home_widget_service.dart';
-import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../domain/entities/settings.dart';
 import '../domain/jaculatoria_interval.dart';
@@ -42,7 +41,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _inexactScheduleFallbackUsed = false;
   bool _shortIntervalReliabilityNotGuaranteed = false;
   bool _escrivaPointsFeedOptionVisible = false;
-  bool _liturgicalSeasonEnabled = false;
   bool _quietHoursEnabled = false;
   String _quietHoursStart = '22:00';
   String _quietHoursEnd = '07:00';
@@ -71,7 +69,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       settings.intervalMinutes,
     );
     _escrivaPointsFeedOptionVisible = settings.escrivaPointsFeedOptionVisible;
-    _liturgicalSeasonEnabled = settings.liturgicalSeasonEnabled;
     _quietHoursEnabled = settings.quietHoursEnabled;
     _quietHoursStart = settings.quietHoursStart;
     _quietHoursEnd = settings.quietHoursEnd;
@@ -449,49 +446,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: IaculaRadius.innerPadding,
-                            vertical: 12,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Jaculatórias do tempo litúrgico',
-                                      style: context.textStyles.cardTitle
-                                          .copyWith(fontSize: 16),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      _liturgicalSeasonEnabled
-                                          ? 'As jaculatórias seguem o tempo litúrgico atual (Advento, Quaresma, Páscoa…).'
-                                          : 'As jaculatórias seguem a ênfase do rito latino por dia da semana.',
-                                      style: context.textStyles.secondary
-                                          .copyWith(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              CupertinoSwitch(
-                                value: _liturgicalSeasonEnabled,
-                                activeTrackColor: context.colors.primaryButton,
-                                onChanged: (value) {
-                                  HapticFeedback.selectionClick();
-                                  setState(
-                                    () => _liturgicalSeasonEnabled = value,
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(height: 1, color: context.colors.separator),
                         CupertinoButton(
                           padding: const EdgeInsets.symmetric(
                             horizontal: IaculaRadius.innerPadding,
@@ -778,7 +732,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       angelusEnabled: _angelusEnabled,
       escrivaPointsFeedOptionVisible: _escrivaPointsFeedOptionVisible,
       escrivaPointsFeedEnabled: _escrivaPointsFeedOptionVisible,
-      liturgicalSeasonEnabled: _liturgicalSeasonEnabled,
       quietHoursEnabled: _quietHoursEnabled,
       quietHoursStart: _quietHoursStart,
       quietHoursEnd: _quietHoursEnd,
@@ -788,16 +741,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.invalidate(getSettingsUseCaseProvider);
     await HomeWidgetService.instance.saveIntervalMinutes(_intervalMinutes);
 
-    final season = await ref
-        .read(liturgicalSeasonServiceProvider)
-        .getCurrentSeason();
     final rebuildResult = await ref
         .read(rebuildNotificationsUseCaseProvider)
-        .call(
-          settings,
-          isEasterSeason: season == LiturgicalSeason.easter,
-          showImmediate: false,
-        );
+        .call(settings, showImmediate: false);
 
     final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
     if (schedulerRepo is LocalNotificationSchedulerRepository) {

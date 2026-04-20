@@ -11,11 +11,6 @@ import '../../features/auth/infrastructure/repositories/in_memory_auth_repositor
 import '../../features/favorites/domain/entities/favorite_item.dart';
 import '../../features/favorites/domain/repositories/favorite_repository.dart';
 import '../../features/favorites/infrastructure/repositories/in_memory_favorite_repository.dart';
-import '../../features/liturgical/domain/repositories/liturgical_season_cache_repository.dart';
-import '../../features/liturgical/domain/liturgical_context.dart';
-import '../../features/liturgical/domain/services/liturgical_season_service.dart';
-import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
-import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
 import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/domain/repositories/last_delivered_card_repository.dart';
@@ -121,24 +116,6 @@ final supabaseClientProvider = Provider<SupabaseClient?>((ref) {
 
 final httpClientProvider = Provider<http.Client>((ref) => http.Client());
 
-final liturgicalSeasonCacheRepositoryProvider =
-    Provider<LiturgicalSeasonCacheRepository>((ref) {
-      return InMemoryLiturgicalSeasonCacheRepository();
-    });
-
-final liturgicalSeasonServiceProvider = Provider<LiturgicalSeasonService>((
-  ref,
-) {
-  return const FallbackLiturgicalSeasonService();
-});
-
-final liturgicalContextProvider =
-    FutureProvider.family<LiturgicalContext, DateTime?>((ref, date) async {
-      return ref
-          .watch(liturgicalSeasonServiceProvider)
-          .getCurrentContext(date: date);
-    });
-
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   return InMemorySettingsRepository();
 });
@@ -182,8 +159,9 @@ final notificationHistoryRepositoryProvider =
 
 final notificationHistoryEpochProvider = StateProvider<int>((ref) => 0);
 
-final tappedNotificationScheduledAtProvider =
-    StateProvider<DateTime?>((ref) => null);
+final tappedNotificationScheduledAtProvider = StateProvider<DateTime?>(
+  (ref) => null,
+);
 
 final notificationHistoryNowProvider = Provider<DateTime>(
   (ref) => DateTime.now(),
@@ -369,7 +347,6 @@ final getNextQuoteUseCaseProvider = Provider<GetNextQuoteUseCase>((ref) {
   return GetNextQuoteUseCase(
     contentRepository: ref.watch(quoteContentRepositoryProvider),
     indicesRepository: ref.watch(quoteIndicesRepositoryProvider),
-    liturgicalSeasonService: ref.watch(liturgicalSeasonServiceProvider),
   );
 });
 
@@ -383,7 +360,6 @@ final getNextEscrivaPointsQuoteUseCaseProvider =
 final getPrayerUseCaseProvider = Provider<GetPrayerUseCase>((ref) {
   return GetPrayerUseCase(
     prayerRepository: ref.watch(prayerContentRepositoryProvider),
-    liturgicalSeasonService: ref.watch(liturgicalSeasonServiceProvider),
   );
 });
 
@@ -583,11 +559,7 @@ final rebuildNotificationsUseCaseProvider =
               }
               return ref
                   .read(getNextQuoteUseCaseProvider)
-                  .call(
-                    language: language,
-                    now: now,
-                    liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-                  );
+                  .call(language: language, now: now);
             },
         batchFetcherForSettings: (settings) {
           if (settings.escrivaPointsFeedEnabled) return null;
@@ -604,7 +576,6 @@ final rebuildNotificationsUseCaseProvider =
                   count: count,
                   startTime: startTime,
                   intervalMinutes: intervalMinutes,
-                  liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
                 );
           };
         },

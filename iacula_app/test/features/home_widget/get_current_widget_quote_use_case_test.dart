@@ -185,43 +185,38 @@ void main() {
     },
   );
 
-  test(
-    'ignores due history from a different season when liturgical season is enabled',
-    () async {
-      var fallbackCalls = 0;
-      final useCase = GetCurrentWidgetQuoteUseCase(
-        notificationHistoryRepository: _FakeNotificationHistoryRepository([
-          NotificationHistoryEntry(
-            quoteText: 'Lent Quote',
-            theme: 'T1',
-            season: LiturgicalSeason.lent.name,
-            deliveredAt: DateTime(2026, 4, 24, 10, 0),
-          ),
-        ]),
-        lastDeliveredCardRepository: _FakeLastDeliveredCardRepository(null),
-        fallbackQuoteFetcher:
-            ({required String language, required DateTime now}) async {
-              fallbackCalls++;
-              return const Quote(
-                text: 'Easter fallback',
-                dayOfWeek: 5,
-                theme: 'fallback',
-                season: LiturgicalSeason.easter,
-              );
-            },
-      );
+  test('uses due history regardless stored season', () async {
+    var fallbackCalls = 0;
+    final useCase = GetCurrentWidgetQuoteUseCase(
+      notificationHistoryRepository: _FakeNotificationHistoryRepository([
+        NotificationHistoryEntry(
+          quoteText: 'Lent Quote',
+          theme: 'T1',
+          season: LiturgicalSeason.lent.name,
+          deliveredAt: DateTime(2026, 4, 24, 10, 0),
+        ),
+      ]),
+      lastDeliveredCardRepository: _FakeLastDeliveredCardRepository(null),
+      fallbackQuoteFetcher:
+          ({required String language, required DateTime now}) async {
+            fallbackCalls++;
+            return const Quote(
+              text: 'Easter fallback',
+              dayOfWeek: 5,
+              theme: 'fallback',
+              season: LiturgicalSeason.easter,
+            );
+          },
+    );
 
-      final quote = await useCase.call(
-        language: 'pt-br',
-        now: DateTime(2026, 4, 24, 10, 1),
-        liturgicalSeasonEnabled: true,
-        currentSeason: LiturgicalSeason.easter,
-      );
+    final quote = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 4, 24, 10, 1),
+    );
 
-      expect(quote.text, 'Easter fallback');
-      expect(fallbackCalls, 1);
-    },
-  );
+    expect(quote.text, 'Lent Quote');
+    expect(fallbackCalls, 0);
+  });
 
   test(
     'reflects tighter schedule after interval changes from 15 to 5 minutes',
@@ -262,66 +257,54 @@ void main() {
     },
   );
 
-  test(
-    'when liturgical season changes, last card remains until interval expires',
-    () async {
-      var fallbackCalls = 0;
-      final lastCardRepository = _FakeLastDeliveredCardRepository(
-        LastDeliveredCard(
-          quoteText: 'Ordinary old',
-          theme: 'Old',
-          season: LiturgicalSeason.ordinary.name,
-          deliveredAt: DateTime(2026, 4, 24, 10, 0),
-        ),
-      );
+  test('keeps same-day last card without seasonal invalidation', () async {
+    var fallbackCalls = 0;
+    final lastCardRepository = _FakeLastDeliveredCardRepository(
+      LastDeliveredCard(
+        quoteText: 'Ordinary old',
+        theme: 'Old',
+        season: LiturgicalSeason.ordinary.name,
+        deliveredAt: DateTime(2026, 4, 24, 10, 0),
+      ),
+    );
 
-      final useCase = GetCurrentWidgetQuoteUseCase(
-        notificationHistoryRepository: _FakeNotificationHistoryRepository([]),
-        lastDeliveredCardRepository: lastCardRepository,
-        fallbackQuoteFetcher:
-            ({required String language, required DateTime now}) async {
-              fallbackCalls++;
-              return const Quote(
-                text: 'Easter fallback',
-                dayOfWeek: 5,
-                theme: 'fallback',
-                season: LiturgicalSeason.easter,
-              );
-            },
-      );
+    final useCase = GetCurrentWidgetQuoteUseCase(
+      notificationHistoryRepository: _FakeNotificationHistoryRepository([]),
+      lastDeliveredCardRepository: lastCardRepository,
+      fallbackQuoteFetcher:
+          ({required String language, required DateTime now}) async {
+            fallbackCalls++;
+            return const Quote(
+              text: 'Easter fallback',
+              dayOfWeek: 5,
+              theme: 'fallback',
+              season: LiturgicalSeason.easter,
+            );
+          },
+    );
 
-      final firstQuote = await useCase.call(
-        language: 'pt-br',
-        now: DateTime(2026, 4, 24, 10, 1),
-        liturgicalSeasonEnabled: true,
-        currentSeason: LiturgicalSeason.easter,
-        intervalMinutes: 15,
-      );
+    final firstQuote = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 4, 24, 10, 1),
+    );
 
-      expect(firstQuote.text, 'Ordinary old');
-      expect(fallbackCalls, 0);
+    expect(firstQuote.text, 'Ordinary old');
+    expect(fallbackCalls, 0);
 
-      final secondQuote = await useCase.call(
-        language: 'pt-br',
-        now: DateTime(2026, 4, 24, 10, 2),
-        liturgicalSeasonEnabled: true,
-        currentSeason: LiturgicalSeason.easter,
-        intervalMinutes: 15,
-      );
+    final secondQuote = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 4, 24, 10, 2),
+    );
 
-      expect(secondQuote.text, 'Ordinary old');
-      expect(fallbackCalls, 0);
+    expect(secondQuote.text, 'Ordinary old');
+    expect(fallbackCalls, 0);
 
-      final thirdQuote = await useCase.call(
-        language: 'pt-br',
-        now: DateTime(2026, 4, 24, 10, 16),
-        liturgicalSeasonEnabled: true,
-        currentSeason: LiturgicalSeason.easter,
-        intervalMinutes: 15,
-      );
+    final thirdQuote = await useCase.call(
+      language: 'pt-br',
+      now: DateTime(2026, 4, 24, 10, 16),
+    );
 
-      expect(thirdQuote.text, 'Easter fallback');
-      expect(fallbackCalls, 1);
-    },
-  );
+    expect(thirdQuote.text, 'Ordinary old');
+    expect(fallbackCalls, 0);
+  });
 }

@@ -48,8 +48,6 @@ final class SqliteSettingsRepository implements SettingsRepository {
           (row['escriva_points_feed_option_visible'] as int? ?? 0) == 1,
       notificationsEnabled: (row['notifications_enabled'] as int? ?? 1) == 1,
       angelusEnabled: (row['angelus_enabled'] as int? ?? 1) == 1,
-      liturgicalSeasonEnabled:
-          (row['liturgical_season_enabled'] as int? ?? 0) == 1,
       quietHoursEnabled: (row['quiet_hours_enabled'] as int? ?? 0) == 1,
       quietHoursStart: row['quiet_hours_start'] as String? ?? '22:00',
       quietHoursEnd: row['quiet_hours_end'] as String? ?? '07:00',
@@ -87,7 +85,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
           settings.escrivaPointsFeedOptionVisible ? 1 : 0,
       'notifications_enabled': settings.notificationsEnabled ? 1 : 0,
       'angelus_enabled': settings.angelusEnabled ? 1 : 0,
-      'liturgical_season_enabled': settings.liturgicalSeasonEnabled ? 1 : 0,
+      'liturgical_season_enabled': 0,
       'quiet_hours_enabled': settings.quietHoursEnabled ? 1 : 0,
       'quiet_hours_start': settings.quietHoursStart,
       'quiet_hours_end': settings.quietHoursEnd,

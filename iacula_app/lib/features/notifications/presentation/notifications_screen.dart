@@ -10,7 +10,6 @@ import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
-import '../../liturgical/domain/liturgical_season.dart';
 import '../../settings/domain/jaculatoria_interval.dart';
 import '../../settings/presentation/settings_screen.dart';
 import '../domain/entities/notification_history_entry.dart';
@@ -118,16 +117,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                             .read(updateSettingsUseCaseProvider)
                             .call(updated);
 
-                        final season = await ref
-                            .read(liturgicalSeasonServiceProvider)
-                            .getCurrentSeason();
                         await ref
                             .read(rebuildNotificationsUseCaseProvider)
-                            .call(
-                              updated,
-                              isEasterSeason: season == LiturgicalSeason.easter,
-                              showImmediate: false,
-                            );
+                            .call(updated, showImmediate: false);
 
                         ref.invalidate(_settingsProvider);
                         ref.invalidate(_availableHistoryDatesProvider);

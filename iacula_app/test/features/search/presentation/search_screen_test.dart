@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
-import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
-import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
 import 'package:iacula_app/features/prayers/domain/entities/prayer_catalog_entry.dart';
 import 'package:iacula_app/features/prayers/domain/repositories/prayer_catalog_repository.dart';
 import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
@@ -14,7 +12,9 @@ import 'package:iacula_app/features/search/presentation/search_screen.dart';
 
 final class _FakePrayerCatalogRepository implements PrayerCatalogRepository {
   @override
-  Future<List<PrayerCatalogEntry>> listCatalog({required String language}) async {
+  Future<List<PrayerCatalogEntry>> listCatalog({
+    required String language,
+  }) async {
     return const [
       PrayerCatalogEntry(
         slug: 'salve-rainha',
@@ -63,18 +63,6 @@ final class _FakeQuoteContentRepository implements QuoteContentRepository {
   }
 }
 
-final class _FakeSeasonService implements LiturgicalSeasonService {
-  @override
-  Future<LiturgicalContext> getCurrentContext({DateTime? date}) async {
-    return LiturgicalContext.ordinaryFallback;
-  }
-
-  @override
-  Future<LiturgicalSeason> getCurrentSeason({DateTime? date}) async {
-    return LiturgicalSeason.ordinary;
-  }
-}
-
 ProviderScope _buildApp() {
   return ProviderScope(
     overrides: [
@@ -84,7 +72,6 @@ ProviderScope _buildApp() {
           quoteContentRepository: _FakeQuoteContentRepository(),
         ),
       ),
-      liturgicalSeasonServiceProvider.overrideWithValue(_FakeSeasonService()),
     ],
     child: const CupertinoApp(home: SearchScreen()),
   );

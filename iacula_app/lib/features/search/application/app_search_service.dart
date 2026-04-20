@@ -195,36 +195,30 @@ final class AppSearchService {
     required String language,
   }) async {
     final results = <AppSearchResult>[];
-    for (final season in LiturgicalSeason.values) {
-      try {
-        final quotes = await quoteContentRepository.loadQuotes(
-          language: language,
-          season: season,
-        );
-        for (final entry in quotes.entries) {
-          for (final text in entry.value.quotes) {
-            if (_contains(text, normalizedQuery) ||
-                _contains(entry.value.theme, normalizedQuery)) {
-              final score = _scoreFields(
+    final quotes = await quoteContentRepository.loadQuotes(
+      language: language,
+      season: LiturgicalSeason.ordinary,
+    );
+    for (final entry in quotes.entries) {
+      for (final text in entry.value.quotes) {
+        if (_contains(text, normalizedQuery) ||
+            _contains(entry.value.theme, normalizedQuery)) {
+          final score = _scoreFields(
+            query: normalizedQuery,
+            title: entry.value.theme,
+            secondary: [text],
+          );
+          if (score > 0) {
+            results.add(
+              AppSearchResult.quote(
+                theme: entry.value.theme,
+                text: text,
+                score: score,
                 query: normalizedQuery,
-                title: entry.value.theme,
-                secondary: [text],
-              );
-              if (score > 0) {
-                results.add(
-                  AppSearchResult.quote(
-                    theme: entry.value.theme,
-                    text: text,
-                    score: score,
-                    query: normalizedQuery,
-                  ),
-                );
-              }
-            }
+              ),
+            );
           }
         }
-      } catch (_) {
-        // Missing seasonal data should not block mixed search.
       }
     }
     return results;

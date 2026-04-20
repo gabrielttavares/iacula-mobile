@@ -1,5 +1,4 @@
-import '../../../liturgical/domain/liturgical_context.dart';
-import '../../../liturgical/domain/services/liturgical_season_service.dart';
+import '../../../liturgical/domain/liturgical_season.dart';
 import '../../domain/entities/day_quotes.dart';
 import '../../domain/entities/quote.dart';
 import '../../domain/entities/quote_indices.dart';
@@ -11,14 +10,13 @@ final class GetNextQuoteUseCase {
   const GetNextQuoteUseCase({
     required QuoteContentRepository contentRepository,
     required QuoteIndicesRepository indicesRepository,
-    required LiturgicalSeasonService liturgicalSeasonService,
-  })  : _contentRepository = contentRepository,
-        _indicesRepository = indicesRepository,
-        _liturgicalSeasonService = liturgicalSeasonService;
+  }) : _contentRepository = contentRepository,
+       _indicesRepository = indicesRepository;
+
+  static const _defaultSeason = LiturgicalSeason.ordinary;
 
   final QuoteContentRepository _contentRepository;
   final QuoteIndicesRepository _indicesRepository;
-  final LiturgicalSeasonService _liturgicalSeasonService;
 
   /// Fetches [count] quotes in sequence, loading indices once and saving once
   /// at the end. Much more efficient than calling [call] in a loop.
@@ -27,266 +25,202 @@ final class GetNextQuoteUseCase {
     required int count,
     required DateTime startTime,
     required int intervalMinutes,
-    bool liturgicalSeasonEnabled = false,
   }) async {
     if (count <= 0) return const [];
 
-    final quotes = <Quote>[];
-    final firstDate = startTime;
-    final startDayOfWeek = _dayOfWeek1to7(firstDate);
-    final context = liturgicalSeasonEnabled
-        ? await _liturgicalSeasonService.getCurrentContext(date: firstDate)
-        : LiturgicalContext.ordinaryFallback;
-
-    final seasonalCollection = await _contentRepository.loadQuotes(
+    final quotePool = await _contentRepository.loadQuotes(
       language: language,
-      season: context.season,
+      season: _defaultSeason,
     );
-    final quotePool = seasonalCollection;
-
     final imageLists = <int, List<String>>{};
-    Future<List<String>> imagesForDay(int dow) async {
-      final cached = imageLists[dow];
+    Future<List<String>> imagesForDay(int dayOfWeek) async {
+      final cached = imageLists[dayOfWeek];
       if (cached != null) return cached;
       final list = await _contentRepository.listDayImages(
-        dayOfWeek: dow,
-        season: context.season,
+        dayOfWeek: dayOfWeek,
+        season: _defaultSeason,
       );
-      imageLists[dow] = list;
+      imageLists[dayOfWeek] = list;
       return list;
     }
 
+    final startDayOfWeek = _dayOfWeek1to7(startTime);
     var indices = await _indicesRepository.load(dayOfWeek: startDayOfWeek);
+    final quotes = <Quote>[];
 
     for (var i = 0; i < count; i++) {
-      final quoteAt = startTime.add(Duration(minutes: intervalMinutes * (i + 1)));
-      final qDayOfWeek = _dayOfWeek1to7(quoteAt);
-      final dayData = quotePool[qDayOfWeek.toString()];
-      final seasonalImages = await imagesForDay(qDayOfWeek);
-
+      final quoteAt = startTime.add(
+        Duration(minutes: intervalMinutes * (i + 1)),
+      );
+      final dayOfWeek = _dayOfWeek1to7(quoteAt);
+      final dayData = quotePool[dayOfWeek.toString()];
       if (dayData == null || dayData.quotes.isEmpty) {
-        quotes.add(Quote(
-          text: 'Conteudo indisponivel para hoje.',
-          dayOfWeek: qDayOfWeek,
-          theme: dayData?.theme ?? 'Sem tema',
-          season: context.season,
-        ));
+        quotes.add(
+          Quote(
+            text: 'Conteudo indisponivel para hoje.',
+            dayOfWeek: dayOfWeek,
+            theme: dayData?.theme ?? 'Sem tema',
+            season: _defaultSeason,
+          ),
+        );
         continue;
       }
 
-      final currentQuoteIndex = indices.quoteIndices[qDayOfWeek] ?? 0;
-      final quoteStep = QuoteSelector.getNextIndex(dayData.quotes.length, currentQuoteIndex);
+      final currentQuoteIndex = indices.quoteIndices[dayOfWeek] ?? 0;
+      final quoteStep = QuoteSelector.getNextIndex(
+        dayData.quotes.length,
+        currentQuoteIndex,
+      );
+      final selectedText = _selectNonRepeatingText(
+        quotePool: quotePool,
+        dayOfWeek: dayOfWeek,
+        currentIndex: currentQuoteIndex,
+        nextIndex: quoteStep.nextIndex,
+        lastQuote: indices.lastQuote,
+        fallback: dayData.quotes.first,
+      );
 
-      final currentImageIndex = indices.imageIndices[qDayOfWeek] ?? 0;
+      final images = await imagesForDay(dayOfWeek);
+      final currentImageIndex = indices.imageIndices[dayOfWeek] ?? 0;
       String? imagePath;
       var nextImageIndex = 0;
-      if (seasonalImages.isNotEmpty) {
-        final imageStep = QuoteSelector.getNextIndex(seasonalImages.length, currentImageIndex);
-        imagePath = seasonalImages[imageStep.currentIndex];
+      if (images.isNotEmpty) {
+        final imageStep = QuoteSelector.getNextIndex(
+          images.length,
+          currentImageIndex,
+        );
+        imagePath = images[imageStep.currentIndex];
         nextImageIndex = imageStep.nextIndex;
       }
 
-      final text = QuoteSelector.selectQuote(
-        collection: quotePool,
-        dayOfWeek: qDayOfWeek,
-        index: currentQuoteIndex,
-      );
-
-      var selectedText = text;
-      var selectedIndex = quoteStep.nextIndex;
-
-      // Prevent consecutive repeats
-      if (selectedText != null && selectedText == indices.lastQuote) {
-        // Advance index again to skip the repeat
-        final nextStep = QuoteSelector.getNextIndex(dayData.quotes.length, selectedIndex);
-        selectedText = QuoteSelector.selectQuote(
-          collection: quotePool,
-          dayOfWeek: qDayOfWeek,
-          index: selectedIndex,
-        );
-        selectedIndex = nextStep.nextIndex;
-      }
-
-      if (selectedText == null) {
-        selectedText = dayData.quotes.first;
-      }
-
       indices = QuoteIndices(
-        quoteIndices: {...indices.quoteIndices, qDayOfWeek: selectedIndex},
-        imageIndices: {...indices.imageIndices, qDayOfWeek: nextImageIndex},
+        quoteIndices: {
+          ...indices.quoteIndices,
+          dayOfWeek: selectedText.nextIndex,
+        },
+        imageIndices: {...indices.imageIndices, dayOfWeek: nextImageIndex},
         lastDay: startDayOfWeek,
-        lastQuote: selectedText,
+        lastQuote: selectedText.text,
       );
 
-      quotes.add(Quote(
-        text: selectedText,
-        dayOfWeek: qDayOfWeek,
-        theme: dayData.theme,
-        season: context.season,
-        imagePath: imagePath,
-      ));
+      quotes.add(
+        Quote(
+          text: selectedText.text,
+          dayOfWeek: dayOfWeek,
+          theme: dayData.theme,
+          season: _defaultSeason,
+          imagePath: imagePath,
+        ),
+      );
     }
 
     await _indicesRepository.save(indices);
     return quotes;
   }
 
-  Future<Quote> call({
-    required String language,
-    DateTime? now,
-    bool liturgicalSeasonEnabled = false,
-  }) async {
+  Future<Quote> call({required String language, DateTime? now}) async {
     final date = now ?? DateTime.now();
     final dayOfWeek = _dayOfWeek1to7(date);
-    final context = liturgicalSeasonEnabled
-        ? await _liturgicalSeasonService.getCurrentContext(date: date)
-        : LiturgicalContext.ordinaryFallback;
-
-    final seasonalCollection = await _contentRepository.loadQuotes(
+    final quotePool = await _contentRepository.loadQuotes(
       language: language,
-      season: context.season,
+      season: _defaultSeason,
     );
-
-    final seasonalDay = seasonalCollection[dayOfWeek.toString()];
-    final seasonalQuotes = seasonalDay?.quotes ?? const <String>[];
-
-    // TODO: re-enable feast quotes
-    // final feastQuotes = context.feast == null
-    //     ? const <String>[]
-    //     : await _contentRepository.loadFeastQuotes(context.feast!);
-    // final mergedFeastQuotes = _mergeDedup(feastQuotes, context.apiQuotes);
-    // final useFeastPool = mergedFeastQuotes.isNotEmpty;
-    // final quotePool = useFeastPool
-    //     ? {
-    //         dayOfWeek.toString(): DayQuotes(
-    //           day: seasonalDay?.day ?? 'Dia',
-    //           theme: context.feastName ?? seasonalDay?.theme ?? 'Festa',
-    //           quotes: mergedFeastQuotes,
-    //         ),
-    //       }
-    //     : seasonalCollection;
-    const useFeastPool = false;
-    final quotePool = seasonalCollection;
-
     final dayData = quotePool[dayOfWeek.toString()];
     if (dayData == null || dayData.quotes.isEmpty) {
       return Quote(
         text: 'Conteudo indisponivel para hoje.',
         dayOfWeek: dayOfWeek,
-        theme: seasonalDay?.theme ?? 'Sem tema',
-        season: context.season,
+        theme: dayData?.theme ?? 'Sem tema',
+        season: _defaultSeason,
       );
     }
 
     final indices = await _indicesRepository.load(dayOfWeek: dayOfWeek);
     final currentQuoteIndex = indices.quoteIndices[dayOfWeek] ?? 0;
-    final quoteStep = QuoteSelector.getNextIndex(dayData.quotes.length, currentQuoteIndex);
-
-    // TODO: re-enable feast images
-    // final feastImagePath = context.feast == null ? null : await _contentRepository.getFeastImagePath(context.feast!);
-    final seasonalImages = await _contentRepository.listDayImages(dayOfWeek: dayOfWeek, season: context.season);
-    final currentImageIndex = indices.imageIndices[dayOfWeek] ?? 0;
-
-    String? imagePath;
-    var nextImageIndex = 0;
-
-    if (seasonalImages.isNotEmpty) {
-      final imageStep = QuoteSelector.getNextIndex(seasonalImages.length, currentImageIndex);
-      imagePath = seasonalImages[imageStep.currentIndex];
-      nextImageIndex = imageStep.nextIndex;
-    }
-
-    final text = QuoteSelector.selectQuote(
-      collection: quotePool,
+    final quoteStep = QuoteSelector.getNextIndex(
+      dayData.quotes.length,
+      currentQuoteIndex,
+    );
+    final selectedText = _selectNonRepeatingText(
+      quotePool: quotePool,
       dayOfWeek: dayOfWeek,
-      index: currentQuoteIndex,
+      currentIndex: currentQuoteIndex,
+      nextIndex: quoteStep.nextIndex,
+      lastQuote: indices.lastQuote,
+      fallback: dayData.quotes.first,
     );
 
-    var selectedText = text;
-    var selectedIndex = quoteStep.nextIndex;
-
-    // Prevent consecutive repeats
-    if (selectedText != null && selectedText == indices.lastQuote) {
-      // Advance index again to skip the repeat
-      final nextStep = QuoteSelector.getNextIndex(dayData.quotes.length, selectedIndex);
-      selectedText = QuoteSelector.selectQuote(
-        collection: quotePool,
-        dayOfWeek: dayOfWeek,
-        index: selectedIndex,
+    final images = await _contentRepository.listDayImages(
+      dayOfWeek: dayOfWeek,
+      season: _defaultSeason,
+    );
+    final currentImageIndex = indices.imageIndices[dayOfWeek] ?? 0;
+    String? imagePath;
+    var nextImageIndex = 0;
+    if (images.isNotEmpty) {
+      final imageStep = QuoteSelector.getNextIndex(
+        images.length,
+        currentImageIndex,
       );
-      selectedIndex = nextStep.nextIndex;
-    }
-
-    if (selectedText == null) {
-      selectedText = seasonalQuotes.isNotEmpty ? seasonalQuotes.first : 'Conteudo indisponivel para hoje.';
+      imagePath = images[imageStep.currentIndex];
+      nextImageIndex = imageStep.nextIndex;
     }
 
     await _indicesRepository.save(
       QuoteIndices(
         quoteIndices: {
           ...indices.quoteIndices,
-          dayOfWeek: selectedIndex,
+          dayOfWeek: selectedText.nextIndex,
         },
-        imageIndices: {
-          ...indices.imageIndices,
-          dayOfWeek: nextImageIndex,
-        },
+        imageIndices: {...indices.imageIndices, dayOfWeek: nextImageIndex},
         lastDay: dayOfWeek,
-        lastQuote: selectedText,
+        lastQuote: selectedText.text,
       ),
     );
 
     return Quote(
-      text: selectedText,
+      text: selectedText.text,
       dayOfWeek: dayOfWeek,
       theme: dayData.theme,
-      season: context.season,
+      season: _defaultSeason,
       imagePath: imagePath,
-      feast: useFeastPool ? context.feast : null,
-      feastName: useFeastPool ? context.feastName : null,
     );
+  }
+
+  ({String text, int nextIndex}) _selectNonRepeatingText({
+    required Map<String, DayQuotes> quotePool,
+    required int dayOfWeek,
+    required int currentIndex,
+    required int nextIndex,
+    required String? lastQuote,
+    required String fallback,
+  }) {
+    var text = QuoteSelector.selectQuote(
+      collection: quotePool,
+      dayOfWeek: dayOfWeek,
+      index: currentIndex,
+    );
+    var next = nextIndex;
+
+    if (text != null && text == lastQuote) {
+      final dayData = quotePool[dayOfWeek.toString()];
+      final length = dayData?.quotes.length ?? 0;
+      if (length <= 1) return (text: text, nextIndex: next);
+      final nextStep = QuoteSelector.getNextIndex(length, next);
+      text = QuoteSelector.selectQuote(
+        collection: quotePool,
+        dayOfWeek: dayOfWeek,
+        index: next,
+      );
+      next = nextStep.nextIndex;
+    }
+
+    return (text: text ?? fallback, nextIndex: next);
   }
 
   int _dayOfWeek1to7(DateTime date) {
     // DateTime.weekday: Monday=1 ... Sunday=7
     // Iacula convention: Sunday=1 ... Saturday=7
     return (date.weekday % 7) + 1;
-  }
-
-  List<String> _mergeDedup(List<String> curated, List<String> apiQuotes) {
-    final merged = <String>[...curated, ...apiQuotes];
-    final deduped = <String>[];
-    final seen = <String>{};
-
-    for (final quote in merged) {
-      final normalized = _normalizeForDedup(quote);
-      if (normalized.isEmpty || seen.contains(normalized)) {
-        continue;
-      }
-      seen.add(normalized);
-      deduped.add(quote);
-    }
-
-    return deduped;
-  }
-
-  String _normalizeForDedup(String value) {
-    return value
-        .toLowerCase()
-        .replaceAll('á', 'a')
-        .replaceAll('à', 'a')
-        .replaceAll('â', 'a')
-        .replaceAll('ã', 'a')
-        .replaceAll('é', 'e')
-        .replaceAll('ê', 'e')
-        .replaceAll('í', 'i')
-        .replaceAll('ó', 'o')
-        .replaceAll('ô', 'o')
-        .replaceAll('õ', 'o')
-        .replaceAll('ú', 'u')
-        .replaceAll('ç', 'c')
-        .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .trim();
   }
 }

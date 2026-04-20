@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/providers.dart';
-import '../../liturgical/domain/liturgical_season.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
@@ -56,13 +55,9 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
       final updated = current.copyWith(escrivaPointsFeedEnabled: value);
       await ref.read(updateSettingsUseCaseProvider).call(updated);
 
-      final season =
-          await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason();
-      await ref.read(rebuildNotificationsUseCaseProvider).call(
-        updated,
-        isEasterSeason: season == LiturgicalSeason.easter,
-        showImmediate: false,
-      );
+      await ref
+          .read(rebuildNotificationsUseCaseProvider)
+          .call(updated, showImmediate: false);
     } catch (_) {
       if (!mounted) {
         return;
@@ -94,9 +89,7 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
               onPressed: () {
                 HapticFeedback.lightImpact();
                 Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (_) => const EditPhraseScreen(),
-                  ),
+                  CupertinoPageRoute(builder: (_) => const EditPhraseScreen()),
                 );
               },
               child: Icon(
@@ -185,7 +178,9 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
                       children: [
                         for (int i = 0; i < phrases.length; i++)
                           Padding(
-                            padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+                            padding: const EdgeInsets.only(
+                              bottom: IaculaSpacing.sm,
+                            ),
                             child: Dismissible(
                               key: Key(phrases[i].id),
                               direction: DismissDirection.endToStart,
@@ -205,7 +200,8 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
                                 return IaculaModal.showConfirm(
                                   context: context,
                                   title: 'Remover frase',
-                                  message: 'Tem certeza que deseja remover esta frase?',
+                                  message:
+                                      'Tem certeza que deseja remover esta frase?',
                                   confirmLabel: 'Remover',
                                   destructive: true,
                                 );
@@ -222,7 +218,8 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
                                 },
                                 onTap: () => Navigator.of(context).push(
                                   CupertinoPageRoute(
-                                    builder: (_) => EditPhraseScreen(existing: phrases[i]),
+                                    builder: (_) =>
+                                        EditPhraseScreen(existing: phrases[i]),
                                   ),
                                 ),
                               ),
@@ -244,7 +241,8 @@ class _CustomPhrasesScreenState extends ConsumerState<CustomPhrasesScreen> {
                   child: IaculaErrorState(
                     title: 'Erro ao carregar frases',
                     message: 'Tente novamente para atualizar suas frases.',
-                    onRetry: () => ref.invalidate(customPhrasesNotifierProvider),
+                    onRetry: () =>
+                        ref.invalidate(customPhrasesNotifierProvider),
                   ),
                 ),
               ),

@@ -15,9 +15,6 @@ import '../../features/auth/infrastructure/repositories/in_memory_auth_repositor
 import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
 import '../../features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import '../../features/custom_phrases/infrastructure/repositories/isar_custom_phrase_repository.dart';
-import '../../features/liturgical/domain/liturgical_season.dart';
-import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
-import '../../features/liturgical/infrastructure/services/remote_liturgical_season_service.dart';
 import '../../features/leituras/data/repositories/leitura_repository.dart';
 import '../../features/leituras/data/sources/leitura_local_source.dart';
 import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
@@ -95,9 +92,6 @@ final class AppBootstrap {
           ),
         );
       }
-      final liturgicalCacheRepo = IsarLiturgicalSeasonCacheRepository(
-        isarStore,
-      );
       final http.Client httpClient;
       if (Platform.isAndroid) {
         final engine = CronetEngine.build(
@@ -108,14 +102,9 @@ final class AppBootstrap {
       } else {
         httpClient = http.Client();
       }
-      final liturgicalSeasonService = RemoteLiturgicalSeasonService(
-        httpClient: httpClient,
-        cacheRepository: liturgicalCacheRepo,
-      );
       final quoteUseCase = GetNextQuoteUseCase(
         contentRepository: const AssetQuoteContentRepository(),
         indicesRepository: indicesRepo,
-        liturgicalSeasonService: liturgicalSeasonService,
       );
       final escrivaPointsUseCase = GetNextEscrivaPointsQuoteUseCase(
         LeituraRepository(localSource: LeituraLocalSource()),
@@ -143,11 +132,7 @@ final class AppBootstrap {
                 cadenceMinutes: currentSettings.intervalMinutes,
               );
             }
-            return quoteUseCase.call(
-              language: language,
-              now: now,
-              liturgicalSeasonEnabled: currentSettings.liturgicalSeasonEnabled,
-            );
+            return quoteUseCase.call(language: language, now: now);
           };
 
       if (currentSettings.onboardingCompleted &&
@@ -166,13 +151,12 @@ final class AppBootstrap {
             try {
               final bootstrapNow = DateTime.now();
               final lastCard = await lastDeliveredCardRepo.load();
-              final recentlyDelivered = lastCard != null &&
+              final recentlyDelivered =
+                  lastCard != null &&
                   lastCard.deliveredAt.year == bootstrapNow.year &&
                   lastCard.deliveredAt.month == bootstrapNow.month &&
                   lastCard.deliveredAt.day == bootstrapNow.day &&
-                  bootstrapNow
-                          .difference(lastCard.deliveredAt)
-                          .inMinutes <
+                  bootstrapNow.difference(lastCard.deliveredAt).inMinutes <
                       currentSettings.intervalMinutes;
               final immediateQuote = recentlyDelivered
                   ? lastCard!.toQuote()
@@ -180,8 +164,6 @@ final class AppBootstrap {
                       language: currentSettings.language,
                       now: bootstrapNow,
                     );
-              final currentSeason =
-                  await liturgicalSeasonService.getCurrentSeason();
               await RebuildNotificationsUseCase(
                 scheduler: scheduler,
                 notificationHistoryRepository: notificationHistoryRepo,
@@ -207,13 +189,10 @@ final class AppBootstrap {
                         count: count,
                         startTime: startTime,
                         intervalMinutes: intervalMinutes,
-                        liturgicalSeasonEnabled:
-                            settings.liturgicalSeasonEnabled,
                       ),
               ).call(
                 currentSettings,
                 immediateQuote: immediateQuote,
-                isEasterSeason: currentSeason == LiturgicalSeason.easter,
                 showImmediate: !recentlyDelivered,
               );
             } on PlatformException catch (e, st) {
@@ -333,9 +312,6 @@ final class AppBootstrap {
         ),
         premiumRepositoryProvider.overrideWithValue(premiumRepository),
         customPhraseRepositoryProvider.overrideWithValue(localCustomPhraseRepo),
-        liturgicalSeasonCacheRepositoryProvider.overrideWithValue(
-          liturgicalCacheRepo,
-        ),
         notificationSchedulerRepositoryProvider.overrideWithValue(scheduler),
         notificationPermissionProvider.overrideWith((ref) => permissionGranted),
         httpClientProvider.overrideWithValue(httpClient),
@@ -344,12 +320,6 @@ final class AppBootstrap {
         bootstrapStatusProvider.overrideWithValue(bootstrapStatus),
         spiritualDataKeyProvider.overrideWithValue(localKeyProvider),
         spiritualDataIsarStoreProvider.overrideWithValue(spiritualStore),
-        liturgicalSeasonServiceProvider.overrideWith((ref) {
-          return RemoteLiturgicalSeasonService(
-            httpClient: ref.watch(httpClientProvider),
-            cacheRepository: ref.watch(liturgicalSeasonCacheRepositoryProvider),
-          );
-        }),
       ];
 
       if (supabaseClient != null) {

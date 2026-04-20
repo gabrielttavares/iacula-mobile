@@ -22,7 +22,6 @@ final class Settings {
     this.escrivaPointsFeedOptionVisible = false,
     this.notificationsEnabled = true,
     this.angelusEnabled = true,
-    this.liturgicalSeasonEnabled = false,
     this.quietHoursEnabled = false,
     this.quietHoursStart = '22:00',
     this.quietHoursEnd = '07:00',
@@ -50,7 +49,6 @@ final class Settings {
   final bool escrivaPointsFeedOptionVisible;
   final bool notificationsEnabled;
   final bool angelusEnabled;
-  final bool liturgicalSeasonEnabled;
   final bool quietHoursEnabled;
   final String quietHoursStart;
   final String quietHoursEnd;
@@ -77,7 +75,6 @@ final class Settings {
     escrivaPointsFeedOptionVisible: false,
     notificationsEnabled: true,
     angelusEnabled: true,
-    liturgicalSeasonEnabled: false,
     quietHoursEnabled: false,
     quietHoursStart: '22:00',
     quietHoursEnd: '07:00',
@@ -106,7 +103,6 @@ final class Settings {
     bool? escrivaPointsFeedOptionVisible,
     bool? notificationsEnabled,
     bool? angelusEnabled,
-    bool? liturgicalSeasonEnabled,
     bool? quietHoursEnabled,
     String? quietHoursStart,
     String? quietHoursEnd,
@@ -138,8 +134,6 @@ final class Settings {
           escrivaPointsFeedOptionVisible ?? this.escrivaPointsFeedOptionVisible,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       angelusEnabled: angelusEnabled ?? this.angelusEnabled,
-      liturgicalSeasonEnabled:
-          liturgicalSeasonEnabled ?? this.liturgicalSeasonEnabled,
       quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
       quietHoursStart: quietHoursStart ?? this.quietHoursStart,
       quietHoursEnd: quietHoursEnd ?? this.quietHoursEnd,

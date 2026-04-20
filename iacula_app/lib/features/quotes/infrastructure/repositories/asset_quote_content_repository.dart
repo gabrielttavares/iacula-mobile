@@ -10,11 +10,13 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
   const AssetQuoteContentRepository();
 
   static AssetManifest? _manifestCache;
-  static final Map<LiturgicalSeason, Map<String, DayQuotes>> _quotesCache = {};
-  static final Map<(int, LiturgicalSeason), List<String>> _dayImagesCache = {};
+  static Map<String, DayQuotes>? _quotesCache;
+  static final Map<int, List<String>> _dayImagesCache = {};
 
   static Future<AssetManifest> _getManifest() async {
-    return _manifestCache ??= await AssetManifest.loadFromAssetBundle(rootBundle);
+    return _manifestCache ??= await AssetManifest.loadFromAssetBundle(
+      rootBundle,
+    );
   }
 
   /// [language] is ignored; bundled quotes are always loaded from the pt-BR JSON assets.
@@ -23,10 +25,10 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
     required String language,
     required LiturgicalSeason season,
   }) async {
-    final cached = _quotesCache[season];
+    final cached = _quotesCache;
     if (cached != null) return cached;
 
-    final path = await _resolveQuotePath(season: season);
+    final path = await _resolveQuotePath();
 
     try {
       final jsonString = await rootBundle.loadString(path);
@@ -34,7 +36,9 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
 
       final result = jsonMap.map((key, value) {
         final data = value as Map<String, dynamic>;
-        final quotes = (data['quotes'] as List<dynamic>).map((e) => e.toString()).toList(growable: false);
+        final quotes = (data['quotes'] as List<dynamic>)
+            .map((e) => e.toString())
+            .toList(growable: false);
         return MapEntry(
           key,
           DayQuotes(
@@ -45,7 +49,7 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
         );
       });
 
-      _quotesCache[season] = result;
+      _quotesCache = result;
       return result;
     } catch (_) {
       return const <String, DayQuotes>{};
@@ -57,30 +61,26 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
     required int dayOfWeek,
     required LiturgicalSeason season,
   }) async {
-    final key = (dayOfWeek, season);
-    final cached = _dayImagesCache[key];
+    final cached = _dayImagesCache[dayOfWeek];
     if (cached != null) return cached;
 
     final manifest = await _getManifest();
     final assets = manifest.listAssets();
 
-    final seasonFolder = season == LiturgicalSeason.ordinary ? 'ordinary/$dayOfWeek' : _seasonFolder(season);
-    final prefix = 'assets/seed/images/$seasonFolder/';
+    final prefix = 'assets/seed/images/ordinary/$dayOfWeek/';
 
-    final imageKeys = assets.where((k) => _isSupportedImage(k) && k.startsWith(prefix)).toList()..sort();
+    final imageKeys =
+        assets
+            .where((k) => _isSupportedImage(k) && k.startsWith(prefix))
+            .toList()
+          ..sort();
 
     if (imageKeys.isNotEmpty) {
-      _dayImagesCache[key] = imageKeys;
+      _dayImagesCache[dayOfWeek] = imageKeys;
       return imageKeys;
     }
 
-    if (season != LiturgicalSeason.ordinary) {
-      final fallback = await listDayImages(dayOfWeek: dayOfWeek, season: LiturgicalSeason.ordinary);
-      _dayImagesCache[key] = fallback;
-      return fallback;
-    }
-
-    _dayImagesCache[key] = const <String>[];
+    _dayImagesCache[dayOfWeek] = const <String>[];
     return const <String>[];
   }
 
@@ -121,23 +121,23 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
     final assets = manifest.listAssets();
     final prefix = 'assets/seed/images/feasts/$feastSlug/';
 
-    final images = assets.where((k) => _isSupportedImage(k) && k.startsWith(prefix)).toList()..sort();
+    final images =
+        assets
+            .where((k) => _isSupportedImage(k) && k.startsWith(prefix))
+            .toList()
+          ..sort();
 
     return images.isEmpty ? null : images.first;
   }
 
-  Future<String> _resolveQuotePath({required LiturgicalSeason season}) async {
+  Future<String> _resolveQuotePath() async {
     final manifest = await _getManifest();
     final assets = manifest.listAssets().toSet();
 
-    final preferred = _quotePath(season: season);
-    if (assets.contains(preferred)) {
-      return preferred;
-    }
+    const preferred = 'assets/seed/quotes/pt-br/quotes.json';
+    if (assets.contains(preferred)) return preferred;
 
-    const fallbacks = <String>[
-      'assets/seed/quotes/pt-br/quotes.json',
-    ];
+    const fallbacks = <String>['assets/seed/quotes/pt-br/quotes.json'];
 
     for (final candidate in fallbacks) {
       if (assets.contains(candidate)) {
@@ -148,32 +148,10 @@ final class AssetQuoteContentRepository implements QuoteContentRepository {
     return preferred;
   }
 
-  String _quotePath({required LiturgicalSeason season}) {
-    if (season == LiturgicalSeason.ordinary) {
-      return 'assets/seed/quotes/pt-br/quotes.json';
-    }
-
-    return switch (season) {
-      LiturgicalSeason.advent => 'assets/seed/quotes/pt-br/advent.json',
-      LiturgicalSeason.lent => 'assets/seed/quotes/pt-br/lent.json',
-      LiturgicalSeason.easter => 'assets/seed/quotes/pt-br/easter.json',
-      LiturgicalSeason.christmas => 'assets/seed/quotes/pt-br/christmas.json',
-      LiturgicalSeason.ordinary => 'assets/seed/quotes/pt-br/quotes.json',
-    };
-  }
-
-  String _seasonFolder(LiturgicalSeason season) {
-    return switch (season) {
-      LiturgicalSeason.advent => 'advent',
-      LiturgicalSeason.lent => 'lent',
-      LiturgicalSeason.easter => 'easter',
-      LiturgicalSeason.christmas => 'christmas',
-      LiturgicalSeason.ordinary => 'ordinary',
-    };
-  }
-
   bool _isSupportedImage(String path) {
     final lower = path.toLowerCase();
-    return lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png');
+    return lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png');
   }
 }

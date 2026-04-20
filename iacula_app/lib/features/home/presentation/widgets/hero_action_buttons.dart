@@ -7,7 +7,6 @@ import '../../../../core/presentation/widgets/iacula_animated_icon.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../confession/infrastructure/services/hero_card_share_image_renderer.dart';
 import '../../../favorites/domain/entities/favorite_item.dart';
-import '../../../liturgical/domain/liturgical_season.dart';
 import '../../../quotes/domain/entities/quote.dart';
 
 class HeroActionButtons extends StatelessWidget {
@@ -33,14 +32,6 @@ class HeroShareButton extends ConsumerWidget {
 
   final Quote quote;
 
-  static const _seasonLabels = <LiturgicalSeason, String>{
-    LiturgicalSeason.ordinary: 'tempo comum',
-    LiturgicalSeason.advent: 'tempo do advento',
-    LiturgicalSeason.lent: 'tempo da quaresma',
-    LiturgicalSeason.easter: 'tempo pascal',
-    LiturgicalSeason.christmas: 'tempo do natal',
-  };
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return CupertinoButton(
@@ -58,7 +49,7 @@ class HeroShareButton extends ConsumerWidget {
                 ? quote.referenceLabel
                 : quote.theme == 'personal'
                 ? 'frase pessoal'
-                : _seasonLabels[quote.season]) ??
+                : quote.theme) ??
             '';
 
         final renderer = ref.read(heroCardShareImageRendererProvider);

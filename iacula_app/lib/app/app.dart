@@ -8,7 +8,6 @@ import '../core/di/providers.dart';
 import '../core/presentation/shell_screen.dart';
 import '../core/theme/app_theme.dart';
 import '../core/theme/lora_font_loader.dart';
-import '../features/liturgical/domain/liturgical_season.dart';
 import '../features/home_widget/application/use_cases/get_current_widget_quote_use_case.dart';
 import '../features/home_widget/application/use_cases/refresh_widget_from_timeline_use_case.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
@@ -114,7 +113,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
               if (catalogEntry != null) {
                 nav.push(
                   CupertinoPageRoute(
-                    builder: (_) => PrayerCatalogDetailScreen(entry: catalogEntry),
+                    builder: (_) =>
+                        PrayerCatalogDetailScreen(entry: catalogEntry),
                   ),
                 );
                 return;
@@ -270,13 +270,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
       _logNotificationHealth('Triggering rebuild; reason=$rebuildReason.');
 
       final rebuildUseCase = ref.read(rebuildNotificationsUseCaseProvider);
-      final liturgicalService = ref.read(liturgicalSeasonServiceProvider);
-      final currentSeason = await liturgicalService.getCurrentSeason();
-      await rebuildUseCase.call(
-        settings,
-        isEasterSeason: currentSeason == LiturgicalSeason.easter,
-        showImmediate: false,
-      );
+      await rebuildUseCase.call(settings, showImmediate: false);
       _lastRebuildTime = DateTime.now();
       final pendingAfter = await scheduler.pendingNotificationIds();
       _logNotificationHealth(
@@ -315,29 +309,11 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
                 }
                 return ref
                     .read(getNextQuoteUseCaseProvider)
-                    .call(
-                      language: language,
-                      now: now,
-                      liturgicalSeasonEnabled:
-                          settings.liturgicalSeasonEnabled,
-                    );
+                    .call(language: language, now: now);
               },
         );
-        LiturgicalSeason? currentSeason;
-        if (settings.liturgicalSeasonEnabled) {
-          final context = await ref
-              .read(liturgicalSeasonServiceProvider)
-              .getCurrentContext(date: now);
-          currentSeason = context.season;
-        }
 
-        return selector.call(
-          language: settings.language,
-          now: now,
-          liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-          currentSeason: currentSeason,
-          intervalMinutes: settings.intervalMinutes,
-        );
+        return selector.call(language: settings.language, now: now);
       },
       updateWidgetIfChanged: HomeWidgetService.instance.updateWidgetIfChanged,
       saveIntervalMinutes: HomeWidgetService.instance.saveIntervalMinutes,

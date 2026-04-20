@@ -1,6 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart'
-    show Colors, Material, Slider, SliderComponentShape, SliderTheme, SliderThemeData;
+    show
+        Colors,
+        Material,
+        Slider,
+        SliderComponentShape,
+        SliderTheme,
+        SliderThemeData;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,7 +15,6 @@ import '../../../core/presentation/shell_screen.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../settings/domain/jaculatoria_interval.dart';
 
@@ -123,9 +128,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget _buildPage() {
     switch (_currentPage) {
       case 0:
-        return _WelcomePage(
-          onContinue: () => _goToPage(1),
-        );
+        return _WelcomePage(onContinue: () => _goToPage(1));
       case 1:
         return _NameInputPage(
           controller: _nameController,
@@ -163,14 +166,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     await ref.read(updateSettingsUseCaseProvider).call(updated);
 
     try {
-      final season = await ref
-          .read(liturgicalSeasonServiceProvider)
-          .getCurrentSeason();
-      await ref.read(rebuildNotificationsUseCaseProvider).call(
-        updated,
-        isEasterSeason: season == LiturgicalSeason.easter,
-        showImmediate: true,
-      );
+      await ref
+          .read(rebuildNotificationsUseCaseProvider)
+          .call(updated, showImmediate: true);
     } on PlatformException catch (_) {
       // Scheduling failed (e.g. exact alarms denied) — continue onboarding.
       // Notifications will be retried on next app launch.
@@ -184,9 +182,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     setState(() => _saving = true);
     final settings = await ref.read(getSettingsUseCaseProvider).call();
     final trimmed = _nameController.text.trim();
-    await ref.read(updateSettingsUseCaseProvider).call(
-      settings.copyWith(displayName: trimmed.isEmpty ? null : trimmed),
-    );
+    await ref
+        .read(updateSettingsUseCaseProvider)
+        .call(settings.copyWith(displayName: trimmed.isEmpty ? null : trimmed));
     if (!mounted) {
       return;
     }
@@ -199,18 +197,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final settings = await ref.read(getSettingsUseCaseProvider).call();
     await ref
         .read(updateSettingsUseCaseProvider)
-        .call(settings.copyWith(
-          onboardingCompleted: true,
-          intervalMinutes: clampJaculatoriaIntervalMinutes(_selectedInterval),
-        ));
+        .call(
+          settings.copyWith(
+            onboardingCompleted: true,
+            intervalMinutes: clampJaculatoriaIntervalMinutes(_selectedInterval),
+          ),
+        );
     if (!mounted) return;
     _finishOnboarding();
   }
 
   void _finishOnboarding() {
-    Navigator.of(context).pushReplacement(
-      CupertinoPageRoute(builder: (_) => const ShellScreen()),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(CupertinoPageRoute(builder: (_) => const ShellScreen()));
   }
 }
 
@@ -264,10 +264,7 @@ class _WelcomePage extends StatelessWidget {
               minHeight: 104,
             ),
             const SizedBox(height: IaculaSpacing.xl),
-            IaculaPrimaryPillButton(
-              label: 'Continuar',
-              onPressed: onContinue,
-            ),
+            IaculaPrimaryPillButton(label: 'Continuar', onPressed: onContinue),
           ],
         ),
       ),
@@ -342,9 +339,7 @@ class _NotificationSetupPage extends StatelessWidget {
                   Text(
                     formatJaculatoriaIntervalShortLabel(selectedInterval),
                     textAlign: TextAlign.center,
-                    style: context.textStyles.cardTitle.copyWith(
-                      fontSize: 18,
-                    ),
+                    style: context.textStyles.cardTitle.copyWith(fontSize: 18),
                   ),
                   const SizedBox(height: 10),
                   SizedBox(
@@ -360,16 +355,14 @@ class _NotificationSetupPage extends StatelessWidget {
                           overlayShape: SliderComponentShape.noOverlay,
                         ),
                         child: Slider(
-                          value: selectedInterval
-                              .toDouble()
-                              .clamp(
-                                kJaculatoriaIntervalMin.toDouble(),
-                                kJaculatoriaIntervalMax.toDouble(),
-                              ),
+                          value: selectedInterval.toDouble().clamp(
+                            kJaculatoriaIntervalMin.toDouble(),
+                            kJaculatoriaIntervalMax.toDouble(),
+                          ),
                           min: kJaculatoriaIntervalMin.toDouble(),
                           max: kJaculatoriaIntervalMax.toDouble(),
-                          divisions: kJaculatoriaIntervalMax -
-                              kJaculatoriaIntervalMin,
+                          divisions:
+                              kJaculatoriaIntervalMax - kJaculatoriaIntervalMin,
                           onChanged: (value) {
                             onIntervalChanged(value.round());
                           },

@@ -116,6 +116,8 @@ void main() {
     await expectVisible('Minhas frases');
     await expectVisible('Pontos de Caminho/Sulco/Forja');
     await expectVisible('Salvar');
+    expect(find.text('Jaculatórias do tempo litúrgico'), findsNothing);
+    expect(find.textContaining('tempo litúrgico'), findsNothing);
   });
 
   testWidgets('settings no longer shows deprecated sync and interval inputs', (
@@ -151,9 +153,6 @@ void main() {
         ProviderScope(
           overrides: [
             settingsRepositoryProvider.overrideWithValue(repo),
-            liturgicalSeasonServiceProvider.overrideWithValue(
-              _FakeLiturgicalSeasonService(),
-            ),
             rebuildNotificationsUseCaseProvider.overrideWith((ref) {
               return _makeNoopRebuildUseCase();
             }),

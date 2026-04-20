@@ -50,14 +50,11 @@ final class ScheduleCoreRemindersUseCase {
   Future<void> call(
     Settings settings, {
     DateTime? now,
-    bool isEasterSeason = false,
     Quote? immediateQuote,
     bool showImmediate = true,
     bool latestOnlyQueuedQuote = false,
   }) async {
     final current = now ?? DateTime.now();
-    final effectiveIsEasterSeason =
-        isEasterSeason || _isDateWithinEasterSeason(current);
     debugPrint(
       '[ScheduleCoreRemindersUseCase] scheduling at ${current.toIso8601String()} '
       'interval=${settings.intervalMinutes}m lang=${settings.language} '
@@ -71,7 +68,9 @@ final class ScheduleCoreRemindersUseCase {
 
     var shouldShowImmediate = showImmediate;
     if (showImmediate) {
-      final todayHistory = await _notificationHistoryRepository.listForDay(current);
+      final todayHistory = await _notificationHistoryRepository.listForDay(
+        current,
+      );
       final hasRecentDueQuote = todayHistory.any((entry) {
         if (entry.deliveredAt.isAfter(current)) return false;
         final minutesAgo = current.difference(entry.deliveredAt).inMinutes;
@@ -249,11 +248,6 @@ final class ScheduleCoreRemindersUseCase {
     }
 
     if (settings.angelusEnabled) {
-      final noonTitle = effectiveIsEasterSeason ? 'Regina Caeli' : 'Angelus';
-      final noonBody = effectiveIsEasterSeason
-          ? 'Hora de rezar a Regina Caeli.'
-          : 'Hora de rezar o Angelus.';
-
       final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
       final noonInQuietHours =
           settings.quietHoursEnabled &&
@@ -263,22 +257,21 @@ final class ScheduleCoreRemindersUseCase {
             settings.quietHoursEnd,
           );
       if (!noonInQuietHours) {
-        final prayerSlug = effectiveIsEasterSeason ? 'regina-coeli' : 'angelus';
         debugPrint(
           '[ScheduleCoreRemindersUseCase] scheduling Angelus/Regina id=200 at ${noon.toIso8601String()} '
-          'title=$noonTitle repeatDaily=true slug=$prayerSlug',
+          'title=Angelus repeatDaily=true slug=angelus',
         );
         await _scheduler.schedule(
           ReminderEvent(
             type: ReminderEventType.angelusNoon,
-            title: noonTitle,
-            body: noonBody,
+            title: 'Angelus',
+            body: 'Hora de rezar o Angelus.',
             scheduledAt: noon,
             withVibration: true,
             isAlarm: true,
             repeatDaily: true,
             routeTarget: NotificationRouteTarget.prayer,
-            prayerSlug: prayerSlug,
+            prayerSlug: 'angelus',
           ),
         );
       } else {
@@ -299,31 +292,6 @@ final class ScheduleCoreRemindersUseCase {
         left.day == right.day;
   }
 
-  bool _isDateWithinEasterSeason(DateTime date) {
-    final day = DateTime(date.year, date.month, date.day);
-    final easterSunday = _calculateGregorianEasterSunday(day.year);
-    final pentecostSunday = easterSunday.add(const Duration(days: 49));
-    return !day.isBefore(easterSunday) && !day.isAfter(pentecostSunday);
-  }
-
-  DateTime _calculateGregorianEasterSunday(int year) {
-    final a = year % 19;
-    final b = year ~/ 100;
-    final c = year % 100;
-    final d = b ~/ 4;
-    final e = b % 4;
-    final f = (b + 8) ~/ 25;
-    final g = (b - f + 1) ~/ 3;
-    final h = (19 * a + b - d - g + 15) % 30;
-    final i = c ~/ 4;
-    final k = c % 4;
-    final l = (32 + 2 * e + 2 * i - h - k) % 7;
-    final m = (a + 11 * h + 22 * l) ~/ 451;
-    final month = (h + l - 7 * m + 114) ~/ 31;
-    final day = ((h + l - 7 * m + 114) % 31) + 1;
-    return DateTime(year, month, day);
-  }
-
   Future<Quote> _fetchDistinctQuoteForSlot({
     required String language,
     required DateTime slotTime,
@@ -333,9 +301,13 @@ final class ScheduleCoreRemindersUseCase {
   }) async {
     const maxAttempts = 3;
     for (var attempt = 1; attempt <= maxAttempts; attempt++) {
-      final candidateTime =
-          slotTime.add(Duration(minutes: intervalMinutes * attempt));
-      final candidate = await _quoteFetcher(language: language, now: candidateTime);
+      final candidateTime = slotTime.add(
+        Duration(minutes: intervalMinutes * attempt),
+      );
+      final candidate = await _quoteFetcher(
+        language: language,
+        now: candidateTime,
+      );
       if (candidate.text != previousText) {
         return candidate;
       }

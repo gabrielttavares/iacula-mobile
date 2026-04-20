@@ -131,9 +131,6 @@ void main() {
               ),
             ),
           ),
-          liturgicalSeasonServiceProvider.overrideWithValue(
-            _FakeLiturgicalSeasonService(),
-          ),
           rebuildNotificationsUseCaseProvider.overrideWith((ref) {
             return _noopRebuildUseCase();
           }),
@@ -159,7 +156,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        (await container.read(_testHeroSettingsProvider.future)).intervalMinutes,
+        (await container.read(
+          _testHeroSettingsProvider.future,
+        )).intervalMinutes,
         15,
       );
 
@@ -201,9 +200,9 @@ void main() {
       expect(repo._value.intervalMinutes, greaterThan(15));
 
       final fromRepo = repo._value.intervalMinutes;
-      final fromProvider =
-          (await container.read(_testHeroSettingsProvider.future))
-              .intervalMinutes;
+      final fromProvider = (await container.read(
+        _testHeroSettingsProvider.future,
+      )).intervalMinutes;
       expect(
         fromProvider,
         fromRepo,

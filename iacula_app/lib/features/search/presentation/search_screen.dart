@@ -6,7 +6,6 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../liturgical/domain/liturgical_season.dart';
 import '../../prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../application/app_search_service.dart';
 
@@ -26,36 +25,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   final List<String> _recentQueries = [];
   bool _loading = false;
   _SearchFilter _selectedFilter = _SearchFilter.all;
-  List<String> _seasonalSuggestions = const [
+  static const List<String> _defaultSuggestions = [
     'pai nosso',
-    'perdao',
-    'contricao',
-    'rosario',
     'gratidao',
+    'rosario',
+    'fe',
+    'caridade',
   ];
   Timer? _debounce;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSeasonalSuggestions();
-  }
-
-  Future<void> _loadSeasonalSuggestions() async {
-    try {
-      final season = await ref
-          .read(liturgicalSeasonServiceProvider)
-          .getCurrentSeason();
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _seasonalSuggestions = _suggestionsForSeason(season);
-      });
-    } catch (_) {
-      // Keep default suggestions if season lookup fails.
-    }
-  }
 
   @override
   void dispose() {
@@ -130,11 +107,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(IaculaSpacing.md),
-                child: CupertinoSearchTextField(
-                  controller: _controller,
-                  placeholder: 'Busque por oração, leitura ou citação',
-                  onChanged: _onQueryChanged,
-                ),
+              child: CupertinoSearchTextField(
+                controller: _controller,
+                placeholder: 'Busque por oração, leitura ou citação',
+                onChanged: _onQueryChanged,
+              ),
             ),
             Expanded(
               child: _loading
@@ -150,7 +127,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       ),
                       child: _DiscoveryState(
                         recentQueries: _recentQueries,
-                        suggestions: _seasonalSuggestions,
+                        suggestions: _defaultSuggestions,
                         onSuggestionPressed: _onSuggestionPressed,
                       ),
                     )
@@ -233,21 +210,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         return normalized == 'citações' || normalized == 'citacoes';
       case _SearchFilter.readings:
         return normalized == 'leituras';
-    }
-  }
-
-  List<String> _suggestionsForSeason(LiturgicalSeason season) {
-    switch (season) {
-      case LiturgicalSeason.advent:
-        return const ['advento', 'maranata', 'esperanca', 'vigiai', 'encarnacao'];
-      case LiturgicalSeason.lent:
-        return const ['quaresma', 'penitencia', 'jejum', 'conversao', 'contricao'];
-      case LiturgicalSeason.easter:
-        return const ['pascoa', 'ressurreicao', 'aleluia', 'regina caeli', 'vida nova'];
-      case LiturgicalSeason.christmas:
-        return const ['natal', 'encarnacao', 'menino jesus', 'sagrada familia', 'paz'];
-      case LiturgicalSeason.ordinary:
-        return const ['pai nosso', 'gratidao', 'rosario', 'fe', 'caridade'];
     }
   }
 
@@ -411,10 +373,7 @@ class _SearchChip extends StatelessWidget {
 }
 
 class _FilterControl extends StatelessWidget {
-  const _FilterControl({
-    required this.selectedFilter,
-    required this.onChanged,
-  });
+  const _FilterControl({required this.selectedFilter, required this.onChanged});
 
   final _SearchFilter selectedFilter;
   final ValueChanged<_SearchFilter> onChanged;

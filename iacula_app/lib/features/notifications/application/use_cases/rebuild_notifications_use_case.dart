@@ -46,7 +46,6 @@ final class RebuildNotificationsUseCase {
 
   Future<NotificationRebuildResult> call(
     Settings settings, {
-    required bool isEasterSeason,
     bool showImmediate = false,
     Quote? immediateQuote,
     DateTime? now,
@@ -55,8 +54,7 @@ final class RebuildNotificationsUseCase {
       final scheduler = _scheduler;
       debugPrint(
         '[RebuildNotificationsUseCase] start notificationsEnabled=${settings.notificationsEnabled} '
-        'interval=${settings.intervalMinutes} showImmediate=$showImmediate '
-        'isEasterSeason=$isEasterSeason',
+        'interval=${settings.intervalMinutes} showImmediate=$showImmediate',
       );
       await HomeWidgetService.instance.saveIntervalMinutes(
         settings.intervalMinutes,
@@ -92,7 +90,6 @@ final class RebuildNotificationsUseCase {
       ).call(
         settings,
         now: now,
-        isEasterSeason: isEasterSeason,
         immediateQuote: immediateQuote,
         showImmediate: showImmediate,
         latestOnlyQueuedQuote: latestOnlyQueuedQuote,

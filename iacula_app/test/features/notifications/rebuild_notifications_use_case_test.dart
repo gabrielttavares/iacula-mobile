@@ -67,35 +67,37 @@ RebuildNotificationsUseCase _makeRebuild(
 }
 
 void main() {
-  test('parallel rebuild calls complete without overlapping duplicate quote ids', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository();
-    final rebuild = _makeRebuild(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return Quote(
-          text: 'x',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-    );
+  test(
+    'parallel rebuild calls complete without overlapping duplicate quote ids',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final rebuild = _makeRebuild(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return Quote(
+                text: 'x',
+                dayOfWeek: 1,
+                theme: 't',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+      );
 
-    final settings = Settings.defaults.copyWith(notificationsEnabled: true);
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+      final settings = Settings.defaults.copyWith(notificationsEnabled: true);
 
-    await Future.wait([
-      rebuild.call(settings, isEasterSeason: season == LiturgicalSeason.easter, showImmediate: false),
-      rebuild.call(settings, isEasterSeason: season == LiturgicalSeason.easter, showImmediate: false),
-    ]);
+      await Future.wait([
+        rebuild.call(settings, showImmediate: false),
+        rebuild.call(settings, showImmediate: false),
+      ]);
 
-    final quoteScheduled =
-        scheduler.events
-            .where((e) => e.type == ReminderEventType.quoteInterval)
-            .map((e) => e.scheduledId)
-            .toSet();
-    expect(quoteScheduled.length, 64);
-  });
+      final quoteScheduled = scheduler.events
+          .where((e) => e.type == ReminderEventType.quoteInterval)
+          .map((e) => e.scheduledId)
+          .toSet();
+      expect(quoteScheduled.length, 64);
+    },
+  );
 
   test('showImmediate true keeps immediate quote channel (id 8999)', () async {
     final scheduler = InMemoryNotificationSchedulerRepository();
@@ -112,64 +114,57 @@ void main() {
     );
 
     final settings = Settings.defaults.copyWith(notificationsEnabled: true);
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
 
-    await rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: true,
-    );
+    await rebuild.call(settings, showImmediate: true);
 
     expect(
       scheduler.events.any(
-        (e) => e.type == ReminderEventType.quoteInterval && e.scheduledId == 8999,
+        (e) =>
+            e.type == ReminderEventType.quoteInterval && e.scheduledId == 8999,
       ),
       isTrue,
     );
   });
 
-  test('first rebuild throws but second rebuild still runs successfully', () async {
-    var fetches = 0;
-    final scheduler = InMemoryNotificationSchedulerRepository();
-    final rebuild = _makeRebuild(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        fetches++;
-        if (fetches == 1) {
-          throw StateError('boom');
-        }
-        return const Quote(
-          text: 'ok',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-    );
+  test(
+    'first rebuild throws but second rebuild still runs successfully',
+    () async {
+      var fetches = 0;
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final rebuild = _makeRebuild(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              fetches++;
+              if (fetches == 1) {
+                throw StateError('boom');
+              }
+              return const Quote(
+                text: 'ok',
+                dayOfWeek: 1,
+                theme: 't',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+      );
 
-    final settings = Settings.defaults.copyWith(notificationsEnabled: true);
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+      final settings = Settings.defaults.copyWith(notificationsEnabled: true);
 
-    await expectLater(
-      rebuild.call(
-        settings,
-        isEasterSeason: season == LiturgicalSeason.easter,
-        showImmediate: false,
-      ),
-      throwsA(isA<StateError>()),
-    );
+      await expectLater(
+        rebuild.call(settings, showImmediate: false),
+        throwsA(isA<StateError>()),
+      );
 
-    final second = await rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
-    expect(second.shortIntervalReliabilityNotGuaranteed, isFalse);
-    expect(
-      scheduler.events.where((e) => e.type == ReminderEventType.quoteInterval).length,
-      64,
-    );
-  });
+      final second = await rebuild.call(settings, showImmediate: false);
+      expect(second.shortIntervalReliabilityNotGuaranteed, isFalse);
+      expect(
+        scheduler.events
+            .where((e) => e.type == ReminderEventType.quoteInterval)
+            .length,
+        64,
+      );
+    },
+  );
 
   test('first concurrent rebuild fails but second still schedules', () async {
     var fetches = 0;
@@ -191,56 +186,45 @@ void main() {
     );
 
     final settings = Settings.defaults.copyWith(notificationsEnabled: true);
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
 
-    final first = rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
-    final second = rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
+    final first = rebuild.call(settings, showImmediate: false);
+    final second = rebuild.call(settings, showImmediate: false);
 
     await expectLater(first, throwsA(isA<StateError>()));
     final secondResult = await second;
     expect(secondResult.shortIntervalReliabilityNotGuaranteed, isFalse);
     expect(
-      scheduler.events.where((e) => e.type == ReminderEventType.quoteInterval).length,
+      scheduler.events
+          .where((e) => e.type == ReminderEventType.quoteInterval)
+          .length,
       64,
     );
   });
 
-  test('short interval with exact reliability ok reports notGuaranteed false', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository()
-      ..shortIntervalReliabilityOverrideForTest = ShortIntervalReliability.ok;
-    final rebuild = _makeRebuild(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return const Quote(
-          text: 'x',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-    );
+  test(
+    'short interval with exact reliability ok reports notGuaranteed false',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository()
+        ..shortIntervalReliabilityOverrideForTest = ShortIntervalReliability.ok;
+      final rebuild = _makeRebuild(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return const Quote(
+                text: 'x',
+                dayOfWeek: 1,
+                theme: 't',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+      );
 
-    final settings = Settings.defaults.copyWith(
-      notificationsEnabled: true,
-      intervalMinutes: 5,
-    );
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+      final settings = Settings.defaults.copyWith(notificationsEnabled: true);
 
-    final r = await rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
-    expect(r.shortIntervalReliabilityNotGuaranteed, isFalse);
-  });
+      final r = await rebuild.call(settings, showImmediate: false);
+      expect(r.shortIntervalReliabilityNotGuaranteed, isFalse);
+    },
+  );
 
   test('short interval with exact denied reports notGuaranteed true', () async {
     final scheduler = InMemoryNotificationSchedulerRepository()
@@ -258,17 +242,9 @@ void main() {
       },
     );
 
-    final settings = Settings.defaults.copyWith(
-      notificationsEnabled: true,
-      intervalMinutes: 5,
-    );
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+    final settings = Settings.defaults.copyWith(notificationsEnabled: true);
 
-    final r = await rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
+    final r = await rebuild.call(settings, showImmediate: false);
     expect(r.shortIntervalReliabilityNotGuaranteed, isTrue);
 
     final quoteEvents = scheduler.events
@@ -283,33 +259,29 @@ void main() {
     expect(quoteEvents.single.scheduledId, 9000);
   });
 
-  test('notifications disabled yields notGuaranteed false even if exact denied', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository()
-      ..shortIntervalReliabilityOverrideForTest =
-          ShortIntervalReliability.exactAlarmsUnavailable;
-    final rebuild = _makeRebuild(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return const Quote(
-          text: 'x',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-    );
+  test(
+    'notifications disabled yields notGuaranteed false even if exact denied',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository()
+        ..shortIntervalReliabilityOverrideForTest =
+            ShortIntervalReliability.exactAlarmsUnavailable;
+      final rebuild = _makeRebuild(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return const Quote(
+                text: 'x',
+                dayOfWeek: 1,
+                theme: 't',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+      );
 
-    final settings = Settings.defaults.copyWith(
-      notificationsEnabled: false,
-      intervalMinutes: 5,
-    );
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
+      final settings = Settings.defaults.copyWith(notificationsEnabled: false);
 
-    final r = await rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
-    expect(r.shortIntervalReliabilityNotGuaranteed, isFalse);
-  });
+      final r = await rebuild.call(settings, showImmediate: false);
+      expect(r.shortIntervalReliabilityNotGuaranteed, isFalse);
+    },
+  );
 }

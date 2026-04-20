@@ -203,11 +203,7 @@ void main() {
         );
       },
       batchFetcherForSettings: (_) => null,
-    ).call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
+    ).call(settings, showImmediate: false);
 
     expect(schedulerRepo.cancelAllCalls, 1);
     expect(
