@@ -2,6 +2,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../domain/entities/intention_schedule.dart';
 import '../domain/entities/prayer_intention.dart';
 import 'use_cases/add_intention_use_case.dart';
 import 'use_cases/cancel_prayer_intention_reminder_use_case.dart';
@@ -44,14 +45,14 @@ class PrayerIntentionsNotifier extends StateNotifier<PrayerIntentionsState> {
     required RespondIntentionUseCase respondIntention,
     required SchedulePrayerIntentionReminderUseCase scheduleReminder,
     required CancelPrayerIntentionReminderUseCase cancelReminder,
-  })  : _listIntentions = listIntentions,
-        _addIntention = addIntention,
-        _updateIntention = updateIntention,
-        _deleteIntention = deleteIntention,
-        _respondIntention = respondIntention,
-        _scheduleReminder = scheduleReminder,
-        _cancelReminder = cancelReminder,
-        super(const PrayerIntentionsState()) {
+  }) : _listIntentions = listIntentions,
+       _addIntention = addIntention,
+       _updateIntention = updateIntention,
+       _deleteIntention = deleteIntention,
+       _respondIntention = respondIntention,
+       _scheduleReminder = scheduleReminder,
+       _cancelReminder = cancelReminder,
+       super(const PrayerIntentionsState()) {
     loadData();
   }
 
@@ -76,7 +77,10 @@ class PrayerIntentionsNotifier extends StateNotifier<PrayerIntentionsState> {
     );
   }
 
-  Future<void> addIntention({required String title, String? description}) async {
+  Future<void> addIntention({
+    required String title,
+    String? description,
+  }) async {
     await _addIntention(title: title, description: description);
     await loadData();
   }
@@ -100,8 +104,20 @@ class PrayerIntentionsNotifier extends StateNotifier<PrayerIntentionsState> {
     await loadData();
   }
 
+  @Deprecated('Use setSchedule instead')
   Future<void> setReminder(String intentionId, String hhmm) async {
-    await _scheduleReminder(intentionId, hhmm);
+    final schedule = IntentionSchedule(
+      type: IntentionScheduleType.daily,
+      times: [hhmm],
+    );
+    await setSchedule(intentionId, schedule);
+  }
+
+  Future<void> setSchedule(
+    String intentionId,
+    IntentionSchedule schedule,
+  ) async {
+    await _scheduleReminder(intentionId, schedule);
     await loadData();
   }
 

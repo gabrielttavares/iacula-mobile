@@ -12,8 +12,11 @@ import 'package:iacula_app/features/notifications/domain/entities/short_interval
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
+import 'package:iacula_app/features/prayer_intentions/application/use_cases/schedule_intention_notifications_use_case.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
+import 'package:iacula_app/features/spiritual_data/domain/entities/spiritual_entry.dart';
+import 'package:iacula_app/features/spiritual_data/domain/repositories/spiritual_entry_repository.dart';
 
 final class _EmptyCustomPhraseRepository implements CustomPhraseRepository {
   @override
@@ -44,6 +47,24 @@ final class _FakeLiturgicalSeasonService implements LiturgicalSeasonService {
   }
 }
 
+class _EmptySpiritualEntryRepository implements SpiritualEntryRepository {
+  @override
+  SpiritualModule get module => SpiritualModule.prayerIntention;
+  @override
+  Future<List<SpiritualEntry>> listLocal({bool includeDeleted = false}) async =>
+      [];
+  @override
+  Future<List<SpiritualEntry>> listDirty() async => [];
+  @override
+  Future<void> saveLocal(SpiritualEntry entry) async {}
+  @override
+  Future<void> upsertMany(List<SpiritualEntry> entries) async {}
+  @override
+  Future<void> markDeleted(String id, {required DateTime deletedAt}) async {}
+  @override
+  Future<void> markClean(String id, {required DateTime syncedAt}) async {}
+}
+
 RebuildNotificationsUseCase _makeRebuild(
   InMemoryNotificationSchedulerRepository scheduler, {
   required Future<Quote> Function({
@@ -60,6 +81,10 @@ RebuildNotificationsUseCase _makeRebuild(
     schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
       scheduler,
       _EmptyCustomPhraseRepository(),
+    ),
+    scheduleIntentionNotifications: ScheduleIntentionNotificationsUseCase(
+      scheduler,
+      _EmptySpiritualEntryRepository(),
     ),
     quoteFetcher: quoteFetcher,
     batchFetcherForSettings: (_) => null,

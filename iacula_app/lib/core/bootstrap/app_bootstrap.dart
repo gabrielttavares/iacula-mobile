@@ -41,6 +41,7 @@ import '../../features/spiritual_data/domain/entities/spiritual_entry.dart';
 import '../../features/spiritual_data/infrastructure/repositories/isar_spiritual_entry_repositories.dart';
 import '../../features/spiritual_data/infrastructure/storage/spiritual_data_encryption_key_provider.dart';
 import '../../features/spiritual_data/infrastructure/storage/spiritual_data_isar_store.dart';
+import '../../features/prayer_intentions/application/use_cases/schedule_intention_notifications_use_case.dart';
 import '../../features/storage/domain/entities/media_asset.dart';
 import '../../features/storage/domain/repositories/media_catalog_repository.dart';
 import '../../features/storage/infrastructure/repositories/isar_media_catalog_repository.dart';
@@ -84,6 +85,7 @@ final class AppBootstrap {
       );
       final localPremiumRepo = IsarPremiumRepository(store: isarStore);
       final localCustomPhraseRepo = IsarCustomPhraseRepository(spiritualStore);
+      final prayerIntentionRepo = IsarPrayerIntentionSpiritualEntryRepository(spiritualStore);
       const devPremiumOverride =
           String.fromEnvironment('DEV_PREMIUM_OVERRIDE') == 'true';
       if (devPremiumOverride) {
@@ -182,6 +184,10 @@ final class AppBootstrap {
                     );
               final currentSeason =
                   await liturgicalSeasonService.getCurrentSeason();
+              final scheduleIntentionNotifications = ScheduleIntentionNotificationsUseCase(
+                scheduler,
+                prayerIntentionRepo,
+              );
               await RebuildNotificationsUseCase(
                 scheduler: scheduler,
                 notificationHistoryRepository: notificationHistoryRepo,
@@ -193,6 +199,7 @@ final class AppBootstrap {
                   scheduler,
                   localCustomPhraseRepo,
                 ),
+                scheduleIntentionNotifications: scheduleIntentionNotifications,
                 quoteFetcher: quoteFetcher,
                 batchFetcherForSettings: (settings) =>
                     settings.escrivaPointsFeedEnabled
