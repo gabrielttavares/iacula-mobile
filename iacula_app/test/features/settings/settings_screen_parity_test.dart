@@ -13,10 +13,13 @@ import 'package:iacula_app/features/notifications/application/use_cases/schedule
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
+import 'package:iacula_app/features/prayer_intentions/application/use_cases/schedule_intention_notifications_use_case.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
 import 'package:iacula_app/features/settings/presentation/settings_screen.dart';
+import 'package:iacula_app/features/spiritual_data/domain/entities/spiritual_entry.dart';
+import 'package:iacula_app/features/spiritual_data/domain/repositories/spiritual_entry_repository.dart';
 
 final class _FakeSettingsRepository implements SettingsRepository {
   _FakeSettingsRepository(this._value);
@@ -61,6 +64,24 @@ final class _FakeLiturgicalSeasonService implements LiturgicalSeasonService {
   }
 }
 
+final class _EmptySpiritualEntryRepository implements SpiritualEntryRepository {
+  @override
+  SpiritualModule get module => SpiritualModule.prayerIntention;
+  @override
+  Future<List<SpiritualEntry>> listLocal({bool includeDeleted = false}) async =>
+      [];
+  @override
+  Future<List<SpiritualEntry>> listDirty() async => [];
+  @override
+  Future<void> saveLocal(SpiritualEntry entry) async {}
+  @override
+  Future<void> upsertMany(List<SpiritualEntry> entries) async {}
+  @override
+  Future<void> markDeleted(String id, {required DateTime deletedAt}) async {}
+  @override
+  Future<void> markClean(String id, {required DateTime syncedAt}) async {}
+}
+
 RebuildNotificationsUseCase _makeNoopRebuildUseCase() {
   final scheduler = InMemoryNotificationSchedulerRepository();
   return RebuildNotificationsUseCase(
@@ -71,6 +92,10 @@ RebuildNotificationsUseCase _makeNoopRebuildUseCase() {
     schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
       scheduler,
       _EmptyCustomPhraseRepository(),
+    ),
+    scheduleIntentionNotifications: ScheduleIntentionNotificationsUseCase(
+      scheduler,
+      _EmptySpiritualEntryRepository(),
     ),
     quoteFetcher: ({required String language, required DateTime now}) async {
       return const Quote(

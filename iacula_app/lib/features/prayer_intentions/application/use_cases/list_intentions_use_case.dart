@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import '../../../spiritual_data/domain/repositories/spiritual_entry_repository.dart';
+import '../../domain/entities/intention_schedule.dart';
 import '../../domain/entities/prayer_intention.dart';
 
 final class ListIntentionsUseCase {
@@ -13,14 +14,14 @@ final class ListIntentionsUseCase {
   Future<List<PrayerIntention>> call({bool includeResponded = false}) async {
     final entries = await _repository.listLocal();
     final intentions = entries.map((e) {
-      final reminderTime = _parseReminderTime(e.scheduleJson);
+      final schedule = _parseSchedule(e.scheduleJson);
       return PrayerIntention(
         id: e.id,
         title: e.title ?? '',
         description: e.body.isNotEmpty ? e.body : null,
         createdAt: e.createdAt,
         respondedAt: e.respondedAt,
-        reminderTime: reminderTime,
+        schedule: schedule,
       );
     }).toList();
 
@@ -32,13 +33,25 @@ final class ListIntentionsUseCase {
     return intentions;
   }
 
-  static String? _parseReminderTime(String? scheduleJson) {
+  static IntentionSchedule? _parseSchedule(String? scheduleJson) {
     if (scheduleJson == null || scheduleJson.isEmpty) return null;
     try {
-      final map = jsonDecode(scheduleJson) as Map<String, dynamic>?;
-      final value = map?['reminderTime']?.toString();
-      if (value == null || value.isEmpty) return null;
-      return value;
+      final map = jsonDecode(scheduleJson) as Map<String, dynamic>;
+
+      // Handle legacy format: {"reminderTime": "09:00"}
+      if (map.containsKey('reminderTime') && !map.containsKey('type')) {
+        final reminderTime = map['reminderTime']?.toString();
+        if (reminderTime != null && reminderTime.isNotEmpty) {
+          return IntentionSchedule(
+            type: IntentionScheduleType.daily,
+            times: [reminderTime],
+          );
+        }
+        return null;
+      }
+
+      // Handle new schedule format
+      return IntentionSchedule.fromJson(map);
     } catch (_) {
       return null;
     }

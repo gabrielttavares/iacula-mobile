@@ -16,12 +16,15 @@ import 'package:iacula_app/features/notifications/domain/entities/short_interval
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_scheduler_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
+import 'package:iacula_app/features/prayer_intentions/application/use_cases/schedule_intention_notifications_use_case.dart';
 import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote_indices.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_content_repository.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_indices_repository.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
+import 'package:iacula_app/features/spiritual_data/domain/entities/spiritual_entry.dart';
+import 'package:iacula_app/features/spiritual_data/domain/repositories/spiritual_entry_repository.dart';
 
 final class _FakeNotificationSchedulerRepository
     implements NotificationSchedulerRepository {
@@ -179,6 +182,24 @@ final class _EmptyCustomPhraseRepository implements CustomPhraseRepository {
   Stream<List<CustomPhrase>> watchAll() => const Stream.empty();
 }
 
+final class _EmptySpiritualEntryRepository implements SpiritualEntryRepository {
+  @override
+  SpiritualModule get module => SpiritualModule.prayerIntention;
+  @override
+  Future<List<SpiritualEntry>> listLocal({bool includeDeleted = false}) async =>
+      [];
+  @override
+  Future<List<SpiritualEntry>> listDirty() async => [];
+  @override
+  Future<void> saveLocal(SpiritualEntry entry) async {}
+  @override
+  Future<void> upsertMany(List<SpiritualEntry> entries) async {}
+  @override
+  Future<void> markDeleted(String id, {required DateTime deletedAt}) async {}
+  @override
+  Future<void> markClean(String id, {required DateTime syncedAt}) async {}
+}
+
 void main() {
   test('saving settings cancels and rebuilds reminders', () async {
     final settings = Settings.defaults.copyWith(laudesEnabled: true);
@@ -193,6 +214,10 @@ void main() {
       schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
         schedulerRepo,
         _EmptyCustomPhraseRepository(),
+      ),
+      scheduleIntentionNotifications: ScheduleIntentionNotificationsUseCase(
+        schedulerRepo,
+        _EmptySpiritualEntryRepository(),
       ),
       quoteFetcher: ({required String language, required DateTime now}) async {
         return const Quote(

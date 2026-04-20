@@ -1,5 +1,7 @@
 // lib/features/prayer_intentions/domain/entities/prayer_intention.dart
 
+import 'intention_schedule.dart';
+
 final class PrayerIntention {
   const PrayerIntention({
     required this.id,
@@ -7,7 +9,7 @@ final class PrayerIntention {
     required this.createdAt,
     this.description,
     this.respondedAt,
-    this.reminderTime,
+    this.schedule,
   });
 
   final String id;
@@ -15,17 +17,22 @@ final class PrayerIntention {
   final String? description;
   final DateTime createdAt;
   final DateTime? respondedAt;
-  /// Daily reminder time in "HH:mm" format, e.g. "09:00".
-  final String? reminderTime;
+  final IntentionSchedule? schedule;
+
+  @Deprecated('Use schedule instead. Kept for migration.')
+  String? get reminderTime =>
+      schedule?.times.isNotEmpty == true ? schedule!.times.first : null;
 
   bool get isResponded => respondedAt != null;
+  bool get hasReminder => schedule != null && schedule!.times.isNotEmpty;
 
   PrayerIntention copyWith({
     String? title,
     String? description,
     DateTime? respondedAt,
-    String? reminderTime,
+    IntentionSchedule? schedule,
     bool clearRespondedAt = false,
+    bool clearSchedule = false,
   }) {
     return PrayerIntention(
       id: id,
@@ -33,7 +40,7 @@ final class PrayerIntention {
       description: description ?? this.description,
       createdAt: createdAt,
       respondedAt: clearRespondedAt ? null : (respondedAt ?? this.respondedAt),
-      reminderTime: reminderTime ?? this.reminderTime,
+      schedule: clearSchedule ? null : (schedule ?? this.schedule),
     );
   }
 }

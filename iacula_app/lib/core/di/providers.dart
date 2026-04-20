@@ -18,6 +18,7 @@ import '../../features/liturgical/infrastructure/repositories/in_memory_liturgic
 import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
 import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
+import '../../features/prayer_intentions/application/use_cases/schedule_intention_notifications_use_case.dart';
 import '../../features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import '../../features/notifications/domain/repositories/notification_history_repository.dart';
 import '../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
@@ -182,8 +183,9 @@ final notificationHistoryRepositoryProvider =
 
 final notificationHistoryEpochProvider = StateProvider<int>((ref) => 0);
 
-final tappedNotificationScheduledAtProvider =
-    StateProvider<DateTime?>((ref) => null);
+final tappedNotificationScheduledAtProvider = StateProvider<DateTime?>(
+  (ref) => null,
+);
 
 final notificationHistoryNowProvider = Provider<DateTime>(
   (ref) => DateTime.now(),
@@ -520,6 +522,14 @@ final cancelPrayerIntentionReminderUseCaseProvider =
       );
     });
 
+final scheduleIntentionNotificationsUseCaseProvider =
+    Provider<ScheduleIntentionNotificationsUseCase>((ref) {
+      return ScheduleIntentionNotificationsUseCase(
+        ref.watch(notificationSchedulerRepositoryProvider),
+        ref.watch(prayerIntentionEntryRepositoryProvider),
+      );
+    });
+
 final prayerIntentionsNotifierProvider =
     StateNotifierProvider<PrayerIntentionsNotifier, PrayerIntentionsState>((
       ref,
@@ -566,6 +576,9 @@ final rebuildNotificationsUseCaseProvider =
         ),
         schedulePhraseNotifications: ref.watch(
           schedulePhraseNotificationsUseCaseProvider,
+        ),
+        scheduleIntentionNotifications: ref.watch(
+          scheduleIntentionNotificationsUseCaseProvider,
         ),
         quoteFetcher:
             ({required String language, required DateTime now}) async {

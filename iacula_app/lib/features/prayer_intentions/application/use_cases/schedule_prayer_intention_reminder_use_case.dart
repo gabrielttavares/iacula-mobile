@@ -2,10 +2,11 @@
 
 import '../../../notifications/domain/entities/reminder_event.dart';
 import '../../../notifications/domain/repositories/notification_scheduler_repository.dart';
-import '../../../notifications/domain/services/next_occurrence_calculator.dart';
+import '../../domain/entities/intention_schedule.dart';
+import '../prayer_intention_notification_id.dart';
+import '../services/intention_next_occurrence_calculator.dart';
 import '../../../spiritual_data/domain/entities/spiritual_entry.dart';
 import '../../../spiritual_data/domain/repositories/spiritual_entry_repository.dart';
-import '../prayer_intention_notification_id.dart';
 
 final class SchedulePrayerIntentionReminderUseCase {
   const SchedulePrayerIntentionReminderUseCase(
@@ -16,7 +17,7 @@ final class SchedulePrayerIntentionReminderUseCase {
   final SpiritualEntryRepository _repository;
   final NotificationSchedulerRepository _scheduler;
 
-  Future<void> call(String intentionId, String hhmm) async {
+  Future<void> call(String intentionId, IntentionSchedule schedule) async {
     final entries = await _repository.listLocal(includeDeleted: true);
     SpiritualEntry? entry;
     for (final e in entries) {
@@ -27,28 +28,39 @@ final class SchedulePrayerIntentionReminderUseCase {
     }
     if (entry == null) return;
 
-    final scheduledAt = NextOccurrenceCalculator.forHourMinute(
-      now: DateTime.now(),
-      hhmm: hhmm,
+    final now = DateTime.now();
+    final occurrences = IntentionNextOccurrenceCalculator.nextOccurrences(
+      schedule: schedule,
+      now: now,
     );
-    final notificationId = prayerIntentionNotificationId(intentionId);
-    final event = ReminderEvent(
-      type: ReminderEventType.prayerIntentionReminder,
-      title: entry.title ?? 'Intenção de oração',
-      body: entry.body.isNotEmpty ? entry.body : 'Reze por esta intenção.',
-      scheduledAt: scheduledAt,
-      withVibration: true,
-      isAlarm: false,
-      repeatDaily: true,
-      routeTarget: NotificationRouteTarget.prayerIntention,
-      scheduledId: notificationId,
-      intentionId: intentionId,
-    );
-    await _scheduler.schedule(event);
 
-    final scheduleJson = '{"reminderTime":"$hhmm"}';
+    for (final (index, scheduledAt) in occurrences.indexed) {
+      final notificationId = _notificationIdForIndex(intentionId, index);
+      final event = ReminderEvent(
+        type: ReminderEventType.prayerIntentionReminder,
+        title: entry.title ?? 'Intenção de oração',
+        body: entry.body.isNotEmpty ? entry.body : 'Reze por esta intenção.',
+        scheduledAt: scheduledAt,
+        withVibration: true,
+        isAlarm: false,
+        repeatDaily: schedule.type == IntentionScheduleType.daily,
+        routeTarget: NotificationRouteTarget.prayerIntention,
+        scheduledId: notificationId,
+        intentionId: intentionId,
+      );
+      await _scheduler.scheduleWithId(notificationId, event);
+    }
+
     await _repository.saveLocal(
-      entry.copyWith(scheduleJson: scheduleJson, isDirty: true),
+      entry.copyWith(
+        scheduleJson: schedule.toJson().toString(),
+        isDirty: true,
+      ),
     );
+  }
+
+  static int _notificationIdForIndex(String intentionId, int index) {
+    final baseId = intentionId.hashCode.abs();
+    return 500000 + (baseId % 499000) + index;
   }
 }

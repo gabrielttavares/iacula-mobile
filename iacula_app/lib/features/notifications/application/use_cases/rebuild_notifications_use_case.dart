@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import '../../../home_widget/home_widget_service.dart';
+import '../../../prayer_intentions/application/use_cases/schedule_intention_notifications_use_case.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../../../settings/domain/entities/settings.dart';
 import '../../domain/entities/notification_rebuild_result.dart';
@@ -24,6 +25,7 @@ final class RebuildNotificationsUseCase {
     required LastDeliveredCardRepository lastDeliveredCardRepository,
     required ScheduleLiturgyRemindersUseCase scheduleLiturgyReminders,
     required SchedulePhraseNotificationsUseCase schedulePhraseNotifications,
+    required ScheduleIntentionNotificationsUseCase scheduleIntentionNotifications,
     required QuoteFetcher quoteFetcher,
     required QuoteBatchFetcherForSettings batchFetcherForSettings,
   }) : _scheduler = scheduler,
@@ -31,6 +33,7 @@ final class RebuildNotificationsUseCase {
        _lastDeliveredCardRepository = lastDeliveredCardRepository,
        _scheduleLiturgyReminders = scheduleLiturgyReminders,
        _schedulePhraseNotifications = schedulePhraseNotifications,
+       _scheduleIntentionNotifications = scheduleIntentionNotifications,
        _quoteFetcher = quoteFetcher,
        _batchFetcherForSettings = batchFetcherForSettings;
 
@@ -39,6 +42,7 @@ final class RebuildNotificationsUseCase {
   final LastDeliveredCardRepository _lastDeliveredCardRepository;
   final ScheduleLiturgyRemindersUseCase _scheduleLiturgyReminders;
   final SchedulePhraseNotificationsUseCase _schedulePhraseNotifications;
+  final ScheduleIntentionNotificationsUseCase _scheduleIntentionNotifications;
   final QuoteFetcher _quoteFetcher;
   final QuoteBatchFetcherForSettings _batchFetcherForSettings;
 
@@ -100,6 +104,7 @@ final class RebuildNotificationsUseCase {
       await Future.wait([
         _schedulePhraseNotifications.call(settings: settings),
         _scheduleLiturgyReminders.call(settings),
+        _scheduleIntentionNotifications.call(),
       ]);
       final pendingAfter = await scheduler.pendingNotificationIds();
       debugPrint(
