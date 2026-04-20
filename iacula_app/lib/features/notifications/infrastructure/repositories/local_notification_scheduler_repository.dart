@@ -25,6 +25,8 @@ final class LocalNotificationSchedulerRepository
 
   static const _smallIcon = 'ic_notification';
   static const reminderCategoryIdentifier = 'iacula_reminder';
+  static const _globalGroupKey = 'iacula_global';
+  static const _iosThreadIdentifier = 'iacula_global';
 
   final FlutterLocalNotificationsPlugin _plugin;
   final _controller = StreamController<NotificationActionEvent>.broadcast();
@@ -254,9 +256,10 @@ final class LocalNotificationSchedulerRepository
       playSound: true,
       visibility: NotificationVisibility.public,
       styleInformation: BigTextStyleInformation(event.body),
-      // Quote reminders must stay user-dismissible on Android.
       ongoing: false,
-      groupKey: _groupKeyForType(event.type),
+      groupKey: _globalGroupKey,
+      setAsGroupSummary: true,
+      groupAlertBehavior: GroupAlertBehavior.summary,
       actions: requiresInteraction ? androidReminderActions : null,
     );
   }
@@ -272,6 +275,7 @@ final class LocalNotificationSchedulerRepository
       categoryIdentifier: requiresInteraction
           ? reminderCategoryIdentifier
           : null,
+      threadIdentifier: _iosThreadIdentifier,
       interruptionLevel: requiresInteraction || event.isAlarm
           ? InterruptionLevel.timeSensitive
           : null,
@@ -445,6 +449,8 @@ final class LocalNotificationSchedulerRepository
 
   @override
   Future<void> showNow(int id, ReminderEvent event) async {
+    await _cancelActiveNotifications();
+
     final androidDetails = buildAndroidNotificationDetails(event);
 
     final iosDetails = buildDarwinNotificationDetails(event);
@@ -473,6 +479,40 @@ final class LocalNotificationSchedulerRepository
   @override
   Future<void> cancelByType(ReminderEventType type) {
     return _plugin.cancel(_idForType(type));
+  }
+
+  /// Cancels all active (already shown) notifications without affecting pending scheduled ones.
+  Future<void> _cancelActiveNotifications() async {
+    final androidImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (androidImpl != null) {
+      try {
+        final active = await androidImpl.getActiveNotifications();
+        for (final notification in active) {
+          if (notification.id != null) {
+            await _plugin.cancel(notification.id!);
+          }
+        }
+        debugPrint(
+          '[LocalNotificationScheduler] canceled ${active.length} active notifications',
+        );
+      } catch (e) {
+        debugPrint(
+          '[LocalNotificationScheduler] failed to cancel active notifications: $e',
+        );
+      }
+    }
+
+    final iosImpl = _plugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
+    if (iosImpl != null) {
+      await iosImpl.cancelAll();
+      debugPrint('[LocalNotificationScheduler] canceled iOS notifications');
+    }
   }
 
   @override
@@ -507,19 +547,6 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.oraMedia => 304,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
-    };
-  }
-
-  static String _groupKeyForType(ReminderEventType type) {
-    return switch (type) {
-      ReminderEventType.quoteInterval => 'iacula_quotes',
-      ReminderEventType.angelusNoon => 'iacula_angelus',
-      ReminderEventType.laudes ||
-      ReminderEventType.vespers ||
-      ReminderEventType.compline ||
-      ReminderEventType.oraMedia => 'iacula_liturgy',
-      ReminderEventType.customPhrase => 'iacula_phrases',
-      ReminderEventType.prayerIntentionReminder => 'iacula_intentions',
     };
   }
 
