@@ -186,7 +186,7 @@ void main() {
   );
 
   test(
-    'ignores due history from a different season when liturgical season is enabled',
+    'returns due history regardless of recorded liturgical season',
     () async {
       var fallbackCalls = 0;
       final useCase = GetCurrentWidgetQuoteUseCase(
@@ -214,12 +214,10 @@ void main() {
       final quote = await useCase.call(
         language: 'pt-br',
         now: DateTime(2026, 4, 24, 10, 1),
-        liturgicalSeasonEnabled: true,
-        currentSeason: LiturgicalSeason.easter,
       );
 
-      expect(quote.text, 'Easter fallback');
-      expect(fallbackCalls, 1);
+      expect(quote.text, 'Lent Quote');
+      expect(fallbackCalls, 0);
     },
   );
 
@@ -263,7 +261,7 @@ void main() {
   );
 
   test(
-    'when liturgical season changes, last card remains until interval expires',
+    'returns same-day last card regardless of recorded liturgical season',
     () async {
       var fallbackCalls = 0;
       final lastCardRepository = _FakeLastDeliveredCardRepository(
@@ -293,9 +291,6 @@ void main() {
       final firstQuote = await useCase.call(
         language: 'pt-br',
         now: DateTime(2026, 4, 24, 10, 1),
-        liturgicalSeasonEnabled: true,
-        currentSeason: LiturgicalSeason.easter,
-        intervalMinutes: 15,
       );
 
       expect(firstQuote.text, 'Ordinary old');
@@ -304,9 +299,6 @@ void main() {
       final secondQuote = await useCase.call(
         language: 'pt-br',
         now: DateTime(2026, 4, 24, 10, 2),
-        liturgicalSeasonEnabled: true,
-        currentSeason: LiturgicalSeason.easter,
-        intervalMinutes: 15,
       );
 
       expect(secondQuote.text, 'Ordinary old');
@@ -315,13 +307,10 @@ void main() {
       final thirdQuote = await useCase.call(
         language: 'pt-br',
         now: DateTime(2026, 4, 24, 10, 16),
-        liturgicalSeasonEnabled: true,
-        currentSeason: LiturgicalSeason.easter,
-        intervalMinutes: 15,
       );
 
-      expect(thirdQuote.text, 'Easter fallback');
-      expect(fallbackCalls, 1);
+      expect(thirdQuote.text, 'Ordinary old');
+      expect(fallbackCalls, 0);
     },
   );
 }

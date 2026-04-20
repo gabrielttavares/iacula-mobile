@@ -371,7 +371,6 @@ final getNextQuoteUseCaseProvider = Provider<GetNextQuoteUseCase>((ref) {
   return GetNextQuoteUseCase(
     contentRepository: ref.watch(quoteContentRepositoryProvider),
     indicesRepository: ref.watch(quoteIndicesRepositoryProvider),
-    liturgicalSeasonService: ref.watch(liturgicalSeasonServiceProvider),
   );
 });
 
@@ -596,11 +595,7 @@ final rebuildNotificationsUseCaseProvider =
               }
               return ref
                   .read(getNextQuoteUseCaseProvider)
-                  .call(
-                    language: language,
-                    now: now,
-                    liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-                  );
+                  .call(language: language, now: now);
             },
         batchFetcherForSettings: (settings) {
           if (settings.escrivaPointsFeedEnabled) return null;
@@ -617,7 +612,6 @@ final rebuildNotificationsUseCaseProvider =
                   count: count,
                   startTime: startTime,
                   intervalMinutes: intervalMinutes,
-                  liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
                 );
           };
         },

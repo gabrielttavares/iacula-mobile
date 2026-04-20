@@ -590,20 +590,12 @@ void main() {
         lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
       );
 
-      // The liturgical season toggle is OFF, but it IS Easter.
-      // isEasterSeason must always reflect the real season for the Angelus,
-      // regardless of the toggle (which only controls quote theming).
-      const liturgicalSeasonEnabled = false;
+      // isEasterSeason must always reflect the real season for the Angelus.
       const actualSeason = LiturgicalSeason.easter;
-      // Fixed: always use the real season for isEasterSeason
       final isEasterSeason = actualSeason == LiturgicalSeason.easter;
 
       await useCase(
-        Settings.defaults.copyWith(
-          intervalMinutes: 30,
-          angelusEnabled: true,
-          liturgicalSeasonEnabled: liturgicalSeasonEnabled,
-        ),
+        Settings.defaults.copyWith(intervalMinutes: 30, angelusEnabled: true),
         now: DateTime(2026, 4, 10, 8),
         isEasterSeason: isEasterSeason,
         showImmediate: false,
@@ -644,7 +636,6 @@ void main() {
         Settings.defaults.copyWith(
           intervalMinutes: 30,
           angelusEnabled: true,
-          liturgicalSeasonEnabled: false,
           escrivaPointsFeedEnabled: true,
         ),
         now: DateTime(2026, 4, 10, 8),

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -57,13 +56,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final settingsAsync = ref.watch(_heroSettingsProvider);
-    final liturgicalSeasonEnabled =
-        settingsAsync.valueOrNull?.liturgicalSeasonEnabled ?? false;
-    final isFallback =
-        !liturgicalSeasonEnabled ||
-        (ref.watch(_liturgicalFallbackProvider).valueOrNull ?? false);
-
     final authUser = ref.watch(authStateProvider).valueOrNull;
     final localName = ref.watch(localDisplayNameProvider).valueOrNull;
     final greeting = homeLargeTitleGreeting(
@@ -100,9 +92,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onPressed: () {
                     HapticFeedback.lightImpact();
                     Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) => const SearchScreen(),
-                      ),
+                      CupertinoPageRoute(builder: (_) => const SearchScreen()),
                     );
                   },
                   child: Icon(
@@ -132,9 +122,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     IaculaStaggerEntrance(
                       children: [
                         _PermissionBanner(),
-                        _HomeHeroSection(
-                          isFallback: isFallback,
-                        ),
+                        const _HomeHeroSection(),
                         const SizedBox(height: IaculaSpacing.lg),
                         _HomeShortcutsRail(
                           onOpenConfession: () {
@@ -232,9 +220,7 @@ class _HomeShortcutsRail extends StatelessWidget {
 }
 
 class _HomeHeroSection extends ConsumerWidget {
-  const _HomeHeroSection({required this.isFallback});
-
-  final bool isFallback;
+  const _HomeHeroSection();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -261,10 +247,7 @@ class _HomeHeroSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         quoteAsync.when(
-          data: (quote) => HomeHeroCard(
-            quote: quote,
-            isFallback: isFallback,
-          ),
+          data: (quote) => HomeHeroCard(quote: quote),
           loading: () => const SizedBox(
             height: 240,
             child: IaculaShimmerCard(height: 240),
@@ -452,26 +435,6 @@ final _heroSettingsProvider = FutureProvider((ref) {
 
 final homeNowProvider = Provider<DateTime>((ref) => DateTime.now());
 
-final _liturgicalFallbackProvider = FutureProvider<bool>((ref) async {
-  final service = ref.watch(liturgicalSeasonServiceProvider);
-  final context = await service.getCurrentContext();
-  final isFallback = context.isFallback;
-  debugPrint(
-    '[HomeScreen] Liturgical fallback provider resolved: isFallback=$isFallback',
-  );
-  developer.log(
-    'Liturgical fallback provider resolved: isFallback=$isFallback',
-    name: 'HomeScreen',
-  );
-  if (isFallback) {
-    developer.log(
-      'Liturgical context is fallback; hero will show "Tempo liturgico indisponivel".',
-      name: 'HomeScreen',
-    );
-  }
-  return isFallback;
-});
-
 final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final now = ref.watch(homeNowProvider);
   final tappedAt = ref.read(tappedNotificationScheduledAtProvider);
@@ -540,13 +503,6 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final history = await ref
       .watch(notificationHistoryRepositoryProvider)
       .listForDay(now);
-  LiturgicalSeason? currentSeason;
-  if (settings.liturgicalSeasonEnabled) {
-    final context = await ref
-        .watch(liturgicalSeasonServiceProvider)
-        .getCurrentContext(date: now);
-    currentSeason = context.season;
-  }
   final dueEntries = history.where((entry) => !entry.deliveredAt.isAfter(now));
   NotificationHistoryEntry? latestDueEntry;
   for (final entry in dueEntries) {
@@ -559,8 +515,6 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     final quote = _quoteFromHistoryEntry(latestDueEntry, now);
     if (_matchesHomeQuoteSeason(
       quote: quote,
-      liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-      currentSeason: currentSeason,
       escrivaPointsFeedEnabled: settings.escrivaPointsFeedEnabled,
     )) {
       return quote;
@@ -572,8 +526,6 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     final quote = lastCard.toQuote();
     if (_matchesHomeQuoteSeason(
       quote: quote,
-      liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-      currentSeason: currentSeason,
       escrivaPointsFeedEnabled: settings.escrivaPointsFeedEnabled,
     )) {
       return quote;
@@ -585,19 +537,15 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   // or bootstrap hasn't completed yet), which is rare.
   final Quote fallback = settings.escrivaPointsFeedEnabled
       ? await ref
-          .watch(getNextEscrivaPointsQuoteUseCaseProvider)
-          .call(
-            language: settings.language,
-            now: now,
-            cadenceMinutes: settings.intervalMinutes,
-          )
+            .watch(getNextEscrivaPointsQuoteUseCaseProvider)
+            .call(
+              language: settings.language,
+              now: now,
+              cadenceMinutes: settings.intervalMinutes,
+            )
       : await ref
-          .watch(getNextQuoteUseCaseProvider)
-          .call(
-            language: settings.language,
-            now: now,
-            liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-          );
+            .watch(getNextQuoteUseCaseProvider)
+            .call(language: settings.language, now: now);
 
   await ref
       .read(lastDeliveredCardRepositoryProvider)
@@ -611,14 +559,10 @@ bool _isSameDay(DateTime a, DateTime b) =>
 
 bool _matchesHomeQuoteSeason({
   required Quote quote,
-  required bool liturgicalSeasonEnabled,
-  required LiturgicalSeason? currentSeason,
   required bool escrivaPointsFeedEnabled,
 }) {
   final isEscrivaQuote = quote.resolvedSource == QuoteSource.escrivaPoints;
-  if (escrivaPointsFeedEnabled != isEscrivaQuote) return false;
-  if (!liturgicalSeasonEnabled) return true;
-  return quote.season == currentSeason;
+  return escrivaPointsFeedEnabled == isEscrivaQuote;
 }
 
 Quote _quoteFromHistoryEntry(NotificationHistoryEntry entry, DateTime now) {

@@ -114,7 +114,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
               if (catalogEntry != null) {
                 nav.push(
                   CupertinoPageRoute(
-                    builder: (_) => PrayerCatalogDetailScreen(entry: catalogEntry),
+                    builder: (_) =>
+                        PrayerCatalogDetailScreen(entry: catalogEntry),
                   ),
                 );
                 return;
@@ -315,29 +316,11 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
                 }
                 return ref
                     .read(getNextQuoteUseCaseProvider)
-                    .call(
-                      language: language,
-                      now: now,
-                      liturgicalSeasonEnabled:
-                          settings.liturgicalSeasonEnabled,
-                    );
+                    .call(language: language, now: now);
               },
         );
-        LiturgicalSeason? currentSeason;
-        if (settings.liturgicalSeasonEnabled) {
-          final context = await ref
-              .read(liturgicalSeasonServiceProvider)
-              .getCurrentContext(date: now);
-          currentSeason = context.season;
-        }
 
-        return selector.call(
-          language: settings.language,
-          now: now,
-          liturgicalSeasonEnabled: settings.liturgicalSeasonEnabled,
-          currentSeason: currentSeason,
-          intervalMinutes: settings.intervalMinutes,
-        );
+        return selector.call(language: settings.language, now: now);
       },
       updateWidgetIfChanged: HomeWidgetService.instance.updateWidgetIfChanged,
       saveIntervalMinutes: HomeWidgetService.instance.saveIntervalMinutes,

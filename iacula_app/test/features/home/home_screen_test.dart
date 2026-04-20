@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/home/presentation/home_screen.dart';
-import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
-import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_history_entry.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
@@ -73,22 +71,6 @@ final class _FakeNotificationHistoryRepository
             .toList(growable: false)
           ..sort((a, b) => b.deliveredAt.compareTo(a.deliveredAt));
     return dayEntries;
-  }
-}
-
-final class _FakeLiturgicalSeasonService implements LiturgicalSeasonService {
-  _FakeLiturgicalSeasonService(this.context);
-
-  final LiturgicalContext context;
-
-  @override
-  Future<LiturgicalSeason> getCurrentSeason({DateTime? date}) async {
-    return context.season;
-  }
-
-  @override
-  Future<LiturgicalContext> getCurrentContext({DateTime? date}) async {
-    return context;
   }
 }
 
@@ -254,36 +236,37 @@ void main() {
     expect(find.text('Stale card'), findsNothing);
   });
 
-  testWidgets('home hero prefers timeline quote even when Escriva feed is enabled', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _buildApp(
-        now: DateTime(2026, 2, 21, 22, 18),
-        settings: Settings.defaults.copyWith(escrivaPointsFeedEnabled: true),
-        lastCard: LastDeliveredCard(
-          quoteText: 'Stale card',
-          theme: 'Conversao',
-          season: 'ordinary',
-          deliveredAt: DateTime(2026, 2, 21, 20, 0),
-        ),
-        history: [
-          NotificationHistoryEntry(
-            quoteText: 'HISTORY_SENTINEL_2214',
+  testWidgets(
+    'home hero prefers timeline quote even when Escriva feed is enabled',
+    (tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          now: DateTime(2026, 2, 21, 22, 18),
+          settings: Settings.defaults.copyWith(escrivaPointsFeedEnabled: true),
+          lastCard: LastDeliveredCard(
+            quoteText: 'Stale card',
             theme: 'Conversao',
             season: 'ordinary',
-            deliveredAt: DateTime(2026, 2, 21, 22, 14),
-            source: QuoteSource.escrivaPoints.name,
+            deliveredAt: DateTime(2026, 2, 21, 20, 0),
           ),
-        ],
-      ),
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+          history: [
+            NotificationHistoryEntry(
+              quoteText: 'HISTORY_SENTINEL_2214',
+              theme: 'Conversao',
+              season: 'ordinary',
+              deliveredAt: DateTime(2026, 2, 21, 22, 14),
+              source: QuoteSource.escrivaPoints.name,
+            ),
+          ],
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('HISTORY_SENTINEL_2214'), findsOneWidget);
-    expect(find.text('Stale card'), findsNothing);
-  });
+      expect(find.text('HISTORY_SENTINEL_2214'), findsOneWidget);
+      expect(find.text('Stale card'), findsNothing);
+    },
+  );
 
   testWidgets(
     'home hero shows tapped notification quote when multiple are due',
@@ -392,7 +375,9 @@ void main() {
     expect(find.text('Quote 10:15'), findsOneWidget);
   });
 
-  testWidgets('home hero refresh timer uses a fresh now snapshot', (tester) async {
+  testWidgets('home hero refresh timer uses a fresh now snapshot', (
+    tester,
+  ) async {
     var currentNow = DateTime(2026, 2, 21, 10, 14);
 
     await tester.pumpWidget(
@@ -418,9 +403,7 @@ void main() {
             deliveredAt: DateTime(2026, 2, 21, 10, 15),
           ),
         ],
-        overrides: [
-          homeNowProvider.overrideWith((ref) => currentNow),
-        ],
+        overrides: [homeNowProvider.overrideWith((ref) => currentNow)],
       ),
     );
     await tester.pumpAndSettle();
@@ -437,12 +420,11 @@ void main() {
   });
 
   testWidgets(
-    'home hero ignores stale ordinary history/last card when liturgical season is enabled',
+    'home hero does not filter history or last card by liturgical season',
     (tester) async {
       await tester.pumpWidget(
         _buildApp(
           now: DateTime(2026, 2, 21, 10, 14),
-          settings: Settings.defaults.copyWith(liturgicalSeasonEnabled: true),
           lastCard: LastDeliveredCard(
             quoteText: 'Stale ordinary last card',
             theme: 'Conversao',
@@ -458,19 +440,8 @@ void main() {
             ),
           ],
           overrides: [
-            liturgicalSeasonServiceProvider.overrideWithValue(
-              _FakeLiturgicalSeasonService(
-                const LiturgicalContext(
-                  season: LiturgicalSeason.lent,
-                  rank: LiturgicalRank.weekday,
-                  apiQuotes: [],
-                ),
-              ),
-            ),
             quoteContentRepositoryProvider.overrideWithValue(
-              _FakeQuoteContentRepository(
-                quoteText: 'Fresh seasonal quote',
-              ),
+              _FakeQuoteContentRepository(quoteText: 'Fresh ordinary quote'),
             ),
             quoteIndicesRepositoryProvider.overrideWithValue(
               const _FakeQuoteIndicesRepository(),
@@ -480,7 +451,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Stale ordinary history'), findsNothing);
+      expect(find.text('Stale ordinary history'), findsOneWidget);
       expect(find.text('Stale ordinary last card'), findsNothing);
     },
   );

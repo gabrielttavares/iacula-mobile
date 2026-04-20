@@ -21,8 +21,6 @@ import '../../features/liturgical/infrastructure/services/remote_liturgical_seas
 import '../../features/leituras/data/repositories/leitura_repository.dart';
 import '../../features/leituras/data/sources/leitura_local_source.dart';
 import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
-import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart'
-    show QuoteFetcher;
 import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
@@ -33,6 +31,7 @@ import '../../features/premium/domain/repositories/premium_repository.dart';
 import '../../features/premium/infrastructure/always_unlocked_premium_repository.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
+import '../../features/quotes/domain/entities/quote.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_quote_indices_repository.dart';
 import '../../features/reading/infrastructure/repositories/isar_reading_annotation_repository.dart';
@@ -85,7 +84,9 @@ final class AppBootstrap {
       );
       final localPremiumRepo = IsarPremiumRepository(store: isarStore);
       final localCustomPhraseRepo = IsarCustomPhraseRepository(spiritualStore);
-      final prayerIntentionRepo = IsarPrayerIntentionSpiritualEntryRepository(spiritualStore);
+      final prayerIntentionRepo = IsarPrayerIntentionSpiritualEntryRepository(
+        spiritualStore,
+      );
       const devPremiumOverride =
           String.fromEnvironment('DEV_PREMIUM_OVERRIDE') == 'true';
       if (devPremiumOverride) {
@@ -117,7 +118,6 @@ final class AppBootstrap {
       final quoteUseCase = GetNextQuoteUseCase(
         contentRepository: const AssetQuoteContentRepository(),
         indicesRepository: indicesRepo,
-        liturgicalSeasonService: liturgicalSeasonService,
       );
       final escrivaPointsUseCase = GetNextEscrivaPointsQuoteUseCase(
         LeituraRepository(localSource: LeituraLocalSource()),
@@ -136,21 +136,19 @@ final class AppBootstrap {
         debugPrint('[Bootstrap] Notification init failed: $e');
         permissionGranted = false;
       }
-      final QuoteFetcher quoteFetcher =
-          ({required String language, required DateTime now}) {
-            if (currentSettings.escrivaPointsFeedEnabled) {
-              return escrivaPointsUseCase.call(
-                language: language,
-                now: now,
-                cadenceMinutes: currentSettings.intervalMinutes,
-              );
-            }
-            return quoteUseCase.call(
-              language: language,
-              now: now,
-              liturgicalSeasonEnabled: currentSettings.liturgicalSeasonEnabled,
-            );
-          };
+      Future<Quote> quoteFetcher({
+        required String language,
+        required DateTime now,
+      }) {
+        if (currentSettings.escrivaPointsFeedEnabled) {
+          return escrivaPointsUseCase.call(
+            language: language,
+            now: now,
+            cadenceMinutes: currentSettings.intervalMinutes,
+          );
+        }
+        return quoteUseCase.call(language: language, now: now);
+      }
 
       if (currentSettings.onboardingCompleted &&
           !currentSettings.notificationsEnabled) {
@@ -168,26 +166,26 @@ final class AppBootstrap {
             try {
               final bootstrapNow = DateTime.now();
               final lastCard = await lastDeliveredCardRepo.load();
-              final recentlyDelivered = lastCard != null &&
+              final recentlyDelivered =
+                  lastCard != null &&
                   lastCard.deliveredAt.year == bootstrapNow.year &&
                   lastCard.deliveredAt.month == bootstrapNow.month &&
                   lastCard.deliveredAt.day == bootstrapNow.day &&
-                  bootstrapNow
-                          .difference(lastCard.deliveredAt)
-                          .inMinutes <
+                  bootstrapNow.difference(lastCard.deliveredAt).inMinutes <
                       currentSettings.intervalMinutes;
               final immediateQuote = recentlyDelivered
-                  ? lastCard!.toQuote()
+                  ? lastCard.toQuote()
                   : await quoteFetcher(
                       language: currentSettings.language,
                       now: bootstrapNow,
                     );
-              final currentSeason =
-                  await liturgicalSeasonService.getCurrentSeason();
-              final scheduleIntentionNotifications = ScheduleIntentionNotificationsUseCase(
-                scheduler,
-                prayerIntentionRepo,
-              );
+              final currentSeason = await liturgicalSeasonService
+                  .getCurrentSeason();
+              final scheduleIntentionNotifications =
+                  ScheduleIntentionNotificationsUseCase(
+                    scheduler,
+                    prayerIntentionRepo,
+                  );
               await RebuildNotificationsUseCase(
                 scheduler: scheduler,
                 notificationHistoryRepository: notificationHistoryRepo,
@@ -214,8 +212,6 @@ final class AppBootstrap {
                         count: count,
                         startTime: startTime,
                         intervalMinutes: intervalMinutes,
-                        liturgicalSeasonEnabled:
-                            settings.liturgicalSeasonEnabled,
                       ),
               ).call(
                 currentSettings,

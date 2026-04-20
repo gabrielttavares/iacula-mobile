@@ -1,6 +1,4 @@
 import '../../../liturgical/domain/liturgical_context.dart';
-import '../../../liturgical/domain/services/liturgical_season_service.dart';
-import '../../domain/entities/day_quotes.dart';
 import '../../domain/entities/quote.dart';
 import '../../domain/entities/quote_indices.dart';
 import '../../domain/repositories/quote_content_repository.dart';
@@ -11,14 +9,11 @@ final class GetNextQuoteUseCase {
   const GetNextQuoteUseCase({
     required QuoteContentRepository contentRepository,
     required QuoteIndicesRepository indicesRepository,
-    required LiturgicalSeasonService liturgicalSeasonService,
-  })  : _contentRepository = contentRepository,
-        _indicesRepository = indicesRepository,
-        _liturgicalSeasonService = liturgicalSeasonService;
+  }) : _contentRepository = contentRepository,
+       _indicesRepository = indicesRepository;
 
   final QuoteContentRepository _contentRepository;
   final QuoteIndicesRepository _indicesRepository;
-  final LiturgicalSeasonService _liturgicalSeasonService;
 
   /// Fetches [count] quotes in sequence, loading indices once and saving once
   /// at the end. Much more efficient than calling [call] in a loop.
@@ -27,16 +22,13 @@ final class GetNextQuoteUseCase {
     required int count,
     required DateTime startTime,
     required int intervalMinutes,
-    bool liturgicalSeasonEnabled = false,
   }) async {
     if (count <= 0) return const [];
 
     final quotes = <Quote>[];
     final firstDate = startTime;
     final startDayOfWeek = _dayOfWeek1to7(firstDate);
-    final context = liturgicalSeasonEnabled
-        ? await _liturgicalSeasonService.getCurrentContext(date: firstDate)
-        : LiturgicalContext.ordinaryFallback;
+    const context = LiturgicalContext.ordinaryFallback;
 
     final seasonalCollection = await _contentRepository.loadQuotes(
       language: language,
@@ -59,29 +51,39 @@ final class GetNextQuoteUseCase {
     var indices = await _indicesRepository.load(dayOfWeek: startDayOfWeek);
 
     for (var i = 0; i < count; i++) {
-      final quoteAt = startTime.add(Duration(minutes: intervalMinutes * (i + 1)));
+      final quoteAt = startTime.add(
+        Duration(minutes: intervalMinutes * (i + 1)),
+      );
       final qDayOfWeek = _dayOfWeek1to7(quoteAt);
       final dayData = quotePool[qDayOfWeek.toString()];
       final seasonalImages = await imagesForDay(qDayOfWeek);
 
       if (dayData == null || dayData.quotes.isEmpty) {
-        quotes.add(Quote(
-          text: 'Conteudo indisponivel para hoje.',
-          dayOfWeek: qDayOfWeek,
-          theme: dayData?.theme ?? 'Sem tema',
-          season: context.season,
-        ));
+        quotes.add(
+          Quote(
+            text: 'Conteudo indisponivel para hoje.',
+            dayOfWeek: qDayOfWeek,
+            theme: dayData?.theme ?? 'Sem tema',
+            season: context.season,
+          ),
+        );
         continue;
       }
 
       final currentQuoteIndex = indices.quoteIndices[qDayOfWeek] ?? 0;
-      final quoteStep = QuoteSelector.getNextIndex(dayData.quotes.length, currentQuoteIndex);
+      final quoteStep = QuoteSelector.getNextIndex(
+        dayData.quotes.length,
+        currentQuoteIndex,
+      );
 
       final currentImageIndex = indices.imageIndices[qDayOfWeek] ?? 0;
       String? imagePath;
       var nextImageIndex = 0;
       if (seasonalImages.isNotEmpty) {
-        final imageStep = QuoteSelector.getNextIndex(seasonalImages.length, currentImageIndex);
+        final imageStep = QuoteSelector.getNextIndex(
+          seasonalImages.length,
+          currentImageIndex,
+        );
         imagePath = seasonalImages[imageStep.currentIndex];
         nextImageIndex = imageStep.nextIndex;
       }
@@ -98,7 +100,10 @@ final class GetNextQuoteUseCase {
       // Prevent consecutive repeats
       if (selectedText != null && selectedText == indices.lastQuote) {
         // Advance index again to skip the repeat
-        final nextStep = QuoteSelector.getNextIndex(dayData.quotes.length, selectedIndex);
+        final nextStep = QuoteSelector.getNextIndex(
+          dayData.quotes.length,
+          selectedIndex,
+        );
         selectedText = QuoteSelector.selectQuote(
           collection: quotePool,
           dayOfWeek: qDayOfWeek,
@@ -107,9 +112,7 @@ final class GetNextQuoteUseCase {
         selectedIndex = nextStep.nextIndex;
       }
 
-      if (selectedText == null) {
-        selectedText = dayData.quotes.first;
-      }
+      selectedText ??= dayData.quotes.first;
 
       indices = QuoteIndices(
         quoteIndices: {...indices.quoteIndices, qDayOfWeek: selectedIndex},
@@ -118,29 +121,25 @@ final class GetNextQuoteUseCase {
         lastQuote: selectedText,
       );
 
-      quotes.add(Quote(
-        text: selectedText,
-        dayOfWeek: qDayOfWeek,
-        theme: dayData.theme,
-        season: context.season,
-        imagePath: imagePath,
-      ));
+      quotes.add(
+        Quote(
+          text: selectedText,
+          dayOfWeek: qDayOfWeek,
+          theme: dayData.theme,
+          season: context.season,
+          imagePath: imagePath,
+        ),
+      );
     }
 
     await _indicesRepository.save(indices);
     return quotes;
   }
 
-  Future<Quote> call({
-    required String language,
-    DateTime? now,
-    bool liturgicalSeasonEnabled = false,
-  }) async {
+  Future<Quote> call({required String language, DateTime? now}) async {
     final date = now ?? DateTime.now();
     final dayOfWeek = _dayOfWeek1to7(date);
-    final context = liturgicalSeasonEnabled
-        ? await _liturgicalSeasonService.getCurrentContext(date: date)
-        : LiturgicalContext.ordinaryFallback;
+    const context = LiturgicalContext.ordinaryFallback;
 
     final seasonalCollection = await _contentRepository.loadQuotes(
       language: language,
@@ -150,22 +149,6 @@ final class GetNextQuoteUseCase {
     final seasonalDay = seasonalCollection[dayOfWeek.toString()];
     final seasonalQuotes = seasonalDay?.quotes ?? const <String>[];
 
-    // TODO: re-enable feast quotes
-    // final feastQuotes = context.feast == null
-    //     ? const <String>[]
-    //     : await _contentRepository.loadFeastQuotes(context.feast!);
-    // final mergedFeastQuotes = _mergeDedup(feastQuotes, context.apiQuotes);
-    // final useFeastPool = mergedFeastQuotes.isNotEmpty;
-    // final quotePool = useFeastPool
-    //     ? {
-    //         dayOfWeek.toString(): DayQuotes(
-    //           day: seasonalDay?.day ?? 'Dia',
-    //           theme: context.feastName ?? seasonalDay?.theme ?? 'Festa',
-    //           quotes: mergedFeastQuotes,
-    //         ),
-    //       }
-    //     : seasonalCollection;
-    const useFeastPool = false;
     final quotePool = seasonalCollection;
 
     final dayData = quotePool[dayOfWeek.toString()];
@@ -180,18 +163,27 @@ final class GetNextQuoteUseCase {
 
     final indices = await _indicesRepository.load(dayOfWeek: dayOfWeek);
     final currentQuoteIndex = indices.quoteIndices[dayOfWeek] ?? 0;
-    final quoteStep = QuoteSelector.getNextIndex(dayData.quotes.length, currentQuoteIndex);
+    final quoteStep = QuoteSelector.getNextIndex(
+      dayData.quotes.length,
+      currentQuoteIndex,
+    );
 
     // TODO: re-enable feast images
     // final feastImagePath = context.feast == null ? null : await _contentRepository.getFeastImagePath(context.feast!);
-    final seasonalImages = await _contentRepository.listDayImages(dayOfWeek: dayOfWeek, season: context.season);
+    final seasonalImages = await _contentRepository.listDayImages(
+      dayOfWeek: dayOfWeek,
+      season: context.season,
+    );
     final currentImageIndex = indices.imageIndices[dayOfWeek] ?? 0;
 
     String? imagePath;
     var nextImageIndex = 0;
 
     if (seasonalImages.isNotEmpty) {
-      final imageStep = QuoteSelector.getNextIndex(seasonalImages.length, currentImageIndex);
+      final imageStep = QuoteSelector.getNextIndex(
+        seasonalImages.length,
+        currentImageIndex,
+      );
       imagePath = seasonalImages[imageStep.currentIndex];
       nextImageIndex = imageStep.nextIndex;
     }
@@ -208,7 +200,10 @@ final class GetNextQuoteUseCase {
     // Prevent consecutive repeats
     if (selectedText != null && selectedText == indices.lastQuote) {
       // Advance index again to skip the repeat
-      final nextStep = QuoteSelector.getNextIndex(dayData.quotes.length, selectedIndex);
+      final nextStep = QuoteSelector.getNextIndex(
+        dayData.quotes.length,
+        selectedIndex,
+      );
       selectedText = QuoteSelector.selectQuote(
         collection: quotePool,
         dayOfWeek: dayOfWeek,
@@ -217,20 +212,14 @@ final class GetNextQuoteUseCase {
       selectedIndex = nextStep.nextIndex;
     }
 
-    if (selectedText == null) {
-      selectedText = seasonalQuotes.isNotEmpty ? seasonalQuotes.first : 'Conteudo indisponivel para hoje.';
-    }
+    selectedText ??= seasonalQuotes.isNotEmpty
+        ? seasonalQuotes.first
+        : 'Conteudo indisponivel para hoje.';
 
     await _indicesRepository.save(
       QuoteIndices(
-        quoteIndices: {
-          ...indices.quoteIndices,
-          dayOfWeek: selectedIndex,
-        },
-        imageIndices: {
-          ...indices.imageIndices,
-          dayOfWeek: nextImageIndex,
-        },
+        quoteIndices: {...indices.quoteIndices, dayOfWeek: selectedIndex},
+        imageIndices: {...indices.imageIndices, dayOfWeek: nextImageIndex},
         lastDay: dayOfWeek,
         lastQuote: selectedText,
       ),
@@ -242,8 +231,6 @@ final class GetNextQuoteUseCase {
       theme: dayData.theme,
       season: context.season,
       imagePath: imagePath,
-      feast: useFeastPool ? context.feast : null,
-      feastName: useFeastPool ? context.feastName : null,
     );
   }
 
@@ -251,42 +238,5 @@ final class GetNextQuoteUseCase {
     // DateTime.weekday: Monday=1 ... Sunday=7
     // Iacula convention: Sunday=1 ... Saturday=7
     return (date.weekday % 7) + 1;
-  }
-
-  List<String> _mergeDedup(List<String> curated, List<String> apiQuotes) {
-    final merged = <String>[...curated, ...apiQuotes];
-    final deduped = <String>[];
-    final seen = <String>{};
-
-    for (final quote in merged) {
-      final normalized = _normalizeForDedup(quote);
-      if (normalized.isEmpty || seen.contains(normalized)) {
-        continue;
-      }
-      seen.add(normalized);
-      deduped.add(quote);
-    }
-
-    return deduped;
-  }
-
-  String _normalizeForDedup(String value) {
-    return value
-        .toLowerCase()
-        .replaceAll('á', 'a')
-        .replaceAll('à', 'a')
-        .replaceAll('â', 'a')
-        .replaceAll('ã', 'a')
-        .replaceAll('é', 'e')
-        .replaceAll('ê', 'e')
-        .replaceAll('í', 'i')
-        .replaceAll('ó', 'o')
-        .replaceAll('ô', 'o')
-        .replaceAll('õ', 'o')
-        .replaceAll('ú', 'u')
-        .replaceAll('ç', 'c')
-        .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .trim();
   }
 }
