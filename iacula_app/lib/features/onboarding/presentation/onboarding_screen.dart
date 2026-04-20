@@ -1,6 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart'
-    show Colors, Material, Slider, SliderComponentShape, SliderTheme, SliderThemeData;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,6 +6,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/shell_screen.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/presentation/widgets/interval_selector.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
@@ -339,65 +338,10 @@ class _NotificationSetupPage extends StatelessWidget {
                     style: context.textStyles.secondary,
                   ),
                   const SizedBox(height: IaculaSpacing.md),
-                  Text(
-                    formatJaculatoriaIntervalShortLabel(selectedInterval),
-                    textAlign: TextAlign.center,
-                    style: context.textStyles.cardTitle.copyWith(
-                      fontSize: 18,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: SliderTheme(
-                        data: SliderThemeData(
-                          trackHeight: 4,
-                          activeTrackColor: context.colors.primaryButton,
-                          inactiveTrackColor: context.colors.separator,
-                          thumbColor: CupertinoColors.white,
-                          overlayShape: SliderComponentShape.noOverlay,
-                        ),
-                        child: Slider(
-                          value: selectedInterval
-                              .toDouble()
-                              .clamp(
-                                kJaculatoriaIntervalMin.toDouble(),
-                                kJaculatoriaIntervalMax.toDouble(),
-                              ),
-                          min: kJaculatoriaIntervalMin.toDouble(),
-                          max: kJaculatoriaIntervalMax.toDouble(),
-                          divisions: kJaculatoriaIntervalMax -
-                              kJaculatoriaIntervalMin,
-                          onChanged: (value) {
-                            onIntervalChanged(value.round());
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        formatJaculatoriaIntervalShortLabel(
-                          kJaculatoriaIntervalMin,
-                        ),
-                        style: context.textStyles.secondary.copyWith(
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        formatJaculatoriaIntervalShortLabel(
-                          kJaculatoriaIntervalMax,
-                        ),
-                        style: context.textStyles.secondary.copyWith(
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
+                  IntervalSelector(
+                    selectedMinutes: selectedInterval,
+                    onChanged: onIntervalChanged,
+                    showCustomLabel: false,
                   ),
                 ],
               ),

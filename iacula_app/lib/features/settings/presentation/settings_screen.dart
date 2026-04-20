@@ -1,12 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart'
-    show
-        Colors,
-        Material,
-        Slider,
-        SliderComponentShape,
-        SliderTheme,
-        SliderThemeData;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,6 +6,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
+import '../../../core/presentation/widgets/interval_selector.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../custom_phrases/presentation/custom_phrases_screen.dart';
@@ -196,68 +189,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           const SizedBox(height: IaculaRadius.elementSpacing),
                           _fieldLabel(context, 'Intervalo entre jaculatórias'),
                           const SizedBox(height: 8),
-                          Text(
-                            formatJaculatoriaIntervalShortLabel(
-                              _intervalMinutes,
-                            ),
-                            style: context.textStyles.cardTitle.copyWith(
-                              fontSize: 18,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: double.infinity,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: SliderTheme(
-                                data: SliderThemeData(
-                                  trackHeight: 4,
-                                  activeTrackColor:
-                                      context.colors.primaryButton,
-                                  inactiveTrackColor: context.colors.separator,
-                                  thumbColor: CupertinoColors.white,
-                                  overlayShape: SliderComponentShape.noOverlay,
-                                ),
-                                child: Slider(
-                                  value: _intervalMinutes.toDouble().clamp(
-                                    kJaculatoriaIntervalMin.toDouble(),
-                                    kJaculatoriaIntervalMax.toDouble(),
-                                  ),
-                                  min: kJaculatoriaIntervalMin.toDouble(),
-                                  max: kJaculatoriaIntervalMax.toDouble(),
-                                  divisions:
-                                      kJaculatoriaIntervalMax -
-                                      kJaculatoriaIntervalMin,
-                                  onChanged: (value) {
-                                    setState(
-                                      () => _intervalMinutes = value.round(),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                formatJaculatoriaIntervalShortLabel(
-                                  kJaculatoriaIntervalMin,
-                                ),
-                                style: context.textStyles.secondary.copyWith(
-                                  fontSize: 13,
-                                ),
-                              ),
-                              Text(
-                                formatJaculatoriaIntervalShortLabel(
-                                  kJaculatoriaIntervalMax,
-                                ),
-                                style: context.textStyles.secondary.copyWith(
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
+                          IntervalSelector(
+                            selectedMinutes: _intervalMinutes,
+                            onChanged: (value) => setState(() => _intervalMinutes = value),
+                            showCustomLabel: true,
                           ),
                           const SizedBox(height: IaculaSpacing.sm),
                           _buildNextNotificationEstimate(context),

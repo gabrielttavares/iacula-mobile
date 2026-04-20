@@ -1,8 +1,41 @@
 /// Intervalo permitido para notificações de jaculatória (minutos).
 const int kJaculatoriaIntervalMin = 5;
 
-/// 1h20
-const int kJaculatoriaIntervalMax = 80;
+/// 6 horas
+const int kJaculatoriaIntervalMax = 360;
+
+/// Preset de intervalo para seleção de notificações.
+class IntervalPreset {
+  final int minutes;
+  final String label;
+  final bool isCommon;
+
+  const IntervalPreset({
+    required this.minutes,
+    required this.label,
+    this.isCommon = false,
+  });
+}
+
+/// Presets de intervalo disponíveis.
+/// `isCommon: true` são exibidos nos botões principais.
+/// Outros estão disponíveis no seletor personalizado.
+const kIntervalPresets = [
+  // Comuns (botões principais)
+  IntervalPreset(minutes: 5, label: '5 min', isCommon: true),
+  IntervalPreset(minutes: 15, label: '15 min', isCommon: true),
+  IntervalPreset(minutes: 30, label: '30 min', isCommon: true),
+  IntervalPreset(minutes: 60, label: '1 hora', isCommon: true),
+  IntervalPreset(minutes: 120, label: '2 horas', isCommon: true),
+  IntervalPreset(minutes: 180, label: '3 horas', isCommon: true),
+
+  // Extendidos (disponíveis no picker)
+  IntervalPreset(minutes: 45, label: '45 min'),
+  IntervalPreset(minutes: 90, label: '1h30'),
+  IntervalPreset(minutes: 240, label: '4 horas'),
+  IntervalPreset(minutes: 300, label: '5 horas'),
+  IntervalPreset(minutes: 360, label: '6 horas'),
+];
 
 int clampJaculatoriaIntervalMinutes(int value) {
   return value.clamp(kJaculatoriaIntervalMin, kJaculatoriaIntervalMax);
