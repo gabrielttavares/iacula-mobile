@@ -48,6 +48,7 @@ final class InMemoryNotificationSchedulerRepository
 
   @override
   Future<void> showNow(int id, ReminderEvent event) async {
+    _events.clear();
     _events[id] = event.copyWith(scheduledId: id);
   }
 
