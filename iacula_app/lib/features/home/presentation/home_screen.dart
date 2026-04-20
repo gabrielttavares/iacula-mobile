@@ -498,6 +498,28 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
 
   final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
   final phrases = phrasesAsync.valueOrNull ?? [];
+
+  // When "Use only my phrases" is enabled, show all active phrases (no schedule constraint)
+  if (settings.customPhrasesOnly) {
+    final activePhrases = phrases
+        .where((p) => p.isActive && p.displayOnHero)
+        .toList();
+    if (activePhrases.isNotEmpty) {
+      final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+      final selected = activePhrases[dayOfYear % activePhrases.length];
+      return Quote(
+        text: selected.text,
+        dayOfWeek: now.weekday,
+        theme: 'personal',
+        season: LiturgicalSeason.ordinary,
+        imagePath: null,
+        source: QuoteSource.personal,
+      );
+    }
+    // No user phrases - fall through to default quotes
+  }
+
+  // Existing schedule-based logic (when toggle is off OR toggle on but no user phrases)
   final matching = phrases
       .where((p) => p.isActive && p.displayOnHero && p.schedule.matchesNow(now))
       .toList();

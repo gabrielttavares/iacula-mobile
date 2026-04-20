@@ -46,6 +46,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _quietHoursEnabled = false;
   String _quietHoursStart = '22:00';
   String _quietHoursEnd = '07:00';
+  bool _customPhrasesOnly = false;
 
   bool _loading = true;
   bool _saving = false;
@@ -75,6 +76,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _quietHoursEnabled = settings.quietHoursEnabled;
     _quietHoursStart = settings.quietHoursStart;
     _quietHoursEnd = settings.quietHoursEnd;
+    _customPhrasesOnly = settings.customPhrasesOnly;
 
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
     if (scheduler is LocalNotificationSchedulerRepository) {
@@ -535,6 +537,43 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
+                                      'Usar apenas minhas frases',
+                                      style: context.textStyles.cardTitle.copyWith(fontSize: 16),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Exibe apenas suas frases personalizadas, ignorando as jaculatórias do tempo.',
+                                      style: context.textStyles.secondary.copyWith(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              CupertinoSwitch(
+                                value: _customPhrasesOnly,
+                                activeTrackColor: context.colors.primaryButton,
+                                onChanged: (value) {
+                                  HapticFeedback.selectionClick();
+                                  setState(() => _customPhrasesOnly = value);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(height: 1, color: context.colors.separator),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: IaculaRadius.innerPadding,
+                            vertical: 12,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
                                       'Pontos de Caminho/Sulco/Forja',
                                       style: context.textStyles.cardTitle
                                           .copyWith(fontSize: 16),
@@ -782,6 +821,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       quietHoursEnabled: _quietHoursEnabled,
       quietHoursStart: _quietHoursStart,
       quietHoursEnd: _quietHoursEnd,
+      customPhrasesOnly: _customPhrasesOnly,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);

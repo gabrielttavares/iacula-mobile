@@ -26,6 +26,7 @@ final class Settings {
     this.quietHoursEnabled = false,
     this.quietHoursStart = '22:00',
     this.quietHoursEnd = '07:00',
+    this.customPhrasesOnly = false,
   });
 
   final int intervalMinutes;
@@ -54,6 +55,7 @@ final class Settings {
   final bool quietHoursEnabled;
   final String quietHoursStart;
   final String quietHoursEnd;
+  final bool customPhrasesOnly;
 
   static const defaults = Settings(
     intervalMinutes: 15,
@@ -81,6 +83,7 @@ final class Settings {
     quietHoursEnabled: false,
     quietHoursStart: '22:00',
     quietHoursEnd: '07:00',
+    customPhrasesOnly: false,
   );
 
   Settings copyWith({
@@ -110,6 +113,7 @@ final class Settings {
     bool? quietHoursEnabled,
     String? quietHoursStart,
     String? quietHoursEnd,
+    bool? customPhrasesOnly,
   }) {
     return Settings(
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
@@ -143,6 +147,7 @@ final class Settings {
       quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
       quietHoursStart: quietHoursStart ?? this.quietHoursStart,
       quietHoursEnd: quietHoursEnd ?? this.quietHoursEnd,
+      customPhrasesOnly: customPhrasesOnly ?? this.customPhrasesOnly,
     );
   }
 }
