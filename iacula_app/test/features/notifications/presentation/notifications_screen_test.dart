@@ -32,14 +32,18 @@ void main() {
     expect(find.text('23/02'), findsNothing);
   });
 
-  testWidgets('shows today scheduled quote history empty state', (tester) async {
+  testWidgets('shows today scheduled quote history empty state', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           notificationHistoryRepositoryProvider.overrideWithValue(
             InMemoryNotificationHistoryRepository(),
           ),
-          notificationHistoryNowProvider.overrideWith((ref) => DateTime(2026, 2, 24, 10)),
+          notificationHistoryNowProvider.overrideWith(
+            (ref) => DateTime(2026, 2, 24, 10),
+          ),
         ],
         child: const CupertinoApp(home: NotificationsScreen()),
       ),
@@ -54,32 +58,42 @@ void main() {
     expect(find.text('Última notificação'), findsNothing);
   });
 
-  testWidgets('shows only quotes scheduled up to the current moment', (tester) async {
+  testWidgets('shows only quotes scheduled up to the current moment', (
+    tester,
+  ) async {
     final repo = InMemoryNotificationHistoryRepository();
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'Deus é amor.',
-      theme: 'Amor',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 9, 45),
-    ));
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'Permanecei em mim.',
-      theme: 'Confiança',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 8, 30),
-    ));
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'Ainda virá.',
-      theme: 'Esperança',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 10, 30),
-    ));
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Deus é amor.',
+        theme: 'Amor',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 9, 45),
+      ),
+    );
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Permanecei em mim.',
+        theme: 'Confiança',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 8, 30),
+      ),
+    );
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Ainda virá.',
+        theme: 'Esperança',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 10, 30),
+      ),
+    );
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           notificationHistoryRepositoryProvider.overrideWithValue(repo),
-          notificationHistoryNowProvider.overrideWith((ref) => DateTime(2026, 2, 24, 10)),
+          notificationHistoryNowProvider.overrideWith(
+            (ref) => DateTime(2026, 2, 24, 10),
+          ),
         ],
         child: const CupertinoApp(home: NotificationsScreen()),
       ),
@@ -93,35 +107,47 @@ void main() {
     expect(find.text('Última notificação'), findsNothing);
   });
 
-  testWidgets('collapses nearby duplicate quotes inside the configured interval', (
+  testWidgets('shows full Escriva notification history, not only latest', (
     tester,
   ) async {
     final repo = InMemoryNotificationHistoryRepository();
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
-      theme: 'Doxologia',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 21, 18),
-    ));
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
-      theme: 'Doxologia',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 21, 16),
-    ));
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'A minha alma tem sede do Deus vivente.',
-      theme: 'Salmo',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 21, 33),
-    ));
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Escriva 09:00',
+        theme: 'Escriva',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 9),
+        source: 'escrivaPoints',
+        referenceLabel: 'Caminho, 1',
+      ),
+    );
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Escriva 09:15',
+        theme: 'Escriva',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 9, 15),
+        source: 'escrivaPoints',
+        referenceLabel: 'Caminho, 2',
+      ),
+    );
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Escriva 09:30',
+        theme: 'Escriva',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 9, 30),
+        source: 'escrivaPoints',
+        referenceLabel: 'Caminho, 3',
+      ),
+    );
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           notificationHistoryRepositoryProvider.overrideWithValue(repo),
           notificationHistoryNowProvider.overrideWith(
-            (ref) => DateTime(2026, 2, 24, 21, 35),
+            (ref) => DateTime(2026, 2, 24, 10),
           ),
         ],
         child: const CupertinoApp(home: NotificationsScreen()),
@@ -129,29 +155,84 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      find.text('Glória ao Pai, ao Filho e ao Espírito Santo.'),
-      findsOneWidget,
-    );
-    expect(find.text('A minha alma tem sede do Deus vivente.'), findsOneWidget);
+    expect(find.text('Escriva 09:00'), findsOneWidget);
+    expect(find.text('Escriva 09:15'), findsOneWidget);
+    expect(find.text('Escriva 09:30'), findsOneWidget);
   });
+
+  testWidgets(
+    'collapses nearby duplicate quotes inside the configured interval',
+    (tester) async {
+      final repo = InMemoryNotificationHistoryRepository();
+      await repo.add(
+        NotificationHistoryEntry(
+          quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
+          theme: 'Doxologia',
+          season: 'ordinary',
+          deliveredAt: DateTime(2026, 2, 24, 21, 18),
+        ),
+      );
+      await repo.add(
+        NotificationHistoryEntry(
+          quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
+          theme: 'Doxologia',
+          season: 'ordinary',
+          deliveredAt: DateTime(2026, 2, 24, 21, 16),
+        ),
+      );
+      await repo.add(
+        NotificationHistoryEntry(
+          quoteText: 'A minha alma tem sede do Deus vivente.',
+          theme: 'Salmo',
+          season: 'ordinary',
+          deliveredAt: DateTime(2026, 2, 24, 21, 33),
+        ),
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            notificationHistoryRepositoryProvider.overrideWithValue(repo),
+            notificationHistoryNowProvider.overrideWith(
+              (ref) => DateTime(2026, 2, 24, 21, 35),
+            ),
+          ],
+          child: const CupertinoApp(home: NotificationsScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Glória ao Pai, ao Filho e ao Espírito Santo.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('A minha alma tem sede do Deus vivente.'),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets('collapses duplicate quotes exactly one interval apart', (
     tester,
   ) async {
     final repo = InMemoryNotificationHistoryRepository();
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
-      theme: 'Doxologia',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 21, 18),
-    ));
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
-      theme: 'Doxologia',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 21, 3),
-    ));
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
+        theme: 'Doxologia',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 21, 18),
+      ),
+    );
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Glória ao Pai, ao Filho e ao Espírito Santo.',
+        theme: 'Doxologia',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 21, 3),
+      ),
+    );
 
     await tester.pumpWidget(
       ProviderScope(
@@ -172,58 +253,67 @@ void main() {
     );
   });
 
-  testWidgets('collapses legacy burst rows with different quotes 1 minute apart', (
-    tester,
-  ) async {
+  testWidgets(
+    'collapses legacy burst rows with different quotes 1 minute apart',
+    (tester) async {
+      final repo = InMemoryNotificationHistoryRepository();
+      await repo.add(
+        NotificationHistoryEntry(
+          quoteText: 'A minha alma tem sede do Deus vivente.',
+          theme: 'Salmo',
+          season: 'ordinary',
+          deliveredAt: DateTime(2026, 2, 24, 21, 35),
+        ),
+      );
+      await repo.add(
+        NotificationHistoryEntry(
+          quoteText:
+              'Faça-se, cumpra-se, seja louvada e eternamente glorificada a justíssima e amabilíssima Vontade de Deus sobre todas as coisas. Assim seja.',
+          theme: 'Vontade de Deus',
+          season: 'ordinary',
+          deliveredAt: DateTime(2026, 2, 24, 21, 36),
+        ),
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            notificationHistoryRepositoryProvider.overrideWithValue(repo),
+            notificationHistoryNowProvider.overrideWith(
+              (ref) => DateTime(2026, 2, 24, 21, 40),
+            ),
+          ],
+          child: const CupertinoApp(home: NotificationsScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('A minha alma tem sede do Deus vivente.'), findsNothing);
+      expect(
+        find.textContaining('Faça-se, cumpra-se, seja louvada e eternamente'),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets('renders quote text as selectable for copying', (tester) async {
     final repo = InMemoryNotificationHistoryRepository();
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'A minha alma tem sede do Deus vivente.',
-      theme: 'Salmo',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 21, 35),
-    ));
-    await repo.add(NotificationHistoryEntry(
-      quoteText:
-          'Faça-se, cumpra-se, seja louvada e eternamente glorificada a justíssima e amabilíssima Vontade de Deus sobre todas as coisas. Assim seja.',
-      theme: 'Vontade de Deus',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 21, 36),
-    ));
+    await repo.add(
+      NotificationHistoryEntry(
+        quoteText: 'Permanecei em mim.',
+        theme: 'Confiança',
+        season: 'ordinary',
+        deliveredAt: DateTime(2026, 2, 24, 8, 30),
+      ),
+    );
 
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           notificationHistoryRepositoryProvider.overrideWithValue(repo),
           notificationHistoryNowProvider.overrideWith(
-            (ref) => DateTime(2026, 2, 24, 21, 40),
+            (ref) => DateTime(2026, 2, 24, 10),
           ),
-        ],
-        child: const CupertinoApp(home: NotificationsScreen()),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('A minha alma tem sede do Deus vivente.'), findsNothing);
-    expect(
-      find.textContaining('Faça-se, cumpra-se, seja louvada e eternamente'),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('renders quote text as selectable for copying', (tester) async {
-    final repo = InMemoryNotificationHistoryRepository();
-    await repo.add(NotificationHistoryEntry(
-      quoteText: 'Permanecei em mim.',
-      theme: 'Confiança',
-      season: 'ordinary',
-      deliveredAt: DateTime(2026, 2, 24, 8, 30),
-    ));
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          notificationHistoryRepositoryProvider.overrideWithValue(repo),
-          notificationHistoryNowProvider.overrideWith((ref) => DateTime(2026, 2, 24, 10)),
         ],
         child: const CupertinoApp(home: NotificationsScreen()),
       ),
@@ -384,7 +474,10 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.bookmark_fill)),
+      find.descendant(
+        of: rail,
+        matching: find.byIcon(CupertinoIcons.bookmark_fill),
+      ),
       findsNothing,
     );
 
@@ -394,7 +487,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.bookmark_fill)),
+      find.descendant(
+        of: rail,
+        matching: find.byIcon(CupertinoIcons.bookmark_fill),
+      ),
       findsOneWidget,
     );
     expect((await favRepo.listAll()).length, 1);
@@ -409,7 +505,10 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.descendant(of: rail, matching: find.byIcon(CupertinoIcons.bookmark_fill)),
+      find.descendant(
+        of: rail,
+        matching: find.byIcon(CupertinoIcons.bookmark_fill),
+      ),
       findsNothing,
     );
     expect((await favRepo.listAll()).length, 0);

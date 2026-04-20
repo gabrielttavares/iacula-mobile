@@ -32,8 +32,7 @@ final class _InMemoryNotificationHistoryRepository
     ).add(const Duration(days: 1));
     entries.removeWhere(
       (entry) =>
-          !entry.deliveredAt.isBefore(instant) &&
-          entry.deliveredAt.isBefore(end),
+          entry.deliveredAt.isAfter(instant) && entry.deliveredAt.isBefore(end),
     );
   }
 
@@ -120,7 +119,7 @@ void main() {
   );
 
   test(
-    'rebuilding reminders replaces future history for the same day',
+    'rebuilding reminders replaces future history and preserves current due slot',
     () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryNotificationHistoryRepository();
@@ -161,7 +160,7 @@ void main() {
               (entry) => !entry.deliveredAt.isBefore(DateTime(2026, 2, 21, 12)),
             )
             .length,
-        23,
+        24,
       );
     },
   );
@@ -282,7 +281,8 @@ void main() {
       );
 
       final immediateEvents = scheduler.events.where(
-        (e) => e.type == ReminderEventType.quoteInterval && e.scheduledId == 8999,
+        (e) =>
+            e.type == ReminderEventType.quoteInterval && e.scheduledId == 8999,
       );
       expect(immediateEvents, isEmpty);
       expect(
@@ -302,17 +302,20 @@ void main() {
 
       final useCase = ScheduleCoreRemindersUseCase(
         scheduler,
-        quoteFetcher: ({required String language, required DateTime now}) async {
-          final slot = now.minute ~/ 15;
-          final text = slot <= 2 ? 'ESCRIVA_DUPLICATE' : 'ESCRIVA_ALTERNATE';
-          return Quote(
-            text: text,
-            dayOfWeek: 1,
-            theme: 'Escriva',
-            season: LiturgicalSeason.ordinary,
-            source: QuoteSource.escrivaPoints,
-          );
-        },
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              final slot = now.minute ~/ 15;
+              final text = slot <= 2
+                  ? 'ESCRIVA_DUPLICATE'
+                  : 'ESCRIVA_ALTERNATE';
+              return Quote(
+                text: text,
+                dayOfWeek: 1,
+                theme: 'Escriva',
+                season: LiturgicalSeason.ordinary,
+                source: QuoteSource.escrivaPoints,
+              );
+            },
         notificationHistoryRepository: history,
         lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
       );
@@ -326,10 +329,11 @@ void main() {
         showImmediate: true,
       );
 
-      final quoteEvents = scheduler.events
-          .where((event) => event.type == ReminderEventType.quoteInterval)
-          .toList()
-        ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+      final quoteEvents =
+          scheduler.events
+              .where((event) => event.type == ReminderEventType.quoteInterval)
+              .toList()
+            ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 
       final firstThreeBodies = quoteEvents.take(3).map((e) => e.body).toList();
 
@@ -420,6 +424,60 @@ void main() {
 
       expect(preservedEntries.first.quoteText, 'Quote 8:00');
       expect(preservedEntries.last.quoteText, 'Quote 11:30');
+    },
+  );
+
+  test(
+    'rebuilding preserves history entry delivered at current notification time',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+      final deliveredAt = DateTime(2026, 2, 21, 12);
+      history.entries.add(
+        NotificationHistoryEntry(
+          quoteText: 'Received Escriva notification',
+          theme: 'Escriva',
+          season: LiturgicalSeason.ordinary.name,
+          deliveredAt: deliveredAt,
+          source: QuoteSource.escrivaPoints.name,
+          referenceLabel: 'Caminho, 1',
+        ),
+      );
+
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return Quote(
+                text: 'Next Escriva notification',
+                dayOfWeek: 1,
+                theme: 'Escriva',
+                season: LiturgicalSeason.ordinary,
+                source: QuoteSource.escrivaPoints,
+                referenceLabel: 'Caminho, 2',
+              );
+            },
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+      );
+
+      await useCase(
+        Settings.defaults.copyWith(
+          intervalMinutes: 15,
+          escrivaPointsFeedEnabled: true,
+        ),
+        now: deliveredAt,
+        showImmediate: false,
+      );
+
+      expect(
+        history.entries.where(
+          (entry) =>
+              entry.quoteText == 'Received Escriva notification' &&
+              entry.deliveredAt == deliveredAt,
+        ),
+        hasLength(1),
+      );
     },
   );
 

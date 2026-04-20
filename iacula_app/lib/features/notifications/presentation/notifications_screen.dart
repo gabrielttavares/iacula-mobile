@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show SelectableText;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,10 +17,7 @@ import '../domain/entities/notification_history_entry.dart';
 import 'notification_detail_screen.dart';
 
 final _historyForDayProvider =
-    FutureProvider.family<List<NotificationHistoryEntry>, DateTime>((
-      ref,
-      day,
-    ) {
+    FutureProvider.family<List<NotificationHistoryEntry>, DateTime>((ref, day) {
       return ref.watch(notificationHistoryRepositoryProvider).listForDay(day);
     });
 
@@ -27,7 +25,9 @@ final _settingsProvider = FutureProvider((ref) {
   return ref.watch(getSettingsUseCaseProvider).call();
 });
 
-final _availableHistoryDatesProvider = FutureProvider<List<DateTime>>((ref) async {
+final _availableHistoryDatesProvider = FutureProvider<List<DateTime>>((
+  ref,
+) async {
   final now = ref.watch(notificationHistoryNowProvider);
   final today = DateTime(now.year, now.month, now.day);
   final candidates = List.generate(
@@ -79,15 +79,14 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Notificações'),
-      ),
+      navigationBar: const CupertinoNavigationBar(middle: Text('Notificações')),
       child: SafeArea(
         child: settingsAsync.when(
           data: (settings) {
             return availableDatesAsync.when(
               data: (availableDates) {
-                final selectedDate = availableDates.any(
+                final selectedDate =
+                    availableDates.any(
                       (date) => _isSameDay(date, _selectedDate),
                     )
                     ? _selectedDate
@@ -115,16 +114,20 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         final updated = settings.copyWith(
                           notificationsEnabled: value,
                         );
-                        await ref.read(updateSettingsUseCaseProvider).call(updated);
+                        await ref
+                            .read(updateSettingsUseCaseProvider)
+                            .call(updated);
 
                         final season = await ref
                             .read(liturgicalSeasonServiceProvider)
                             .getCurrentSeason();
-                        await ref.read(rebuildNotificationsUseCaseProvider).call(
-                          updated,
-                          isEasterSeason: season == LiturgicalSeason.easter,
-                          showImmediate: false,
-                        );
+                        await ref
+                            .read(rebuildNotificationsUseCaseProvider)
+                            .call(
+                              updated,
+                              isEasterSeason: season == LiturgicalSeason.easter,
+                              showImmediate: false,
+                            );
 
                         ref.invalidate(_settingsProvider);
                         ref.invalidate(_availableHistoryDatesProvider);
@@ -157,15 +160,18 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                       data: (entries) {
                         final visibleEntries = isTodaySelected
                             ? entries
-                                  .where((entry) => !entry.deliveredAt.isAfter(now))
+                                  .where(
+                                    (entry) => !entry.deliveredAt.isAfter(now),
+                                  )
                                   .toList(growable: false)
                             : entries;
                         final dedupedEntries = _collapseNearbyDuplicateQuotes(
                           visibleEntries,
                           intervalMinutes: settings.intervalMinutes,
                         );
-                        final sanitizedEntries =
-                            _collapseLegacyBurstEntries(dedupedEntries);
+                        final sanitizedEntries = _collapseLegacyBurstEntries(
+                          dedupedEntries,
+                        );
 
                         if (sanitizedEntries.isEmpty) {
                           return IaculaSoftCard(
@@ -184,8 +190,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                       error: (error, stackTrace) => IaculaErrorState(
                         title: 'Erro ao carregar citacoes',
                         message: 'Tente novamente para atualizar o historico.',
-                        onRetry: () =>
-                            ref.invalidate(_historyForDayProvider(selectedDate)),
+                        onRetry: () => ref.invalidate(
+                          _historyForDayProvider(selectedDate),
+                        ),
                       ),
                     ),
                   ],
@@ -195,7 +202,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               error: (error, stackTrace) => Center(
                 child: IaculaErrorState(
                   title: 'Erro ao carregar histórico',
-                  message: 'Tente novamente para atualizar os dias disponíveis.',
+                  message:
+                      'Tente novamente para atualizar os dias disponíveis.',
                   onRetry: () => ref.invalidate(_availableHistoryDatesProvider),
                 ),
               ),
@@ -205,7 +213,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           error: (error, stackTrace) => Center(
             child: IaculaErrorState(
               title: 'Erro ao carregar configuracoes',
-              message: 'Nao foi possivel abrir as configuracoes de notificacao.',
+              message:
+                  'Nao foi possivel abrir as configuracoes de notificacao.',
               onRetry: () => ref.invalidate(_settingsProvider),
             ),
           ),
@@ -213,7 +222,6 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       ),
     );
   }
-
 }
 
 String _formatTime(DateTime dt) {
@@ -231,7 +239,9 @@ List<NotificationHistoryEntry> _collapseNearbyDuplicateQuotes(
   for (final entry in entries) {
     final latestForText = latestByQuote[entry.quoteText];
     if (latestForText != null) {
-      final diff = latestForText.deliveredAt.difference(entry.deliveredAt).abs();
+      final diff = latestForText.deliveredAt
+          .difference(entry.deliveredAt)
+          .abs();
       if (diff.inMinutes <= intervalMinutes) {
         continue;
       }
@@ -304,10 +314,9 @@ class _NotificationsRail extends StatelessWidget {
                       style: context.textStyles.secondary,
                     ),
                     const SizedBox(height: 8),
-                    Text(
+                    SelectableText(
                       entry.quoteText,
                       maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
                       style: context.textStyles.cardTitle,
                     ),
                     const Spacer(),
@@ -415,7 +424,9 @@ class _HistoryDateSelector extends StatelessWidget {
           return CupertinoButton(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             minimumSize: const Size(34, 34),
-            color: selected ? context.colors.primaryButton : context.colors.card,
+            color: selected
+                ? context.colors.primaryButton
+                : context.colors.card,
             borderRadius: BorderRadius.circular(IaculaRadius.small),
             onPressed: () => onSelect(date),
             child: Text(
