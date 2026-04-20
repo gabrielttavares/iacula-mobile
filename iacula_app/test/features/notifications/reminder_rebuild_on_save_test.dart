@@ -73,8 +73,14 @@ final class _FakeNotificationSchedulerRepository
 
   @override
   Future<List<int>> pendingNotificationIds() async {
-    return scheduled.where((e) => e.scheduledId != null).map((e) => e.scheduledId!).toList();
+    return scheduled
+        .where((e) => e.scheduledId != null)
+        .map((e) => e.scheduledId!)
+        .toList();
   }
+
+  @override
+  Future<NotificationActionEvent?> getLaunchNotificationAction() async => null;
 
   @override
   void resetScheduleTelemetry() {}
@@ -197,7 +203,11 @@ void main() {
         );
       },
       batchFetcherForSettings: (_) => null,
-    ).call(settings, isEasterSeason: season == LiturgicalSeason.easter, showImmediate: false);
+    ).call(
+      settings,
+      isEasterSeason: season == LiturgicalSeason.easter,
+      showImmediate: false,
+    );
 
     expect(schedulerRepo.cancelAllCalls, 1);
     expect(
