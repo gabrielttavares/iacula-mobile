@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 15,
+      version: 16,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -50,7 +50,8 @@ final class AppDatabase {
             liturgical_season_enabled INTEGER NOT NULL DEFAULT 0,
             quiet_hours_enabled INTEGER NOT NULL DEFAULT 0,
             quiet_hours_start TEXT NOT NULL DEFAULT '22:00',
-            quiet_hours_end TEXT NOT NULL DEFAULT '07:00'
+            quiet_hours_end TEXT NOT NULL DEFAULT '07:00',
+            custom_phrases_only INTEGER NOT NULL DEFAULT 0
           )
         ''');
 
@@ -195,6 +196,11 @@ final class AppDatabase {
         if (oldVersion < 15) {
           await db.execute(
             'ALTER TABLE notification_history_entries ADD COLUMN reference_label TEXT',
+          );
+        }
+        if (oldVersion < 16) {
+          await db.execute(
+            'ALTER TABLE settings ADD COLUMN custom_phrases_only INTEGER NOT NULL DEFAULT 0',
           );
         }
       },

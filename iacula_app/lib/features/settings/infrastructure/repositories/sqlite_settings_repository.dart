@@ -51,6 +51,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       quietHoursEnabled: (row['quiet_hours_enabled'] as int? ?? 0) == 1,
       quietHoursStart: row['quiet_hours_start'] as String? ?? '22:00',
       quietHoursEnd: row['quiet_hours_end'] as String? ?? '07:00',
+      customPhrasesOnly: (row['custom_phrases_only'] as int? ?? 0) == 1,
     );
   }
 
@@ -88,6 +89,7 @@ final class SqliteSettingsRepository implements SettingsRepository {
       'quiet_hours_enabled': settings.quietHoursEnabled ? 1 : 0,
       'quiet_hours_start': settings.quietHoursStart,
       'quiet_hours_end': settings.quietHoursEnd,
+      'custom_phrases_only': settings.customPhrasesOnly ? 1 : 0,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }
