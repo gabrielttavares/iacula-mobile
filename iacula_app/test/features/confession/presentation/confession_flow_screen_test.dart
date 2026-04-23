@@ -5,6 +5,7 @@ import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/confession/domain/entities/confession_examination_item.dart';
 import 'package:iacula_app/features/confession/domain/repositories/confession_examination_repository.dart';
 import 'package:iacula_app/features/confession/presentation/confession_flow_screen.dart';
+import 'package:iacula_app/features/examination/presentation/widgets/examination_confession_view.dart';
 
 final class _FakeConfessionExaminationRepository
     implements ConfessionExaminationRepository {
@@ -100,8 +101,11 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Compartilhar'), findsNothing);
-      expect(find.byIcon(CupertinoIcons.square), findsNothing);
-      expect(find.byIcon(CupertinoIcons.checkmark_square_fill), findsNothing);
+      expect(find.byIcon(CupertinoIcons.square), findsNWidgets(3));
+      expect(
+        find.byIcon(CupertinoIcons.checkmark_square_fill),
+        findsNothing,
+      );
     },
   );
 
@@ -126,5 +130,108 @@ void main() {
 
     expect(find.byType(ConfessionFlowScreen), findsNothing);
     expect(find.text('Abrir'), findsOneWidget);
+  });
+
+  testWidgets('tapping an item toggles checkbox state', (tester) async {
+    await tester.pumpWidget(
+      buildTestApp(
+        repository: const _FakeConfessionExaminationRepository(items),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.byIcon(CupertinoIcons.square), findsNWidgets(3));
+    expect(
+      find.byIcon(CupertinoIcons.checkmark_square_fill),
+      findsNothing,
+    );
+
+    await tester.tap(find.text('Neguei ou abandonei a minha fé.'));
+    await tester.pump();
+
+    expect(find.byIcon(CupertinoIcons.square), findsNWidgets(2));
+    expect(
+      find.byIcon(CupertinoIcons.checkmark_square_fill),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Neguei ou abandonei a minha fé.'));
+    await tester.pump();
+
+    expect(find.byIcon(CupertinoIcons.square), findsNWidgets(3));
+    expect(
+      find.byIcon(CupertinoIcons.checkmark_square_fill),
+      findsNothing,
+    );
+  });
+
+  testWidgets(
+    'floating pill appears when items selected and navigates to summary',
+    (tester) async {
+      await tester.pumpWidget(
+        buildTestApp(
+          repository: const _FakeConfessionExaminationRepository(items),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.text('Ver 1 selecionado'), findsNothing);
+
+      await tester.tap(find.text('Disse mentiras.'));
+      await tester.pump();
+
+      expect(find.text('Ver 1 selecionado'), findsOneWidget);
+
+      await tester.tap(find.text('Neguei ou abandonei a minha fé.'));
+      await tester.pump();
+
+      expect(find.text('Ver 2 selecionados'), findsOneWidget);
+
+      await tester.tap(find.text('Ver 2 selecionados'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.byType(ExaminationConfessionView), findsOneWidget);
+      expect(
+        find.text('Lista temporária — será perdida ao sair desta tela.'),
+        findsOneWidget,
+      );
+      expect(find.text('Disse mentiras.'), findsOneWidget);
+      expect(find.text('Neguei ou abandonei a minha fé.'), findsOneWidget);
+      expect(find.text('Copiar'), findsOneWidget);
+      expect(find.text('Limpar tudo'), findsOneWidget);
+    },
+  );
+
+  testWidgets('Limpar tudo clears selections and pops back', (tester) async {
+    await tester.pumpWidget(
+      buildTestApp(
+        repository: const _FakeConfessionExaminationRepository(items),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.text('Disse mentiras.'));
+    await tester.pump();
+
+    await tester.tap(find.text('Ver 1 selecionado'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.byType(ExaminationConfessionView), findsOneWidget);
+
+    await tester.tap(find.text('Limpar tudo'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.byType(ExaminationConfessionView), findsNothing);
+    expect(find.byIcon(CupertinoIcons.square), findsNWidgets(3));
+    expect(
+      find.byIcon(CupertinoIcons.checkmark_square_fill),
+      findsNothing,
+    );
   });
 }

@@ -6,6 +6,7 @@ import '../../../../core/di/providers.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../confession/domain/entities/confession_examination_item.dart';
 import '../../application/examination_flow_notifier.dart';
+import 'examination_confession_view.dart';
 
 class ExaminationSectionView extends ConsumerWidget {
   const ExaminationSectionView({super.key});
@@ -57,7 +58,7 @@ class ExaminationSectionView extends ConsumerWidget {
           ),
           Expanded(
             child: itemsAsync.when(
-              data: (items) => _ExaminationList(items: items),
+              data: (items) => _ExaminationBody(items: items),
               loading: () => const Center(child: CupertinoActivityIndicator()),
               error: (error, stackTrace) => Center(
                 child: Padding(
@@ -77,15 +78,77 @@ class ExaminationSectionView extends ConsumerWidget {
   }
 }
 
-class _ExaminationList extends StatelessWidget {
+class _ExaminationBody extends ConsumerWidget {
+  const _ExaminationBody({required this.items});
+
+  final List<ConfessionExaminationItem> items;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIds = ref.watch(
+      examinationFlowProvider.select((s) => s.selectedItemIds),
+    );
+
+    return Stack(
+      children: [
+        _ExaminationList(items: items),
+        if (selectedIds.isNotEmpty)
+          Positioned(
+            left: 24,
+            right: 24,
+            bottom: 16,
+            child: _SelectionPillButton(count: selectedIds.length),
+          ),
+      ],
+    );
+  }
+}
+
+class _SelectionPillButton extends ConsumerWidget {
+  const _SelectionPillButton({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (_) => const ExaminationConfessionView(),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: context.colors.primaryButton,
+          borderRadius: BorderRadius.circular(IaculaRadius.card),
+          boxShadow: IaculaShadows.buttonResting,
+        ),
+        child: Text(
+          'Ver $count selecionado${count == 1 ? '' : 's'}',
+          style: context.textStyles.cardTitle.copyWith(
+            color: context.colors.background,
+            fontSize: 17,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
+
+class _ExaminationList extends ConsumerWidget {
   const _ExaminationList({required this.items});
 
   final List<ConfessionExaminationItem> items;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 100),
       physics: const BouncingScrollPhysics(),
       children: [
         Text(
@@ -94,13 +157,62 @@ class _ExaminationList extends StatelessWidget {
             color: const Color(0xFF8F2830),
           ),
         ),
-        const SizedBox(height: 8),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
         for (final item in items) ...[
-          Text(item.text, style: context.textStyles.readingBody),
-          const SizedBox(height: 24),
+          _CheckableItemRow(item: item),
+          const SizedBox(height: 16),
         ],
       ],
+    );
+  }
+}
+
+class _CheckableItemRow extends ConsumerWidget {
+  const _CheckableItemRow({required this.item});
+
+  final ConfessionExaminationItem item;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSelected = ref.watch(
+      examinationFlowProvider.select(
+        (s) => s.selectedItemIds.contains(item.id),
+      ),
+    );
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        ref.read(examinationFlowProvider.notifier).toggleItem(item.id);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                item.text,
+                style: context.textStyles.readingBody,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Icon(
+                isSelected
+                    ? CupertinoIcons.checkmark_square_fill
+                    : CupertinoIcons.square,
+                color: isSelected
+                    ? context.colors.primaryButton
+                    : context.colors.textSecondary,
+                size: 22,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
