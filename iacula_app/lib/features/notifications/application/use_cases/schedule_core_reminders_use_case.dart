@@ -65,13 +65,12 @@ final class ScheduleCoreRemindersUseCase {
     );
     await _notificationHistoryRepository.clearFrom(current);
 
-    final resolvedImmediate =
-        immediateQuote ??
-        await _quoteFetcher(language: settings.language, now: current);
+    Quote? resolvedImmediate = immediateQuote;
 
     var shouldShowImmediate = showImmediate;
     if (showImmediate) {
-      final todayHistory = await _notificationHistoryRepository.listForDay(current);
+      final todayHistory =
+          await _notificationHistoryRepository.listForDay(current);
       final hasRecentDueQuote = todayHistory.any((entry) {
         if (entry.deliveredAt.isAfter(current)) return false;
         final minutesAgo = current.difference(entry.deliveredAt).inMinutes;
@@ -85,32 +84,42 @@ final class ScheduleCoreRemindersUseCase {
       }
     }
 
+    if (resolvedImmediate == null &&
+        (shouldShowImmediate || _batchFetcher == null)) {
+      resolvedImmediate = await _quoteFetcher(
+        language: settings.language,
+        now: current,
+      );
+    }
+
     if (shouldShowImmediate) {
       const immediateId = quoteScheduleIdBase - 1;
+      final imm = resolvedImmediate!;
       debugPrint(
-        '[ScheduleCoreRemindersUseCase] show immediate quote id=$immediateId textLen=${resolvedImmediate.text.length}',
+        '[ScheduleCoreRemindersUseCase] show immediate quote id=$immediateId textLen=${imm.text.length}',
       );
       await _scheduler.showNow(
         immediateId,
         ReminderEvent(
           type: ReminderEventType.quoteInterval,
           title: 'Iacula',
-          body: resolvedImmediate.text,
+          body: imm.text,
           scheduledAt: current,
           withVibration: true,
           isAlarm: false,
           routeTarget: NotificationRouteTarget.home,
           scheduledId: immediateId,
-          quoteTheme: resolvedImmediate.theme,
-          quoteSeason: resolvedImmediate.season.name,
-          quoteFeastName: resolvedImmediate.feastName,
+          quoteTheme: imm.theme,
+          quoteSeason: imm.season.name,
+          quoteFeastName: imm.feastName,
         ),
       );
     }
 
     if (shouldShowImmediate) {
+      final imm = resolvedImmediate!;
       final deliveredCard = LastDeliveredCard.fromQuote(
-        resolvedImmediate,
+        imm,
         deliveredAt: current,
       );
       await _lastDeliveredCardRepository.save(deliveredCard);
@@ -122,14 +131,14 @@ final class ScheduleCoreRemindersUseCase {
 
       await _notificationHistoryRepository.add(
         NotificationHistoryEntry(
-          quoteText: resolvedImmediate.text,
-          theme: resolvedImmediate.theme,
-          season: resolvedImmediate.season.name,
+          quoteText: imm.text,
+          theme: imm.theme,
+          season: imm.season.name,
           deliveredAt: current,
-          imagePath: resolvedImmediate.imagePath,
-          feastName: resolvedImmediate.feastName,
-          source: resolvedImmediate.resolvedSource.name,
-          referenceLabel: resolvedImmediate.referenceLabel,
+          imagePath: imm.imagePath,
+          feastName: imm.feastName,
+          source: imm.resolvedSource.name,
+          referenceLabel: imm.referenceLabel,
         ),
       );
     }
@@ -185,7 +194,8 @@ final class ScheduleCoreRemindersUseCase {
     }
 
     if (settings.escrivaPointsFeedEnabled && scheduledQuotes.isNotEmpty) {
-      var previousText = shouldShowImmediate ? resolvedImmediate.text : null;
+      var previousText =
+          shouldShowImmediate ? resolvedImmediate?.text : null;
       for (var i = 0; i < scheduledQuotes.length; i++) {
         final currentQuote = scheduledQuotes[i];
         if (previousText != null && currentQuote.text == previousText) {
@@ -242,10 +252,27 @@ final class ScheduleCoreRemindersUseCase {
     if (scheduledQuotes.isNotEmpty) {
       final firstAt = scheduledTimes.first;
       final lastAt = scheduledTimes.last;
+      final uniqueTexts = scheduledQuotes.map((q) => q.text).toSet();
       debugPrint(
         '[ScheduleCoreRemindersUseCase] queued ${scheduledQuotes.length} quote reminders from '
-        '${firstAt.toIso8601String()} to ${lastAt.toIso8601String()}',
+        '${firstAt.toIso8601String()} to ${lastAt.toIso8601String()} '
+        '(${uniqueTexts.length} distinct texts)',
       );
+      if (uniqueTexts.length < scheduledQuotes.length) {
+        final counts = <String, int>{};
+        for (final q in scheduledQuotes) {
+          counts[q.text] = (counts[q.text] ?? 0) + 1;
+        }
+        final dupes =
+            counts.entries.where((e) => e.value > 1).map((e) {
+              final preview =
+                  e.key.length > 40 ? '${e.key.substring(0, 40)}…' : e.key;
+              return '"$preview" x${e.value}';
+            }).join(', ');
+        debugPrint(
+          '[ScheduleCoreRemindersUseCase] DUPLICATE QUOTES detected: $dupes',
+        );
+      }
     }
 
     if (settings.angelusEnabled) {

@@ -720,12 +720,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final season = await ref
         .read(liturgicalSeasonServiceProvider)
         .getCurrentSeason();
+    final escrivaChanged = settings.escrivaPointsFeedEnabled !=
+        _loadedSettings.escrivaPointsFeedEnabled;
     final rebuildResult = await ref
         .read(rebuildNotificationsUseCaseProvider)
         .call(
           settings,
           isEasterSeason: season == LiturgicalSeason.easter,
-          showImmediate: false,
+          showImmediate: escrivaChanged,
         );
 
     final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);

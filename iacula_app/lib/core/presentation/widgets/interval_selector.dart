@@ -26,7 +26,7 @@ class IntervalSelector extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          height: 40,
+          height: 44,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: commonPresets.length + (showCustomLabel ? 1 : 0),
@@ -85,10 +85,9 @@ class _IntervalButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoButton(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      minSize: 0,
-      onPressed: onPressed,
+    return GestureDetector(
+      onTap: onPressed,
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
