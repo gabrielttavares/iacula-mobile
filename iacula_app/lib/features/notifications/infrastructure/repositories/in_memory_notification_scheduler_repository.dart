@@ -46,10 +46,11 @@ final class InMemoryNotificationSchedulerRepository
     _events[id] = event.copyWith(scheduledId: id);
   }
 
+  static const _showNowId = 99999;
+
   @override
   Future<void> showNow(int id, ReminderEvent event) async {
-    _events.clear();
-    _events[id] = event.copyWith(scheduledId: id);
+    _events[_showNowId] = event.copyWith(scheduledId: _showNowId);
   }
 
   @override

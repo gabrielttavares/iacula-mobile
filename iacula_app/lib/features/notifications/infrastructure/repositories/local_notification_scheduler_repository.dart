@@ -27,6 +27,7 @@ final class LocalNotificationSchedulerRepository
   static const reminderCategoryIdentifier = 'iacula_reminder';
   static const _globalGroupKey = 'iacula_global';
   static const _iosThreadIdentifier = 'iacula_global';
+  static const _showNowId = 99999;
 
   final FlutterLocalNotificationsPlugin _plugin;
   final _controller = StreamController<NotificationActionEvent>.broadcast();
@@ -449,8 +450,6 @@ final class LocalNotificationSchedulerRepository
 
   @override
   Future<void> showNow(int id, ReminderEvent event) async {
-    await _cancelActiveNotifications();
-
     final androidDetails = buildAndroidNotificationDetails(event);
 
     final iosDetails = buildDarwinNotificationDetails(event);
@@ -464,55 +463,23 @@ final class LocalNotificationSchedulerRepository
       event: event,
     ).toPayload();
 
+    // Fixed ID so each new notification replaces the previous one in the tray
+    // without canceling any pending scheduled notifications.
     await _plugin.show(
-      id,
+      _showNowId,
       notificationTitleForPlugin(event),
       event.body,
       details,
       payload: payload,
     );
     debugPrint(
-      '[LocalNotificationScheduler] showNow id=$id type=${event.type.name} at=${event.scheduledAt.toIso8601String()}',
+      '[LocalNotificationScheduler] showNow id=$_showNowId type=${event.type.name} at=${event.scheduledAt.toIso8601String()}',
     );
   }
 
   @override
   Future<void> cancelByType(ReminderEventType type) {
     return _plugin.cancel(_idForType(type));
-  }
-
-  /// Cancels all active (already shown) notifications without affecting pending scheduled ones.
-  Future<void> _cancelActiveNotifications() async {
-    final androidImpl = _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-    if (androidImpl != null) {
-      try {
-        final active = await androidImpl.getActiveNotifications();
-        for (final notification in active) {
-          if (notification.id != null) {
-            await _plugin.cancel(notification.id!);
-          }
-        }
-        debugPrint(
-          '[LocalNotificationScheduler] canceled ${active.length} active notifications',
-        );
-      } catch (e) {
-        debugPrint(
-          '[LocalNotificationScheduler] failed to cancel active notifications: $e',
-        );
-      }
-    }
-
-    final iosImpl = _plugin
-        .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin
-        >();
-    if (iosImpl != null) {
-      await iosImpl.cancelAll();
-      debugPrint('[LocalNotificationScheduler] canceled iOS notifications');
-    }
   }
 
   @override
