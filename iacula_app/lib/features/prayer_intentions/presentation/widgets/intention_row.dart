@@ -30,7 +30,9 @@ class IntentionRow extends StatelessWidget {
       onTap: onTap,
       child: IaculaSoftCard(
         radius: 16,
-        padding: const EdgeInsets.all(IaculaSpacing.md),
+        padding: EdgeInsets.all(
+          showRespondedDate ? IaculaSpacing.sm : IaculaSpacing.md,
+        ),
         child: Row(
           children: [
             Expanded(
@@ -49,7 +51,7 @@ class IntentionRow extends StatelessWidget {
                     Text(
                       intention.description!,
                       style: context.textStyles.secondary,
-                      maxLines: 2,
+                      maxLines: showRespondedDate ? 1 : 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -61,6 +63,7 @@ class IntentionRow extends StatelessWidget {
                         fontSize: 13,
                         color: context.colors.success,
                       ),
+                      maxLines: 1,
                     ),
                   ],
                   if (intention.reminderTime != null) ...[
