@@ -23,7 +23,7 @@ class RespondedIntentionsScreen extends ConsumerWidget {
           CupertinoSliverNavigationBar(
             backgroundColor: context.colors.background,
             border: null,
-            largeTitle: const Text('Intenções Respondidas'),
+            largeTitle: const Text('Respondidas'),
           ),
           CupertinoSliverRefreshControl(
             onRefresh: () async {
