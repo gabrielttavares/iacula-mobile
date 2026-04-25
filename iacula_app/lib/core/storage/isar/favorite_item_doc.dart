@@ -19,6 +19,7 @@ class FavoriteItemDoc {
   String? imagePath;
   String? feastName;
   String? prayerSlug;
+  String? referenceLabel;
 
   // Sync-ready fields
   late bool isDirty;

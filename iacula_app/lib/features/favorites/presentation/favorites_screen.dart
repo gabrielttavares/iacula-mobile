@@ -97,8 +97,11 @@ class FavoritesScreen extends ConsumerWidget {
                                 onShare: () async {
                                   HapticFeedback.selectionClick();
                                   final favorite = favorites[i];
+                                  final refSuffix = favorite.referenceLabel != null
+                                      ? '\n\n${favorite.referenceLabel}'
+                                      : '';
                                   final shareText =
-                                      '${favorite.quoteText}\n\n- Iacula';
+                                      '${favorite.quoteText}$refSuffix\n\n- Iacula';
                                   final imageBytes = await ref
                                       .read(heroCardShareImageRendererProvider)
                                       .renderPng(
@@ -345,6 +348,15 @@ class _FavoriteQuoteCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(item.quoteText, style: context.textStyles.cardTitle),
+        if (item.referenceLabel != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            item.referenceLabel!,
+            style: context.textStyles.secondary.copyWith(
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
         const SizedBox(height: 4),
         Row(
           children: [

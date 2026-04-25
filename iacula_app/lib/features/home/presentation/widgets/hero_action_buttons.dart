@@ -73,7 +73,9 @@ class HeroShareButton extends ConsumerWidget {
         );
 
         final shareService = ref.read(nativeShareServiceProvider);
-        final shareText = '${quote.text}\n\n- Iacula';
+        final refSuffix =
+            quote.referenceLabel != null ? '\n\n${quote.referenceLabel}' : '';
+        final shareText = '${quote.text}$refSuffix\n\n- Iacula';
         if (imageBytes != null) {
           await shareService.shareTextWithImage(
             text: shareText,
@@ -126,6 +128,7 @@ class HeroBookmarkButton extends ConsumerWidget {
               savedAt: DateTime.now(),
               imagePath: quote.imagePath,
               feastName: quote.feastName,
+              referenceLabel: quote.referenceLabel,
             ),
           );
         }

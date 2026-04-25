@@ -46,6 +46,7 @@ final class IsarFavoriteRepository implements FavoriteRepository {
         ..imagePath = item.imagePath
         ..feastName = item.feastName
         ..prayerSlug = item.prayerSlug
+        ..referenceLabel = item.referenceLabel
         ..isDirty = true
         ..deletedAt = null;
       await isar.favoriteItemDocs.put(doc);
@@ -91,6 +92,7 @@ final class IsarFavoriteRepository implements FavoriteRepository {
       imagePath: doc.imagePath,
       feastName: doc.feastName,
       prayerSlug: doc.prayerSlug,
+      referenceLabel: doc.referenceLabel,
     );
   }
 }

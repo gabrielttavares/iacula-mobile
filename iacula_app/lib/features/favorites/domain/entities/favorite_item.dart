@@ -8,6 +8,7 @@ final class FavoriteItem {
     this.imagePath,
     this.feastName,
     this.prayerSlug,
+    this.referenceLabel,
   });
 
   final String id;
@@ -18,6 +19,7 @@ final class FavoriteItem {
   final String? imagePath;
   final String? feastName;
   final String? prayerSlug;
+  final String? referenceLabel;
 
   /// Deduplication key based on content.
   String get contentKey => quoteText.hashCode.toRadixString(36);
