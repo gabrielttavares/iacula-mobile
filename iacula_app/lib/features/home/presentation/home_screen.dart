@@ -584,5 +584,6 @@ Quote _quoteFromHistoryEntry(NotificationHistoryEntry entry, DateTime now) {
     imagePath: entry.imagePath,
     feastName: entry.feastName,
     source: source,
+    referenceLabel: entry.referenceLabel,
   );
 }

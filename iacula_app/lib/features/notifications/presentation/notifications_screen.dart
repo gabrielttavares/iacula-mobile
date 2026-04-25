@@ -314,9 +314,10 @@ class _NotificationsRail extends StatelessWidget {
                       style: context.textStyles.secondary,
                     ),
                     const SizedBox(height: 8),
-                    SelectableText(
+                    Text(
                       entry.quoteText,
                       maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
                       style: context.textStyles.cardTitle,
                     ),
                     const Spacer(),

@@ -77,14 +77,16 @@ class NotificationDetailScreen extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: CupertinoColors.systemBackground.withValues(
+          alpha: 0.0,
+        ),
         border: null,
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: () => Navigator.of(context).pop(),
           child: Icon(
             CupertinoIcons.back,
-            color: CupertinoColors.white,
+            color: CupertinoTheme.of(context).primaryColor,
           ),
         ),
         trailing: Row(
@@ -288,7 +290,7 @@ class _DetailShareButton extends ConsumerWidget {
       },
       child: Icon(
         CupertinoIcons.share,
-        color: CupertinoColors.white,
+        color: CupertinoTheme.of(context).primaryColor,
         size: 20,
       ),
     );
@@ -342,7 +344,7 @@ class _DetailBookmarkButton extends ConsumerWidget {
       },
       child: IaculaAnimatedIcon(
         icon: isSaved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
-        color: CupertinoColors.white,
+        color: CupertinoTheme.of(context).primaryColor,
         size: 20,
         enableHaptics: false,
       ),

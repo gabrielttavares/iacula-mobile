@@ -82,7 +82,7 @@ class _DayQuotesTabState extends ConsumerState<DayQuotesTab> {
                       dayQuotes: _quotes![iaculaDay.toString()],
                       disabledIndices: disabledMap[iaculaDay] ?? const {},
                       isExpanded: _expandedDays.contains(iaculaDay),
-                      switchesEnabled: !widget.escrivaEnabled,
+                      actionsEnabled: !widget.escrivaEnabled,
                       onHeaderTap: () {
                         HapticFeedback.selectionClick();
                         setState(() {
@@ -101,6 +101,40 @@ class _DayQuotesTabState extends ConsumerState<DayQuotesTab> {
                               dayOfWeek: iaculaDay,
                               quoteIndex: quoteIndex,
                             );
+                      },
+                      onDelete: (quoteIndex) async {
+                        final confirmed = await showCupertinoDialog<bool>(
+                          context: context,
+                          builder: (ctx) => CupertinoAlertDialog(
+                            title: const Text('Apagar jaculatória'),
+                            content: const Text(
+                              'Após apagar, a única forma de recuperar '
+                              'esta jaculatória é adicioná-la novamente '
+                              'manualmente. Deseja continuar?',
+                            ),
+                            actions: [
+                              CupertinoDialogAction(
+                                isDefaultAction: true,
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: const Text('Cancelar'),
+                              ),
+                              CupertinoDialogAction(
+                                isDestructiveAction: true,
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: const Text('Apagar'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirmed == true) {
+                          HapticFeedback.mediumImpact();
+                          ref
+                              .read(disabledQuotesNotifierProvider.notifier)
+                              .toggle(
+                                dayOfWeek: iaculaDay,
+                                quoteIndex: quoteIndex,
+                              );
+                        }
                       },
                       onAddPhrase: () {
                         HapticFeedback.lightImpact();
@@ -128,9 +162,10 @@ class _DaySection extends StatelessWidget {
     required this.dayQuotes,
     required this.disabledIndices,
     required this.isExpanded,
-    required this.switchesEnabled,
+    required this.actionsEnabled,
     required this.onHeaderTap,
     required this.onToggle,
+    required this.onDelete,
     required this.onAddPhrase,
   });
 
@@ -138,9 +173,10 @@ class _DaySection extends StatelessWidget {
   final DayQuotes? dayQuotes;
   final Set<int> disabledIndices;
   final bool isExpanded;
-  final bool switchesEnabled;
+  final bool actionsEnabled;
   final VoidCallback onHeaderTap;
   final ValueChanged<int> onToggle;
+  final ValueChanged<int> onDelete;
   final VoidCallback onAddPhrase;
 
   @override
@@ -219,8 +255,9 @@ class _DaySection extends StatelessWidget {
               _QuoteRow(
                 text: quotes.quotes[i],
                 isDisabled: disabledIndices.contains(i),
-                switchEnabled: switchesEnabled,
+                actionsEnabled: actionsEnabled,
                 onToggle: () => onToggle(i),
+                onDelete: () => onDelete(i),
               ),
             ],
             Container(
@@ -258,49 +295,107 @@ class _DaySection extends StatelessWidget {
   }
 }
 
-class _QuoteRow extends StatelessWidget {
+class _QuoteRow extends StatefulWidget {
   const _QuoteRow({
     required this.text,
     required this.isDisabled,
-    required this.switchEnabled,
+    required this.actionsEnabled,
     required this.onToggle,
+    required this.onDelete,
   });
 
   final String text;
   final bool isDisabled;
-  final bool switchEnabled;
+  final bool actionsEnabled;
   final VoidCallback onToggle;
+  final VoidCallback onDelete;
+
+  @override
+  State<_QuoteRow> createState() => _QuoteRowState();
+}
+
+class _QuoteRowState extends State<_QuoteRow> {
+  bool _expanded = false;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: IaculaSpacing.md,
-        vertical: IaculaSpacing.xs,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Opacity(
-              opacity: isDisabled ? 0.4 : 1.0,
-              child: Text(
-                text,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: context.textStyles.secondary.copyWith(
-                  fontSize: 14,
-                  color: context.colors.textPrimary,
+    return GestureDetector(
+      onTap: () => setState(() => _expanded = !_expanded),
+      onLongPress: () {
+        HapticFeedback.mediumImpact();
+        Clipboard.setData(ClipboardData(text: widget.text));
+        showCupertinoDialog(
+          context: context,
+          builder: (ctx) => CupertinoAlertDialog(
+            content: const Text('Texto copiado!'),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      },
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedSize(
+        duration: const Duration(milliseconds: 200),
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: IaculaSpacing.md,
+            vertical: IaculaSpacing.xs,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Opacity(
+                  opacity: widget.isDisabled ? 0.4 : 1.0,
+                  child: Text(
+                    widget.text,
+                    maxLines: _expanded ? null : 2,
+                    overflow: _expanded ? null : TextOverflow.ellipsis,
+                    style: context.textStyles.secondary.copyWith(
+                      fontSize: 14,
+                      color: context.colors.textPrimary,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: IaculaSpacing.xs),
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(28, 28),
+                onPressed: widget.actionsEnabled ? widget.onToggle : null,
+                child: Icon(
+                  widget.isDisabled
+                      ? CupertinoIcons.circle
+                      : CupertinoIcons.checkmark_circle_fill,
+                  size: 22,
+                  color: widget.actionsEnabled
+                      ? (widget.isDisabled
+                          ? context.colors.textSecondary
+                          : context.colors.primaryButton)
+                      : context.colors.textSecondary.withValues(alpha: 0.4),
+                ),
+              ),
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(28, 28),
+                onPressed: widget.actionsEnabled ? widget.onDelete : null,
+                child: Icon(
+                  CupertinoIcons.trash,
+                  size: 18,
+                  color: widget.actionsEnabled
+                      ? CupertinoColors.destructiveRed
+                      : CupertinoColors.destructiveRed
+                          .withValues(alpha: 0.4),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: IaculaSpacing.sm),
-          CupertinoSwitch(
-            value: !isDisabled,
-            onChanged: switchEnabled ? (_) => onToggle() : null,
-            activeTrackColor: context.colors.primaryButton,
-          ),
-        ],
+        ),
       ),
     );
   }
