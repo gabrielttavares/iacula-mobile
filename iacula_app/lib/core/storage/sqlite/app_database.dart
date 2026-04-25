@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 16,
+      version: 17,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -96,6 +96,15 @@ final class AppDatabase {
             delivered_at TEXT NOT NULL,
             source TEXT,
             reference_label TEXT
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE disabled_default_quotes (
+            day_of_week INTEGER NOT NULL,
+            quote_index INTEGER NOT NULL,
+            season TEXT NOT NULL DEFAULT 'ordinary',
+            PRIMARY KEY (day_of_week, quote_index, season)
           )
         ''');
       },
@@ -202,6 +211,16 @@ final class AppDatabase {
           await db.execute(
             'ALTER TABLE settings ADD COLUMN custom_phrases_only INTEGER NOT NULL DEFAULT 0',
           );
+        }
+        if (oldVersion < 17) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS disabled_default_quotes (
+              day_of_week INTEGER NOT NULL,
+              quote_index INTEGER NOT NULL,
+              season TEXT NOT NULL DEFAULT 'ordinary',
+              PRIMARY KEY (day_of_week, quote_index, season)
+            )
+          ''');
         }
       },
     );

@@ -12,7 +12,7 @@ import '../../../core/presentation/widgets/iacula_stagger_entrance.dart';
 import '../../../core/presentation/widgets/image_background_card.dart';
 import '../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../custom_phrases/presentation/custom_phrases_screen.dart';
+import '../../jaculatorias/presentation/jaculatorias_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../notifications/domain/entities/notification_history_entry.dart';
@@ -374,13 +374,13 @@ class _FeatureCardsList extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
           child: ImageBackgroundCard(
             key: const Key('home_custom_phrases_card'),
-            title: 'Minhas frases',
+            title: 'Jaculatórias',
             imageAsset:
                 'assets/placeholders/sections/minhas-frases/minhas-frases.jpeg',
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
-                CupertinoPageRoute(builder: (_) => const CustomPhrasesScreen()),
+                CupertinoPageRoute(builder: (_) => const JaculatoriasScreen()),
               );
             },
             height: 120,

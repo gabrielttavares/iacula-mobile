@@ -33,6 +33,7 @@ import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
 import '../../features/quotes/domain/entities/quote.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
+import '../../features/quotes/infrastructure/repositories/sqlite_disabled_quotes_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_quote_indices_repository.dart';
 import '../../features/reading/infrastructure/repositories/isar_reading_annotation_repository.dart';
 import '../../features/settings/infrastructure/repositories/sqlite_settings_repository.dart';
@@ -75,6 +76,7 @@ final class AppBootstrap {
 
       final settingsRepo = SqliteSettingsRepository(db);
       final indicesRepo = SqliteQuoteIndicesRepository(db);
+      final disabledQuotesRepo = SqliteDisabledQuotesRepository(db);
       final lastDeliveredCardRepo = SqliteLastDeliveredCardRepository(db);
       final notificationHistoryRepo = SqliteNotificationHistoryRepository(db);
       final mediaRepo = IsarMediaCatalogRepository(isarStore);
@@ -118,6 +120,7 @@ final class AppBootstrap {
       final quoteUseCase = GetNextQuoteUseCase(
         contentRepository: const AssetQuoteContentRepository(),
         indicesRepository: indicesRepo,
+        disabledQuotesRepository: disabledQuotesRepo,
       );
       final escrivaPointsUseCase = GetNextEscrivaPointsQuoteUseCase(
         LeituraRepository(localSource: LeituraLocalSource()),
@@ -323,6 +326,7 @@ final class AppBootstrap {
         appEnvProvider.overrideWithValue(env),
         settingsRepositoryProvider.overrideWithValue(settingsRepo),
         quoteIndicesRepositoryProvider.overrideWithValue(indicesRepo),
+        disabledQuotesRepositoryProvider.overrideWithValue(disabledQuotesRepo),
         lastDeliveredCardRepositoryProvider.overrideWithValue(
           lastDeliveredCardRepo,
         ),

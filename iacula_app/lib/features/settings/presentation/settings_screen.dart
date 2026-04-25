@@ -9,7 +9,7 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/interval_selector.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../custom_phrases/presentation/custom_phrases_screen.dart';
+import '../../jaculatorias/presentation/jaculatorias_screen.dart';
 import '../../home_widget/home_widget_service.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
@@ -38,8 +38,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _quietHoursEnabled = false;
   String _quietHoursStart = '22:00';
   String _quietHoursEnd = '07:00';
-  bool _customPhrasesOnly = false;
-
   bool _loading = true;
   bool _saving = false;
   String? _validationMessage;
@@ -67,8 +65,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _quietHoursEnabled = settings.quietHoursEnabled;
     _quietHoursStart = settings.quietHoursStart;
     _quietHoursEnd = settings.quietHoursEnd;
-    _customPhrasesOnly = settings.customPhrasesOnly;
-
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
     if (scheduler is LocalNotificationSchedulerRepository) {
       _permissionGranted = await scheduler.checkPermission();
@@ -392,14 +388,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           onPressed: () {
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (_) => const CustomPhrasesScreen(),
+                                builder: (_) => const JaculatoriasScreen(),
                               ),
                             );
                           },
                           child: Row(
                             children: [
                               Text(
-                                'Minhas frases',
+                                'Jaculatórias',
                                 style: context.textStyles.cardTitle.copyWith(
                                   fontSize: 16,
                                 ),
@@ -409,43 +405,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 CupertinoIcons.chevron_right,
                                 color: context.colors.textSecondary,
                                 size: 18,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(height: 1, color: context.colors.separator),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: IaculaRadius.innerPadding,
-                            vertical: 12,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Usar apenas minhas frases',
-                                      style: context.textStyles.cardTitle.copyWith(fontSize: 16),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Exibe apenas suas frases personalizadas, ignorando as jaculatórias do tempo.',
-                                      style: context.textStyles.secondary.copyWith(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              CupertinoSwitch(
-                                value: _customPhrasesOnly,
-                                activeTrackColor: context.colors.primaryButton,
-                                onChanged: (value) {
-                                  HapticFeedback.selectionClick();
-                                  setState(() => _customPhrasesOnly = value);
-                                },
                               ),
                             ],
                           ),
@@ -710,7 +669,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       quietHoursEnabled: _quietHoursEnabled,
       quietHoursStart: _quietHoursStart,
       quietHoursEnd: _quietHoursEnd,
-      customPhrasesOnly: _customPhrasesOnly,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);

@@ -33,6 +33,12 @@ final class QuoteSelector {
     return day.quotes[safeIndex];
   }
 
+  static String? selectFromList(List<String> quotes, int index) {
+    if (quotes.isEmpty) return null;
+    final safeIndex = (index >= 0 && index < quotes.length) ? index : 0;
+    return quotes[safeIndex];
+  }
+
   static QuoteIndices ensureCurrentDay(QuoteIndices indices, int dayOfWeek) {
     if (shouldResetIndices(indices.lastDay, dayOfWeek)) {
       return QuoteIndices.empty(dayOfWeek);

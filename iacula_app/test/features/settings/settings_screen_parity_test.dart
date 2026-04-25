@@ -138,7 +138,7 @@ void main() {
     expect(find.text('Tema'), findsOneWidget);
     expect(find.text('Tamanho da fonte'), findsOneWidget);
     await expectVisible('Personalização');
-    await expectVisible('Minhas frases');
+    await expectVisible('Jaculatórias');
     await expectVisible('Pontos de Caminho/Sulco/Forja');
     await expectVisible('Salvar');
   });

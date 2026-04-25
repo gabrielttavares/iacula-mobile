@@ -5,6 +5,7 @@ import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote_indices.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_content_repository.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_indices_repository.dart';
+import 'package:iacula_app/features/quotes/infrastructure/repositories/in_memory_disabled_quotes_repository.dart';
 
 class _FakeQuoteContentRepository implements QuoteContentRepository {
   final Map<String, DayQuotes> _quotes;
@@ -81,6 +82,7 @@ void main() {
     final useCase = GetNextQuoteUseCase(
       contentRepository: _FakeQuoteContentRepository(),
       indicesRepository: _FakeIndicesRepository(),
+      disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
     );
 
     final result = await useCase.call(
@@ -99,6 +101,7 @@ void main() {
         },
       ),
       indicesRepository: _FakeIndicesRepository(),
+      disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
     );
 
     final batch = await useCase.fetchBatch(
@@ -116,6 +119,7 @@ void main() {
     final useCase = GetNextQuoteUseCase(
       contentRepository: _FakeQuoteContentRepository(),
       indicesRepository: repo,
+      disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
     );
 
     final result = await useCase.call(
@@ -154,6 +158,7 @@ void main() {
       final useCase = GetNextQuoteUseCase(
         contentRepository: twoDayRepo,
         indicesRepository: repo,
+        disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
       );
 
       final start = DateTime(2026, 3, 22, 23, 40);
@@ -190,6 +195,7 @@ void main() {
     final useCase = GetNextQuoteUseCase(
       contentRepository: twoDayRepo,
       indicesRepository: repo,
+      disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
     );
 
     final start = DateTime(2026, 3, 22, 23, 40);
@@ -222,6 +228,7 @@ void main() {
     final useCase = GetNextQuoteUseCase(
       contentRepository: _FakeQuoteContentRepository(),
       indicesRepository: repo,
+      disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
     );
 
     final result = await useCase.call(

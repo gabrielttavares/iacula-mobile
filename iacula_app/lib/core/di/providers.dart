@@ -39,9 +39,11 @@ import '../../features/prayers/infrastructure/repositories/asset_prayer_catalog_
 import '../../features/prayers/infrastructure/repositories/asset_prayer_content_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
 import '../../features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
+import '../../features/quotes/domain/repositories/disabled_quotes_repository.dart';
 import '../../features/quotes/domain/repositories/quote_content_repository.dart';
 import '../../features/quotes/domain/repositories/quote_indices_repository.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
+import '../../features/quotes/infrastructure/repositories/in_memory_disabled_quotes_repository.dart';
 import '../../features/quotes/infrastructure/repositories/in_memory_quote_indices_repository.dart';
 import '../../features/settings/application/use_cases/get_settings_use_case.dart';
 import '../../features/settings/application/use_cases/update_settings_use_case.dart';
@@ -65,6 +67,7 @@ import '../../features/prayer_intentions/application/use_cases/schedule_prayer_i
 import '../../features/prayer_intentions/application/use_cases/cancel_prayer_intention_reminder_use_case.dart';
 import '../../features/prayer_intentions/application/prayer_intentions_notifier.dart';
 
+import '../../features/jaculatorias/application/disabled_quotes_notifier.dart';
 import '../../features/custom_phrases/application/custom_phrases_notifier.dart';
 import '../../features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import '../../features/custom_phrases/domain/entities/custom_phrase.dart';
@@ -151,6 +154,11 @@ final quoteContentRepositoryProvider = Provider<QuoteContentRepository>((ref) {
 
 final quoteIndicesRepositoryProvider = Provider<QuoteIndicesRepository>((ref) {
   return InMemoryQuoteIndicesRepository();
+});
+
+final disabledQuotesRepositoryProvider =
+    Provider<DisabledQuotesRepository>((ref) {
+  return InMemoryDisabledQuotesRepository();
 });
 
 final prayerContentRepositoryProvider = Provider<PrayerContentRepository>((
@@ -372,6 +380,7 @@ final getNextQuoteUseCaseProvider = Provider<GetNextQuoteUseCase>((ref) {
   return GetNextQuoteUseCase(
     contentRepository: ref.watch(quoteContentRepositoryProvider),
     indicesRepository: ref.watch(quoteIndicesRepositoryProvider),
+    disabledQuotesRepository: ref.watch(disabledQuotesRepositoryProvider),
   );
 });
 
@@ -630,6 +639,11 @@ final rebuildNotificationsUseCaseProvider =
 final customPhrasesNotifierProvider =
     AsyncNotifierProvider<CustomPhrasesNotifier, List<CustomPhrase>>(() {
       return CustomPhrasesNotifier();
+    });
+
+final disabledQuotesNotifierProvider =
+    AsyncNotifierProvider<DisabledQuotesNotifier, Map<int, Set<int>>>(() {
+      return DisabledQuotesNotifier();
     });
 
 // -- Prayer Activity / Streak Providers --

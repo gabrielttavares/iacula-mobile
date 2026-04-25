@@ -5,6 +5,7 @@ import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote_indices.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_content_repository.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_indices_repository.dart';
+import 'package:iacula_app/features/quotes/infrastructure/repositories/in_memory_disabled_quotes_repository.dart';
 
 class _FakeQuoteContentRepository implements QuoteContentRepository {
   _FakeQuoteContentRepository({
@@ -79,6 +80,7 @@ void main() {
         feastImage: 'img-feast',
       ),
       indicesRepository: repo,
+      disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
     );
 
     final first = await useCase.call(
@@ -112,6 +114,7 @@ void main() {
         feastQuotes: const <String>[],
       ),
       indicesRepository: repo,
+      disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
     );
 
     final quote = await useCase.call(
@@ -143,6 +146,7 @@ void main() {
       final useCase = GetNextQuoteUseCase(
         contentRepository: content,
         indicesRepository: repo,
+        disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
       );
 
       final quote = await useCase.call(
