@@ -366,7 +366,7 @@ class _DaySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final days = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+    final days = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'];
     return Wrap(
       spacing: 8,
       children: List.generate(7, (index) {
