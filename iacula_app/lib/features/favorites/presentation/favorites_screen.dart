@@ -267,6 +267,17 @@ class _FavoritePrayerRow extends StatelessWidget {
                 ],
               ),
             ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              minSize: 30,
+              onPressed: onShare,
+              child: Icon(
+                CupertinoIcons.share,
+                size: 18,
+                color: context.colors.textSecondary,
+              ),
+            ),
+            const SizedBox(width: 4),
             Icon(
               CupertinoIcons.chevron_right,
               size: 18,
@@ -335,9 +346,25 @@ class _FavoriteQuoteCard extends StatelessWidget {
       children: [
         Text(item.quoteText, style: context.textStyles.cardTitle),
         const SizedBox(height: 4),
-        Text(
-          _savedAtCaption(item.savedAt),
-          style: context.textStyles.secondary,
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                _savedAtCaption(item.savedAt),
+                style: context.textStyles.secondary,
+              ),
+            ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              minSize: 30,
+              onPressed: onShare,
+              child: Icon(
+                CupertinoIcons.share,
+                size: 18,
+                color: context.colors.textSecondary,
+              ),
+            ),
+          ],
         ),
       ],
     );

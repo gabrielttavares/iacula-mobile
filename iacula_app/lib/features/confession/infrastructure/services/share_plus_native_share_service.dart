@@ -9,14 +9,11 @@ final class SharePlusNativeShareService implements NativeShareService {
   const SharePlusNativeShareService();
 
   static const Rect _defaultShareOrigin = Rect.fromLTWH(0, 0, 1, 1);
-  static const String _appUrl = 'https://iacula.app';
 
   @visibleForTesting
   ShareParams buildShareParams(String text) {
-    final sharedText = _appendAppUrl(text);
-
     return ShareParams(
-      text: sharedText,
+      text: text.trim(),
       sharePositionOrigin: _defaultShareOrigin,
     );
   }
@@ -28,18 +25,11 @@ final class SharePlusNativeShareService implements NativeShareService {
     String fileName = 'iacula-share-card.png',
   }) {
     return ShareParams(
-      text: _appendAppUrl(text),
+      text: text.trim(),
       files: [XFile.fromData(imageBytes, mimeType: 'image/png')],
       fileNameOverrides: [fileName],
       sharePositionOrigin: _defaultShareOrigin,
     );
-  }
-
-  String _appendAppUrl(String text) {
-    final normalizedText = text.trim();
-    return normalizedText.contains(_appUrl)
-        ? normalizedText
-        : '$normalizedText\n\n$_appUrl';
   }
 
   @override
