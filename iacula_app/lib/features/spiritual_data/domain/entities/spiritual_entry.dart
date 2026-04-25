@@ -46,6 +46,7 @@ final class SpiritualEntry {
     DateTime? respondedAt,
     bool? isDirty,
     DateTime? lastSyncedAt,
+    bool clearRespondedAt = false,
   }) {
     return SpiritualEntry(
       id: id ?? this.id,
@@ -57,7 +58,7 @@ final class SpiritualEntry {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
-      respondedAt: respondedAt ?? this.respondedAt,
+      respondedAt: clearRespondedAt ? null : (respondedAt ?? this.respondedAt),
       isDirty: isDirty ?? this.isDirty,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
     );

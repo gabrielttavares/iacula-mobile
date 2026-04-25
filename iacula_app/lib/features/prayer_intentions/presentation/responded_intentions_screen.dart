@@ -57,12 +57,47 @@ class RespondedIntentionsScreen extends ConsumerWidget {
                           child: IntentionRow(
                             intention: intention,
                             showRespondedDate: true,
+                            onRespond: () => _confirmUnmark(
+                              context,
+                              ref,
+                              intention.id,
+                            ),
                           ),
                         );
                       },
                       childCount: state.respondedIntentions.length,
                     ),
                   ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmUnmark(BuildContext context, WidgetRef ref, String id) {
+    HapticFeedback.mediumImpact();
+    showCupertinoDialog<void>(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: const Text('Desmarcar como respondida?'),
+        content: const Text(
+          'A intenção voltará para a lista de intenções abertas.',
+        ),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: const Text('Cancelar'),
+            onPressed: () => Navigator.of(ctx).pop(),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            child: const Text('Desmarcar'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              ref
+                  .read(prayerIntentionsNotifierProvider.notifier)
+                  .unmarkResponded(id);
+            },
           ),
         ],
       ),

@@ -10,6 +10,7 @@ import 'use_cases/delete_intention_use_case.dart';
 import 'use_cases/list_intentions_use_case.dart';
 import 'use_cases/respond_intention_use_case.dart';
 import 'use_cases/schedule_prayer_intention_reminder_use_case.dart';
+import 'use_cases/unrespond_intention_use_case.dart';
 import 'use_cases/update_intention_use_case.dart';
 
 class PrayerIntentionsState {
@@ -43,6 +44,7 @@ class PrayerIntentionsNotifier extends StateNotifier<PrayerIntentionsState> {
     required UpdateIntentionUseCase updateIntention,
     required DeleteIntentionUseCase deleteIntention,
     required RespondIntentionUseCase respondIntention,
+    required UnrespondIntentionUseCase unrespondIntention,
     required SchedulePrayerIntentionReminderUseCase scheduleReminder,
     required CancelPrayerIntentionReminderUseCase cancelReminder,
   }) : _listIntentions = listIntentions,
@@ -50,6 +52,7 @@ class PrayerIntentionsNotifier extends StateNotifier<PrayerIntentionsState> {
        _updateIntention = updateIntention,
        _deleteIntention = deleteIntention,
        _respondIntention = respondIntention,
+       _unrespondIntention = unrespondIntention,
        _scheduleReminder = scheduleReminder,
        _cancelReminder = cancelReminder,
        super(const PrayerIntentionsState()) {
@@ -61,6 +64,7 @@ class PrayerIntentionsNotifier extends StateNotifier<PrayerIntentionsState> {
   final UpdateIntentionUseCase _updateIntention;
   final DeleteIntentionUseCase _deleteIntention;
   final RespondIntentionUseCase _respondIntention;
+  final UnrespondIntentionUseCase _unrespondIntention;
   final SchedulePrayerIntentionReminderUseCase _scheduleReminder;
   final CancelPrayerIntentionReminderUseCase _cancelReminder;
 
@@ -101,6 +105,11 @@ class PrayerIntentionsNotifier extends StateNotifier<PrayerIntentionsState> {
 
   Future<void> markResponded(String id) async {
     await _respondIntention(id);
+    await loadData();
+  }
+
+  Future<void> unmarkResponded(String id) async {
+    await _unrespondIntention(id);
     await loadData();
   }
 
