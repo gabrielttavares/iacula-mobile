@@ -121,6 +121,7 @@ final class AppBootstrap {
         contentRepository: const AssetQuoteContentRepository(),
         indicesRepository: indicesRepo,
         disabledQuotesRepository: disabledQuotesRepo,
+        customPhraseRepository: localCustomPhraseRepo,
       );
       final escrivaPointsUseCase = GetNextEscrivaPointsQuoteUseCase(
         LeituraRepository(localSource: LeituraLocalSource()),

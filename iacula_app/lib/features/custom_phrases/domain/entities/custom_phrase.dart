@@ -7,6 +7,7 @@ final class CustomPhrase {
     this.isActive = true,
     this.displayOnHero = true,
     this.displayAsNotification = true,
+    this.useFixedSchedule = false,
     required this.schedule,
     required this.createdAt,
     required this.updatedAt,
@@ -17,9 +18,12 @@ final class CustomPhrase {
   final bool isActive;
   final bool displayOnHero;
   final bool displayAsNotification;
+  final bool useFixedSchedule;
   final PhraseSchedule schedule;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  bool get isRotationMode => !useFixedSchedule;
 
   CustomPhrase copyWith({
     String? id,
@@ -27,6 +31,7 @@ final class CustomPhrase {
     bool? isActive,
     bool? displayOnHero,
     bool? displayAsNotification,
+    bool? useFixedSchedule,
     PhraseSchedule? schedule,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -37,6 +42,7 @@ final class CustomPhrase {
       isActive: isActive ?? this.isActive,
       displayOnHero: displayOnHero ?? this.displayOnHero,
       displayAsNotification: displayAsNotification ?? this.displayAsNotification,
+      useFixedSchedule: useFixedSchedule ?? this.useFixedSchedule,
       schedule: schedule ?? this.schedule,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

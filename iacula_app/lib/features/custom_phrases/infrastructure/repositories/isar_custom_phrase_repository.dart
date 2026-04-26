@@ -41,7 +41,10 @@ final class IsarCustomPhraseRepository implements CustomPhraseRepository {
       doc.isActive = phrase.isActive;
       doc.displayOnHero = phrase.displayOnHero;
       doc.displayAsNotification = phrase.displayAsNotification;
-      doc.scheduleJson = jsonEncode(phrase.schedule.toJson());
+      doc.scheduleJson = jsonEncode({
+        ...phrase.schedule.toJson(),
+        'useFixedSchedule': phrase.useFixedSchedule,
+      });
       doc.createdAt = phrase.createdAt.toUtc();
       doc.updatedAt = phrase.updatedAt.toUtc();
 
@@ -67,15 +70,15 @@ final class IsarCustomPhraseRepository implements CustomPhraseRepository {
   }
 
   CustomPhrase _toEntity(CustomPhraseDoc doc) {
+    final json = jsonDecode(doc.scheduleJson) as Map<String, dynamic>;
     return CustomPhrase(
       id: doc.phraseId,
       text: doc.text,
       isActive: doc.isActive,
       displayOnHero: doc.displayOnHero,
       displayAsNotification: doc.displayAsNotification,
-      schedule: PhraseSchedule.fromJson(
-        jsonDecode(doc.scheduleJson) as Map<String, dynamic>,
-      ),
+      useFixedSchedule: json['useFixedSchedule'] as bool? ?? false,
+      schedule: PhraseSchedule.fromJson(json),
       createdAt: doc.createdAt.toLocal(),
       updatedAt: doc.updatedAt.toLocal(),
     );

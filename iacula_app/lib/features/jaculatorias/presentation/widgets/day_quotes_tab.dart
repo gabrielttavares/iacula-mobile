@@ -314,87 +314,208 @@ class _QuoteRow extends StatefulWidget {
   State<_QuoteRow> createState() => _QuoteRowState();
 }
 
-class _QuoteRowState extends State<_QuoteRow> {
+class _QuoteRowState extends State<_QuoteRow>
+    with SingleTickerProviderStateMixin {
   bool _expanded = false;
+  late final AnimationController _slideController;
+  late final Animation<Offset> _slideAnimation;
+  static const _actionsWidth = 120.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _slideController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(-_actionsWidth, 0),
+    ).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _slideController.dispose();
+    super.dispose();
+  }
+
+  void _handleDragUpdate(DragUpdateDetails details) {
+    if (!widget.actionsEnabled) return;
+    final delta = details.primaryDelta ?? 0;
+    _slideController.value += -delta / _actionsWidth;
+  }
+
+  void _handleDragEnd(DragEndDetails details) {
+    if (!widget.actionsEnabled) return;
+    final velocity = details.primaryVelocity ?? 0;
+    if (velocity < -300 || _slideController.value > 0.5) {
+      _slideController.forward();
+    } else {
+      _slideController.reverse();
+    }
+  }
+
+  void _closeActions() {
+    _slideController.reverse();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => setState(() => _expanded = !_expanded),
-      onLongPress: () {
-        HapticFeedback.mediumImpact();
-        Clipboard.setData(ClipboardData(text: widget.text));
-        showCupertinoDialog(
-          context: context,
-          builder: (ctx) => CupertinoAlertDialog(
-            content: const Text('Texto copiado!'),
-            actions: [
-              CupertinoDialogAction(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      },
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedSize(
-        duration: const Duration(milliseconds: 200),
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: IaculaSpacing.md,
-            vertical: IaculaSpacing.xs,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Opacity(
-                  opacity: widget.isDisabled ? 0.4 : 1.0,
-                  child: Text(
-                    widget.text,
-                    maxLines: _expanded ? null : 2,
-                    overflow: _expanded ? null : TextOverflow.ellipsis,
-                    style: context.textStyles.secondary.copyWith(
-                      fontSize: 14,
-                      color: context.colors.textPrimary,
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 200),
+      alignment: Alignment.topCenter,
+      child: ClipRect(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      widget.onToggle();
+                      _closeActions();
+                    },
+                    child: Container(
+                      width: 60,
+                      color: widget.isDisabled
+                          ? context.colors.primaryButton
+                          : CupertinoColors.systemGrey,
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            widget.isDisabled
+                                ? CupertinoIcons.checkmark_circle
+                                : CupertinoIcons.eye_slash,
+                            color: CupertinoColors.white,
+                            size: 20,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            widget.isDisabled ? 'Ativar' : 'Desativar',
+                            style: const TextStyle(
+                              color: CupertinoColors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _closeActions();
+                      widget.onDelete();
+                    },
+                    child: Container(
+                      width: 60,
+                      color: CupertinoColors.destructiveRed,
+                      alignment: Alignment.center,
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            CupertinoIcons.trash,
+                            color: CupertinoColors.white,
+                            size: 20,
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Apagar',
+                            style: TextStyle(
+                              color: CupertinoColors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            AnimatedBuilder(
+              animation: _slideAnimation,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: _slideAnimation.value,
+                  child: child,
+                );
+              },
+              child: GestureDetector(
+                onTap: () {
+                  if (_slideController.value > 0) {
+                    _closeActions();
+                  } else {
+                    setState(() => _expanded = !_expanded);
+                  }
+                },
+                onLongPress: () {
+                  HapticFeedback.mediumImpact();
+                  Clipboard.setData(ClipboardData(text: widget.text));
+                  showCupertinoDialog(
+                    context: context,
+                    builder: (ctx) => CupertinoAlertDialog(
+                      content: const Text('Texto copiado!'),
+                      actions: [
+                        CupertinoDialogAction(
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                onHorizontalDragUpdate: _handleDragUpdate,
+                onHorizontalDragEnd: _handleDragEnd,
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  color: context.colors.card,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: IaculaSpacing.md,
+                    vertical: IaculaSpacing.xs,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Opacity(
+                          opacity: widget.isDisabled ? 0.4 : 1.0,
+                          child: Text(
+                            widget.text,
+                            maxLines: _expanded ? null : 2,
+                            overflow:
+                                _expanded ? null : TextOverflow.ellipsis,
+                            style: context.textStyles.secondary.copyWith(
+                              fontSize: 14,
+                              color: context.colors.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (widget.isDisabled)
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: IaculaSpacing.xs),
+                          child: Icon(
+                            CupertinoIcons.eye_slash,
+                            size: 14,
+                            color: context.colors.textSecondary,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(width: IaculaSpacing.xs),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(28, 28),
-                onPressed: widget.actionsEnabled ? widget.onToggle : null,
-                child: Icon(
-                  widget.isDisabled
-                      ? CupertinoIcons.circle
-                      : CupertinoIcons.checkmark_circle_fill,
-                  size: 22,
-                  color: widget.actionsEnabled
-                      ? (widget.isDisabled
-                          ? context.colors.textSecondary
-                          : context.colors.primaryButton)
-                      : context.colors.textSecondary.withValues(alpha: 0.4),
-                ),
-              ),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(28, 28),
-                onPressed: widget.actionsEnabled ? widget.onDelete : null,
-                child: Icon(
-                  CupertinoIcons.trash,
-                  size: 18,
-                  color: widget.actionsEnabled
-                      ? CupertinoColors.destructiveRed
-                      : CupertinoColors.destructiveRed
-                          .withValues(alpha: 0.4),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

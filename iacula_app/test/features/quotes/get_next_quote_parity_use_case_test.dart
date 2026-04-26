@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:iacula_app/features/custom_phrases/domain/entities/custom_phrase.dart';
+import 'package:iacula_app/features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/quotes/application/use_cases/get_next_quote_use_case.dart';
 import 'package:iacula_app/features/quotes/domain/entities/day_quotes.dart';
@@ -6,6 +8,19 @@ import 'package:iacula_app/features/quotes/domain/entities/quote_indices.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_content_repository.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_indices_repository.dart';
 import 'package:iacula_app/features/quotes/infrastructure/repositories/in_memory_disabled_quotes_repository.dart';
+
+class _EmptyCustomPhraseRepository implements CustomPhraseRepository {
+  @override
+  Future<List<CustomPhrase>> listAll() async => const [];
+  @override
+  Future<CustomPhrase?> getById(String id) async => null;
+  @override
+  Future<void> save(CustomPhrase phrase) async {}
+  @override
+  Future<void> delete(String id) async {}
+  @override
+  Stream<List<CustomPhrase>> watchAll() => Stream.value(const []);
+}
 
 class _FakeQuoteContentRepository implements QuoteContentRepository {
   _FakeQuoteContentRepository({
@@ -81,6 +96,7 @@ void main() {
       ),
       indicesRepository: repo,
       disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
+      customPhraseRepository: _EmptyCustomPhraseRepository(),
     );
 
     final first = await useCase.call(
@@ -115,6 +131,7 @@ void main() {
       ),
       indicesRepository: repo,
       disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
+      customPhraseRepository: _EmptyCustomPhraseRepository(),
     );
 
     final quote = await useCase.call(
@@ -147,6 +164,7 @@ void main() {
         contentRepository: content,
         indicesRepository: repo,
         disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
+        customPhraseRepository: _EmptyCustomPhraseRepository(),
       );
 
       final quote = await useCase.call(

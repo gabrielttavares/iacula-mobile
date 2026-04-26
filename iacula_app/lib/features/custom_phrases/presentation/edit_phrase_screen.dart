@@ -25,6 +25,7 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
   late final TextEditingController _textController;
   late bool _displayOnHero;
   late bool _displayAsNotification;
+  late bool _useFixedSchedule;
   late PhraseScheduleType _scheduleType;
   late List<int> _daysOfWeek;
   late List<String> _specificDates;
@@ -37,6 +38,7 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
     _textController = TextEditingController(text: e?.text ?? '');
     _displayOnHero = e?.displayOnHero ?? true;
     _displayAsNotification = e?.displayAsNotification ?? true;
+    _useFixedSchedule = e?.useFixedSchedule ?? false;
     _scheduleType = e?.schedule.type ?? PhraseScheduleType.daily;
     _daysOfWeek = List.from(e?.schedule.daysOfWeek ?? []);
     _specificDates = List.from(e?.schedule.specificDates ?? []);
@@ -69,31 +71,33 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
       return;
     }
 
-    if (_scheduleType == PhraseScheduleType.weekly && _daysOfWeek.isEmpty) {
-      IaculaModal.showAlert(
-        context: context,
-        title: 'Escolha os dias',
-        message: 'Selecione pelo menos um dia da semana.',
-      );
-      return;
-    }
+    if (_useFixedSchedule) {
+      if (_scheduleType == PhraseScheduleType.weekly && _daysOfWeek.isEmpty) {
+        IaculaModal.showAlert(
+          context: context,
+          title: 'Escolha os dias',
+          message: 'Selecione pelo menos um dia da semana.',
+        );
+        return;
+      }
 
-    if (_scheduleType == PhraseScheduleType.specificDates && _specificDates.isEmpty) {
-      IaculaModal.showAlert(
-        context: context,
-        title: 'Escolha as datas',
-        message: 'Selecione pelo menos uma data.',
-      );
-      return;
-    }
+      if (_scheduleType == PhraseScheduleType.specificDates && _specificDates.isEmpty) {
+        IaculaModal.showAlert(
+          context: context,
+          title: 'Escolha as datas',
+          message: 'Selecione pelo menos uma data.',
+        );
+        return;
+      }
 
-    if (_times.isEmpty) {
-      IaculaModal.showAlert(
-        context: context,
-        title: 'Escolha os horários',
-        message: 'Selecione pelo menos um horário.',
-      );
-      return;
+      if (_times.isEmpty) {
+        IaculaModal.showAlert(
+          context: context,
+          title: 'Escolha os horários',
+          message: 'Selecione pelo menos um horário.',
+        );
+        return;
+      }
     }
 
     final phrase = (widget.existing ??
@@ -108,11 +112,12 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
       text: text,
       displayOnHero: _displayOnHero,
       displayAsNotification: _displayAsNotification,
+      useFixedSchedule: _useFixedSchedule,
       schedule: PhraseSchedule(
         type: _scheduleType,
         daysOfWeek: _daysOfWeek,
         specificDates: _specificDates,
-        times: _times,
+        times: _useFixedSchedule ? _times : const [],
       ),
     );
 
@@ -193,80 +198,115 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
                     ),
                   ),
                   _Section(
-                    title: 'RECORRÊNCIA',
+                    title: 'MODO DE EXIBIÇÃO',
                     child: Column(
                       children: [
                         SizedBox(
                           width: double.infinity,
-                          child: CupertinoSlidingSegmentedControl<PhraseScheduleType>(
-                            groupValue: _scheduleType,
+                          child: CupertinoSlidingSegmentedControl<bool>(
+                            groupValue: _useFixedSchedule,
                             children: const {
-                              PhraseScheduleType.daily: Text('Diário', style: TextStyle(fontSize: 13)),
-                              PhraseScheduleType.weekly: Text('Semanal', style: TextStyle(fontSize: 13)),
-                              PhraseScheduleType.specificDates: Text('Datas', style: TextStyle(fontSize: 13)),
+                              false: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 4),
+                                child: Text('Com as jaculatórias', style: TextStyle(fontSize: 12)),
+                              ),
+                              true: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 4),
+                                child: Text('Horário fixo', style: TextStyle(fontSize: 12)),
+                              ),
                             },
                             onValueChanged: (v) {
-                              if (v != null) setState(() => _scheduleType = v);
+                              if (v != null) setState(() => _useFixedSchedule = v);
                             },
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: _scheduleType == PhraseScheduleType.weekly
-                              ? _DaySelector(
-                                  key: const ValueKey<String>('weekly'),
-                                  selected: _daysOfWeek,
-                                  onChanged: (days) => setState(() => _daysOfWeek = days),
-                                )
-                              : _scheduleType == PhraseScheduleType.specificDates
-                                  ? _DateSelector(
-                                      key: const ValueKey<String>('specificDates'),
-                                      dates: _specificDates,
-                                      onChanged: (dates) => setState(() => _specificDates = dates),
-                                    )
-                                  : const SizedBox.shrink(key: ValueKey<String>('daily')),
+                        const SizedBox(height: 8),
+                        Text(
+                          _useFixedSchedule
+                              ? 'Será exibida nos horários que você definir.'
+                              : 'Aparecerá aleatoriamente junto com as jaculatórias, no intervalo configurado.',
+                          style: context.textStyles.secondary.copyWith(fontSize: 12),
                         ),
                       ],
                     ),
                   ),
-                  _Section(
-                    title: 'HORÁRIOS',
-                    child: _TimeSelector(
-                      times: _times,
-                      onChanged: (times) => setState(() => _times = times),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(IaculaSpacing.md),
-                    decoration: BoxDecoration(
-                      color: context.colors.primaryButton.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(IaculaRadius.card),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Será exibida:',
-                          style: context.textStyles.secondary.copyWith(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                  if (_useFixedSchedule) ...[
+                    _Section(
+                      title: 'RECORRÊNCIA',
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: CupertinoSlidingSegmentedControl<PhraseScheduleType>(
+                              groupValue: _scheduleType,
+                              children: const {
+                                PhraseScheduleType.daily: Text('Diário', style: TextStyle(fontSize: 13)),
+                                PhraseScheduleType.weekly: Text('Semanal', style: TextStyle(fontSize: 13)),
+                                PhraseScheduleType.specificDates: Text('Datas', style: TextStyle(fontSize: 13)),
+                              },
+                              onValueChanged: (v) {
+                                if (v != null) setState(() => _scheduleType = v);
+                              },
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          PhraseSchedule(
-                            type: _scheduleType,
-                            daysOfWeek: _daysOfWeek,
-                            specificDates: _specificDates,
-                            times: _times,
-                          ).summary(),
-                          style: context.textStyles.cardTitle.copyWith(fontSize: 14),
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
+                            child: _scheduleType == PhraseScheduleType.weekly
+                                ? _DaySelector(
+                                    key: const ValueKey<String>('weekly'),
+                                    selected: _daysOfWeek,
+                                    onChanged: (days) => setState(() => _daysOfWeek = days),
+                                  )
+                                : _scheduleType == PhraseScheduleType.specificDates
+                                    ? _DateSelector(
+                                        key: const ValueKey<String>('specificDates'),
+                                        dates: _specificDates,
+                                        onChanged: (dates) => setState(() => _specificDates = dates),
+                                      )
+                                    : const SizedBox.shrink(key: ValueKey<String>('daily')),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                    _Section(
+                      title: 'HORÁRIOS',
+                      child: _TimeSelector(
+                        times: _times,
+                        onChanged: (times) => setState(() => _times = times),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(IaculaSpacing.md),
+                      decoration: BoxDecoration(
+                        color: context.colors.primaryButton.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(IaculaRadius.card),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Será exibida:',
+                            style: context.textStyles.secondary.copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            PhraseSchedule(
+                              type: _scheduleType,
+                              daysOfWeek: _daysOfWeek,
+                              specificDates: _specificDates,
+                              times: _times,
+                            ).summary(),
+                            style: context.textStyles.cardTitle.copyWith(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   if (widget.existing != null) ...[
                     const SizedBox(height: 24),
                     CupertinoButton(

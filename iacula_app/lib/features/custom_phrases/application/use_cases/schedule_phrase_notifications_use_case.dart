@@ -36,7 +36,7 @@ class SchedulePhraseNotificationsUseCase {
       await _scheduler.cancelById(id);
     }
 
-    if (!phrase.isActive || !phrase.displayAsNotification) return;
+    if (!phrase.isActive || !phrase.displayAsNotification || !phrase.useFixedSchedule) return;
 
     // 2. Schedule new notifications
     final now = DateTime.now();

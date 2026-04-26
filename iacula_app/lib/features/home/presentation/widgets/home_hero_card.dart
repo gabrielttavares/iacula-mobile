@@ -6,7 +6,7 @@ import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../liturgical/domain/liturgical_season.dart';
 import '../../../quotes/domain/entities/quote.dart';
-import '../pages/quote_full_text_screen.dart';
+import '../../../notifications/presentation/notification_detail_screen.dart';
 import 'hero_action_buttons.dart';
 
 class HomeHeroCard extends ConsumerStatefulWidget {
@@ -54,10 +54,17 @@ class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
   }
 
   void _openFullText(BuildContext context, Quote quote, String labelText) {
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       CupertinoPageRoute<void>(
-        builder: (context) =>
-            QuoteFullTextScreen(quote: quote, labelText: labelText),
+        builder: (_) => NotificationDetailScreen(
+          quoteText: quote.text,
+          theme: quote.theme ?? '',
+          season: quote.season.name,
+          imagePath: quote.imagePath,
+          feastName: quote.feastName,
+          source: quote.resolvedSource.name,
+          referenceLabel: quote.referenceLabel,
+        ),
       ),
     );
   }

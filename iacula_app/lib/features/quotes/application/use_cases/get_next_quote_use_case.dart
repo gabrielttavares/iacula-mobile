@@ -1,3 +1,4 @@
+import '../../../custom_phrases/domain/repositories/custom_phrase_repository.dart';
 import '../../../liturgical/domain/liturgical_context.dart';
 import '../../domain/entities/quote.dart';
 import '../../domain/entities/quote_indices.dart';
@@ -11,13 +12,16 @@ final class GetNextQuoteUseCase {
     required QuoteContentRepository contentRepository,
     required QuoteIndicesRepository indicesRepository,
     required DisabledQuotesRepository disabledQuotesRepository,
+    required CustomPhraseRepository customPhraseRepository,
   }) : _contentRepository = contentRepository,
        _indicesRepository = indicesRepository,
-       _disabledQuotesRepository = disabledQuotesRepository;
+       _disabledQuotesRepository = disabledQuotesRepository,
+       _customPhraseRepository = customPhraseRepository;
 
   final QuoteContentRepository _contentRepository;
   final QuoteIndicesRepository _indicesRepository;
   final DisabledQuotesRepository _disabledQuotesRepository;
+  final CustomPhraseRepository _customPhraseRepository;
 
   /// Fetches [count] quotes in sequence, loading indices once and saving once
   /// at the end. Much more efficient than calling [call] in a loop.
@@ -53,6 +57,8 @@ final class GetNextQuoteUseCase {
       return list;
     }
 
+    final rotationPhrases = await _loadRotationPhrases();
+
     final disabledCache = <int, Set<int>>{};
     Future<List<String>> enabledQuotesForDay(int dow, List<String> all) async {
       final disabled = disabledCache[dow] ??=
@@ -60,12 +66,14 @@ final class GetNextQuoteUseCase {
             dayOfWeek: dow,
             season: seasonName,
           );
-      if (disabled.isEmpty) return all;
-      final filtered = [
-        for (var i = 0; i < all.length; i++)
-          if (!disabled.contains(i)) all[i],
-      ];
-      return filtered.isEmpty ? all : filtered;
+      final base = disabled.isEmpty
+          ? all
+          : [
+              for (var i = 0; i < all.length; i++)
+                if (!disabled.contains(i)) all[i],
+            ];
+      final filtered = (base.isEmpty ? all : base) + rotationPhrases;
+      return filtered;
     }
 
     var indices = await _indicesRepository.load(dayOfWeek: startDayOfWeek);
@@ -179,8 +187,9 @@ final class GetNextQuoteUseCase {
             for (var i = 0; i < dayData.quotes.length; i++)
               if (!disabled.contains(i)) dayData.quotes[i],
           ];
+    final rotationPhrases = await _loadRotationPhrases();
     final effectiveQuotes =
-        enabled.isEmpty ? dayData.quotes : enabled;
+        (enabled.isEmpty ? dayData.quotes : enabled) + rotationPhrases;
 
     final indices = await _indicesRepository.load(dayOfWeek: dayOfWeek);
     final currentQuoteIndex = indices.quoteIndices[dayOfWeek] ?? 0;
@@ -245,6 +254,14 @@ final class GetNextQuoteUseCase {
       season: context.season,
       imagePath: imagePath,
     );
+  }
+
+  Future<List<String>> _loadRotationPhrases() async {
+    final allPhrases = await _customPhraseRepository.listAll();
+    return [
+      for (final p in allPhrases)
+        if (p.isActive && p.isRotationMode) p.text,
+    ];
   }
 
   int _dayOfWeek1to7(DateTime date) {

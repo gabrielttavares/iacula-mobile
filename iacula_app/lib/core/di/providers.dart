@@ -381,6 +381,7 @@ final getNextQuoteUseCaseProvider = Provider<GetNextQuoteUseCase>((ref) {
     contentRepository: ref.watch(quoteContentRepositoryProvider),
     indicesRepository: ref.watch(quoteIndicesRepositoryProvider),
     disabledQuotesRepository: ref.watch(disabledQuotesRepositoryProvider),
+    customPhraseRepository: ref.watch(customPhraseRepositoryProvider),
   );
 });
 
