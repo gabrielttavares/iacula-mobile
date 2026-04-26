@@ -51,6 +51,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadSettings();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final connectivity = ref.read(connectivityProvider);
       unawaited(loadLoraFontsWhenOnline(connectivity));
