@@ -81,93 +81,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
       _actionsSub = scheduler.actions.listen((event) async {
         final shouldOpen = await handler.call(event);
         if (!shouldOpen) return;
-
-        final nav = _navigatorKey.currentState;
-        if (nav == null) return;
-
-        switch (event.event.routeTarget) {
-          case NotificationRouteTarget.home:
-            ref.read(tappedNotificationScheduledAtProvider.notifier).state =
-                event.event.scheduledAt;
-            nav.pushAndRemoveUntil(
-              CupertinoPageRoute(builder: (_) => const ShellScreen()),
-              (route) => false,
-            );
-            nav.push(
-              CupertinoPageRoute(
-                builder: (_) => NotificationDetailScreen(
-                  quoteText: event.event.body,
-                  theme: event.event.quoteTheme ?? '',
-                  season: event.event.quoteSeason ?? 'ordinary',
-                  feastName: event.event.quoteFeastName,
-                ),
-              ),
-            );
-            return;
-
-          case NotificationRouteTarget.prayer:
-            final settings = await ref.read(getSettingsUseCaseProvider).call();
-            final prayerSlug = event.event.prayerSlug;
-            if (prayerSlug != null) {
-              final catalogEntry = await ref
-                  .read(getPrayerCatalogUseCaseProvider)
-                  .getBySlug(language: settings.language, slug: prayerSlug);
-              if (catalogEntry != null) {
-                nav.push(
-                  CupertinoPageRoute(
-                    builder: (_) =>
-                        PrayerCatalogDetailScreen(entry: catalogEntry),
-                  ),
-                );
-                return;
-              }
-            }
-
-            final prayer = await ref
-                .read(getPrayerUseCaseProvider)
-                .call(language: settings.language);
-            nav.push(
-              CupertinoPageRoute(builder: (_) => PrayerScreen(prayer: prayer)),
-            );
-            return;
-
-          case NotificationRouteTarget.alarm:
-            nav.push(
-              CupertinoPageRoute(
-                builder: (_) => AlarmScreen(
-                  title: event.event.title,
-                  body: event.event.body,
-                ),
-              ),
-            );
-            return;
-
-          case NotificationRouteTarget.prayerIntention:
-            nav.pushAndRemoveUntil(
-              CupertinoPageRoute(builder: (_) => const ShellScreen()),
-              (route) => false,
-            );
-            nav.push(
-              CupertinoPageRoute(
-                builder: (_) => const PrayerIntentionsScreen(),
-              ),
-            );
-            return;
-
-          case NotificationRouteTarget.nightPrayer:
-            nav.push(
-              CupertinoPageRoute(builder: (_) => const NightPrayerScreen()),
-            );
-            return;
-
-          case NotificationRouteTarget.liturgyHours:
-            nav.push(
-              CupertinoPageRoute(
-                builder: (_) => const LiturgyHoursLandingScreen(),
-              ),
-            );
-            return;
-        }
+        await _pushRouteForEvent(event.event);
       });
 
       unawaited(_handleLaunchNotification(scheduler, handler));
@@ -192,6 +106,95 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     }
   }
 
+  Future<void> _pushRouteForEvent(ReminderEvent event) async {
+    final nav = _navigatorKey.currentState;
+    if (nav == null) return;
+
+    switch (event.routeTarget) {
+      case NotificationRouteTarget.home:
+        ref.read(tappedNotificationScheduledAtProvider.notifier).state =
+            event.scheduledAt;
+        nav.pushAndRemoveUntil(
+          CupertinoPageRoute(builder: (_) => const ShellScreen()),
+          (route) => false,
+        );
+        nav.push(
+          CupertinoPageRoute(
+            builder: (_) => NotificationDetailScreen(
+              quoteText: event.body,
+              theme: event.quoteTheme ?? '',
+              season: event.quoteSeason ?? 'ordinary',
+              feastName: event.quoteFeastName,
+            ),
+          ),
+        );
+        return;
+
+      case NotificationRouteTarget.prayer:
+        final settings = await ref.read(getSettingsUseCaseProvider).call();
+        final prayerSlug = event.prayerSlug;
+        if (prayerSlug != null) {
+          final catalogEntry = await ref
+              .read(getPrayerCatalogUseCaseProvider)
+              .getBySlug(language: settings.language, slug: prayerSlug);
+          if (catalogEntry != null) {
+            nav.push(
+              CupertinoPageRoute(
+                builder: (_) =>
+                    PrayerCatalogDetailScreen(entry: catalogEntry),
+              ),
+            );
+            return;
+          }
+        }
+
+        final prayer = await ref
+            .read(getPrayerUseCaseProvider)
+            .call(language: settings.language);
+        nav.push(
+          CupertinoPageRoute(builder: (_) => PrayerScreen(prayer: prayer)),
+        );
+        return;
+
+      case NotificationRouteTarget.alarm:
+        nav.push(
+          CupertinoPageRoute(
+            builder: (_) => AlarmScreen(
+              title: event.title,
+              body: event.body,
+            ),
+          ),
+        );
+        return;
+
+      case NotificationRouteTarget.prayerIntention:
+        nav.pushAndRemoveUntil(
+          CupertinoPageRoute(builder: (_) => const ShellScreen()),
+          (route) => false,
+        );
+        nav.push(
+          CupertinoPageRoute(
+            builder: (_) => const PrayerIntentionsScreen(),
+          ),
+        );
+        return;
+
+      case NotificationRouteTarget.nightPrayer:
+        nav.push(
+          CupertinoPageRoute(builder: (_) => const NightPrayerScreen()),
+        );
+        return;
+
+      case NotificationRouteTarget.liturgyHours:
+        nav.push(
+          CupertinoPageRoute(
+            builder: (_) => const LiturgyHoursLandingScreen(),
+          ),
+        );
+        return;
+    }
+  }
+
   Future<void> _handleLaunchNotification(
     NotificationSchedulerRepository scheduler,
     HandleNotificationActionUseCase handler,
@@ -200,22 +203,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     if (event == null) return;
     final shouldOpen = await handler.call(event);
     if (!shouldOpen) return;
-
-    final nav = _navigatorKey.currentState;
-    if (nav == null) return;
-
-    if (event.event.routeTarget == NotificationRouteTarget.home) {
-      nav.push(
-        CupertinoPageRoute(
-          builder: (_) => NotificationDetailScreen(
-            quoteText: event.event.body,
-            theme: event.event.quoteTheme ?? '',
-            season: event.event.quoteSeason ?? 'ordinary',
-            feastName: event.event.quoteFeastName,
-          ),
-        ),
-      );
-    }
+    await _pushRouteForEvent(event.event);
   }
 
   Future<void> _ensureNotificationsScheduled() async {
