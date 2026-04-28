@@ -463,10 +463,8 @@ final class LocalNotificationSchedulerRepository
       event: event,
     ).toPayload();
 
-    // Fixed ID so each new notification replaces the previous one in the tray
-    // without canceling any pending scheduled notifications.
     await _plugin.show(
-      _showNowId,
+      id,
       notificationTitleForPlugin(event),
       event.body,
       details,

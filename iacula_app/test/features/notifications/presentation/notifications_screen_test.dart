@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show SelectableText;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
@@ -296,7 +295,7 @@ void main() {
     },
   );
 
-  testWidgets('renders quote text as selectable for copying', (tester) async {
+  testWidgets('renders quote text inside rail cards', (tester) async {
     final repo = InMemoryNotificationHistoryRepository();
     await repo.add(
       NotificationHistoryEntry(
@@ -323,9 +322,9 @@ void main() {
     expect(
       find.descendant(
         of: find.byKey(const Key('today_notifications_rail')),
-        matching: find.byType(SelectableText),
+        matching: find.text('Permanecei em mim.'),
       ),
-      findsWidgets,
+      findsOneWidget,
     );
   });
 
