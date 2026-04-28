@@ -482,24 +482,6 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     // No user phrases - fall through to default quotes
   }
 
-  // Existing schedule-based logic (when toggle is off OR toggle on but no user phrases)
-  final matching = phrases
-      .where((p) => p.isActive && p.displayOnHero && p.schedule.matchesNow(now))
-      .toList();
-
-  if (matching.isNotEmpty) {
-    final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
-    final selected = matching[dayOfYear % matching.length];
-    return Quote(
-      text: selected.text,
-      dayOfWeek: now.weekday,
-      theme: 'personal',
-      season: LiturgicalSeason.ordinary,
-      imagePath: null,
-      source: QuoteSource.personal,
-    );
-  }
-
   final history = await ref
       .watch(notificationHistoryRepositoryProvider)
       .listForDay(now);
@@ -530,6 +512,26 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     )) {
       return quote;
     }
+  }
+
+  // Fallback: if no regular quote has been delivered today and a personal
+  // phrase matches the current schedule, show it. This only applies when
+  // using phrases "alongside others" (customPhrasesOnly = false).
+  final matching = phrases
+      .where((p) => p.isActive && p.displayOnHero && p.schedule.matchesNow(now))
+      .toList();
+
+  if (matching.isNotEmpty) {
+    final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+    final selected = matching[dayOfYear % matching.length];
+    return Quote(
+      text: selected.text,
+      dayOfWeek: now.weekday,
+      theme: 'personal',
+      season: LiturgicalSeason.ordinary,
+      imagePath: null,
+      source: QuoteSource.personal,
+    );
   }
 
   // Fallback: fetch a quote but accept it may advance the index.
