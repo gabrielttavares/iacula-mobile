@@ -373,70 +373,69 @@ class _ReminderSheetState extends State<_ReminderSheet> {
   @override
   Widget build(BuildContext context) {
     final hasReminder = widget.intention.hasReminder;
-    return SizedBox(
-      height: 450,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Lembrete', style: context.textStyles.sectionTitle),
-                if (hasReminder)
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () async {
-                      HapticFeedback.lightImpact();
-                      await widget.notifier.clearReminder(widget.intention.id);
-                      if (context.mounted) Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'Remover',
-                      style: TextStyle(
-                        color: CupertinoColors.destructiveRed,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: IntentionScheduleSelector(
-              schedule: _schedule,
-              onChanged: (schedule) => setState(() => _schedule = schedule),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-            child: Row(
-              children: [
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Lembrete', style: context.textStyles.sectionTitle),
+              if (hasReminder)
                 CupertinoButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancelar'),
-                ),
-                const Spacer(),
-                CupertinoButton.filled(
+                  padding: EdgeInsets.zero,
                   onPressed: () async {
-                    if (_schedule.times.isEmpty) {
-                      HapticFeedback.heavyImpact();
-                      return;
-                    }
                     HapticFeedback.lightImpact();
-                    await widget.notifier.setSchedule(
-                      widget.intention.id,
-                      _schedule,
-                    );
+                    await widget.notifier.clearReminder(widget.intention.id);
                     if (context.mounted) Navigator.pop(context);
                   },
-                  child: const Text('Salvar'),
+                  child: const Text(
+                    'Remover',
+                    style: TextStyle(
+                      color: CupertinoColors.destructiveRed,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
-              ],
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: IntentionScheduleSelector(
+            schedule: _schedule,
+            onChanged: (schedule) => setState(() => _schedule = schedule),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+          child: Row(
+            children: [
+              CupertinoButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancelar'),
+              ),
+              const Spacer(),
+              CupertinoButton.filled(
+                onPressed: () async {
+                  if (_schedule.times.isEmpty) {
+                    HapticFeedback.heavyImpact();
+                    return;
+                  }
+                  HapticFeedback.lightImpact();
+                  await widget.notifier.setSchedule(
+                    widget.intention.id,
+                    _schedule,
+                  );
+                  if (context.mounted) Navigator.pop(context);
+                },
+                child: const Text('Salvar'),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

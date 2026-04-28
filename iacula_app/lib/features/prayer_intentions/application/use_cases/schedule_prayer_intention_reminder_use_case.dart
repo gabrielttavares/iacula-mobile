@@ -1,5 +1,7 @@
 // lib/features/prayer_intentions/application/use_cases/schedule_prayer_intention_reminder_use_case.dart
 
+import 'dart:convert';
+
 import '../../../notifications/domain/entities/reminder_event.dart';
 import '../../../notifications/domain/repositories/notification_scheduler_repository.dart';
 import '../../domain/entities/intention_schedule.dart';
@@ -53,7 +55,7 @@ final class SchedulePrayerIntentionReminderUseCase {
 
     await _repository.saveLocal(
       entry.copyWith(
-        scheduleJson: schedule.toJson().toString(),
+        scheduleJson: jsonEncode(schedule.toJson()),
         isDirty: true,
       ),
     );
