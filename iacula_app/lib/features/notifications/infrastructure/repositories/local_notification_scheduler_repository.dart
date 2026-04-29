@@ -249,11 +249,9 @@ final class LocalNotificationSchedulerRepository
       icon: _smallIcon,
       importance: Importance.max,
       priority: Priority.high,
-      fullScreenIntent: requiresInteraction || event.isAlarm,
+      fullScreenIntent: event.isAlarm,
       enableVibration: event.withVibration,
-      category: requiresInteraction || event.isAlarm
-          ? AndroidNotificationCategory.alarm
-          : null,
+      category: event.isAlarm ? AndroidNotificationCategory.alarm : null,
       playSound: true,
       visibility: NotificationVisibility.public,
       styleInformation: BigTextStyleInformation(event.body),

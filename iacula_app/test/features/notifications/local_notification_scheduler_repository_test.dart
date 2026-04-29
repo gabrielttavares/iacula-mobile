@@ -138,8 +138,49 @@ void main() {
       expect(details.actions![1].id, 'snooze_1h');
       expect(details.actions![1].title, 'Adiar 1h');
       expect(details.actions![1].showsUserInterface, isFalse);
-      expect(details.fullScreenIntent, isTrue);
+      expect(details.fullScreenIntent, isFalse);
+      expect(details.category, isNull);
       expect(details.ongoing, isFalse);
+    });
+
+    test('angelus alarm uses fullScreenIntent and alarm category', () {
+      final event = ReminderEvent(
+        type: ReminderEventType.angelusNoon,
+        title: 'Angelus',
+        body: 'Hora de rezar o Angelus.',
+        scheduledAt: DateTime(2026, 4, 10, 12),
+        withVibration: true,
+        isAlarm: true,
+      );
+
+      final details =
+          LocalNotificationSchedulerRepository.buildAndroidNotificationDetails(
+            event,
+          );
+
+      expect(details.fullScreenIntent, isTrue);
+      expect(details.category, AndroidNotificationCategory.alarm);
+      expect(details.actions, hasLength(2));
+    });
+
+    test('customPhrase does not use fullScreenIntent but keeps actions', () {
+      final event = ReminderEvent(
+        type: ReminderEventType.customPhrase,
+        title: 'Frase Pessoal',
+        body: 'My phrase',
+        scheduledAt: DateTime(2026, 4, 10, 8),
+        withVibration: true,
+        isAlarm: false,
+      );
+
+      final details =
+          LocalNotificationSchedulerRepository.buildAndroidNotificationDetails(
+            event,
+          );
+
+      expect(details.fullScreenIntent, isFalse);
+      expect(details.category, isNull);
+      expect(details.actions, hasLength(2));
     });
 
     test('keeps alarm actions and liturgy channel mapping unchanged', () {
