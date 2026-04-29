@@ -65,12 +65,13 @@ final class ScheduleCoreRemindersUseCase {
     );
     await _notificationHistoryRepository.clearFrom(current);
 
+    final todayHistory =
+        await _notificationHistoryRepository.listForDay(current);
+
     Quote? resolvedImmediate = immediateQuote;
 
     var shouldShowImmediate = showImmediate;
     if (showImmediate) {
-      final todayHistory =
-          await _notificationHistoryRepository.listForDay(current);
       final hasRecentDueQuote = todayHistory.any((entry) {
         if (entry.deliveredAt.isAfter(current)) return false;
         final minutesAgo = current.difference(entry.deliveredAt).inMinutes;
@@ -193,21 +194,32 @@ final class ScheduleCoreRemindersUseCase {
       }
     }
 
-    if (settings.escrivaPointsFeedEnabled && scheduledQuotes.isNotEmpty) {
-      var previousText =
-          shouldShowImmediate ? resolvedImmediate?.text : null;
+    if (scheduledQuotes.isNotEmpty) {
+      final alreadyDeliveredTexts = <String>{
+        for (final entry in todayHistory)
+          if (!entry.deliveredAt.isAfter(current)) entry.quoteText,
+      };
+      if (shouldShowImmediate && resolvedImmediate != null) {
+        alreadyDeliveredTexts.add(resolvedImmediate.text);
+      }
+
       for (var i = 0; i < scheduledQuotes.length; i++) {
         final currentQuote = scheduledQuotes[i];
-        if (previousText != null && currentQuote.text == previousText) {
+        final isToday = _isSameDay(scheduledTimes[i], current);
+
+        if (isToday && alreadyDeliveredTexts.contains(currentQuote.text)) {
           scheduledQuotes[i] = await _fetchDistinctQuoteForSlot(
             language: settings.language,
             slotTime: scheduledTimes[i],
-            previousText: previousText,
+            excludedTexts: alreadyDeliveredTexts,
             intervalMinutes: settings.intervalMinutes,
             fallback: currentQuote,
           );
         }
-        previousText = scheduledQuotes[i].text;
+
+        if (isToday) {
+          alreadyDeliveredTexts.add(scheduledQuotes[i].text);
+        }
       }
     }
 
@@ -354,16 +366,16 @@ final class ScheduleCoreRemindersUseCase {
   Future<Quote> _fetchDistinctQuoteForSlot({
     required String language,
     required DateTime slotTime,
-    required String previousText,
+    required Set<String> excludedTexts,
     required int intervalMinutes,
     required Quote fallback,
   }) async {
-    const maxAttempts = 3;
+    const maxAttempts = 5;
     for (var attempt = 1; attempt <= maxAttempts; attempt++) {
       final candidateTime =
           slotTime.add(Duration(minutes: intervalMinutes * attempt));
       final candidate = await _quoteFetcher(language: language, now: candidateTime);
-      if (candidate.text != previousText) {
+      if (!excludedTexts.contains(candidate.text)) {
         return candidate;
       }
     }
