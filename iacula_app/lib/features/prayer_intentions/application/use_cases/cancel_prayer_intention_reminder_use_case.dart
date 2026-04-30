@@ -13,7 +13,7 @@ final class CancelPrayerIntentionReminderUseCase {
   final SpiritualEntryRepository _repository;
   final NotificationSchedulerRepository _scheduler;
 
-  Future<void> call(String intentionId) async {
+  Future<void> call(String intentionId, {bool clearSchedule = true}) async {
     final entries = await _repository.listLocal(includeDeleted: true);
     SpiritualEntry? entry;
     for (final e in entries) {
@@ -45,9 +45,9 @@ final class CancelPrayerIntentionReminderUseCase {
       await _scheduler.cancelById(notificationId);
     }
 
-    if (entry != null && entry.scheduleJson != null) {
+    if (clearSchedule && entry != null && entry.scheduleJson != null) {
       await _repository.saveLocal(
-        entry.copyWith(scheduleJson: null, isDirty: true),
+        entry.copyWith(clearScheduleJson: true, isDirty: true),
       );
     }
   }

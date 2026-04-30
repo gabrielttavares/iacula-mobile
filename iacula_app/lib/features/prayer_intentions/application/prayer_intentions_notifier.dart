@@ -105,6 +105,7 @@ class PrayerIntentionsNotifier extends StateNotifier<PrayerIntentionsState> {
 
   Future<void> markResponded(String id) async {
     await _respondIntention(id);
+    await _cancelReminder(id, clearSchedule: false);
     await loadData();
   }
 

@@ -27,6 +27,8 @@ class ScheduleIntentionNotificationsUseCase {
   }
 
   Future<void> _scheduleForEntry(SpiritualEntry entry) async {
+    if (entry.respondedAt != null) return;
+
     final schedule = _parseSchedule(entry.scheduleJson);
     if (schedule == null || schedule.times.isEmpty) return;
 

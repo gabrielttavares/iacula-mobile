@@ -47,6 +47,7 @@ final class SpiritualEntry {
     bool? isDirty,
     DateTime? lastSyncedAt,
     bool clearRespondedAt = false,
+    bool clearScheduleJson = false,
   }) {
     return SpiritualEntry(
       id: id ?? this.id,
@@ -54,7 +55,7 @@ final class SpiritualEntry {
       userId: userId ?? this.userId,
       title: title ?? this.title,
       body: body ?? this.body,
-      scheduleJson: scheduleJson ?? this.scheduleJson,
+      scheduleJson: clearScheduleJson ? null : (scheduleJson ?? this.scheduleJson),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
