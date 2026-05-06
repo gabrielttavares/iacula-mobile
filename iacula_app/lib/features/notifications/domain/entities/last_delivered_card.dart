@@ -25,6 +25,7 @@ final class LastDeliveredCard {
   final String? referenceLabel;
 
   Quote toQuote() {
+    final parsedSource = _parseSource(source);
     return Quote(
       text: quoteText,
       dayOfWeek: 1,
@@ -33,7 +34,8 @@ final class LastDeliveredCard {
       imagePath: imagePath,
       feast: feast,
       feastName: feastName,
-      source: _parseSource(source),
+      source: parsedSource ??
+          (referenceLabel != null ? QuoteSource.escrivaPoints : null),
       referenceLabel: referenceLabel,
     );
   }
@@ -59,8 +61,8 @@ final class LastDeliveredCard {
     );
   }
 
-  static QuoteSource _parseSource(String? value) {
-    if (value == null) return QuoteSource.liturgical;
+  static QuoteSource? _parseSource(String? value) {
+    if (value == null) return null;
     return QuoteSource.values.firstWhere(
       (s) => s.name == value,
       orElse: () => QuoteSource.liturgical,

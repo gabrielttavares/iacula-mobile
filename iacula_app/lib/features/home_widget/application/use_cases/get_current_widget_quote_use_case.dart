@@ -70,6 +70,12 @@ final class GetCurrentWidgetQuoteUseCase {
       (candidate) => candidate.name == entry.season,
       orElse: () => LiturgicalSeason.ordinary,
     );
+    final source = entry.source != null
+        ? QuoteSource.values.firstWhere(
+            (s) => s.name == entry.source,
+            orElse: () => QuoteSource.liturgical,
+          )
+        : QuoteSource.liturgical;
 
     return Quote(
       text: entry.quoteText,
@@ -78,6 +84,8 @@ final class GetCurrentWidgetQuoteUseCase {
       season: season,
       imagePath: entry.imagePath,
       feastName: entry.feastName,
+      source: source,
+      referenceLabel: entry.referenceLabel,
     );
   }
 }

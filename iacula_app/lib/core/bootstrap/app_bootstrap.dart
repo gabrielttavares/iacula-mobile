@@ -122,6 +122,7 @@ final class AppBootstrap {
         indicesRepository: indicesRepo,
         disabledQuotesRepository: disabledQuotesRepo,
         customPhraseRepository: localCustomPhraseRepo,
+        liturgicalSeasonService: liturgicalSeasonService,
       );
       final escrivaPointsUseCase = GetNextEscrivaPointsQuoteUseCase(
         LeituraRepository(localSource: LeituraLocalSource()),

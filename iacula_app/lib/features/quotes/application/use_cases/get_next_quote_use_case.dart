@@ -1,5 +1,6 @@
 import '../../../custom_phrases/domain/repositories/custom_phrase_repository.dart';
-import '../../../liturgical/domain/liturgical_context.dart';
+import '../../../liturgical/domain/liturgical_season.dart';
+import '../../../liturgical/domain/services/liturgical_season_service.dart';
 import '../../domain/entities/quote.dart';
 import '../../domain/entities/quote_indices.dart';
 import '../../domain/repositories/disabled_quotes_repository.dart';
@@ -13,15 +14,18 @@ final class GetNextQuoteUseCase {
     required QuoteIndicesRepository indicesRepository,
     required DisabledQuotesRepository disabledQuotesRepository,
     required CustomPhraseRepository customPhraseRepository,
+    LiturgicalSeasonService? liturgicalSeasonService,
   }) : _contentRepository = contentRepository,
        _indicesRepository = indicesRepository,
        _disabledQuotesRepository = disabledQuotesRepository,
-       _customPhraseRepository = customPhraseRepository;
+       _customPhraseRepository = customPhraseRepository,
+       _liturgicalSeasonService = liturgicalSeasonService;
 
   final QuoteContentRepository _contentRepository;
   final QuoteIndicesRepository _indicesRepository;
   final DisabledQuotesRepository _disabledQuotesRepository;
   final CustomPhraseRepository _customPhraseRepository;
+  final LiturgicalSeasonService? _liturgicalSeasonService;
 
   /// Fetches [count] quotes in sequence, loading indices once and saving once
   /// at the end. Much more efficient than calling [call] in a loop.
@@ -36,14 +40,14 @@ final class GetNextQuoteUseCase {
     final quotes = <Quote>[];
     final firstDate = startTime;
     final startDayOfWeek = _dayOfWeek1to7(firstDate);
-    const context = LiturgicalContext.ordinaryFallback;
+    final season = await _resolveSeason(firstDate);
 
     final seasonalCollection = await _contentRepository.loadQuotes(
       language: language,
-      season: context.season,
+      season: season,
     );
     final quotePool = seasonalCollection;
-    final seasonName = context.season.name;
+    final seasonName = season.name;
 
     final imageLists = <int, List<String>>{};
     Future<List<String>> imagesForDay(int dow) async {
@@ -51,7 +55,7 @@ final class GetNextQuoteUseCase {
       if (cached != null) return cached;
       final list = await _contentRepository.listDayImages(
         dayOfWeek: dow,
-        season: context.season,
+        season: season,
       );
       imageLists[dow] = list;
       return list;
@@ -92,7 +96,7 @@ final class GetNextQuoteUseCase {
             text: 'Conteudo indisponivel para hoje.',
             dayOfWeek: qDayOfWeek,
             theme: dayData?.theme ?? 'Sem tema',
-            season: context.season,
+            season: season,
           ),
         );
         continue;
@@ -147,7 +151,7 @@ final class GetNextQuoteUseCase {
           text: selectedText,
           dayOfWeek: qDayOfWeek,
           theme: dayData.theme,
-          season: context.season,
+          season: season,
           imagePath: imagePath,
         ),
       );
@@ -160,11 +164,11 @@ final class GetNextQuoteUseCase {
   Future<Quote> call({required String language, DateTime? now}) async {
     final date = now ?? DateTime.now();
     final dayOfWeek = _dayOfWeek1to7(date);
-    const context = LiturgicalContext.ordinaryFallback;
+    final season = await _resolveSeason(date);
 
     final seasonalCollection = await _contentRepository.loadQuotes(
       language: language,
-      season: context.season,
+      season: season,
     );
 
     final dayData = seasonalCollection[dayOfWeek.toString()];
@@ -173,13 +177,13 @@ final class GetNextQuoteUseCase {
         text: 'Conteudo indisponivel para hoje.',
         dayOfWeek: dayOfWeek,
         theme: dayData?.theme ?? 'Sem tema',
-        season: context.season,
+        season: season,
       );
     }
 
     final disabled = await _disabledQuotesRepository.loadDisabledIndices(
       dayOfWeek: dayOfWeek,
-      season: context.season.name,
+      season: season.name,
     );
     final enabled = disabled.isEmpty
         ? dayData.quotes
@@ -200,7 +204,7 @@ final class GetNextQuoteUseCase {
 
     final seasonalImages = await _contentRepository.listDayImages(
       dayOfWeek: dayOfWeek,
-      season: context.season,
+      season: season,
     );
     final currentImageIndex = indices.imageIndices[dayOfWeek] ?? 0;
 
@@ -251,7 +255,7 @@ final class GetNextQuoteUseCase {
       text: selectedText,
       dayOfWeek: dayOfWeek,
       theme: dayData.theme,
-      season: context.season,
+      season: season,
       imagePath: imagePath,
     );
   }
@@ -262,6 +266,17 @@ final class GetNextQuoteUseCase {
       for (final p in allPhrases)
         if (p.isActive && p.isRotationMode) p.text,
     ];
+  }
+
+  Future<LiturgicalSeason> _resolveSeason(DateTime date) async {
+    if (_liturgicalSeasonService != null) {
+      try {
+        return await _liturgicalSeasonService.getCurrentSeason(date: date);
+      } catch (_) {
+        // Fall through to default on any error.
+      }
+    }
+    return LiturgicalSeason.ordinary;
   }
 
   int _dayOfWeek1to7(DateTime date) {

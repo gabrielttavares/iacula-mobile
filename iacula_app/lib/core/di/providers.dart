@@ -382,6 +382,7 @@ final getNextQuoteUseCaseProvider = Provider<GetNextQuoteUseCase>((ref) {
     indicesRepository: ref.watch(quoteIndicesRepositoryProvider),
     disabledQuotesRepository: ref.watch(disabledQuotesRepositoryProvider),
     customPhraseRepository: ref.watch(customPhraseRepositoryProvider),
+    liturgicalSeasonService: ref.watch(liturgicalSeasonServiceProvider),
   );
 });
 
