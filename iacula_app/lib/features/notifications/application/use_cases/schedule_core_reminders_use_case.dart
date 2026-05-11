@@ -245,20 +245,18 @@ final class ScheduleCoreRemindersUseCase {
         ),
       );
 
-      if (_isSameDay(quoteAt, current)) {
-        await _notificationHistoryRepository.add(
-          NotificationHistoryEntry(
-            quoteText: quote.text,
-            theme: quote.theme,
-            season: quote.season.name,
-            deliveredAt: quoteAt,
-            imagePath: quote.imagePath,
-            feastName: quote.feastName,
-            source: quote.resolvedSource.name,
-            referenceLabel: quote.referenceLabel,
-          ),
-        );
-      }
+      await _notificationHistoryRepository.add(
+        NotificationHistoryEntry(
+          quoteText: quote.text,
+          theme: quote.theme,
+          season: quote.season.name,
+          deliveredAt: quoteAt,
+          imagePath: quote.imagePath,
+          feastName: quote.feastName,
+          source: quote.resolvedSource.name,
+          referenceLabel: quote.referenceLabel,
+        ),
+      );
     }
 
     if (scheduledQuotes.isNotEmpty) {

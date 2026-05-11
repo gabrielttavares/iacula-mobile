@@ -101,14 +101,14 @@ void main() {
       final scheduledIds = scheduledEvents.map((e) => e.scheduledId).toSet();
       expect(scheduledIds.length, 64);
 
-      expect(history.entries, hasLength(56));
+      expect(history.entries, hasLength(65));
       expect(
         history.entries.first.quoteText,
         'Sede santos, porque eu sou santo.',
       );
       expect(history.entries.first.theme, 'todos os santos');
       expect(history.entries.first.deliveredAt, now);
-      expect(history.entries.last.deliveredAt, DateTime(2026, 2, 21, 23, 45));
+      expect(history.entries.last.deliveredAt, DateTime(2026, 2, 22, 2, 0));
 
       final angelusEvent = scheduler.events.firstWhere(
         (e) => e.type == ReminderEventType.angelusNoon,
@@ -153,14 +153,14 @@ void main() {
         now: DateTime(2026, 2, 21, 12),
       );
 
-      expect(firstRunCount, 56);
+      expect(firstRunCount, 65);
       expect(
         history.entries
             .where(
               (entry) => !entry.deliveredAt.isBefore(DateTime(2026, 2, 21, 12)),
             )
             .length,
-        24,
+        69,
       );
     },
   );
@@ -407,8 +407,8 @@ void main() {
         now: DateTime(2026, 2, 21, 8),
       );
 
-      // Should have entries from 08:00 through 23:30
-      expect(history.entries.length, 32);
+      // Should have entries from 08:00 through next day 16:00
+      expect(history.entries.length, 65);
 
       // Second run at 12:00 (simulating app reopen)
       await useCase(
@@ -652,4 +652,41 @@ void main() {
       expect(angelus.prayerSlug, 'regina-coeli');
     },
   );
+
+  test('writes history entries for next-day scheduled notifications', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+
+    final useCase = ScheduleCoreRemindersUseCase(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return Quote(
+          text:
+              'Quote ${now.month}/${now.day} ${now.hour}:${now.minute.toString().padLeft(2, '0')}',
+          dayOfWeek: 1,
+          theme: 'Tema',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+      notificationHistoryRepository: history,
+      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+    );
+
+    final now = DateTime(2026, 2, 21, 22, 0);
+    await useCase(
+      Settings.defaults.copyWith(intervalMinutes: 60),
+      now: now,
+      showImmediate: true,
+    );
+
+    // With 1h intervals starting at 22:00, immediate at 22:00, then 23:00, 00:00, 01:00...
+    // Should have entries for both Feb 21 and Feb 22
+    final feb21Entries =
+        history.entries.where((e) => e.deliveredAt.day == 21).toList();
+    final feb22Entries =
+        history.entries.where((e) => e.deliveredAt.day == 22).toList();
+
+    expect(feb21Entries, isNotEmpty);
+    expect(feb22Entries, isNotEmpty);
+  });
 }

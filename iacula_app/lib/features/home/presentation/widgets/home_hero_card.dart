@@ -4,16 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
-import '../../../liturgical/domain/liturgical_season.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../../../notifications/presentation/notification_detail_screen.dart';
 import 'hero_action_buttons.dart';
 
 class HomeHeroCard extends ConsumerStatefulWidget {
-  const HomeHeroCard({super.key, required this.quote, this.isFallback = false});
+  const HomeHeroCard({super.key, required this.quote});
 
   final Quote quote;
-  final bool isFallback;
 
   @override
   ConsumerState<HomeHeroCard> createState() => _HomeHeroCardState();
@@ -21,14 +19,6 @@ class HomeHeroCard extends ConsumerStatefulWidget {
 
 class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
   bool _isTruncated = false;
-
-  static const _seasonLabels = <LiturgicalSeason, String>{
-    LiturgicalSeason.ordinary: 'tempo comum',
-    LiturgicalSeason.advent: 'tempo do advento',
-    LiturgicalSeason.lent: 'tempo da quaresma',
-    LiturgicalSeason.easter: 'tempo pascal',
-    LiturgicalSeason.christmas: 'tempo do natal',
-  };
 
   String? _resolveAssetPath(String? path) {
     if (path == null) {
@@ -53,7 +43,7 @@ class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
     });
   }
 
-  void _openFullText(BuildContext context, Quote quote, String labelText) {
+  void _openFullText(BuildContext context, Quote quote) {
     Navigator.of(context, rootNavigator: true).push(
       CupertinoPageRoute<void>(
         builder: (_) => NotificationDetailScreen(
@@ -74,18 +64,11 @@ class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
     final quote = widget.quote;
     final isEscrivaPoints = quote.resolvedSource == QuoteSource.escrivaPoints;
     final imagePath = _resolveAssetPath(quote.imagePath);
-    final labelText =
-        quote.feastName ??
-        (isEscrivaPoints
-            ? quote.referenceLabel
-            : quote.theme == 'personal'
-            ? 'frase pessoal'
-            : _seasonLabels[quote.season]) ??
-        '';
+    final labelText = isEscrivaPoints ? (quote.referenceLabel ?? '') : '';
 
     return PremiumTouchableCard(
       borderRadius: IaculaRadius.banner,
-      onTap: () => _openFullText(context, quote, labelText),
+      onTap: () => _openFullText(context, quote),
       child: Container(
         key: const Key('home_hero_card'),
         decoration: BoxDecoration(
@@ -241,7 +224,7 @@ class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
                     ),
                   ),
                 ),
-                if (!widget.isFallback || isEscrivaPoints)
+                if (isEscrivaPoints && labelText.isNotEmpty)
                   Positioned(
                     left: 18,
                     bottom: 8,

@@ -41,6 +41,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   Timer? _widgetRefreshSub;
   Settings? _settings;
   DateTime? _lastRebuildTime;
+  ReminderEvent? _pendingLaunchEvent;
 
   void _logNotificationHealth(String message) {
     debugPrint('[IaculaApp][NotifHealth] $message');
@@ -93,6 +94,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     WidgetsBinding.instance.removeObserver(this);
     _actionsSub?.cancel();
     _widgetRefreshSub?.cancel();
+    _pendingLaunchEvent = null;
     super.dispose();
   }
 
@@ -106,6 +108,14 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     }
   }
 
+  void _resetAndPush(NavigatorState nav, Widget destination) {
+    nav.pushAndRemoveUntil(
+      CupertinoPageRoute(builder: (_) => const ShellScreen()),
+      (route) => false,
+    );
+    nav.push(CupertinoPageRoute(builder: (_) => destination));
+  }
+
   Future<void> _pushRouteForEvent(ReminderEvent event) async {
     final nav = _navigatorKey.currentState;
     if (nav == null) return;
@@ -114,18 +124,13 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
       case NotificationRouteTarget.home:
         ref.read(tappedNotificationScheduledAtProvider.notifier).state =
             event.scheduledAt;
-        nav.pushAndRemoveUntil(
-          CupertinoPageRoute(builder: (_) => const ShellScreen()),
-          (route) => false,
-        );
-        nav.push(
-          CupertinoPageRoute(
-            builder: (_) => NotificationDetailScreen(
-              quoteText: event.body,
-              theme: event.quoteTheme ?? '',
-              season: event.quoteSeason ?? 'ordinary',
-              feastName: event.quoteFeastName,
-            ),
+        _resetAndPush(
+          nav,
+          NotificationDetailScreen(
+            quoteText: event.body,
+            theme: event.quoteTheme ?? '',
+            season: event.quoteSeason ?? 'ordinary',
+            feastName: event.quoteFeastName,
           ),
         );
         return;
@@ -138,11 +143,9 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
               .read(getPrayerCatalogUseCaseProvider)
               .getBySlug(language: settings.language, slug: prayerSlug);
           if (catalogEntry != null) {
-            nav.push(
-              CupertinoPageRoute(
-                builder: (_) =>
-                    PrayerCatalogDetailScreen(entry: catalogEntry),
-              ),
+            _resetAndPush(
+              nav,
+              PrayerCatalogDetailScreen(entry: catalogEntry),
             );
             return;
           }
@@ -151,9 +154,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
         final prayer = await ref
             .read(getPrayerUseCaseProvider)
             .call(language: settings.language);
-        nav.push(
-          CupertinoPageRoute(builder: (_) => PrayerScreen(prayer: prayer)),
-        );
+        _resetAndPush(nav, PrayerScreen(prayer: prayer));
         return;
 
       case NotificationRouteTarget.alarm:
@@ -168,15 +169,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
         return;
 
       case NotificationRouteTarget.prayerIntention:
-        nav.pushAndRemoveUntil(
-          CupertinoPageRoute(builder: (_) => const ShellScreen()),
-          (route) => false,
-        );
-        nav.push(
-          CupertinoPageRoute(
-            builder: (_) => const PrayerIntentionsScreen(),
-          ),
-        );
+        _resetAndPush(nav, const PrayerIntentionsScreen());
         return;
 
       case NotificationRouteTarget.nightPrayer:
@@ -203,7 +196,11 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     if (event == null) return;
     final shouldOpen = await handler.call(event);
     if (!shouldOpen) return;
-    await _pushRouteForEvent(event.event);
+    if (_settings != null) {
+      await _pushRouteForEvent(event.event);
+    } else {
+      _pendingLaunchEvent = event.event;
+    }
   }
 
   Future<void> _ensureNotificationsScheduled() async {
@@ -322,6 +319,13 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     if (mounted) {
       ref.read(themeModeProvider.notifier).state = settings.themeMode;
       setState(() => _settings = settings);
+      final pendingEvent = _pendingLaunchEvent;
+      if (pendingEvent != null) {
+        _pendingLaunchEvent = null;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _pushRouteForEvent(pendingEvent);
+        });
+      }
     }
   }
 
