@@ -4,7 +4,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -96,18 +95,6 @@ final class LocalNotificationSchedulerRepository
   Future<bool> initialize({bool requestPermission = true}) async {
     _singleton = this;
     tzdata.initializeTimeZones();
-
-    try {
-      final currentTimeZone = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(currentTimeZone));
-      debugPrint(
-        '[LocalNotificationScheduler] local timezone set to $currentTimeZone',
-      );
-    } catch (e) {
-      debugPrint(
-        '[LocalNotificationScheduler] Failed to set local timezone: $e',
-      );
-    }
 
     const android = AndroidInitializationSettings(_smallIcon);
     final ios = DarwinInitializationSettings(

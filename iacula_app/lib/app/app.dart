@@ -106,18 +106,9 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     }
   }
 
-  Future<void> _pushRouteForEvent(ReminderEvent event, {int retryCount = 0}) async {
+  Future<void> _pushRouteForEvent(ReminderEvent event) async {
     final nav = _navigatorKey.currentState;
-    if (nav == null) {
-      if (retryCount >= 5) {
-        debugPrint(
-          '[IaculaApp] _pushRouteForEvent navigator still null after retries; aborting.',
-        );
-        return;
-      }
-      await Future.delayed(const Duration(milliseconds: 200));
-      return _pushRouteForEvent(event, retryCount: retryCount + 1);
-    }
+    if (nav == null) return;
 
     switch (event.routeTarget) {
       case NotificationRouteTarget.home:

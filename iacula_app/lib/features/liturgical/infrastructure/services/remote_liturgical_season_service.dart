@@ -185,7 +185,6 @@ final class RemoteLiturgicalSeasonService implements LiturgicalSeasonService {
       case 'branco':
         if (normalizedLiturgy.contains('natal')) return LiturgicalSeason.christmas;
         if (normalizedLiturgy.contains('pascoa') ||
-            normalizedLiturgy.contains('pascal') ||
             normalizedLiturgy.contains('ressurreicao') ||
             normalizedLiturgy.contains('aleluia')) {
           return LiturgicalSeason.easter;
