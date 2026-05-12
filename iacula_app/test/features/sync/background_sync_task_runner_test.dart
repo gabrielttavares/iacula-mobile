@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/sync/infrastructure/services/background_sync_scheduler.dart';
+import 'package:iacula_app/features/sync/infrastructure/services/background_task_runtime.dart';
 
 void main() {
   test('configured background task runner is invoked', () async {
@@ -33,5 +34,52 @@ void main() {
     );
 
     expect(receivedWidgetTask, isTrue);
+  });
+
+  group('BackgroundTaskRuntime', () {
+    test('dispatches sync task to syncAll handler', () async {
+      var syncCalls = 0;
+      var widgetCalls = 0;
+
+      final runtime = BackgroundTaskRuntime(
+        syncAll: () async => syncCalls++,
+        refreshWidget: () async => widgetCalls++,
+      );
+
+      await runtime.execute(BackgroundSyncScheduler.periodicTaskName);
+
+      expect(syncCalls, 1);
+      expect(widgetCalls, 0);
+    });
+
+    test('dispatches widget task to refreshWidget handler', () async {
+      var syncCalls = 0;
+      var widgetCalls = 0;
+
+      final runtime = BackgroundTaskRuntime(
+        syncAll: () async => syncCalls++,
+        refreshWidget: () async => widgetCalls++,
+      );
+
+      await runtime.execute(BackgroundSyncScheduler.widgetTaskName);
+
+      expect(syncCalls, 0);
+      expect(widgetCalls, 1);
+    });
+
+    test('ignores unknown task names safely', () async {
+      var syncCalls = 0;
+      var widgetCalls = 0;
+
+      final runtime = BackgroundTaskRuntime(
+        syncAll: () async => syncCalls++,
+        refreshWidget: () async => widgetCalls++,
+      );
+
+      await runtime.execute('unknown.task.name');
+
+      expect(syncCalls, 0);
+      expect(widgetCalls, 0);
+    });
   });
 }

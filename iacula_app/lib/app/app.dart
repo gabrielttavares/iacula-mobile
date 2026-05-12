@@ -11,9 +11,9 @@ import '../core/theme/lora_font_loader.dart';
 import '../features/liturgical/domain/liturgical_season.dart';
 import '../features/home_widget/application/use_cases/get_current_widget_quote_use_case.dart';
 import '../features/home_widget/application/use_cases/refresh_widget_from_timeline_use_case.dart';
+import '../features/notifications/application/services/notification_runtime_coordinator.dart';
 import '../features/notifications/application/use_cases/handle_notification_action_use_case.dart';
 import '../features/notifications/domain/repositories/notification_scheduler_repository.dart';
-import '../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import '../features/notifications/domain/entities/reminder_event.dart';
 import '../features/notifications/presentation/alarm_screen.dart';
 import '../features/notifications/presentation/notification_detail_screen.dart';
@@ -26,6 +26,7 @@ import '../features/prayers/presentation/prayer_catalog_detail_screen.dart';
 import '../features/prayers/presentation/prayer_screen.dart';
 import '../features/settings/domain/entities/settings.dart';
 import '../features/sync/infrastructure/services/background_sync_scheduler.dart';
+import '../features/sync/infrastructure/services/background_task_runtime.dart';
 
 class IaculaApp extends ConsumerStatefulWidget {
   const IaculaApp({super.key});
@@ -40,12 +41,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   StreamSubscription? _actionsSub;
   Timer? _widgetRefreshSub;
   Settings? _settings;
-  DateTime? _lastRebuildTime;
   ReminderEvent? _pendingLaunchEvent;
-
-  void _logNotificationHealth(String message) {
-    debugPrint('[IaculaApp][NotifHealth] $message');
-  }
+  NotificationRuntimeCoordinator? _notificationCoordinator;
 
   @override
   void initState() {
@@ -59,13 +56,14 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
 
       final syncService = ref.read(connectivitySyncServiceProvider);
       syncService.start();
-      BackgroundSyncScheduler.configureTaskRunner((task, inputData) async {
-        if (task == BackgroundSyncScheduler.widgetTaskName) {
-          await _makeWidgetRefreshUseCase().call();
-          return;
-        }
-        await ref.read(syncOrchestratorProvider).syncAll();
-      });
+
+      final backgroundTaskRuntime = BackgroundTaskRuntime(
+        syncAll: () => ref.read(syncOrchestratorProvider).syncAll(),
+        refreshWidget: () => _makeWidgetRefreshUseCase().call().then((_) {}),
+      );
+      BackgroundSyncScheduler.configureTaskRunner(
+        (task, inputData) => backgroundTaskRuntime.execute(task),
+      );
 
       final backgroundSyncScheduler = ref.read(backgroundSyncSchedulerProvider);
       unawaited(backgroundSyncScheduler.register());
@@ -73,6 +71,23 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
 
       final scheduler = ref.read(notificationSchedulerRepositoryProvider);
       final handler = HandleNotificationActionUseCase(scheduler);
+
+      _notificationCoordinator = NotificationRuntimeCoordinator(
+        loadSettings: () => ref.read(getSettingsUseCaseProvider).call(),
+        rebuild: (settings, {required isEasterSeason, required showImmediate}) async {
+          final rebuildUseCase = ref.read(rebuildNotificationsUseCaseProvider);
+          final liturgicalService = ref.read(liturgicalSeasonServiceProvider);
+          final currentSeason = await liturgicalService.getCurrentSeason();
+          await rebuildUseCase.call(
+            settings,
+            isEasterSeason: isEasterSeason || currentSeason == LiturgicalSeason.easter,
+            showImmediate: showImmediate,
+          );
+        },
+        pendingQuoteIds: () => scheduler.pendingNotificationIds(),
+        refreshWidget: () => _makeWidgetRefreshUseCase().call().then((_) {}),
+        cancelAll: () => scheduler.cancelAll(),
+      );
 
       _widgetRefreshSub = Timer.periodic(const Duration(seconds: 30), (_) {
         unawaited(_syncWidgetFromTimeline());
@@ -101,10 +116,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _logNotificationHealth('App resumed; checking notification health.');
       HomeWidgetService.instance.resetSignatureCache();
-      unawaited(_syncWidgetFromTimeline());
-      unawaited(_ensureNotificationsScheduled());
+      unawaited(_notificationCoordinator?.handleAppResume());
     }
   }
 
@@ -201,43 +214,6 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
       await _pushRouteForEvent(event.event);
     } else {
       _pendingLaunchEvent = event.event;
-    }
-  }
-
-  Future<void> _ensureNotificationsScheduled() async {
-    final now = DateTime.now();
-    if (_lastRebuildTime != null &&
-        now.difference(_lastRebuildTime!).inSeconds < 120) {
-      return;
-    }
-    try {
-      final settings = await ref.read(getSettingsUseCaseProvider).call();
-      if (!settings.onboardingCompleted || !settings.notificationsEnabled) {
-        return;
-      }
-      final scheduler = ref.read(notificationSchedulerRepositoryProvider);
-      final pendingIds = await scheduler.pendingNotificationIds();
-      final hasQuotes = pendingIds.any(
-        (id) =>
-            id >= ScheduleCoreRemindersUseCase.quoteScheduleIdBase &&
-            id <
-                ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
-                    ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders,
-      );
-      if (hasQuotes) return;
-
-      _logNotificationHealth('No pending quotes found; rebuilding.');
-      final rebuildUseCase = ref.read(rebuildNotificationsUseCaseProvider);
-      final liturgicalService = ref.read(liturgicalSeasonServiceProvider);
-      final currentSeason = await liturgicalService.getCurrentSeason();
-      await rebuildUseCase.call(
-        settings,
-        isEasterSeason: currentSeason == LiturgicalSeason.easter,
-        showImmediate: false,
-      );
-      _lastRebuildTime = DateTime.now();
-    } catch (e) {
-      _logNotificationHealth('Health check failed: $e');
     }
   }
 
