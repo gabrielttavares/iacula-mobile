@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,12 +58,23 @@ class NotificationsScreen extends ConsumerStatefulWidget {
 
 class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   late DateTime _selectedDate;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
     super.initState();
     final now = ref.read(notificationHistoryNowProvider);
     _selectedDate = DateTime(now.year, now.month, now.day);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      ref.invalidate(notificationHistoryNowProvider);
+      ref.invalidate(_availableHistoryDatesProvider);
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   bool _isSameDay(DateTime a, DateTime b) {

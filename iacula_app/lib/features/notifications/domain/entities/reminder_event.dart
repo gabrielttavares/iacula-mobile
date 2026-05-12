@@ -34,6 +34,7 @@ final class ReminderEvent {
     this.quoteTheme,
     this.quoteSeason,
     this.quoteFeastName,
+    this.quoteImagePath,
     this.snoozeCount = 0,
   });
 
@@ -57,6 +58,7 @@ final class ReminderEvent {
   final String? quoteTheme;
   final String? quoteSeason;
   final String? quoteFeastName;
+  final String? quoteImagePath;
   final int snoozeCount;
 
   ReminderEvent copyWith({
@@ -74,6 +76,7 @@ final class ReminderEvent {
     String? quoteTheme,
     String? quoteSeason,
     String? quoteFeastName,
+    String? quoteImagePath,
     int? snoozeCount,
   }) {
     return ReminderEvent(
@@ -91,6 +94,7 @@ final class ReminderEvent {
       quoteTheme: quoteTheme ?? this.quoteTheme,
       quoteSeason: quoteSeason ?? this.quoteSeason,
       quoteFeastName: quoteFeastName ?? this.quoteFeastName,
+      quoteImagePath: quoteImagePath ?? this.quoteImagePath,
       snoozeCount: snoozeCount ?? this.snoozeCount,
     );
   }
@@ -111,6 +115,7 @@ final class ReminderEvent {
       if (quoteTheme != null) 'quoteTheme': quoteTheme,
       if (quoteSeason != null) 'quoteSeason': quoteSeason,
       if (quoteFeastName != null) 'quoteFeastName': quoteFeastName,
+      if (quoteImagePath != null) 'quoteImagePath': quoteImagePath,
       'snoozeCount': snoozeCount,
     };
   }
@@ -162,6 +167,7 @@ final class ReminderEvent {
       quoteTheme: map['quoteTheme']?.toString(),
       quoteSeason: map['quoteSeason']?.toString(),
       quoteFeastName: map['quoteFeastName']?.toString(),
+      quoteImagePath: map['quoteImagePath']?.toString(),
       snoozeCount: snoozeCount,
     );
   }

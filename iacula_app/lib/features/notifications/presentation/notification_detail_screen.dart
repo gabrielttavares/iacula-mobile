@@ -47,21 +47,13 @@ class NotificationDetailScreen extends ConsumerWidget {
     );
   }
 
-  static const _seasonLabels = <String, String>{
-    'ordinary': 'tempo comum',
-    'advent': 'tempo do advento',
-    'lent': 'tempo da quaresma',
-    'easter': 'tempo pascal',
-    'christmas': 'tempo do natal',
-  };
-
   bool get _isEscrivaPoints => source == 'escrivaPoints';
 
   String get _labelText {
     if (feastName != null) return feastName!;
     if (_isEscrivaPoints) return referenceLabel ?? '';
     if (theme == 'personal') return 'frase pessoal';
-    return _seasonLabels[season] ?? '';
+    return '';
   }
 
   String? _resolveAssetPath(String? path) {

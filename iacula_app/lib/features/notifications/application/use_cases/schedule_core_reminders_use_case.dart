@@ -72,6 +72,7 @@ final class ScheduleCoreRemindersUseCase {
           quoteTheme: quote.theme,
           quoteSeason: quote.season.name,
           quoteFeastName: quote.feastName,
+          quoteImagePath: quote.imagePath,
         ),
       );
 
@@ -151,6 +152,7 @@ final class ScheduleCoreRemindersUseCase {
           quoteTheme: quote.theme,
           quoteSeason: quote.season.name,
           quoteFeastName: quote.feastName,
+          quoteImagePath: quote.imagePath,
         ),
       );
 

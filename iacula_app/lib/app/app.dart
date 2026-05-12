@@ -131,6 +131,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
             theme: event.quoteTheme ?? '',
             season: event.quoteSeason ?? 'ordinary',
             feastName: event.quoteFeastName,
+            imagePath: event.quoteImagePath,
           ),
         );
         return;
