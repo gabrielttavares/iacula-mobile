@@ -12,6 +12,8 @@ PODS:
     - Flutter
   - flutter_secure_storage (6.0.0):
     - Flutter
+  - flutter_timezone (0.0.1):
+    - Flutter
   - home_widget (0.0.1):
     - Flutter
   - in_app_purchase_storekit (0.0.1):
@@ -47,6 +49,7 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - flutter_timezone (from `.symlinks/plugins/flutter_timezone/ios`)
   - home_widget (from `.symlinks/plugins/home_widget/ios`)
   - in_app_purchase_storekit (from `.symlinks/plugins/in_app_purchase_storekit/darwin`)
   - isar_flutter_libs (from `.symlinks/plugins/isar_flutter_libs/ios`)
@@ -74,6 +77,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  flutter_timezone:
+    :path: ".symlinks/plugins/flutter_timezone/ios"
   home_widget:
     :path: ".symlinks/plugins/home_widget/ios"
   in_app_purchase_storekit:
@@ -105,6 +110,7 @@ SPEC CHECKSUMS:
   flutter_local_notifications: a5a732f069baa862e728d839dd2ebb904737effb
   flutter_native_splash: c32d145d68aeda5502d5f543ee38c192065986cf
   flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
+  flutter_timezone: 7c838e17ffd4645d261e87037e5bebf6d38fe544
   home_widget: f169fc41fd807b4d46ab6615dc44d62adbf9f64f
   in_app_purchase_storekit: 22cca7d08eebca9babdf4d07d0baccb73325d3c8
   isar_flutter_libs: 9fc2cfb928c539e1b76c481ba5d143d556d94920

@@ -18,14 +18,6 @@ import '../../domain/services/quiet_hours_checker.dart';
 typedef QuoteFetcher =
     Future<Quote> Function({required String language, required DateTime now});
 
-typedef QuoteBatchFetcher =
-    Future<List<Quote>> Function({
-      required String language,
-      required int count,
-      required DateTime startTime,
-      required int intervalMinutes,
-    });
-
 final class ScheduleCoreRemindersUseCase {
   static const int quoteScheduleIdBase = 9000;
   static const int maxQueuedQuoteReminders = 64;
@@ -35,15 +27,12 @@ final class ScheduleCoreRemindersUseCase {
     required QuoteFetcher quoteFetcher,
     required NotificationHistoryRepository notificationHistoryRepository,
     required LastDeliveredCardRepository lastDeliveredCardRepository,
-    QuoteBatchFetcher? batchFetcher,
   }) : _quoteFetcher = quoteFetcher,
        _notificationHistoryRepository = notificationHistoryRepository,
-       _lastDeliveredCardRepository = lastDeliveredCardRepository,
-       _batchFetcher = batchFetcher;
+       _lastDeliveredCardRepository = lastDeliveredCardRepository;
 
   final NotificationSchedulerRepository _scheduler;
   final QuoteFetcher _quoteFetcher;
-  final QuoteBatchFetcher? _batchFetcher;
   final NotificationHistoryRepository _notificationHistoryRepository;
   final LastDeliveredCardRepository _lastDeliveredCardRepository;
 
@@ -53,110 +42,71 @@ final class ScheduleCoreRemindersUseCase {
     bool isEasterSeason = false,
     Quote? immediateQuote,
     bool showImmediate = true,
-    bool latestOnlyQueuedQuote = false,
   }) async {
     final current = now ?? DateTime.now();
     final effectiveIsEasterSeason =
         isEasterSeason || _isDateWithinEasterSeason(current);
+
     debugPrint(
       '[ScheduleCoreRemindersUseCase] scheduling at ${current.toIso8601String()} '
-      'interval=${settings.intervalMinutes}m lang=${settings.language} '
-      'showImmediate=$showImmediate platform=${Platform.operatingSystem}',
+      'interval=${settings.intervalMinutes}m showImmediate=$showImmediate',
     );
-    await _notificationHistoryRepository.clearFrom(current);
 
-    final todayHistory =
-        await _notificationHistoryRepository.listForDay(current);
-
-    Quote? resolvedImmediate = immediateQuote;
-
-    var shouldShowImmediate = showImmediate;
+    // Show an immediate notification if requested
     if (showImmediate) {
-      final hasRecentDueQuote = todayHistory.any((entry) {
-        if (entry.deliveredAt.isAfter(current)) return false;
-        final minutesAgo = current.difference(entry.deliveredAt).inMinutes;
-        return minutesAgo >= 0 && minutesAgo < settings.intervalMinutes;
-      });
-      if (hasRecentDueQuote) {
-        shouldShowImmediate = false;
-        debugPrint(
-          '[ScheduleCoreRemindersUseCase] skip immediate quote: recent due history exists within interval.',
-        );
-      }
-    }
+      final quote = immediateQuote ??
+          await _quoteFetcher(language: settings.language, now: current);
 
-    if (resolvedImmediate == null &&
-        (shouldShowImmediate || _batchFetcher == null)) {
-      resolvedImmediate = await _quoteFetcher(
-        language: settings.language,
-        now: current,
-      );
-    }
-
-    if (shouldShowImmediate) {
       const immediateId = quoteScheduleIdBase - 1;
-      final imm = resolvedImmediate!;
-      debugPrint(
-        '[ScheduleCoreRemindersUseCase] show immediate quote id=$immediateId textLen=${imm.text.length}',
-      );
       await _scheduler.showNow(
         immediateId,
         ReminderEvent(
           type: ReminderEventType.quoteInterval,
           title: 'Iacula',
-          body: imm.text,
+          body: quote.text,
           scheduledAt: current,
           withVibration: true,
           isAlarm: false,
           routeTarget: NotificationRouteTarget.home,
           scheduledId: immediateId,
-          quoteTheme: imm.theme,
-          quoteSeason: imm.season.name,
-          quoteFeastName: imm.feastName,
+          quoteTheme: quote.theme,
+          quoteSeason: quote.season.name,
+          quoteFeastName: quote.feastName,
         ),
       );
-    }
 
-    if (shouldShowImmediate) {
-      final imm = resolvedImmediate!;
       final deliveredCard = LastDeliveredCard.fromQuote(
-        imm,
+        quote,
         deliveredAt: current,
       );
       await _lastDeliveredCardRepository.save(deliveredCard);
-
       await HomeWidgetService.instance.updateWidget(
         deliveredCard,
         intervalMinutes: settings.intervalMinutes,
       );
-
       await _notificationHistoryRepository.add(
         NotificationHistoryEntry(
-          quoteText: imm.text,
-          theme: imm.theme,
-          season: imm.season.name,
+          quoteText: quote.text,
+          theme: quote.theme,
+          season: quote.season.name,
           deliveredAt: current,
-          imagePath: imm.imagePath,
-          feastName: imm.feastName,
-          source: imm.resolvedSource.name,
-          referenceLabel: imm.referenceLabel,
+          imagePath: quote.imagePath,
+          feastName: quote.feastName,
+          source: quote.resolvedSource.name,
+          referenceLabel: quote.referenceLabel,
         ),
       );
     }
 
-    // iOS allows at most 64 pending notifications. Reserve slots for
-    // non-quote notifications (Angelus, liturgy hours, custom phrases).
+    // iOS allows at most 64 pending notifications total.
+    // Reserve slots for non-quote notifications.
     const iosScheduledLimit = 64;
-    const reservedSlots = 6; // 1 Angelus + 4 liturgy + 1 buffer
-    final defaultQuoteCount = Platform.isIOS
+    const reservedSlots = 6;
+    final quoteCount = Platform.isIOS
         ? min(maxQueuedQuoteReminders, iosScheduledLimit - reservedSlots)
         : maxQueuedQuoteReminders;
-    final quoteCount = latestOnlyQueuedQuote ? 1 : defaultQuoteCount;
-    debugPrint(
-      '[ScheduleCoreRemindersUseCase] quote queue size=$quoteCount (max=$maxQueuedQuoteReminders, '
-      'iosReserved=$reservedSlots, isIOS=${Platform.isIOS}, latestOnly=$latestOnlyQueuedQuote)',
-    );
 
+    // Compute future time slots respecting quiet hours
     final scheduledTimes = <DateTime>[];
     var cursor = current;
     for (var i = 0; i < quoteCount; i++) {
@@ -176,56 +126,15 @@ final class ScheduleCoreRemindersUseCase {
       scheduledTimes.add(cursor);
     }
 
-    // Use batch fetcher only on linear schedule (no quiet-hours jumps).
-    final List<Quote> scheduledQuotes;
-    if (_batchFetcher != null && !settings.quietHoursEnabled) {
-      scheduledQuotes = await _batchFetcher(
-        language: settings.language,
-        count: quoteCount,
-        startTime: current,
-        intervalMinutes: settings.intervalMinutes,
-      );
-    } else {
-      scheduledQuotes = <Quote>[];
-      for (final quoteAt in scheduledTimes) {
-        scheduledQuotes.add(
-          await _quoteFetcher(language: settings.language, now: quoteAt),
-        );
-      }
-    }
+    await _notificationHistoryRepository.clearFrom(current);
 
-    if (scheduledQuotes.isNotEmpty) {
-      final alreadyDeliveredTexts = <String>{
-        for (final entry in todayHistory)
-          if (!entry.deliveredAt.isAfter(current)) entry.quoteText,
-      };
-      if (shouldShowImmediate && resolvedImmediate != null) {
-        alreadyDeliveredTexts.add(resolvedImmediate.text);
-      }
-
-      for (var i = 0; i < scheduledQuotes.length; i++) {
-        final currentQuote = scheduledQuotes[i];
-        final isToday = _isSameDay(scheduledTimes[i], current);
-
-        if (isToday && alreadyDeliveredTexts.contains(currentQuote.text)) {
-          scheduledQuotes[i] = await _fetchDistinctQuoteForSlot(
-            language: settings.language,
-            slotTime: scheduledTimes[i],
-            excludedTexts: alreadyDeliveredTexts,
-            intervalMinutes: settings.intervalMinutes,
-            fallback: currentQuote,
-          );
-        }
-
-        if (isToday) {
-          alreadyDeliveredTexts.add(scheduledQuotes[i].text);
-        }
-      }
-    }
-
-    for (var i = 0; i < scheduledQuotes.length; i++) {
+    // Fetch one quote per slot, schedule, and write history
+    for (var i = 0; i < scheduledTimes.length; i++) {
       final quoteAt = scheduledTimes[i];
-      final quote = scheduledQuotes[i];
+      final quote = await _quoteFetcher(
+        language: settings.language,
+        now: quoteAt,
+      );
       final scheduledId = quoteScheduleIdBase + i;
 
       await _scheduler.scheduleWithId(
@@ -259,32 +168,11 @@ final class ScheduleCoreRemindersUseCase {
       );
     }
 
-    if (scheduledQuotes.isNotEmpty) {
-      final firstAt = scheduledTimes.first;
-      final lastAt = scheduledTimes.last;
-      final uniqueTexts = scheduledQuotes.map((q) => q.text).toSet();
-      debugPrint(
-        '[ScheduleCoreRemindersUseCase] queued ${scheduledQuotes.length} quote reminders from '
-        '${firstAt.toIso8601String()} to ${lastAt.toIso8601String()} '
-        '(${uniqueTexts.length} distinct texts)',
-      );
-      if (uniqueTexts.length < scheduledQuotes.length) {
-        final counts = <String, int>{};
-        for (final q in scheduledQuotes) {
-          counts[q.text] = (counts[q.text] ?? 0) + 1;
-        }
-        final dupes =
-            counts.entries.where((e) => e.value > 1).map((e) {
-              final preview =
-                  e.key.length > 40 ? '${e.key.substring(0, 40)}…' : e.key;
-              return '"$preview" x${e.value}';
-            }).join(', ');
-        debugPrint(
-          '[ScheduleCoreRemindersUseCase] DUPLICATE QUOTES detected: $dupes',
-        );
-      }
-    }
+    debugPrint(
+      '[ScheduleCoreRemindersUseCase] queued ${scheduledTimes.length} quote reminders',
+    );
 
+    // Schedule Angelus/Regina Caeli
     if (settings.angelusEnabled) {
       final noonTitle = effectiveIsEasterSeason ? 'Regina Caeli' : 'Angelus';
       final noonBody = effectiveIsEasterSeason
@@ -301,10 +189,6 @@ final class ScheduleCoreRemindersUseCase {
           );
       if (!noonInQuietHours) {
         final prayerSlug = effectiveIsEasterSeason ? 'regina-coeli' : 'angelus';
-        debugPrint(
-          '[ScheduleCoreRemindersUseCase] scheduling Angelus/Regina id=200 at ${noon.toIso8601String()} '
-          'title=$noonTitle repeatDaily=true slug=$prayerSlug',
-        );
         await _scheduler.schedule(
           ReminderEvent(
             type: ReminderEventType.angelusNoon,
@@ -318,22 +202,8 @@ final class ScheduleCoreRemindersUseCase {
             prayerSlug: prayerSlug,
           ),
         );
-      } else {
-        debugPrint(
-          '[ScheduleCoreRemindersUseCase] noon trigger falls inside quiet hours; skipping Angelus scheduling.',
-        );
       }
-    } else {
-      debugPrint(
-        '[ScheduleCoreRemindersUseCase] Angelus disabled; skipping noon alarm scheduling.',
-      );
     }
-  }
-
-  bool _isSameDay(DateTime left, DateTime right) {
-    return left.year == right.year &&
-        left.month == right.month &&
-        left.day == right.day;
   }
 
   bool _isDateWithinEasterSeason(DateTime date) {
@@ -359,24 +229,5 @@ final class ScheduleCoreRemindersUseCase {
     final month = (h + l - 7 * m + 114) ~/ 31;
     final day = ((h + l - 7 * m + 114) % 31) + 1;
     return DateTime(year, month, day);
-  }
-
-  Future<Quote> _fetchDistinctQuoteForSlot({
-    required String language,
-    required DateTime slotTime,
-    required Set<String> excludedTexts,
-    required int intervalMinutes,
-    required Quote fallback,
-  }) async {
-    const maxAttempts = 5;
-    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
-      final candidateTime =
-          slotTime.add(Duration(minutes: intervalMinutes * attempt));
-      final candidate = await _quoteFetcher(language: language, now: candidateTime);
-      if (!excludedTexts.contains(candidate.text)) {
-        return candidate;
-      }
-    }
-    return fallback;
   }
 }

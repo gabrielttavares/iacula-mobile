@@ -616,24 +616,6 @@ final rebuildNotificationsUseCaseProvider =
                   .read(getNextQuoteUseCaseProvider)
                   .call(language: language, now: now);
             },
-        batchFetcherForSettings: (settings) {
-          if (settings.escrivaPointsFeedEnabled) return null;
-          return ({
-            required String language,
-            required int count,
-            required DateTime startTime,
-            required int intervalMinutes,
-          }) {
-            return ref
-                .read(getNextQuoteUseCaseProvider)
-                .fetchBatch(
-                  language: language,
-                  count: count,
-                  startTime: startTime,
-                  intervalMinutes: intervalMinutes,
-                );
-          };
-        },
       );
     });
 

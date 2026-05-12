@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:io' show Platform;
 
@@ -156,7 +155,6 @@ final class AppBootstrap {
 
       if (currentSettings.onboardingCompleted &&
           !currentSettings.notificationsEnabled) {
-        // Notifications explicitly disabled — cancel any stale leftovers.
         try {
           await scheduler.cancelAll();
         } catch (e) {
@@ -165,89 +163,39 @@ final class AppBootstrap {
       } else if (currentSettings.onboardingCompleted &&
           currentSettings.notificationsEnabled &&
           permissionGranted) {
-        unawaited(
-          Future(() async {
-            try {
-              final bootstrapNow = DateTime.now();
-              final lastCard = await lastDeliveredCardRepo.load();
-              final recentlyDelivered =
-                  lastCard != null &&
-                  lastCard.deliveredAt.year == bootstrapNow.year &&
-                  lastCard.deliveredAt.month == bootstrapNow.month &&
-                  lastCard.deliveredAt.day == bootstrapNow.day &&
-                  bootstrapNow.difference(lastCard.deliveredAt).inMinutes <
-                      currentSettings.intervalMinutes;
-              final immediateQuote = recentlyDelivered
-                  ? lastCard.toQuote()
-                  : await quoteFetcher(
-                      language: currentSettings.language,
-                      now: bootstrapNow,
-                    );
-              final currentSeason = await liturgicalSeasonService
-                  .getCurrentSeason();
-              final scheduleIntentionNotifications =
-                  ScheduleIntentionNotificationsUseCase(
-                    scheduler,
-                    prayerIntentionRepo,
-                  );
-              await RebuildNotificationsUseCase(
-                scheduler: scheduler,
-                notificationHistoryRepository: notificationHistoryRepo,
-                lastDeliveredCardRepository: lastDeliveredCardRepo,
-                scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(
+        try {
+          final currentSeason = await liturgicalSeasonService
+              .getCurrentSeason();
+          await RebuildNotificationsUseCase(
+            scheduler: scheduler,
+            notificationHistoryRepository: notificationHistoryRepo,
+            lastDeliveredCardRepository: lastDeliveredCardRepo,
+            scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(
+              scheduler,
+            ),
+            schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
+              scheduler,
+              localCustomPhraseRepo,
+            ),
+            scheduleIntentionNotifications:
+                ScheduleIntentionNotificationsUseCase(
                   scheduler,
+                  prayerIntentionRepo,
                 ),
-                schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
-                  scheduler,
-                  localCustomPhraseRepo,
-                ),
-                scheduleIntentionNotifications: scheduleIntentionNotifications,
-                quoteFetcher: quoteFetcher,
-                batchFetcherForSettings: (settings) =>
-                    settings.escrivaPointsFeedEnabled
-                    ? null
-                    : ({
-                        required String language,
-                        required int count,
-                        required DateTime startTime,
-                        required int intervalMinutes,
-                      }) => quoteUseCase.fetchBatch(
-                        language: language,
-                        count: count,
-                        startTime: startTime,
-                        intervalMinutes: intervalMinutes,
-                      ),
-              ).call(
-                currentSettings,
-                immediateQuote: immediateQuote,
-                isEasterSeason: currentSeason == LiturgicalSeason.easter,
-                showImmediate: !recentlyDelivered,
-              );
-            } on PlatformException catch (e, st) {
-              developer.log(
-                'Notification scheduling skipped: ${e.code} ${e.message}',
-                name: 'AppBootstrap',
-                error: e,
-                stackTrace: st,
-              );
-            } catch (e, st) {
-              developer.log(
-                'Notification scheduling failed during bootstrap.',
-                name: 'AppBootstrap',
-                error: e,
-                stackTrace: st,
-              );
-            }
-          }).timeout(
-            const Duration(seconds: 15),
-            onTimeout: () {
-              developer.log(
-                'Notification scheduling timed out after 15s.',
-                name: 'AppBootstrap',
-              );
-            },
-          ),
-        );
+            quoteFetcher: quoteFetcher,
+          ).call(
+            currentSettings,
+            isEasterSeason: currentSeason == LiturgicalSeason.easter,
+            showImmediate: false,
+          );
+        } catch (e, st) {
+          developer.log(
+            'Notification scheduling failed during bootstrap.',
+            name: 'AppBootstrap',
+            error: e,
+            stackTrace: st,
+          );
+        }
       }
 
       AuthRepository authRepository = InMemoryAuthRepository();

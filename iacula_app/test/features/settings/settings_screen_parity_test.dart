@@ -105,7 +105,6 @@ RebuildNotificationsUseCase _makeNoopRebuildUseCase() {
         season: LiturgicalSeason.ordinary,
       );
     },
-    batchFetcherForSettings: (_) => null,
   );
 }
 

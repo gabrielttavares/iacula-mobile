@@ -4,12 +4,12 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../domain/entities/notification_action_event.dart';
 import '../../domain/entities/reminder_event.dart';
-import '../../domain/entities/short_interval_reliability.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
 @pragma('vm:entry-point')
@@ -27,7 +27,6 @@ final class LocalNotificationSchedulerRepository
   static const reminderCategoryIdentifier = 'iacula_reminder';
   static const _globalGroupKey = 'iacula_global';
   static const _iosThreadIdentifier = 'iacula_global';
-  static const _showNowId = 99999;
 
   final FlutterLocalNotificationsPlugin _plugin;
   final _controller = StreamController<NotificationActionEvent>.broadcast();
@@ -41,60 +40,21 @@ final class LocalNotificationSchedulerRepository
 
   bool get permissionGranted => _permissionGranted;
 
-  /// True after [schedule]/[scheduleWithId] fell back to inexact mode on Android.
-  bool usedInexactScheduleFallback = false;
-
-  @override
-  void resetScheduleTelemetry() {
-    usedInexactScheduleFallback = false;
-  }
-
-  @override
-  Future<bool?> canScheduleExactNotifications() async {
-    if (!Platform.isAndroid) return null;
-    final androidImpl = _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-    return androidImpl?.canScheduleExactNotifications();
-  }
-
-  @override
-  Future<bool?> requestExactAlarmsPermission() async {
-    if (!Platform.isAndroid) return null;
-    final androidImpl = _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-    return androidImpl?.requestExactAlarmsPermission();
-  }
-
-  @override
-  Future<ShortIntervalReliability> evaluateShortIntervalReliability({
-    required bool notificationsEnabled,
-    required int intervalMinutes,
-  }) async {
-    if (!Platform.isAndroid || !notificationsEnabled || intervalMinutes > 15) {
-      return ShortIntervalReliability.ok;
-    }
-    final before = await canScheduleExactNotifications();
-    if (before == true) {
-      return ShortIntervalReliability.ok;
-    }
-    await requestExactAlarmsPermission();
-    final after = await canScheduleExactNotifications();
-    if (after == true) {
-      return ShortIntervalReliability.ok;
-    }
-    if (after == false) {
-      return ShortIntervalReliability.exactAlarmsUnavailable;
-    }
-    return ShortIntervalReliability.ok;
-  }
-
   Future<bool> initialize({bool requestPermission = true}) async {
     _singleton = this;
     tzdata.initializeTimeZones();
+
+    try {
+      final currentTimeZone = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(currentTimeZone));
+      debugPrint(
+        '[LocalNotificationScheduler] local timezone set to $currentTimeZone',
+      );
+    } catch (e) {
+      debugPrint(
+        '[LocalNotificationScheduler] Failed to set local timezone: $e',
+      );
+    }
 
     const android = AndroidInitializationSettings(_smallIcon);
     final ios = DarwinInitializationSettings(
@@ -332,61 +292,9 @@ final class LocalNotificationSchedulerRepository
       ];
 
   @override
-  Future<void> schedule(ReminderEvent event) async {
+  Future<void> schedule(ReminderEvent event) {
     final id = event.scheduledId ?? _idForType(event.type);
-    final androidDetails = buildAndroidNotificationDetails(event);
-
-    final iosDetails = buildDarwinNotificationDetails(event);
-
-    final details = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
-    final scheduled = tz.TZDateTime.from(event.scheduledAt, tz.local);
-    final payload = NotificationActionEvent(
-      actionId: null,
-      event: event,
-    ).toPayload();
-    final repeat = event.repeatDaily ? DateTimeComponents.time : null;
-
-    final title = notificationTitleForPlugin(event);
-
-    try {
-      await _plugin.zonedSchedule(
-        id,
-        title,
-        event.body,
-        scheduled,
-        details,
-        payload: payload,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: repeat,
-      );
-      debugPrint(
-        '[LocalNotificationScheduler] zonedSchedule exactAllowWhileIdle id=$id type=${event.type.name} '
-        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily}',
-      );
-    } on PlatformException catch (e) {
-      if (e.code != 'exact_alarms_not_permitted') {
-        rethrow;
-      }
-
-      usedInexactScheduleFallback = true;
-      debugPrint(
-        '[LocalNotificationScheduler] zonedSchedule fell back to inexactAllowWhileIdle id=$id type=${event.type.name} '
-        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily}',
-      );
-      await _plugin.zonedSchedule(
-        id,
-        title,
-        event.body,
-        scheduled,
-        details,
-        payload: payload,
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        matchDateTimeComponents: repeat,
-      );
-    }
+    return scheduleWithId(id, event);
   }
 
   @override
@@ -428,7 +336,7 @@ final class LocalNotificationSchedulerRepository
         rethrow;
       }
 
-      usedInexactScheduleFallback = true;
+
       debugPrint(
         '[LocalNotificationScheduler] scheduleWithId fell back to inexactAllowWhileIdle id=$id type=${event.type.name} '
         'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily}',
@@ -469,7 +377,7 @@ final class LocalNotificationSchedulerRepository
       payload: payload,
     );
     debugPrint(
-      '[LocalNotificationScheduler] showNow id=$_showNowId type=${event.type.name} at=${event.scheduledAt.toIso8601String()}',
+      '[LocalNotificationScheduler] showNow id=$id type=${event.type.name} at=${event.scheduledAt.toIso8601String()}',
     );
   }
 

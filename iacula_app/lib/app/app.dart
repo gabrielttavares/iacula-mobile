@@ -204,29 +204,18 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   }
 
   Future<void> _ensureNotificationsScheduled() async {
-    // Debounce: skip if we rebuilt within the last 60 seconds.
     final now = DateTime.now();
     if (_lastRebuildTime != null &&
-        now.difference(_lastRebuildTime!).inSeconds < 60) {
-      final secondsSinceRebuild = now.difference(_lastRebuildTime!).inSeconds;
-      _logNotificationHealth(
-        'Skipping health check due to debounce; last rebuild ${secondsSinceRebuild}s ago.',
-      );
+        now.difference(_lastRebuildTime!).inSeconds < 120) {
       return;
     }
     try {
       final settings = await ref.read(getSettingsUseCaseProvider).call();
       if (!settings.onboardingCompleted || !settings.notificationsEnabled) {
-        _logNotificationHealth(
-          'Health check skipped; onboardingCompleted=${settings.onboardingCompleted} '
-          'notificationsEnabled=${settings.notificationsEnabled}.',
-        );
         return;
       }
       final scheduler = ref.read(notificationSchedulerRepositoryProvider);
       final pendingIds = await scheduler.pendingNotificationIds();
-      // Angelus (200) and at least one quote (9000-9063) should be pending.
-      final hasAngelus = !settings.angelusEnabled || pendingIds.contains(200);
       final hasQuotes = pendingIds.any(
         (id) =>
             id >= ScheduleCoreRemindersUseCase.quoteScheduleIdBase &&
@@ -234,28 +223,9 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
                 ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
                     ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders,
       );
-      final quoteIdsCount = pendingIds
-          .where(
-            (id) =>
-                id >= ScheduleCoreRemindersUseCase.quoteScheduleIdBase &&
-                id <
-                    ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
-                        ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders,
-          )
-          .length;
-      _logNotificationHealth(
-        'Pending IDs count=${pendingIds.length}; quoteIds=$quoteIdsCount; '
-        'angelusPresent=${pendingIds.contains(200)}; '
-        'hasAngelus=$hasAngelus hasQuotes=$hasQuotes.',
-      );
-      if (hasAngelus && hasQuotes) return;
+      if (hasQuotes) return;
 
-      final rebuildReason = <String>[
-        if (!hasAngelus) 'angelus_missing',
-        if (!hasQuotes) 'quotes_missing',
-      ].join(',');
-      _logNotificationHealth('Triggering rebuild; reason=$rebuildReason.');
-
+      _logNotificationHealth('No pending quotes found; rebuilding.');
       final rebuildUseCase = ref.read(rebuildNotificationsUseCaseProvider);
       final liturgicalService = ref.read(liturgicalSeasonServiceProvider);
       final currentSeason = await liturgicalService.getCurrentSeason();
@@ -265,10 +235,6 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
         showImmediate: false,
       );
       _lastRebuildTime = DateTime.now();
-      final pendingAfter = await scheduler.pendingNotificationIds();
-      _logNotificationHealth(
-        'Rebuild finished; pending IDs now=${pendingAfter.length}.',
-      );
     } catch (e) {
       _logNotificationHealth('Health check failed: $e');
     }

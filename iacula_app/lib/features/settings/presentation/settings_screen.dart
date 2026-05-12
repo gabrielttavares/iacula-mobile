@@ -31,9 +31,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _angelusEnabled = true;
   int _intervalMinutes = 15;
   bool _permissionGranted = true;
-  bool? _exactAlarmsReliable;
-  bool _inexactScheduleFallbackUsed = false;
-  bool _shortIntervalReliabilityNotGuaranteed = false;
   bool _escrivaPointsFeedOptionVisible = false;
   bool _quietHoursEnabled = false;
   String _quietHoursStart = '22:00';
@@ -68,16 +65,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
     if (scheduler is LocalNotificationSchedulerRepository) {
       _permissionGranted = await scheduler.checkPermission();
-      final canExact = await scheduler.canScheduleExactNotifications();
-      _exactAlarmsReliable = canExact ?? true;
-      _inexactScheduleFallbackUsed = scheduler.usedInexactScheduleFallback;
-      _shortIntervalReliabilityNotGuaranteed =
-          settings.notificationsEnabled &&
-          settings.intervalMinutes <= 15 &&
-          (canExact == false);
-    } else {
-      _exactAlarmsReliable = true;
-      _shortIntervalReliabilityNotGuaranteed = false;
     }
 
     if (mounted) {
@@ -148,14 +135,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         if (!_permissionGranted) ...[
                           const SizedBox(height: IaculaSpacing.sm),
                           _buildPermissionWarning(context),
-                        ],
-                        if (_notificationsEnabled &&
-                            _intervalMinutes <= 15 &&
-                            (_shortIntervalReliabilityNotGuaranteed ||
-                                (_exactAlarmsReliable == false) ||
-                                _inexactScheduleFallbackUsed)) ...[
-                          const SizedBox(height: IaculaSpacing.sm),
-                          _buildShortIntervalReliabilityWarning(context),
                         ],
                         if (_notificationsEnabled) ...[
                           const SizedBox(height: IaculaRadius.elementSpacing),
@@ -524,38 +503,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  Widget _buildShortIntervalReliabilityWarning(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(IaculaSpacing.sm),
-      decoration: BoxDecoration(
-        color: context.colors.warning.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(IaculaRadius.small),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            CupertinoIcons.clock_fill,
-            color: context.colors.warning,
-            size: 18,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              'Não é possível garantir intervalos curtos (por exemplo, 5 minutos) sem alarmes exatos no Android. '
-              'Sem essa permissão, o sistema pode atrasar as jaculatórias. '
-              'Abra as configurações do app e ative alarmes e lembretes exatos, se disponível. '
-              'A atualização do widget em segundo plano também é em melhor esforço e pode atrasar dependendo do sistema.',
-              style: context.textStyles.secondary.copyWith(
-                color: context.colors.textPrimary,
-                fontSize: 13,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildNextNotificationEstimate(BuildContext context) {
     final nextAt = DateTime.now().add(Duration(minutes: _intervalMinutes));
@@ -680,27 +627,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         .getCurrentSeason();
     final escrivaChanged = settings.escrivaPointsFeedEnabled !=
         _loadedSettings.escrivaPointsFeedEnabled;
-    final rebuildResult = await ref
+    await ref
         .read(rebuildNotificationsUseCaseProvider)
         .call(
           settings,
           isEasterSeason: season == LiturgicalSeason.easter,
           showImmediate: escrivaChanged,
         );
-
-    final schedulerRepo = ref.read(notificationSchedulerRepositoryProvider);
-    if (schedulerRepo is LocalNotificationSchedulerRepository) {
-      final canExact = await schedulerRepo.canScheduleExactNotifications();
-      if (mounted) {
-        setState(() {
-          _exactAlarmsReliable = canExact ?? true;
-          _inexactScheduleFallbackUsed =
-              schedulerRepo.usedInexactScheduleFallback;
-          _shortIntervalReliabilityNotGuaranteed =
-              rebuildResult.shortIntervalReliabilityNotGuaranteed;
-        });
-      }
-    }
 
     ref.read(notificationPermissionProvider.notifier).state =
         _permissionGranted;

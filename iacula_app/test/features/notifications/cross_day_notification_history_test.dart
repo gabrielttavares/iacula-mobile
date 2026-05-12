@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
-import 'package:iacula_app/features/notifications/domain/entities/notification_history_entry.dart';
+import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
@@ -9,7 +9,7 @@ import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 
 void main() {
-  group('Bug 1: cross-day notification history entries', () {
+  group('cross-day notification scheduling', () {
     late InMemoryNotificationSchedulerRepository scheduler;
     late InMemoryNotificationHistoryRepository history;
     late ScheduleCoreRemindersUseCase useCase;
@@ -32,7 +32,7 @@ void main() {
       );
     });
 
-    test('scheduling at 23:00 writes history entries for today AND tomorrow', () async {
+    test('scheduling at 23:00 queues notifications that span into next day', () async {
       final now = DateTime(2026, 3, 10, 23, 0);
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 30),
@@ -40,113 +40,64 @@ void main() {
         showImmediate: true,
       );
 
-      final todayEntries = await history.listForDay(DateTime(2026, 3, 10));
-      final tomorrowEntries = await history.listForDay(DateTime(2026, 3, 11));
+      final quoteEvents = scheduler.events
+          .where((e) => e.type == ReminderEventType.quoteInterval)
+          .toList()
+        ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 
-      expect(todayEntries, isNotEmpty, reason: 'should have entries for today (23:00, 23:30)');
-      expect(tomorrowEntries, isNotEmpty, reason: 'should have entries for tomorrow');
+      final todayEvents = quoteEvents.where((e) => e.scheduledAt.day == 10).toList();
+      final tomorrowEvents = quoteEvents.where((e) => e.scheduledAt.day == 11).toList();
+
+      expect(todayEvents, isNotEmpty, reason: 'should have events for today');
+      expect(tomorrowEvents, isNotEmpty, reason: 'should have events for tomorrow');
     });
 
-    test('app opened next day sees delivered notifications from overnight schedule', () async {
-      // Simulate: app opened yesterday at 20:00, scheduled notifications
-      final yesterday = DateTime(2026, 3, 10, 20, 0);
+    test('history entries written for both immediate and scheduled quotes', () async {
+      final now = DateTime(2026, 3, 10, 20, 0);
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 60),
-        now: yesterday,
+        now: now,
         showImmediate: true,
       );
 
-      // Verify today (March 11) has entries that were pre-written
-      final todayEntries = await history.listForDay(DateTime(2026, 3, 11));
-      expect(
-        todayEntries,
-        isNotEmpty,
-        reason: 'notifications scheduled yesterday should have history entries for today',
-      );
+      // Today (20:00 immediate, 21:00, 22:00, 23:00) = 4 entries
+      final todayEntries = await history.listForDay(DateTime(2026, 3, 10));
+      expect(todayEntries, hasLength(4));
+      expect(todayEntries.last.deliveredAt, now);
 
-      // The entries for today should span multiple hours
-      final todayHours = todayEntries.map((entry) => entry.deliveredAt.hour).toSet();
-      expect(
-        todayHours.length,
-        greaterThan(1),
-        reason: 'today should have entries across multiple hours',
-      );
+      // Tomorrow should have entries too
+      final tomorrowEntries = await history.listForDay(DateTime(2026, 3, 11));
+      expect(tomorrowEntries, isNotEmpty);
     });
 
-    test('rebuild preserves already-delivered entries while replacing future ones', () async {
-      // First scheduling at 8:00 — writes entries for 8:00 onward
+    test('showImmediate false still writes scheduled history entries', () async {
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 60),
         now: DateTime(2026, 3, 10, 8, 0),
-        showImmediate: true,
-      );
-
-      final entriesBeforeRebuild = await history.listForDay(DateTime(2026, 3, 10));
-      final deliveredBefore14 = entriesBeforeRebuild
-          .where((entry) => entry.deliveredAt.isBefore(DateTime(2026, 3, 10, 14, 0)))
-          .toList();
-
-      // App reopened at 14:00 — rebuild clears future entries, reschedules
-      await useCase(
-        Settings.defaults.copyWith(intervalMinutes: 60),
-        now: DateTime(2026, 3, 10, 14, 0),
         showImmediate: false,
       );
 
-      final entriesAfterRebuild = await history.listForDay(DateTime(2026, 3, 10));
-
-      // Entries before 14:00 (8:00, 9:00, 10:00, 11:00, 12:00, 13:00) must survive
-      final survivingEarlyEntries = entriesAfterRebuild
-          .where((entry) => entry.deliveredAt.isBefore(DateTime(2026, 3, 10, 14, 0)))
-          .toList();
-      expect(
-        survivingEarlyEntries.length,
-        deliveredBefore14.length,
-        reason: 'already-delivered entries must not be deleted by rebuild',
-      );
+      // Today (09:00 through 23:00 at 60-min intervals) = 15 entries
+      final todayEntries = await history.listForDay(DateTime(2026, 3, 10));
+      expect(todayEntries, hasLength(15));
     });
 
-    test('listForDay only returns entries for the requested day', () async {
-      await useCase(
-        Settings.defaults.copyWith(intervalMinutes: 60),
-        now: DateTime(2026, 3, 10, 20, 0),
-        showImmediate: true,
-      );
-
-      final mar10 = await history.listForDay(DateTime(2026, 3, 10));
-      final mar11 = await history.listForDay(DateTime(2026, 3, 11));
-
-      for (final entry in mar10) {
-        expect(entry.deliveredAt.day, 10, reason: 'Mar 10 query should only return Mar 10 entries');
-      }
-      for (final entry in mar11) {
-        expect(entry.deliveredAt.day, 11, reason: 'Mar 11 query should only return Mar 11 entries');
-      }
-    });
-
-    test('two-day gap: app not opened for 2 days still has history for delivery day', () async {
-      // App opened on March 10 at 08:00 with 60-min intervals
-      // 64 slots = 64 hours = ~2.7 days of coverage
+    test('two-day gap: scheduled notifications span multiple days', () async {
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 60),
         now: DateTime(2026, 3, 10, 8, 0),
         showImmediate: true,
       );
 
-      // User opens app on March 12 — the entries for March 11 should exist
-      final mar11Entries = await history.listForDay(DateTime(2026, 3, 11));
-      expect(
-        mar11Entries,
-        isNotEmpty,
-        reason: 'notifications scheduled 2 days ago should have history for intermediate day',
-      );
+      final quoteEvents = scheduler.events
+          .where((e) => e.type == ReminderEventType.quoteInterval)
+          .toList();
 
-      // March 12 should also have entries (within the 64-slot window)
-      final mar12Entries = await history.listForDay(DateTime(2026, 3, 12));
+      final scheduledDays = quoteEvents.map((e) => e.scheduledAt.day).toSet();
       expect(
-        mar12Entries,
-        isNotEmpty,
-        reason: 'notifications should span into the 3rd day at 60-min intervals',
+        scheduledDays.length,
+        greaterThan(1),
+        reason: 'notifications at 60-min intervals should span multiple days',
       );
     });
   });

@@ -43,7 +43,7 @@ final class _InMemoryNotificationHistoryRepository
 
 void main() {
   test(
-    'schedules quote history for today without depending on notification taps',
+    'schedules quote reminders and writes only immediate history entry',
     () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryNotificationHistoryRepository();
@@ -101,6 +101,7 @@ void main() {
       final scheduledIds = scheduledEvents.map((e) => e.scheduledId).toSet();
       expect(scheduledIds.length, 64);
 
+      // 1 immediate + 64 scheduled = 65 history entries
       expect(history.entries, hasLength(65));
       expect(
         history.entries.first.quoteText,
@@ -108,60 +109,12 @@ void main() {
       );
       expect(history.entries.first.theme, 'todos os santos');
       expect(history.entries.first.deliveredAt, now);
-      expect(history.entries.last.deliveredAt, DateTime(2026, 2, 22, 2, 0));
 
       final angelusEvent = scheduler.events.firstWhere(
         (e) => e.type == ReminderEventType.angelusNoon,
       );
       expect(angelusEvent.scheduledId, 200);
       expect(angelusEvent.prayerSlug, 'angelus');
-    },
-  );
-
-  test(
-    'rebuilding reminders replaces future history and preserves current due slot',
-    () async {
-      final scheduler = InMemoryNotificationSchedulerRepository();
-      final history = _InMemoryNotificationHistoryRepository();
-
-      final useCase = ScheduleCoreRemindersUseCase(
-        scheduler,
-        quoteFetcher:
-            ({required String language, required DateTime now}) async {
-              return Quote(
-                text: 'Quote ${now.hour}:${now.minute}',
-                dayOfWeek: 1,
-                theme: 'Tema',
-                season: LiturgicalSeason.ordinary,
-                imagePath: null,
-                feast: null,
-                feastName: null,
-              );
-            },
-        notificationHistoryRepository: history,
-        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-      );
-
-      await useCase(
-        Settings.defaults.copyWith(intervalMinutes: 15),
-        now: DateTime(2026, 2, 21, 10),
-      );
-      final firstRunCount = history.entries.length;
-
-      await useCase(
-        Settings.defaults.copyWith(intervalMinutes: 30),
-        now: DateTime(2026, 2, 21, 12),
-      );
-
-      expect(firstRunCount, 65);
-      expect(
-        history.entries
-            .where(
-              (entry) => !entry.deliveredAt.isBefore(DateTime(2026, 2, 21, 12)),
-            )
-            .length,
-        69,
-      );
     },
   );
 
@@ -205,7 +158,7 @@ void main() {
   );
 
   test(
-    'showImmediate false does not add synthetic history entry at current time',
+    'showImmediate false still writes history for scheduled quotes',
     () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryNotificationHistoryRepository();
@@ -232,115 +185,7 @@ void main() {
         showImmediate: false,
       );
 
-      expect(
-        history.entries.where((entry) => entry.deliveredAt == now),
-        isEmpty,
-      );
-      expect(
-        history.entries.any(
-          (entry) => entry.deliveredAt == now.add(const Duration(minutes: 15)),
-        ),
-        isTrue,
-      );
-    },
-  );
-
-  test(
-    'showImmediate true skips immediate when a recent due quote already exists',
-    () async {
-      final scheduler = InMemoryNotificationSchedulerRepository();
-      final history = _InMemoryNotificationHistoryRepository();
-      history.entries.add(
-        NotificationHistoryEntry(
-          quoteText: 'Recent scheduled quote',
-          theme: 't',
-          season: LiturgicalSeason.ordinary.name,
-          deliveredAt: DateTime(2026, 2, 21, 21, 33),
-        ),
-      );
-
-      final useCase = ScheduleCoreRemindersUseCase(
-        scheduler,
-        quoteFetcher:
-            ({required String language, required DateTime now}) async {
-              return const Quote(
-                text: 'Immediate candidate',
-                dayOfWeek: 1,
-                theme: 't',
-                season: LiturgicalSeason.ordinary,
-              );
-            },
-        notificationHistoryRepository: history,
-        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-      );
-
-      await useCase(
-        Settings.defaults.copyWith(intervalMinutes: 15),
-        now: DateTime(2026, 2, 21, 21, 35),
-        showImmediate: true,
-      );
-
-      final immediateEvents = scheduler.events.where(
-        (e) =>
-            e.type == ReminderEventType.quoteInterval && e.scheduledId == 8999,
-      );
-      expect(immediateEvents, isEmpty);
-      expect(
-        history.entries.where(
-          (entry) => entry.deliveredAt == DateTime(2026, 2, 21, 21, 35),
-        ),
-        isEmpty,
-      );
-    },
-  );
-
-  test(
-    'escriva mode avoids three identical quotes in a row across immediate and queued reminders',
-    () async {
-      final scheduler = InMemoryNotificationSchedulerRepository();
-      final history = _InMemoryNotificationHistoryRepository();
-
-      final useCase = ScheduleCoreRemindersUseCase(
-        scheduler,
-        quoteFetcher:
-            ({required String language, required DateTime now}) async {
-              final slot = now.minute ~/ 15;
-              final text = slot <= 2
-                  ? 'ESCRIVA_DUPLICATE'
-                  : 'ESCRIVA_ALTERNATE';
-              return Quote(
-                text: text,
-                dayOfWeek: 1,
-                theme: 'Escriva',
-                season: LiturgicalSeason.ordinary,
-                source: QuoteSource.escrivaPoints,
-              );
-            },
-        notificationHistoryRepository: history,
-        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-      );
-
-      await useCase(
-        Settings.defaults.copyWith(
-          intervalMinutes: 15,
-          escrivaPointsFeedEnabled: true,
-        ),
-        now: DateTime(2026, 2, 21, 10, 0),
-        showImmediate: true,
-      );
-
-      final quoteEvents =
-          scheduler.events
-              .where((event) => event.type == ReminderEventType.quoteInterval)
-              .toList()
-            ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
-
-      final firstThreeBodies = quoteEvents.take(3).map((e) => e.body).toList();
-
-      expect(
-        firstThreeBodies,
-        isNot(everyElement(equals('ESCRIVA_DUPLICATE'))),
-      );
+      expect(history.entries, hasLength(64));
     },
   );
 
@@ -380,52 +225,6 @@ void main() {
     );
     expect(futureQuotes.first.scheduledId, 9000);
   });
-
-  test(
-    'rebuilding preserves history entries delivered before current time',
-    () async {
-      final scheduler = InMemoryNotificationSchedulerRepository();
-      final history = _InMemoryNotificationHistoryRepository();
-
-      final useCase = ScheduleCoreRemindersUseCase(
-        scheduler,
-        quoteFetcher: ({required String language, required DateTime now}) async {
-          return Quote(
-            text: 'Quote ${now.hour}:${now.minute.toString().padLeft(2, '0')}',
-            dayOfWeek: 1,
-            theme: 'Tema',
-            season: LiturgicalSeason.ordinary,
-          );
-        },
-        notificationHistoryRepository: history,
-        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-      );
-
-      // First run at 08:00 with 30-minute interval
-      await useCase(
-        Settings.defaults.copyWith(intervalMinutes: 30),
-        now: DateTime(2026, 2, 21, 8),
-      );
-
-      // Should have entries from 08:00 through next day 16:00
-      expect(history.entries.length, 65);
-
-      // Second run at 12:00 (simulating app reopen)
-      await useCase(
-        Settings.defaults.copyWith(intervalMinutes: 30),
-        now: DateTime(2026, 2, 21, 12),
-      );
-
-      // Entries before 12:00 from first run must be preserved
-      final preservedEntries = history.entries
-          .where((e) => e.deliveredAt.isBefore(DateTime(2026, 2, 21, 12)))
-          .toList();
-      expect(preservedEntries, hasLength(8)); // 08:00, 08:30, ..., 11:30
-
-      expect(preservedEntries.first.quoteText, 'Quote 8:00');
-      expect(preservedEntries.last.quoteText, 'Quote 11:30');
-    },
-  );
 
   test(
     'rebuilding preserves history entry delivered at current notification time',
@@ -653,40 +452,4 @@ void main() {
     },
   );
 
-  test('writes history entries for next-day scheduled notifications', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository();
-    final history = _InMemoryNotificationHistoryRepository();
-
-    final useCase = ScheduleCoreRemindersUseCase(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return Quote(
-          text:
-              'Quote ${now.month}/${now.day} ${now.hour}:${now.minute.toString().padLeft(2, '0')}',
-          dayOfWeek: 1,
-          theme: 'Tema',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-      notificationHistoryRepository: history,
-      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-    );
-
-    final now = DateTime(2026, 2, 21, 22, 0);
-    await useCase(
-      Settings.defaults.copyWith(intervalMinutes: 60),
-      now: now,
-      showImmediate: true,
-    );
-
-    // With 1h intervals starting at 22:00, immediate at 22:00, then 23:00, 00:00, 01:00...
-    // Should have entries for both Feb 21 and Feb 22
-    final feb21Entries =
-        history.entries.where((e) => e.deliveredAt.day == 21).toList();
-    final feb22Entries =
-        history.entries.where((e) => e.deliveredAt.day == 22).toList();
-
-    expect(feb21Entries, isNotEmpty);
-    expect(feb22Entries, isNotEmpty);
-  });
 }

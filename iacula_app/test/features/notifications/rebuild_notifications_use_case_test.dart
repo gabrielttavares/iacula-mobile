@@ -8,7 +8,6 @@ import 'package:iacula_app/features/liturgical/domain/services/liturgical_season
 import 'package:iacula_app/features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
-import 'package:iacula_app/features/notifications/domain/entities/short_interval_reliability.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
@@ -87,7 +86,6 @@ RebuildNotificationsUseCase _makeRebuild(
       _EmptySpiritualEntryRepository(),
     ),
     quoteFetcher: quoteFetcher,
-    batchFetcherForSettings: (_) => null,
   );
 }
 
@@ -184,12 +182,11 @@ void main() {
       throwsA(isA<StateError>()),
     );
 
-    final second = await rebuild.call(
+    await rebuild.call(
       settings,
       isEasterSeason: season == LiturgicalSeason.easter,
       showImmediate: false,
     );
-    expect(second.shortIntervalReliabilityNotGuaranteed, isFalse);
     expect(
       scheduler.events.where((e) => e.type == ReminderEventType.quoteInterval).length,
       64,
@@ -230,111 +227,10 @@ void main() {
     );
 
     await expectLater(first, throwsA(isA<StateError>()));
-    final secondResult = await second;
-    expect(secondResult.shortIntervalReliabilityNotGuaranteed, isFalse);
+    await second;
     expect(
       scheduler.events.where((e) => e.type == ReminderEventType.quoteInterval).length,
       64,
     );
-  });
-
-  test('short interval with exact reliability ok reports notGuaranteed false', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository()
-      ..shortIntervalReliabilityOverrideForTest = ShortIntervalReliability.ok;
-    final rebuild = _makeRebuild(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return const Quote(
-          text: 'x',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-    );
-
-    final settings = Settings.defaults.copyWith(
-      notificationsEnabled: true,
-      intervalMinutes: 5,
-    );
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
-
-    final r = await rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
-    expect(r.shortIntervalReliabilityNotGuaranteed, isFalse);
-  });
-
-  test('short interval with exact denied reports notGuaranteed true', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository()
-      ..shortIntervalReliabilityOverrideForTest =
-          ShortIntervalReliability.exactAlarmsUnavailable;
-    final rebuild = _makeRebuild(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return const Quote(
-          text: 'x',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-    );
-
-    final settings = Settings.defaults.copyWith(
-      notificationsEnabled: true,
-      intervalMinutes: 5,
-    );
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
-
-    final r = await rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
-    expect(r.shortIntervalReliabilityNotGuaranteed, isTrue);
-
-    final quoteEvents = scheduler.events
-        .where((event) => event.type == ReminderEventType.quoteInterval)
-        .toList();
-    expect(
-      quoteEvents,
-      hasLength(1),
-      reason:
-          'When exact alarms are unavailable, keep only the latest upcoming quote to avoid Android burst delivery.',
-    );
-    expect(quoteEvents.single.scheduledId, 9000);
-  });
-
-  test('notifications disabled yields notGuaranteed false even if exact denied', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository()
-      ..shortIntervalReliabilityOverrideForTest =
-          ShortIntervalReliability.exactAlarmsUnavailable;
-    final rebuild = _makeRebuild(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return const Quote(
-          text: 'x',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-    );
-
-    final settings = Settings.defaults.copyWith(
-      notificationsEnabled: false,
-      intervalMinutes: 5,
-    );
-    final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
-
-    final r = await rebuild.call(
-      settings,
-      isEasterSeason: season == LiturgicalSeason.easter,
-      showImmediate: false,
-    );
-    expect(r.shortIntervalReliabilityNotGuaranteed, isFalse);
   });
 }
