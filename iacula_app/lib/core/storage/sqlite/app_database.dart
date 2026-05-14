@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 17,
+      version: 18,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -59,7 +59,11 @@ final class AppDatabase {
           CREATE TABLE quote_indices (
             day_of_week INTEGER PRIMARY KEY,
             quote_index INTEGER NOT NULL,
-            image_index INTEGER NOT NULL
+            image_index INTEGER NOT NULL,
+            quote_order TEXT,
+            image_order TEXT,
+            quote_pool_key TEXT,
+            image_pool_key TEXT
           )
         ''');
 
@@ -221,6 +225,22 @@ final class AppDatabase {
               PRIMARY KEY (day_of_week, quote_index, season)
             )
           ''');
+        }
+        if (oldVersion < 18) {
+          await db.execute(
+            'ALTER TABLE quote_indices ADD COLUMN quote_order TEXT',
+          );
+          await db.execute(
+            'ALTER TABLE quote_indices ADD COLUMN image_order TEXT',
+          );
+          await db.execute(
+            'ALTER TABLE quote_indices ADD COLUMN quote_pool_key TEXT',
+          );
+          await db.execute(
+            'ALTER TABLE quote_indices ADD COLUMN image_pool_key TEXT',
+          );
+          await db.delete('quote_indices');
+          await db.delete('quote_meta');
         }
       },
     );

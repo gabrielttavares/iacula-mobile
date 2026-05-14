@@ -1,23 +1,11 @@
-﻿import '../entities/day_quotes.dart';
-import '../entities/quote_indices.dart';
+import 'dart:math';
+
+import '../entities/day_quotes.dart';
 
 typedef QuoteCollection = Map<String, DayQuotes>;
 
 final class QuoteSelector {
   const QuoteSelector._();
-
-  static ({int currentIndex, int nextIndex}) getNextIndex(
-    int total,
-    int current,
-  ) {
-    final validCurrent = (current >= 0 && current < total) ? current : 0;
-    final next = (validCurrent + 1) % total;
-    return (currentIndex: validCurrent, nextIndex: next);
-  }
-
-  static bool shouldResetIndices(int lastDay, int currentDay) {
-    return lastDay != currentDay;
-  }
 
   static String? selectQuote({
     required QuoteCollection collection,
@@ -33,16 +21,74 @@ final class QuoteSelector {
     return day.quotes[safeIndex];
   }
 
-  static String? selectFromList(List<String> quotes, int index) {
-    if (quotes.isEmpty) return null;
-    final safeIndex = (index >= 0 && index < quotes.length) ? index : 0;
-    return quotes[safeIndex];
+  static ({T? item, int nextCursor, List<int> nextOrder})
+  selectFromShuffleBag<T>(
+    List<T> items, {
+    required int cursor,
+    required List<int>? order,
+    required String? currentPoolKey,
+    required String nextPoolKey,
+  }) {
+    if (items.isEmpty) {
+      return (item: null, nextCursor: 0, nextOrder: const <int>[]);
+    }
+
+    List<int> effectiveOrder;
+    if (currentPoolKey != nextPoolKey || !_isValidOrder(order, items.length)) {
+      effectiveOrder = _shuffleIndices(items.length);
+      cursor = 0;
+    } else {
+      effectiveOrder = order!;
+    }
+
+    final validCursor = (cursor >= 0 && cursor < effectiveOrder.length)
+        ? cursor
+        : 0;
+    final selectedIndex = effectiveOrder[validCursor];
+    var nextCursor = validCursor + 1;
+    var nextOrder = effectiveOrder;
+
+    if (nextCursor >= effectiveOrder.length) {
+      nextOrder = _shuffleIndices(
+        items.length,
+        avoidFirst: items.length > 1 ? selectedIndex : null,
+      );
+      nextCursor = 0;
+    }
+
+    return (
+      item: items[selectedIndex],
+      nextCursor: nextCursor,
+      nextOrder: nextOrder,
+    );
   }
 
-  static QuoteIndices ensureCurrentDay(QuoteIndices indices, int dayOfWeek) {
-    if (shouldResetIndices(indices.lastDay, dayOfWeek)) {
-      return QuoteIndices.empty(dayOfWeek);
+  static bool _isValidOrder(List<int>? order, int total) {
+    if (order == null || order.length != total) {
+      return false;
     }
+
+    final seen = <int>{};
+    for (final value in order) {
+      if (value < 0 || value >= total || !seen.add(value)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  static List<int> _shuffleIndices(int total, {int? avoidFirst}) {
+    final indices = List<int>.generate(total, (index) => index);
+    indices.shuffle(Random());
+
+    if (avoidFirst != null &&
+        indices.length > 1 &&
+        indices.first == avoidFirst) {
+      final first = indices.removeAt(0);
+      indices.add(first);
+    }
+
     return indices;
   }
 }

@@ -8,6 +8,7 @@ import 'package:iacula_app/features/quotes/domain/entities/quote_indices.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_content_repository.dart';
 import 'package:iacula_app/features/quotes/domain/repositories/quote_indices_repository.dart';
 import 'package:iacula_app/features/quotes/infrastructure/repositories/in_memory_disabled_quotes_repository.dart';
+import 'package:iacula_app/features/quotes/infrastructure/repositories/in_memory_quote_indices_repository.dart';
 
 class _EmptyCustomPhraseRepository implements CustomPhraseRepository {
   @override
@@ -88,56 +89,106 @@ void main() {
       language: 'pt-br',
       now: DateTime(2026, 2, 22),
     );
-    expect(result.text, 'Q1');
+    expect({'Q1', 'Q2'}, contains(result.text));
     expect(result.season, LiturgicalSeason.ordinary);
   });
 
-  test('returns sequential quote and updates indices', () async {
-    final repo = _FakeIndicesRepository();
+  test(
+    'returns different quote and image before the pool is exhausted',
+    () async {
+      final repo = _FakeIndicesRepository();
+      final useCase = GetNextQuoteUseCase(
+        contentRepository: _FakeQuoteContentRepository(),
+        indicesRepository: repo,
+        disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
+        customPhraseRepository: _EmptyCustomPhraseRepository(),
+      );
+
+      final result = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 2, 22),
+      ); // Sunday
+
+      final next = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 2, 22),
+      );
+      expect({'Q1', 'Q2'}, contains(result.text));
+      expect({'Q1', 'Q2'}, contains(next.text));
+      expect(next.text, isNot(result.text));
+      expect({'img1', 'img2'}, contains(result.imagePath));
+      expect({'img1', 'img2'}, contains(next.imagePath));
+      expect(next.imagePath, isNot(result.imagePath));
+    },
+  );
+
+  test(
+    'returns every quote before repeating within the same weekday',
+    () async {
+      final useCase = GetNextQuoteUseCase(
+        contentRepository: _FakeQuoteContentRepository(
+          quotes: {
+            '1': const DayQuotes(
+              day: 'Domingo',
+              theme: 'Tema',
+              quotes: ['Q1', 'Q2', 'Q3'],
+            ),
+          },
+        ),
+        indicesRepository: InMemoryQuoteIndicesRepository(),
+        disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
+        customPhraseRepository: _EmptyCustomPhraseRepository(),
+      );
+
+      final first = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 2, 22),
+      ); // Sunday
+      final second = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 2, 22, 0, 1),
+      );
+      final third = await useCase.call(
+        language: 'pt-br',
+        now: DateTime(2026, 2, 22, 0, 2),
+      );
+
+      expect({first.text, second.text, third.text}, hasLength(3));
+    },
+  );
+
+  test('preserves weekday rotation after visiting a future weekday', () async {
     final useCase = GetNextQuoteUseCase(
-      contentRepository: _FakeQuoteContentRepository(),
-      indicesRepository: repo,
+      contentRepository: _FakeQuoteContentRepository(
+        quotes: {
+          '5': const DayQuotes(
+            day: 'Quinta-feira',
+            theme: 'Eucaristia',
+            quotes: ['T1', 'T2', 'T3'],
+          ),
+          '6': const DayQuotes(
+            day: 'Sexta-feira',
+            theme: 'Cruz',
+            quotes: ['F1', 'F2'],
+          ),
+        },
+      ),
+      indicesRepository: InMemoryQuoteIndicesRepository(),
       disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
       customPhraseRepository: _EmptyCustomPhraseRepository(),
     );
 
-    final result = await useCase.call(
+    final firstThursday = await useCase.call(
       language: 'pt-br',
-      now: DateTime(2026, 2, 22),
-    ); // Sunday
-    expect(result.text, 'Q1');
-    expect(result.imagePath, 'img1');
-
-    final next = await useCase.call(
+      now: DateTime(2026, 5, 14, 10),
+    );
+    await useCase.call(language: 'pt-br', now: DateTime(2026, 5, 15, 10));
+    final resumedThursday = await useCase.call(
       language: 'pt-br',
-      now: DateTime(2026, 2, 22),
-    );
-    expect(next.text, 'Q2');
-    expect(next.imagePath, 'img2');
-  });
-
-  test('prevents consecutive quote repeats', () async {
-    final repo = _FakeIndicesRepository();
-    // Set initial lastQuote to 'Q1' to simulate previous selection
-    repo.indices = QuoteIndices(
-      quoteIndices: {1: 0},
-      imageIndices: {},
-      lastDay: 1,
-      lastQuote: 'Q1',
-    );
-    final useCase = GetNextQuoteUseCase(
-      contentRepository: _FakeQuoteContentRepository(),
-      indicesRepository: repo,
-      disabledQuotesRepository: InMemoryDisabledQuotesRepository(),
-      customPhraseRepository: _EmptyCustomPhraseRepository(),
+      now: DateTime(2026, 5, 14, 11),
     );
 
-    final result = await useCase.call(
-      language: 'pt-br',
-      now: DateTime(2026, 2, 22),
-    ); // Sunday
-    // Should skip Q1 and select Q2
-    expect(result.text, 'Q2');
-    expect(repo.indices.lastQuote, 'Q2');
+    expect(resumedThursday.text, isNot(firstThursday.text));
+    expect(resumedThursday.imagePath, isNot(firstThursday.imagePath));
   });
 }

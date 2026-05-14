@@ -1,35 +1,39 @@
-﻿final class QuoteIndices {
+final class QuoteIndices {
   const QuoteIndices({
     required this.quoteIndices,
     required this.imageIndices,
-    required this.lastDay,
-    this.lastQuote,
+    this.quoteOrders = const {},
+    this.imageOrders = const {},
+    this.quotePoolKeys = const {},
+    this.imagePoolKeys = const {},
   });
 
   final Map<int, int> quoteIndices;
   final Map<int, int> imageIndices;
-  final int lastDay;
-  final String? lastQuote;
+  final Map<int, List<int>> quoteOrders;
+  final Map<int, List<int>> imageOrders;
+  final Map<int, String> quotePoolKeys;
+  final Map<int, String> imagePoolKeys;
 
-  factory QuoteIndices.empty(int dayOfWeek) {
-    return QuoteIndices(
-      quoteIndices: const {},
-      imageIndices: const {},
-      lastDay: dayOfWeek,
-    );
+  factory QuoteIndices.empty([int? dayOfWeek]) {
+    return const QuoteIndices(quoteIndices: const {}, imageIndices: const {});
   }
 
   QuoteIndices copyWith({
     Map<int, int>? quoteIndices,
     Map<int, int>? imageIndices,
-    int? lastDay,
-    String? lastQuote,
+    Map<int, List<int>>? quoteOrders,
+    Map<int, List<int>>? imageOrders,
+    Map<int, String>? quotePoolKeys,
+    Map<int, String>? imagePoolKeys,
   }) {
     return QuoteIndices(
       quoteIndices: quoteIndices ?? this.quoteIndices,
       imageIndices: imageIndices ?? this.imageIndices,
-      lastDay: lastDay ?? this.lastDay,
-      lastQuote: lastQuote ?? this.lastQuote,
+      quoteOrders: quoteOrders ?? this.quoteOrders,
+      imageOrders: imageOrders ?? this.imageOrders,
+      quotePoolKeys: quotePoolKeys ?? this.quotePoolKeys,
+      imagePoolKeys: imagePoolKeys ?? this.imagePoolKeys,
     );
   }
 }

@@ -1,15 +1,11 @@
-﻿import '../../domain/entities/quote_indices.dart';
+import '../../domain/entities/quote_indices.dart';
 import '../../domain/repositories/quote_indices_repository.dart';
-import '../../domain/services/quote_selector.dart';
 
 final class InMemoryQuoteIndicesRepository implements QuoteIndicesRepository {
-  QuoteIndices _indices = QuoteIndices.empty(DateTime.now().weekday % 7 + 1);
+  QuoteIndices _indices = QuoteIndices.empty();
 
   @override
-  Future<QuoteIndices> load({required int dayOfWeek}) async {
-    _indices = QuoteSelector.ensureCurrentDay(_indices, dayOfWeek);
-    return _indices;
-  }
+  Future<QuoteIndices> load({required int dayOfWeek}) async => _indices;
 
   @override
   Future<void> save(QuoteIndices indices) async {

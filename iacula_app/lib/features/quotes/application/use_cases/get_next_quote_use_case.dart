@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../../../custom_phrases/domain/repositories/custom_phrase_repository.dart';
 import '../../../liturgical/domain/liturgical_season.dart';
 import '../../domain/entities/quote.dart';
@@ -58,58 +60,63 @@ final class GetNextQuoteUseCase {
         (enabled.isEmpty ? dayData.quotes : enabled) + rotationPhrases;
 
     final indices = await _indicesRepository.load(dayOfWeek: dayOfWeek);
-    final currentQuoteIndex = indices.quoteIndices[dayOfWeek] ?? 0;
-    final quoteStep = QuoteSelector.getNextIndex(
-      effectiveQuotes.length,
-      currentQuoteIndex,
+    final quotePoolKey = _poolKeyFor(effectiveQuotes);
+    final quoteSelection = QuoteSelector.selectFromShuffleBag(
+      effectiveQuotes,
+      cursor: indices.quoteIndices[dayOfWeek] ?? 0,
+      order: indices.quoteOrders[dayOfWeek],
+      currentPoolKey: indices.quotePoolKeys[dayOfWeek],
+      nextPoolKey: quotePoolKey,
     );
 
     final seasonalImages = await _contentRepository.listDayImages(
       dayOfWeek: dayOfWeek,
       season: season,
     );
-    final currentImageIndex = indices.imageIndices[dayOfWeek] ?? 0;
+    final imagePoolKey = _poolKeyFor(seasonalImages);
 
     String? imagePath;
-    var nextImageIndex = 0;
+    List<int>? nextImageOrder;
+    var nextImageCursor = 0;
 
     if (seasonalImages.isNotEmpty) {
-      final imageStep = QuoteSelector.getNextIndex(
-        seasonalImages.length,
-        currentImageIndex,
+      final imageSelection = QuoteSelector.selectFromShuffleBag(
+        seasonalImages,
+        cursor: indices.imageIndices[dayOfWeek] ?? 0,
+        order: indices.imageOrders[dayOfWeek],
+        currentPoolKey: indices.imagePoolKeys[dayOfWeek],
+        nextPoolKey: imagePoolKey,
       );
-      imagePath = seasonalImages[imageStep.currentIndex];
-      nextImageIndex = imageStep.nextIndex;
+      imagePath = imageSelection.item;
+      nextImageOrder = imageSelection.nextOrder;
+      nextImageCursor = imageSelection.nextCursor;
     }
-
-    var selectedText = QuoteSelector.selectFromList(
-      effectiveQuotes,
-      currentQuoteIndex,
-    );
-    var selectedIndex = quoteStep.nextIndex;
-
-    if (selectedText != null && selectedText == indices.lastQuote) {
-      final nextStep = QuoteSelector.getNextIndex(
-        effectiveQuotes.length,
-        selectedIndex,
-      );
-      selectedText = QuoteSelector.selectFromList(
-        effectiveQuotes,
-        selectedIndex,
-      );
-      selectedIndex = nextStep.nextIndex;
-    }
-
-    selectedText ??= effectiveQuotes.isNotEmpty
-        ? effectiveQuotes.first
-        : 'Conteudo indisponivel para hoje.';
+    final selectedText =
+        quoteSelection.item ??
+        (effectiveQuotes.isNotEmpty
+            ? effectiveQuotes.first
+            : 'Conteudo indisponivel para hoje.');
 
     await _indicesRepository.save(
       QuoteIndices(
-        quoteIndices: {...indices.quoteIndices, dayOfWeek: selectedIndex},
-        imageIndices: {...indices.imageIndices, dayOfWeek: nextImageIndex},
-        lastDay: dayOfWeek,
-        lastQuote: selectedText,
+        quoteIndices: {
+          ...indices.quoteIndices,
+          dayOfWeek: quoteSelection.nextCursor,
+        },
+        imageIndices: {...indices.imageIndices, dayOfWeek: nextImageCursor},
+        quoteOrders: {
+          ...indices.quoteOrders,
+          dayOfWeek: quoteSelection.nextOrder,
+        },
+        imageOrders: {
+          ...indices.imageOrders,
+          if (nextImageOrder != null) dayOfWeek: nextImageOrder,
+        },
+        quotePoolKeys: {...indices.quotePoolKeys, dayOfWeek: quotePoolKey},
+        imagePoolKeys: {
+          ...indices.imagePoolKeys,
+          if (seasonalImages.isNotEmpty) dayOfWeek: imagePoolKey,
+        },
       ),
     );
 
@@ -132,5 +139,9 @@ final class GetNextQuoteUseCase {
 
   int _dayOfWeek1to7(DateTime date) {
     return (date.weekday % 7) + 1;
+  }
+
+  String _poolKeyFor(List<String> values) {
+    return jsonEncode(values);
   }
 }
