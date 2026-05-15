@@ -279,7 +279,7 @@ class _DaySection extends StatelessWidget {
                   ),
                   const SizedBox(width: IaculaSpacing.xs),
                   Text(
-                    'Adicionar frase personalizada',
+                    'Adicionar jaculatória personalizada',
                     style: context.textStyles.secondary.copyWith(
                       color: context.colors.primaryButton,
                       fontSize: 14,
