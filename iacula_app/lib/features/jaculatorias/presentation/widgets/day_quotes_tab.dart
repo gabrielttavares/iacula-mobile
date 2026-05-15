@@ -7,8 +7,6 @@ import '../../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../liturgical/domain/liturgical_season.dart';
 import '../../../quotes/domain/entities/day_quotes.dart';
-import '../../../custom_phrases/presentation/edit_phrase_screen.dart';
-
 class DayQuotesTab extends ConsumerStatefulWidget {
   const DayQuotesTab({super.key, required this.escrivaEnabled});
 
@@ -136,14 +134,6 @@ class _DayQuotesTabState extends ConsumerState<DayQuotesTab> {
                               );
                         }
                       },
-                      onAddPhrase: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const EditPhraseScreen(),
-                          ),
-                        );
-                      },
                     ),
                   ),
               ],
@@ -166,7 +156,6 @@ class _DaySection extends StatelessWidget {
     required this.onHeaderTap,
     required this.onToggle,
     required this.onDelete,
-    required this.onAddPhrase,
   });
 
   final int iaculaDay;
@@ -177,7 +166,6 @@ class _DaySection extends StatelessWidget {
   final VoidCallback onHeaderTap;
   final ValueChanged<int> onToggle;
   final ValueChanged<int> onDelete;
-  final VoidCallback onAddPhrase;
 
   @override
   Widget build(BuildContext context) {
@@ -260,34 +248,6 @@ class _DaySection extends StatelessWidget {
                 onDelete: () => onDelete(i),
               ),
             ],
-            Container(
-              height: 0.5,
-              color: context.colors.separator,
-            ),
-            CupertinoButton(
-              padding: const EdgeInsets.symmetric(
-                horizontal: IaculaSpacing.md,
-                vertical: IaculaSpacing.xs,
-              ),
-              onPressed: onAddPhrase,
-              child: Row(
-                children: [
-                  Icon(
-                    CupertinoIcons.add_circled,
-                    size: 18,
-                    color: context.colors.primaryButton,
-                  ),
-                  const SizedBox(width: IaculaSpacing.xs),
-                  Text(
-                    'Adicionar jaculatória personalizada',
-                    style: context.textStyles.secondary.copyWith(
-                      color: context.colors.primaryButton,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ],
       ),

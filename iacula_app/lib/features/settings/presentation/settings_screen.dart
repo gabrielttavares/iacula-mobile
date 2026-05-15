@@ -9,7 +9,7 @@ import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/interval_selector.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../jaculatorias/presentation/jaculatorias_screen.dart';
+import '../../jaculatorias/presentation/minhas_jaculatorias_screen.dart';
 import '../../home_widget/home_widget_service.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
@@ -367,7 +367,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           onPressed: () {
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (_) => const JaculatoriasScreen(),
+                                builder: (_) => const MinhasJaculatoriasScreen(),
                               ),
                             );
                           },

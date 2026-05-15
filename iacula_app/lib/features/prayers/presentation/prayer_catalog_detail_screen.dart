@@ -7,7 +7,7 @@ import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_animated_icon.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../custom_phrases/presentation/edit_phrase_screen.dart';
+import '../../custom_phrases/presentation/edit_prayer_alarm_screen.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
 import '../domain/entities/prayer_detail.dart';
@@ -225,7 +225,7 @@ class _PrayerAlarmButton extends StatelessWidget {
         HapticFeedback.selectionClick();
         Navigator.of(context).push(
           CupertinoPageRoute(
-            builder: (_) => EditPhraseScreen(initialPrayer: entry),
+            builder: (_) => EditPrayerAlarmScreen(initialPrayer: entry),
           ),
         );
       },

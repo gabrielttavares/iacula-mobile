@@ -12,7 +12,7 @@ import '../../../core/presentation/widgets/iacula_stagger_entrance.dart';
 import '../../../core/presentation/widgets/image_background_card.dart';
 import '../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
-import '../../jaculatorias/presentation/jaculatorias_screen.dart';
+import '../../jaculatorias/presentation/minhas_jaculatorias_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../notifications/domain/entities/notification_history_entry.dart';
@@ -380,7 +380,7 @@ class _FeatureCardsList extends StatelessWidget {
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
-                CupertinoPageRoute(builder: (_) => const JaculatoriasScreen()),
+                CupertinoPageRoute(builder: (_) => const MinhasJaculatoriasScreen()),
               );
             },
             height: 120,

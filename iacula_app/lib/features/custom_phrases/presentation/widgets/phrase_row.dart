@@ -55,7 +55,9 @@ class PhraseRow extends StatelessWidget {
                   Text(
                     isPrayer
                         ? 'Alarme · ${phrase.schedule.summary()}'
-                        : phrase.schedule.summary(),
+                        : phrase.isRotationMode
+                            ? 'Jaculatória personalizada'
+                            : phrase.schedule.summary(),
                     style:
                         context.textStyles.secondary.copyWith(fontSize: 12),
                   ),
