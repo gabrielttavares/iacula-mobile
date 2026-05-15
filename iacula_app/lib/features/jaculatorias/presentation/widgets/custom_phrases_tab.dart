@@ -7,10 +7,9 @@ import '../../../../core/presentation/design/iacula_feedback.dart';
 import '../../../../core/presentation/design/iacula_modal.dart';
 import '../../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../../core/presentation/widgets/iacula_soft_card.dart';
-import '../../../../core/presentation/widgets/iacula_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
-import '../../../custom_phrases/domain/entities/custom_phrase.dart';
 import '../../../custom_phrases/presentation/edit_phrase_screen.dart';
+import '../../../custom_phrases/presentation/widgets/phrase_row.dart';
 import '../../../liturgical/domain/liturgical_season.dart';
 
 class CustomPhrasesTab extends ConsumerStatefulWidget {
@@ -169,7 +168,7 @@ class _CustomPhrasesTabState extends ConsumerState<CustomPhrasesTab> {
                               HapticFeedback.mediumImpact();
                               notifier.delete(phrases[i].id);
                             },
-                            child: _PhraseRow(
+                            child: PhraseRow(
                               phrase: phrases[i],
                               onToggle: (val) {
                                 HapticFeedback.selectionClick();
@@ -249,58 +248,3 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-class _PhraseRow extends StatelessWidget {
-  const _PhraseRow({
-    required this.phrase,
-    required this.onToggle,
-    required this.onTap,
-  });
-
-  final CustomPhrase phrase;
-  final ValueChanged<bool> onToggle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return IaculaTouchableCard(
-      onTap: onTap,
-      child: IaculaSoftCard(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    phrase.text,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.textStyles.cardTitle.copyWith(
-                      fontSize: 15,
-                      color: phrase.isActive
-                          ? context.colors.textPrimary
-                          : context.colors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    phrase.schedule.summary(),
-                    style:
-                        context.textStyles.secondary.copyWith(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            CupertinoSwitch(
-              value: phrase.isActive,
-              onChanged: onToggle,
-              activeTrackColor: context.colors.primaryButton,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

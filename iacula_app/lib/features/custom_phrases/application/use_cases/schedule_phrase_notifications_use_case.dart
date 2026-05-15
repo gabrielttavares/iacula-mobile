@@ -66,17 +66,21 @@ class SchedulePhraseNotificationsUseCase {
       }
 
       final id = _deriveId(phrase.id, i);
+      final isPrayerAlarm = phrase.isPrayerAlarm;
       await _scheduler.scheduleWithId(
         id,
         ReminderEvent(
           type: ReminderEventType.customPhrase,
-          title: 'Frase Pessoal',
-          body: phrase.text,
+          title: isPrayerAlarm ? (phrase.prayerTitle ?? phrase.text) : 'Frase Pessoal',
+          body: isPrayerAlarm ? 'Hora de rezar' : phrase.text,
           scheduledAt: nextOccurrence,
           withVibration: true,
-          isAlarm: false,
+          isAlarm: isPrayerAlarm,
           repeatDaily: phrase.schedule.type != PhraseScheduleType.specificDates,
-          routeTarget: NotificationRouteTarget.home,
+          routeTarget: isPrayerAlarm
+              ? NotificationRouteTarget.prayer
+              : NotificationRouteTarget.home,
+          prayerSlug: isPrayerAlarm ? phrase.prayerSlug : null,
         ),
       );
     }

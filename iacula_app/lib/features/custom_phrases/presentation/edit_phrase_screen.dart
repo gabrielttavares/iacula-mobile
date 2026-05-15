@@ -9,13 +9,16 @@ import '../../../core/presentation/widgets/iacula_calendar_modal.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../prayers/domain/entities/prayer_catalog_entry.dart';
 import '../domain/entities/custom_phrase.dart';
 import '../domain/entities/phrase_schedule.dart';
+import 'prayer_picker_sheet.dart';
 
 class EditPhraseScreen extends ConsumerStatefulWidget {
-  const EditPhraseScreen({this.existing, super.key});
+  const EditPhraseScreen({this.existing, this.initialPrayer, super.key});
 
   final CustomPhrase? existing;
+  final PrayerCatalogEntry? initialPrayer;
 
   @override
   ConsumerState<EditPhraseScreen> createState() => _EditPhraseScreenState();
@@ -30,19 +33,42 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
   late List<int> _daysOfWeek;
   late List<String> _specificDates;
   late List<String> _times;
+  late bool _isPrayerMode;
+  PrayerCatalogEntry? _selectedPrayer;
 
   @override
   void initState() {
     super.initState();
     final e = widget.existing;
+    final hasInitialPrayer = widget.initialPrayer != null;
+    final isExistingPrayerAlarm = e?.isPrayerAlarm ?? false;
+
+    _isPrayerMode = hasInitialPrayer || isExistingPrayerAlarm;
+    _selectedPrayer = widget.initialPrayer;
+
     _textController = TextEditingController(text: e?.text ?? '');
-    _displayOnHero = e?.displayOnHero ?? true;
+    _displayOnHero = e?.displayOnHero ?? !_isPrayerMode;
     _displayAsNotification = e?.displayAsNotification ?? true;
-    _useFixedSchedule = e?.useFixedSchedule ?? false;
+    _useFixedSchedule = _isPrayerMode ? true : (e?.useFixedSchedule ?? false);
     _scheduleType = e?.schedule.type ?? PhraseScheduleType.daily;
     _daysOfWeek = List.from(e?.schedule.daysOfWeek ?? []);
     _specificDates = List.from(e?.schedule.specificDates ?? []);
     _times = List.from(e?.schedule.times ?? []);
+
+    if (isExistingPrayerAlarm && !hasInitialPrayer) {
+      _loadExistingPrayer(e!);
+    }
+  }
+
+  Future<void> _loadExistingPrayer(CustomPhrase phrase) async {
+    final settings = await ref.read(getSettingsUseCaseProvider).call();
+    if (!mounted) return;
+    final catalogEntry = await ref
+        .read(getPrayerCatalogUseCaseProvider)
+        .getBySlug(language: settings.language, slug: phrase.prayerSlug!);
+    if (mounted && catalogEntry != null) {
+      setState(() => _selectedPrayer = catalogEntry);
+    }
   }
 
   @override
@@ -52,23 +78,34 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
   }
 
   void _save() {
-    final text = _textController.text.trim();
-    if (text.length < 5 || text.length > 300) {
-      IaculaModal.showAlert(
-        context: context,
-        title: 'Ajuste o texto',
-        message: 'A frase precisa ter entre 5 e 300 caracteres.',
-      );
-      return;
-    }
+    if (_isPrayerMode) {
+      if (_selectedPrayer == null) {
+        IaculaModal.showAlert(
+          context: context,
+          title: 'Selecione uma oração',
+          message: 'Escolha uma oração do catálogo para criar o alarme.',
+        );
+        return;
+      }
+    } else {
+      final text = _textController.text.trim();
+      if (text.length < 5 || text.length > 300) {
+        IaculaModal.showAlert(
+          context: context,
+          title: 'Ajuste o texto',
+          message: 'A frase precisa ter entre 5 e 300 caracteres.',
+        );
+        return;
+      }
 
-    if (!_displayOnHero && !_displayAsNotification) {
-      IaculaModal.showAlert(
-        context: context,
-        title: 'Forma de exibição',
-        message: 'Selecione pelo menos uma opção: Destaque do Início ou Notificação.',
-      );
-      return;
+      if (!_displayOnHero && !_displayAsNotification) {
+        IaculaModal.showAlert(
+          context: context,
+          title: 'Forma de exibição',
+          message: 'Selecione pelo menos uma opção: Destaque do Início ou Notificação.',
+        );
+        return;
+      }
     }
 
     if (_useFixedSchedule) {
@@ -100,16 +137,20 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
       }
     }
 
+    final resolvedText = _isPrayerMode
+        ? (_selectedPrayer!.title)
+        : _textController.text.trim();
+
     final phrase = (widget.existing ??
             CustomPhrase(
               id: const Uuid().v4(),
-              text: text,
+              text: resolvedText,
               createdAt: DateTime.now(),
               updatedAt: DateTime.now(),
               schedule: PhraseSchedule(type: _scheduleType),
             ))
         .copyWith(
-      text: text,
+      text: resolvedText,
       displayOnHero: _displayOnHero,
       displayAsNotification: _displayAsNotification,
       useFixedSchedule: _useFixedSchedule,
@@ -119,6 +160,8 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
         specificDates: _specificDates,
         times: _useFixedSchedule ? _times : const [],
       ),
+      prayerSlug: _isPrayerMode ? _selectedPrayer!.slug : null,
+      prayerTitle: _isPrayerMode ? _selectedPrayer!.title : null,
     );
 
     ref.read(customPhrasesNotifierProvider.notifier).save(phrase);
@@ -140,14 +183,31 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
     }
   }
 
+  String get _screenTitle {
+    if (_isPrayerMode) {
+      return widget.existing == null ? 'Alarme de Oração' : 'Editar Alarme';
+    }
+    return widget.existing == null ? 'Nova Frase' : 'Editar Frase';
+  }
+
+  Future<void> _pickPrayer() async {
+    final entry = await PrayerPickerSheet.show(context);
+    if (entry != null && mounted) {
+      setState(() => _selectedPrayer = entry);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isEditingExisting = widget.existing != null;
+    final canSwitchType = !isEditingExisting;
+
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
       navigationBar: CupertinoNavigationBar(
         backgroundColor: context.colors.background,
         border: null,
-        middle: Text(widget.existing == null ? 'Nova Frase' : 'Editar Frase'),
+        middle: Text(_screenTitle),
       ),
       child: SafeArea(
         child: Column(
@@ -156,80 +216,178 @@ class _EditPhraseScreenState extends ConsumerState<EditPhraseScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  _Section(
-                    title: 'FRASE',
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        IaculaTextInput(
-                          controller: _textController,
-                          placeholder: 'Escreva uma frase espiritual...',
-                          maxLines: 5,
-                          padding: const EdgeInsets.all(12),
-                          onChanged: (val) => setState(() {}),
+                  if (canSwitchType)
+                    _Section(
+                      title: 'TIPO',
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: CupertinoSlidingSegmentedControl<bool>(
+                          groupValue: _isPrayerMode,
+                          children: const {
+                            false: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 4),
+                              child: Text('Frase Pessoal', style: TextStyle(fontSize: 12)),
+                            ),
+                            true: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 4),
+                              child: Text('Oração', style: TextStyle(fontSize: 12)),
+                            ),
+                          },
+                          onValueChanged: (v) {
+                            if (v == null) return;
+                            setState(() {
+                              _isPrayerMode = v;
+                              if (v) {
+                                _useFixedSchedule = true;
+                                _displayAsNotification = true;
+                              }
+                            });
+                          },
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${_textController.text.length}/300',
-                          style: context.textStyles.secondary.copyWith(fontSize: 12),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  _Section(
-                    title: 'EXIBIR EM',
-                    child: IaculaSoftCard(
-                      padding: EdgeInsets.zero,
-                      child: Column(
-                        children: [
-                          _ToggleRow(
-                            label: 'Destaque do Início',
-                            value: _displayOnHero,
-                            onChanged: (v) => setState(() => _displayOnHero = v),
+                  if (_isPrayerMode)
+                    Builder(builder: (context) {
+                      final displayTitle = _selectedPrayer?.title
+                          ?? widget.existing?.prayerTitle;
+                      final hasPrayer = displayTitle != null;
+                      if (hasPrayer) {
+                        return _Section(
+                          title: 'ORAÇÃO',
+                          child: IaculaSoftCard(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  CupertinoIcons.book,
+                                  size: 20,
+                                  color: context.colors.primaryButton,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    displayTitle,
+                                    style: context.textStyles.cardTitle.copyWith(fontSize: 15),
+                                  ),
+                                ),
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: const Size(32, 32),
+                                  onPressed: _pickPrayer,
+                                  child: Text(
+                                    'Alterar',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: context.colors.primaryButton,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          const _Divider(),
-                          _ToggleRow(
-                            label: 'Notificação',
-                            value: _displayAsNotification,
-                            onChanged: (v) => setState(() => _displayAsNotification = v),
+                        );
+                      }
+                      return _Section(
+                        title: 'ORAÇÃO',
+                        child: CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: _pickPrayer,
+                          child: IaculaSoftCard(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  CupertinoIcons.search,
+                                  size: 18,
+                                  color: context.colors.textSecondary,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Selecionar oração...',
+                                  style: context.textStyles.secondary.copyWith(fontSize: 15),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    })
+                  else ...[
+                    _Section(
+                      title: 'FRASE',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          IaculaTextInput(
+                            controller: _textController,
+                            placeholder: 'Escreva uma frase espiritual...',
+                            maxLines: 5,
+                            padding: const EdgeInsets.all(12),
+                            onChanged: (val) => setState(() {}),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${_textController.text.length}/300',
+                            style: context.textStyles.secondary.copyWith(fontSize: 12),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  _Section(
-                    title: 'MODO DE EXIBIÇÃO',
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: CupertinoSlidingSegmentedControl<bool>(
-                            groupValue: _useFixedSchedule,
-                            children: const {
-                              false: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 4),
-                                child: Text('Com as jaculatórias', style: TextStyle(fontSize: 12)),
-                              ),
-                              true: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 4),
-                                child: Text('Horário fixo', style: TextStyle(fontSize: 12)),
-                              ),
-                            },
-                            onValueChanged: (v) {
-                              if (v != null) setState(() => _useFixedSchedule = v);
-                            },
-                          ),
+                    _Section(
+                      title: 'EXIBIR EM',
+                      child: IaculaSoftCard(
+                        padding: EdgeInsets.zero,
+                        child: Column(
+                          children: [
+                            _ToggleRow(
+                              label: 'Destaque do Início',
+                              value: _displayOnHero,
+                              onChanged: (v) => setState(() => _displayOnHero = v),
+                            ),
+                            const _Divider(),
+                            _ToggleRow(
+                              label: 'Notificação',
+                              value: _displayAsNotification,
+                              onChanged: (v) => setState(() => _displayAsNotification = v),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          _useFixedSchedule
-                              ? 'Será exibida nos horários que você definir.'
-                              : 'Aparecerá aleatoriamente junto com as jaculatórias, no intervalo configurado.',
-                          style: context.textStyles.secondary.copyWith(fontSize: 12),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    _Section(
+                      title: 'MODO DE EXIBIÇÃO',
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: CupertinoSlidingSegmentedControl<bool>(
+                              groupValue: _useFixedSchedule,
+                              children: const {
+                                false: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text('Com as jaculatórias', style: TextStyle(fontSize: 12)),
+                                ),
+                                true: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text('Horário fixo', style: TextStyle(fontSize: 12)),
+                                ),
+                              },
+                              onValueChanged: (v) {
+                                if (v != null) setState(() => _useFixedSchedule = v);
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _useFixedSchedule
+                                ? 'Será exibida nos horários que você definir.'
+                                : 'Aparecerá aleatoriamente junto com as jaculatórias, no intervalo configurado.',
+                            style: context.textStyles.secondary.copyWith(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   if (_useFixedSchedule) ...[
                     _Section(
                       title: 'RECORRÊNCIA',

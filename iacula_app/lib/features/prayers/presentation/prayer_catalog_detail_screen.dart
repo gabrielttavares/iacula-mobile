@@ -7,6 +7,7 @@ import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_animated_icon.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../custom_phrases/presentation/edit_phrase_screen.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
 import '../domain/entities/prayer_detail.dart';
@@ -45,7 +46,13 @@ class _PrayerCatalogDetailScreenState
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.entry.title),
         backgroundColor: context.colors.background,
-        trailing: _PrayerBookmarkButton(entry: widget.entry),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _PrayerAlarmButton(entry: widget.entry),
+            _PrayerBookmarkButton(entry: widget.entry),
+          ],
+        ),
       ),
       child: SafeArea(
         child: FutureBuilder(
@@ -201,6 +208,33 @@ class _PrayerCatalogDetailScreenState
 
   bool _isLanguageAvailable(String language, List<String> available) {
     return available.contains(language);
+  }
+}
+
+class _PrayerAlarmButton extends StatelessWidget {
+  const _PrayerAlarmButton({required this.entry});
+
+  final PrayerCatalogEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: const Size(32, 32),
+      onPressed: () {
+        HapticFeedback.selectionClick();
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (_) => EditPhraseScreen(initialPrayer: entry),
+          ),
+        );
+      },
+      child: Icon(
+        CupertinoIcons.bell,
+        color: context.colors.primaryButton,
+        size: 22,
+      ),
+    );
   }
 }
 

@@ -44,6 +44,8 @@ final class IsarCustomPhraseRepository implements CustomPhraseRepository {
       doc.scheduleJson = jsonEncode({
         ...phrase.schedule.toJson(),
         'useFixedSchedule': phrase.useFixedSchedule,
+        if (phrase.prayerSlug != null) 'prayerSlug': phrase.prayerSlug,
+        if (phrase.prayerTitle != null) 'prayerTitle': phrase.prayerTitle,
       });
       doc.createdAt = phrase.createdAt.toUtc();
       doc.updatedAt = phrase.updatedAt.toUtc();
@@ -81,6 +83,8 @@ final class IsarCustomPhraseRepository implements CustomPhraseRepository {
       schedule: PhraseSchedule.fromJson(json),
       createdAt: doc.createdAt.toLocal(),
       updatedAt: doc.updatedAt.toLocal(),
+      prayerSlug: json['prayerSlug'] as String?,
+      prayerTitle: json['prayerTitle'] as String?,
     );
   }
 }
