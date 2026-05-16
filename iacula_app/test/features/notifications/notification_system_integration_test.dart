@@ -28,7 +28,15 @@ final class _InMemoryHistoryRepository
   final List<NotificationHistoryEntry> entries = [];
 
   @override
-  Future<void> add(NotificationHistoryEntry entry) async => entries.add(entry);
+  Future<void> add(NotificationHistoryEntry entry) async {
+    final alreadyExists = entries.any(
+      (current) =>
+          current.quoteText == entry.quoteText &&
+          current.deliveredAt == entry.deliveredAt,
+    );
+    if (alreadyExists) return;
+    entries.add(entry);
+  }
 
   @override
   Future<void> clearFrom(DateTime instant) async {
@@ -857,5 +865,281 @@ void main() {
         }
       }
     });
+  });
+
+  group('Notification history stability across rebuilds', () {
+    test(
+      'OS notifications match history entries after multiple rebuilds',
+      () async {
+        final scheduler = InMemoryNotificationSchedulerRepository();
+        final history = _InMemoryHistoryRepository();
+        final rebuild = _makeRebuild(scheduler, history);
+
+        final now = DateTime(2026, 5, 16, 9, 0);
+        final settings = _baseSettings(intervalMinutes: 30);
+
+        // First build: seeds history and schedules notifications.
+        await rebuild.call(
+          settings,
+          isEasterSeason: false,
+          showImmediate: false,
+          now: now,
+        );
+
+        // Capture the quote text for each time slot after the first build.
+        final firstBuildByTimestamp = <String, String>{};
+        for (final entry in history.entries) {
+          firstBuildByTimestamp[entry.deliveredAt.toIso8601String()] =
+              entry.quoteText;
+        }
+
+        // Simulate two rebuilds at the same base time (e.g. settings toggle,
+        // coordinator health check). Same `now` = same time slots.
+        for (var i = 0; i < 2; i++) {
+          await rebuild.call(
+            settings,
+            isEasterSeason: false,
+            showImmediate: false,
+            now: now,
+          );
+        }
+
+        // Only check same-day slots — cross-day entries are outside the
+        // scope of listFromUntilEndOfDay and are expected to vary.
+        final todayEnd = DateTime(now.year, now.month, now.day + 1);
+        final todayNotifications =
+            scheduler.events
+                .where(
+                  (e) =>
+                      e.type == ReminderEventType.quoteInterval &&
+                      e.scheduledAt.isBefore(todayEnd),
+                )
+                .toList();
+
+        // Every same-day OS notification must have exactly one matching
+        // history entry with the same quote text.
+        for (final notification in todayNotifications) {
+          final matchingHistoryEntry = history.entries.where(
+            (entry) => entry.deliveredAt == notification.scheduledAt,
+          );
+          expect(
+            matchingHistoryEntry,
+            hasLength(1),
+            reason:
+                'Exactly one history entry for ${notification.scheduledAt}',
+          );
+          expect(
+            notification.body,
+            matchingHistoryEntry.first.quoteText,
+            reason:
+                'OS notification body at ${notification.scheduledAt} must '
+                'match history entry',
+          );
+        }
+
+        // Same-day slots must keep their original text from the first build.
+        for (final entry in history.entries) {
+          if (entry.deliveredAt.isBefore(todayEnd)) {
+            final key = entry.deliveredAt.toIso8601String();
+            final originalText = firstBuildByTimestamp[key];
+            if (originalText != null) {
+              expect(
+                entry.quoteText,
+                originalText,
+                reason:
+                    'Slot at ${entry.deliveredAt} must keep original text '
+                    '"$originalText", not "${entry.quoteText}"',
+              );
+            }
+          }
+        }
+      },
+    );
+
+    test(
+      'interval change replaces history with correct new quotes',
+      () async {
+        final scheduler = InMemoryNotificationSchedulerRepository();
+        final history = _InMemoryHistoryRepository();
+        final rebuild = _makeRebuild(scheduler, history);
+
+        final now = DateTime(2026, 5, 16, 9, 0);
+
+        // Build at 15-minute intervals.
+        await rebuild.call(
+          _baseSettings(intervalMinutes: 15),
+          isEasterSeason: false,
+          showImmediate: false,
+          now: now,
+        );
+
+        final entriesAt15m = history.entries.length;
+        expect(entriesAt15m, 64);
+
+        // User changes interval to 60 minutes — rebuild.
+        await rebuild.call(
+          _baseSettings(intervalMinutes: 60),
+          isEasterSeason: false,
+          showImmediate: false,
+          now: now,
+        );
+
+        // Orphaned 15m-only slots must be cleaned up.
+        final fifteenMinSlot = now.add(const Duration(minutes: 15));
+        final orphanAt15 = history.entries.where(
+          (entry) => entry.deliveredAt == fifteenMinSlot,
+        );
+        expect(
+          orphanAt15,
+          isEmpty,
+          reason: '15m-only slot must be removed after switching to 60m',
+        );
+
+        // 60m slots must exist and have OS notifications matching them.
+        final sixtyMinSlot = now.add(const Duration(minutes: 60));
+        final entryAt60 = history.entries.where(
+          (entry) => entry.deliveredAt == sixtyMinSlot,
+        );
+        expect(entryAt60, hasLength(1));
+
+        final osNotificationAt60 = scheduler.events.firstWhere(
+          (e) =>
+              e.type == ReminderEventType.quoteInterval &&
+              e.scheduledAt == sixtyMinSlot,
+        );
+        expect(osNotificationAt60.body, entryAt60.first.quoteText);
+      },
+    );
+
+    test(
+      'rebuild after some notifications have been delivered preserves past entries',
+      () async {
+        final scheduler = InMemoryNotificationSchedulerRepository();
+        final history = _InMemoryHistoryRepository();
+        final rebuild = _makeRebuild(scheduler, history);
+
+        final morningStart = DateTime(2026, 5, 16, 8, 0);
+        final settings = _baseSettings(intervalMinutes: 30);
+
+        // 8:00 AM: initial build.
+        await rebuild.call(
+          settings,
+          isEasterSeason: false,
+          showImmediate: true,
+          now: morningStart,
+        );
+
+        // Record what was written for the 8:00 (immediate), 8:30, 9:00 slots.
+        final eightOClockEntry = history.entries.firstWhere(
+          (e) => e.deliveredAt == morningStart,
+        );
+        final eightThirtyEntry = history.entries.firstWhere(
+          (e) => e.deliveredAt == DateTime(2026, 5, 16, 8, 30),
+        );
+        final nineOClockEntry = history.entries.firstWhere(
+          (e) => e.deliveredAt == DateTime(2026, 5, 16, 9, 0),
+        );
+
+        // 10:00 AM: app resumes, rebuild fires.
+        // By now, 8:00, 8:30, and 9:00 notifications have already been
+        // "delivered" by the OS.
+        await rebuild.call(
+          settings,
+          isEasterSeason: false,
+          showImmediate: false,
+          now: DateTime(2026, 5, 16, 10, 0),
+        );
+
+        // Past entries must survive untouched.
+        final survivingEight = history.entries.where(
+          (e) =>
+              e.deliveredAt == morningStart &&
+              e.quoteText == eightOClockEntry.quoteText,
+        );
+        expect(
+          survivingEight,
+          hasLength(1),
+          reason: '8:00 immediate entry must survive rebuild at 10:00',
+        );
+
+        final survivingEightThirty = history.entries.where(
+          (e) =>
+              e.deliveredAt == DateTime(2026, 5, 16, 8, 30) &&
+              e.quoteText == eightThirtyEntry.quoteText,
+        );
+        expect(
+          survivingEightThirty,
+          hasLength(1),
+          reason: '8:30 entry must survive rebuild at 10:00',
+        );
+
+        final survivingNine = history.entries.where(
+          (e) =>
+              e.deliveredAt == DateTime(2026, 5, 16, 9, 0) &&
+              e.quoteText == nineOClockEntry.quoteText,
+        );
+        expect(
+          survivingNine,
+          hasLength(1),
+          reason: '9:00 entry must survive rebuild at 10:00',
+        );
+      },
+    );
+
+    test(
+      'Notificações tab shows same quotes the OS would display',
+      () async {
+        final scheduler = InMemoryNotificationSchedulerRepository();
+        final history = _InMemoryHistoryRepository();
+        final rebuild = _makeRebuild(scheduler, history);
+
+        final now = DateTime(2026, 5, 16, 8, 0);
+        final settings = _baseSettings(intervalMinutes: 30);
+
+        // Initial build.
+        await rebuild.call(
+          settings,
+          isEasterSeason: false,
+          showImmediate: false,
+          now: now,
+        );
+
+        // Simulate user opening the app at 12:00 (rebuild fires).
+        final noon = DateTime(2026, 5, 16, 12, 0);
+        await rebuild.call(
+          settings,
+          isEasterSeason: false,
+          showImmediate: false,
+          now: noon,
+        );
+
+        // What the Notificações tab would show: history entries up to now.
+        final tabEntries = history.entries
+            .where((e) => !e.deliveredAt.isAfter(noon))
+            .toList();
+
+        // What iOS notification center would have shown: OS notifications
+        // with scheduledAt <= noon.
+        // Since we can't query "actually delivered" in tests, we verify
+        // the invariant: for every time slot, the OS notification body and
+        // the history entry text are identical.
+        for (final tabEntry in tabEntries) {
+          final osNotification = scheduler.events.where(
+            (e) =>
+                e.type == ReminderEventType.quoteInterval &&
+                e.scheduledAt == tabEntry.deliveredAt,
+          );
+          if (osNotification.isEmpty) continue;
+          expect(
+            osNotification.first.body,
+            tabEntry.quoteText,
+            reason:
+                'At ${tabEntry.deliveredAt}: tab shows '
+                '"${tabEntry.quoteText}" but OS would show '
+                '"${osNotification.first.body}"',
+          );
+        }
+      },
+    );
   });
 }
