@@ -127,48 +127,85 @@ final class ScheduleCoreRemindersUseCase {
       scheduledTimes.add(cursor);
     }
 
-    await _notificationHistoryRepository.clearFrom(current);
+    // Reuse existing history entries so rebuilds don't replace quotes that
+    // the OS already delivered (or will deliver) to the notification center.
+    final existingFutureEntries =
+        await _notificationHistoryRepository.listFromUntilEndOfDay(current);
+    final existingByTime = <String, NotificationHistoryEntry>{};
+    for (final entry in existingFutureEntries) {
+      existingByTime[entry.deliveredAt.toIso8601String()] = entry;
+    }
 
-    // Fetch one quote per slot, schedule, and write history
     for (var i = 0; i < scheduledTimes.length; i++) {
       final quoteAt = scheduledTimes[i];
-      final quote = await _quoteFetcher(
-        language: settings.language,
-        now: quoteAt,
-      );
       final scheduledId = quoteScheduleIdBase + i;
+      final existingEntry = existingByTime[quoteAt.toIso8601String()];
 
-      await _scheduler.scheduleWithId(
-        scheduledId,
-        ReminderEvent(
-          type: ReminderEventType.quoteInterval,
-          title: 'Iacula',
-          body: quote.text,
-          scheduledAt: quoteAt,
-          withVibration: true,
-          isAlarm: false,
-          routeTarget: NotificationRouteTarget.home,
-          scheduledId: scheduledId,
-          quoteTheme: quote.theme,
-          quoteSeason: quote.season.name,
-          quoteFeastName: quote.feastName,
-          quoteImagePath: quote.imagePath,
-        ),
-      );
+      if (existingEntry != null) {
+        await _scheduler.scheduleWithId(
+          scheduledId,
+          ReminderEvent(
+            type: ReminderEventType.quoteInterval,
+            title: 'Iacula',
+            body: existingEntry.quoteText,
+            scheduledAt: quoteAt,
+            withVibration: true,
+            isAlarm: false,
+            routeTarget: NotificationRouteTarget.home,
+            scheduledId: scheduledId,
+            quoteTheme: existingEntry.theme,
+            quoteSeason: existingEntry.season,
+            quoteFeastName: existingEntry.feastName,
+            quoteImagePath: existingEntry.imagePath,
+          ),
+        );
+      } else {
+        final quote = await _quoteFetcher(
+          language: settings.language,
+          now: quoteAt,
+        );
 
-      await _notificationHistoryRepository.add(
-        NotificationHistoryEntry(
-          quoteText: quote.text,
-          theme: quote.theme,
-          season: quote.season.name,
-          deliveredAt: quoteAt,
-          imagePath: quote.imagePath,
-          feastName: quote.feastName,
-          source: quote.resolvedSource.name,
-          referenceLabel: quote.referenceLabel,
-        ),
-      );
+        await _scheduler.scheduleWithId(
+          scheduledId,
+          ReminderEvent(
+            type: ReminderEventType.quoteInterval,
+            title: 'Iacula',
+            body: quote.text,
+            scheduledAt: quoteAt,
+            withVibration: true,
+            isAlarm: false,
+            routeTarget: NotificationRouteTarget.home,
+            scheduledId: scheduledId,
+            quoteTheme: quote.theme,
+            quoteSeason: quote.season.name,
+            quoteFeastName: quote.feastName,
+            quoteImagePath: quote.imagePath,
+          ),
+        );
+
+        await _notificationHistoryRepository.add(
+          NotificationHistoryEntry(
+            quoteText: quote.text,
+            theme: quote.theme,
+            season: quote.season.name,
+            deliveredAt: quoteAt,
+            imagePath: quote.imagePath,
+            feastName: quote.feastName,
+            source: quote.resolvedSource.name,
+            referenceLabel: quote.referenceLabel,
+          ),
+        );
+      }
     }
+
+    // Remove orphaned future entries that no longer match any scheduled slot
+    // (e.g. after an interval change shifted all time slots).
+    final scheduledTimestamps =
+        scheduledTimes.map((dt) => dt.toIso8601String()).toSet();
+    await _notificationHistoryRepository.clearFromExcept(
+      current,
+      scheduledTimestamps,
+    );
 
     debugPrint(
       '[ScheduleCoreRemindersUseCase] queued ${scheduledTimes.length} quote reminders',

@@ -47,6 +47,72 @@ final class SqliteNotificationHistoryRepository
   }
 
   @override
+  Future<void> clearFromExcept(
+    DateTime instant,
+    Set<String> keepTimestamps,
+  ) async {
+    final end = DateTime(
+      instant.year,
+      instant.month,
+      instant.day,
+    ).add(const Duration(days: 1));
+    final db = await _database.database;
+    if (keepTimestamps.isEmpty) {
+      await db.delete(
+        'notification_history_entries',
+        where: 'delivered_at > ? AND delivered_at < ?',
+        whereArgs: [instant.toIso8601String(), end.toIso8601String()],
+      );
+      return;
+    }
+    final placeholders = List.filled(keepTimestamps.length, '?').join(', ');
+    await db.delete(
+      'notification_history_entries',
+      where:
+          'delivered_at > ? AND delivered_at < ? AND delivered_at NOT IN ($placeholders)',
+      whereArgs: [
+        instant.toIso8601String(),
+        end.toIso8601String(),
+        ...keepTimestamps,
+      ],
+    );
+  }
+
+  @override
+  Future<List<NotificationHistoryEntry>> listFromUntilEndOfDay(
+    DateTime instant,
+  ) async {
+    final end = DateTime(
+      instant.year,
+      instant.month,
+      instant.day,
+    ).add(const Duration(days: 1));
+    final db = await _database.database;
+    final rows = await db.query(
+      'notification_history_entries',
+      where: 'delivered_at > ? AND delivered_at < ?',
+      whereArgs: [instant.toIso8601String(), end.toIso8601String()],
+      orderBy: 'delivered_at ASC',
+    );
+    return rows
+        .map(
+          (row) => NotificationHistoryEntry(
+            quoteText: row['quote_text'] as String,
+            theme: row['theme'] as String,
+            season: row['season'] as String,
+            deliveredAt:
+                DateTime.tryParse(row['delivered_at'] as String? ?? '') ??
+                instant,
+            imagePath: row['image_path'] as String?,
+            feastName: row['feast_name'] as String?,
+            source: row['source'] as String?,
+            referenceLabel: row['reference_label'] as String?,
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  @override
   Future<List<NotificationHistoryEntry>> listForDay(DateTime day) async {
     final start = DateTime(day.year, day.month, day.day);
     final end = start.add(const Duration(days: 1));

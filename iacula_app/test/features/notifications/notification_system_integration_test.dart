@@ -44,8 +44,45 @@ final class _InMemoryHistoryRepository
   }
 
   @override
+  Future<void> clearFromExcept(
+    DateTime instant,
+    Set<String> keepTimestamps,
+  ) async {
+    final end = DateTime(
+      instant.year,
+      instant.month,
+      instant.day,
+    ).add(const Duration(days: 1));
+    entries.removeWhere(
+      (entry) =>
+          entry.deliveredAt.isAfter(instant) &&
+          entry.deliveredAt.isBefore(end) &&
+          !keepTimestamps.contains(entry.deliveredAt.toIso8601String()),
+    );
+  }
+
+  @override
   Future<List<NotificationHistoryEntry>> listForDay(DateTime day) async =>
       entries;
+
+  @override
+  Future<List<NotificationHistoryEntry>> listFromUntilEndOfDay(
+    DateTime instant,
+  ) async {
+    final end = DateTime(
+      instant.year,
+      instant.month,
+      instant.day,
+    ).add(const Duration(days: 1));
+    return entries
+        .where(
+          (entry) =>
+              entry.deliveredAt.isAfter(instant) &&
+              entry.deliveredAt.isBefore(end),
+        )
+        .toList()
+      ..sort((a, b) => a.deliveredAt.compareTo(b.deliveredAt));
+  }
 }
 
 final class _InMemoryCustomPhraseRepository implements CustomPhraseRepository {

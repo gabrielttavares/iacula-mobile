@@ -37,8 +37,45 @@ final class _InMemoryNotificationHistoryRepository
   }
 
   @override
+  Future<void> clearFromExcept(
+    DateTime instant,
+    Set<String> keepTimestamps,
+  ) async {
+    final end = DateTime(
+      instant.year,
+      instant.month,
+      instant.day,
+    ).add(const Duration(days: 1));
+    entries.removeWhere(
+      (entry) =>
+          entry.deliveredAt.isAfter(instant) &&
+          entry.deliveredAt.isBefore(end) &&
+          !keepTimestamps.contains(entry.deliveredAt.toIso8601String()),
+    );
+  }
+
+  @override
   Future<List<NotificationHistoryEntry>> listForDay(DateTime day) async =>
       entries;
+
+  @override
+  Future<List<NotificationHistoryEntry>> listFromUntilEndOfDay(
+    DateTime instant,
+  ) async {
+    final end = DateTime(
+      instant.year,
+      instant.month,
+      instant.day,
+    ).add(const Duration(days: 1));
+    return entries
+        .where(
+          (entry) =>
+              entry.deliveredAt.isAfter(instant) &&
+              entry.deliveredAt.isBefore(end),
+        )
+        .toList()
+      ..sort((a, b) => a.deliveredAt.compareTo(b.deliveredAt));
+  }
 }
 
 void main() {
@@ -449,6 +486,191 @@ void main() {
       expect(angelus.title, 'Regina Caeli');
       expect(angelus.body, 'Hora de rezar a Regina Caeli.');
       expect(angelus.prayerSlug, 'regina-coeli');
+    },
+  );
+
+  test(
+    'rebuild reuses existing history entries so OS notifications match the tab',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+      final now = DateTime(2026, 5, 16, 10, 0);
+
+      var fetchCount = 0;
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              fetchCount++;
+              return Quote(
+                text: 'Quote-$fetchCount',
+                dayOfWeek: 1,
+                theme: 'tema',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+      );
+
+      final settings = Settings.defaults.copyWith(intervalMinutes: 30);
+
+      // First run: writes fresh history entries.
+      await useCase(settings, now: now, showImmediate: false);
+      final firstRunTexts =
+          history.entries.map((entry) => entry.quoteText).toList();
+      expect(firstRunTexts, hasLength(64));
+
+      // Capture the text of the first scheduled slot (10:30).
+      final firstSlotTime = now.add(const Duration(minutes: 30));
+      final originalFirstSlotText = history.entries
+          .firstWhere((entry) => entry.deliveredAt == firstSlotTime)
+          .quoteText;
+
+      // Second run at the same time (e.g. settings toggled): must reuse quotes.
+      fetchCount = 1000;
+      await scheduler.cancelAll();
+      await useCase(settings, now: now, showImmediate: false);
+
+      // The 10:30 slot must still have the original quote text, not a new one.
+      final reusedEntry = history.entries.firstWhere(
+        (entry) => entry.deliveredAt == firstSlotTime,
+      );
+      expect(
+        reusedEntry.quoteText,
+        originalFirstSlotText,
+        reason: 'Existing history entry must be reused, not replaced',
+      );
+
+      // OS notifications for today's slots must match history entries.
+      final todayEnd = DateTime(2026, 5, 17);
+      final scheduledQuotesToday =
+          scheduler.events
+              .where(
+                (e) =>
+                    e.type == ReminderEventType.quoteInterval &&
+                    e.scheduledAt.isBefore(todayEnd),
+              )
+              .toList();
+      for (final event in scheduledQuotesToday) {
+        final matchingEntry = history.entries.firstWhere(
+          (entry) => entry.deliveredAt == event.scheduledAt,
+        );
+        expect(
+          event.body,
+          matchingEntry.quoteText,
+          reason:
+              'OS notification at ${event.scheduledAt} must match history entry',
+        );
+      }
+    },
+  );
+
+  test(
+    'interval change removes orphaned history entries and fills new slots',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+      final now = DateTime(2026, 5, 16, 10, 0);
+
+      var fetchCount = 0;
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              fetchCount++;
+              return Quote(
+                text: 'Q-$fetchCount',
+                dayOfWeek: 1,
+                theme: 'tema',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+      );
+
+      // First run at 15m interval.
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 15),
+        now: now,
+        showImmediate: false,
+      );
+      expect(history.entries, hasLength(64));
+      final firstSlotTime = now.add(const Duration(minutes: 15));
+      final firstSlotEntry = history.entries.firstWhere(
+        (entry) => entry.deliveredAt == firstSlotTime,
+      );
+
+      // Switch to 30m interval and rebuild.
+      await scheduler.cancelAll();
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 30),
+        now: now,
+        showImmediate: false,
+      );
+
+      // 30m slots that existed in the 15m schedule should be reused.
+      final thirtyMinSlot = now.add(const Duration(minutes: 30));
+      final reusedEntry = history.entries.where(
+        (entry) => entry.deliveredAt == thirtyMinSlot,
+      );
+      expect(reusedEntry, hasLength(1));
+
+      // 15m-only slots (like 10:15) should be cleaned up.
+      final orphanedSlot = history.entries.where(
+        (entry) => entry.deliveredAt == firstSlotTime,
+      );
+      expect(
+        orphanedSlot,
+        isEmpty,
+        reason: '15m slot must be removed after switching to 30m interval',
+      );
+    },
+  );
+
+  test(
+    'past history entries are never deleted during rebuild',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+      final pastEntry = NotificationHistoryEntry(
+        quoteText: 'Past quote',
+        theme: 'tema',
+        season: LiturgicalSeason.ordinary.name,
+        deliveredAt: DateTime(2026, 5, 16, 9, 0),
+      );
+      history.entries.add(pastEntry);
+
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return const Quote(
+                text: 'New',
+                dayOfWeek: 1,
+                theme: 'tema',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+      );
+
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 30),
+        now: DateTime(2026, 5, 16, 10, 0),
+        showImmediate: false,
+      );
+
+      final pastEntries = history.entries.where(
+        (entry) => entry.quoteText == 'Past quote',
+      );
+      expect(
+        pastEntries,
+        hasLength(1),
+        reason: 'Past entries must survive rebuild',
+      );
     },
   );
 
