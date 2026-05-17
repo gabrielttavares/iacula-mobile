@@ -941,12 +941,11 @@
   },
   {
     "id": "responso-portugues",
-    "title": "Responso (Português)",
-    "content": "Eterno Pai, pelas chagas de Jesus Cristo, concedei o descanso eterno às almas dos fiéis defuntos, especialmente às que mais precisam de vossa misericórdia. Que descansem em paz. Amém.",
+    "title": "Responso I",
+    "content": "Eu sou a ressurreição e a vida; quem crê em Mim, mesmo que esteja morto, viverá; e quem vive e crê em Mim não morrerá eternamente.",
     "section_id": "oracoes-pelos-defuntos",
     "section_title": "Orações pelos Defuntos",
     "languages": [
-      "la",
       "pt-br"
     ],
     "theme": [
@@ -956,13 +955,12 @@
   },
   {
     "id": "responso-latim",
-    "title": "Responso (Latim)",
-    "content": "Requiem æternam dona eis, Domine, et lux perpetua luceat eis. Requiescant in pace. Amen. Deus, cui proprium est misereri semper et parcere, propitius esto animabus illorum, ut perintercessionem Sanctissimorum omnium Sanctorum tuorum a peccatorum suorum omnibus absoluti, beatæ quondam claritatis in conspectu tuo resident.",
+    "title": "Responsórium I",
+    "content": "Ne recordéris peccáta mea, Dómine. Dum véneris iudicáre sǽculum per ignem.",
     "section_id": "oracoes-pelos-defuntos",
     "section_title": "Orações pelos Defuntos",
     "languages": [
-      "la",
-      "pt-br"
+      "la"
     ],
     "theme": [
       "defuntos"
@@ -972,12 +970,11 @@
   {
     "id": "responosrium-ii",
     "title": "Responsórium II",
-    "content": "Libera me, Domine, de morte æterna in die illa tremenda, quando cæli movendi sunt et terra, quando venies iudicare sæculum per ignem. Tremens factus sum ego et timeo, dum discussio venerit atque ventura ira.",
+    "content": "In nómine Patris, et Fílii et Spíritus Sancti. De profúndis clamávi ad te, Dómine; Dómine, exáudi vocem meam.",
     "section_id": "oracoes-pelos-defuntos",
     "section_title": "Orações pelos Defuntos",
     "languages": [
-      "la",
-      "pt-br"
+      "la"
     ],
     "theme": [
       "defuntos"
