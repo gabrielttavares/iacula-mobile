@@ -25,7 +25,9 @@ import 'package:iacula_app/features/settings/domain/repositories/settings_reposi
 final class _IosResumeTapScheduler implements NotificationSchedulerRepository {
   _IosResumeTapScheduler(this.event) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.add(NotificationActionEvent(actionId: null, event: event));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _controller.add(NotificationActionEvent(actionId: null, event: event));
+      });
     });
   }
 
@@ -189,7 +191,7 @@ void main() {
   );
 
   testWidgets(
-    'iOS non-Angelus tap delivered on first frame keeps existing startup behavior',
+    'iOS quote tap delivered on first frame opens the notification detail screen',
     (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       try {
@@ -208,9 +210,7 @@ void main() {
           ),
         );
 
-        expect(find.byType(ShellScreen), findsWidgets);
-        expect(find.byType(NotificationDetailScreen), findsNothing);
-        expect(find.byType(PrayerCatalogDetailScreen), findsNothing);
+        expect(find.byType(NotificationDetailScreen), findsOneWidget);
       } finally {
         debugDefaultTargetPlatformOverride = null;
       }

@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -46,19 +44,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   Settings? _settings;
   ReminderEvent? _pendingLaunchEvent;
   bool _pendingLaunchDrainScheduled = false;
-  bool _restrictStartupIosNotificationHandling = false;
   NotificationRuntimeCoordinator? _notificationCoordinator;
-
-  bool get _isIosRuntime => defaultTargetPlatform == TargetPlatform.iOS;
-
-  bool _shouldRetryDeferredIosNotificationRoute(ReminderEvent event) {
-    if (!_isIosRuntime) return false;
-    if (event.type != ReminderEventType.angelusNoon) return false;
-    return switch (event.prayerSlug) {
-      'angelus' || 'regina-coeli' => true,
-      _ => false,
-    };
-  }
 
   @override
   void initState() {
@@ -68,10 +54,6 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
 
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
     final handler = HandleNotificationActionUseCase(scheduler);
-    if (_isIosRuntime) {
-      _restrictStartupIosNotificationHandling = true;
-      _actionsSub = _listenToNotificationActions(scheduler, handler);
-    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final connectivity = ref.read(connectivityProvider);
@@ -123,13 +105,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
       });
       unawaited(_syncWidgetFromTimeline());
 
-      _actionsSub ??= _listenToNotificationActions(scheduler, handler);
-      if (_isIosRuntime) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          _restrictStartupIosNotificationHandling = false;
-        });
-      }
+      _actionsSub = _listenToNotificationActions(scheduler, handler);
 
       unawaited(_handleLaunchNotification(scheduler, handler));
     });
@@ -165,18 +141,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     HandleNotificationActionUseCase handler,
   ) {
     return scheduler.actions.listen((event) async {
-      if (_restrictStartupIosNotificationHandling &&
-          !_shouldRetryDeferredIosNotificationRoute(event.event)) {
-        return;
-      }
       final shouldOpen = await handler.call(event);
       if (!shouldOpen) return;
-      if (_restrictStartupIosNotificationHandling &&
-          _shouldRetryDeferredIosNotificationRoute(event.event)) {
-        _pendingLaunchEvent = event.event;
-        _schedulePendingLaunchEventDrain();
-        return;
-      }
       await _pushRouteForEvent(event.event);
     });
   }
@@ -196,9 +162,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
 
     final nav = _navigatorKey.currentState;
     if (nav == null) {
-      if (_shouldRetryDeferredIosNotificationRoute(event)) {
-        _schedulePendingLaunchEventDrain();
-      }
+      _schedulePendingLaunchEventDrain();
       return;
     }
 
@@ -209,10 +173,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
   Future<void> _pushRouteForEvent(ReminderEvent event) async {
     final nav = _navigatorKey.currentState;
     if (nav == null) {
-      if (_shouldRetryDeferredIosNotificationRoute(event)) {
-        _pendingLaunchEvent = event;
-        _schedulePendingLaunchEventDrain();
-      }
+      _pendingLaunchEvent = event;
+      _schedulePendingLaunchEventDrain();
       return;
     }
 
