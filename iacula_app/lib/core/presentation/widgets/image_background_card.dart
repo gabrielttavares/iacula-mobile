@@ -11,6 +11,7 @@ class ImageBackgroundCard extends StatelessWidget {
   final double height;
   final Widget? trailing;
   final Alignment imageAlignment;
+  final double overlayOpacity;
 
   const ImageBackgroundCard({
     super.key,
@@ -21,6 +22,7 @@ class ImageBackgroundCard extends StatelessWidget {
     this.height = 180.0,
     this.trailing,
     this.imageAlignment = Alignment.center,
+    this.overlayOpacity = 0.0,
   });
 
   @override
@@ -52,7 +54,14 @@ class ImageBackgroundCard extends StatelessWidget {
                 Positioned.fill(
                   child: Container(color: context.colors.background),
                 ),
-              // Gradient for text readability
+              if (overlayOpacity > 0)
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(0, 0, 0, overlayOpacity),
+                    ),
+                  ),
+                ),
               Positioned.fill(
                 child: Container(
                   decoration: const BoxDecoration(

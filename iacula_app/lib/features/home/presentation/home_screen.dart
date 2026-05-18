@@ -16,6 +16,7 @@ import '../../jaculatorias/presentation/minhas_jaculatorias_screen.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/domain/entities/last_delivered_card.dart';
 import '../../notifications/domain/entities/notification_history_entry.dart';
+import '../../notifications/presentation/notifications_screen.dart';
 import '../../search/presentation/search_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
@@ -85,20 +86,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 largeTitle: Text(greeting),
                 middle: const SizedBox.shrink(),
                 alwaysShowMiddle: false,
-                trailing: CupertinoButton(
-                  key: const Key('home_search_button'),
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(32, 32),
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(builder: (_) => const SearchScreen()),
-                    );
-                  },
-                  child: Icon(
-                    CupertinoIcons.search,
-                    color: context.colors.textSecondary,
-                  ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CupertinoButton(
+                      key: const Key('home_notifications_button'),
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(32, 32),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const NotificationsScreen(),
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        CupertinoIcons.bell,
+                        color: context.colors.textSecondary,
+                      ),
+                    ),
+                    CupertinoButton(
+                      key: const Key('home_search_button'),
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(32, 32),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const SearchScreen(),
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        CupertinoIcons.search,
+                        color: context.colors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               CupertinoSliverRefreshControl(
@@ -123,7 +148,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         _PermissionBanner(),
                         const _HomeHeroSection(),
-                        const SizedBox(height: IaculaSpacing.lg),
+                        const SizedBox(height: IaculaSpacing.xs),
                         _HomeShortcutsRail(
                           onOpenConfession: () {
                             HapticFeedback.lightImpact();
@@ -151,7 +176,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             );
                           },
                         ),
-                        const SizedBox(height: IaculaSpacing.xl),
                         const _FeatureCardsList(),
                       ],
                     ),
@@ -359,6 +383,7 @@ class _FeatureCardsList extends StatelessWidget {
             key: const Key('home_action_intencoes'),
             title: 'Intenções',
             imageAsset: 'assets/placeholders/sections/intencoes/intencoes.jpg',
+            overlayOpacity: 0.45,
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
@@ -367,7 +392,7 @@ class _FeatureCardsList extends StatelessWidget {
                 ),
               );
             },
-            height: 120,
+            height: 88,
           ),
         ),
         Padding(
@@ -377,13 +402,17 @@ class _FeatureCardsList extends StatelessWidget {
             title: 'Jaculatórias',
             imageAsset:
                 'assets/placeholders/sections/minhas-frases/minhas-frases.jpeg',
+            imageAlignment: const Alignment(0, -0.45),
+            overlayOpacity: 0.45,
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
-                CupertinoPageRoute(builder: (_) => const MinhasJaculatoriasScreen()),
+                CupertinoPageRoute(
+                  builder: (_) => const MinhasJaculatoriasScreen(),
+                ),
               );
             },
-            height: 120,
+            height: 88,
           ),
         ),
       ],

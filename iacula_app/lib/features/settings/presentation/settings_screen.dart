@@ -388,48 +388,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ],
                           ),
                         ),
-                        Container(height: 1, color: context.colors.separator),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: IaculaRadius.innerPadding,
-                            vertical: 12,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Pontos de Caminho/Sulco/Forja',
-                                      style: context.textStyles.cardTitle
-                                          .copyWith(fontSize: 16),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Exibe em Minhas frases a opção de usar estes conteúdos no lugar das jaculatórias.',
-                                      style: context.textStyles.secondary
-                                          .copyWith(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              CupertinoSwitch(
-                                value: _escrivaPointsFeedOptionVisible,
-                                activeTrackColor: context.colors.primaryButton,
-                                onChanged: (value) {
-                                  HapticFeedback.selectionClick();
-                                  setState(
-                                    () =>
-                                        _escrivaPointsFeedOptionVisible = value,
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
+                        // Pontos de Caminho/Sulco/Forja toggle hidden from UI
                       ],
                     ),
                   ),
