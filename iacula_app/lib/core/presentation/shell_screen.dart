@@ -1,17 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/bible/presentation/bible_books_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
-import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
 import '../../features/more/presentation/more_screen.dart';
-import '../di/providers.dart';
 import '../theme/cupertino_tokens.dart';
-
-final _shellNotifEnabledProvider = FutureProvider<bool>((ref) async {
-  final s = await ref.watch(getSettingsUseCaseProvider).call();
-  return s.notificationsEnabled;
-});
 
 class ShellScreen extends ConsumerStatefulWidget {
   const ShellScreen({super.key});
@@ -30,7 +24,7 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
 
   static const _screens = <Widget>[
     HomeScreen(),
-    NotificationsScreen(),
+    BibleBooksScreen(),
     FavoritesScreen(),
     MoreScreen(),
   ];
@@ -43,10 +37,6 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final notifEnabled = ref.watch(
-      _shellNotifEnabledProvider.select((s) => s.valueOrNull ?? true),
-    );
-
     return CupertinoTabScaffold(
       controller: _tabController,
       tabBar: CupertinoTabBar(
@@ -71,8 +61,8 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
             _currentIndex = index;
           });
         },
-        items: [
-          const BottomNavigationBarItem(
+        items: const [
+          BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 4.0),
               child: SizedBox(width: 30, child: Icon(CupertinoIcons.house)),
@@ -81,40 +71,19 @@ class _ShellScreenState extends ConsumerState<ShellScreen> {
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: SizedBox(
-                width: 30,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    const Icon(CupertinoIcons.bell),
-                    if (notifEnabled)
-                      Positioned(
-                        top: -2,
-                        right: -2,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: context.colors.primaryButton,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+              padding: EdgeInsets.only(top: 4.0),
+              child: SizedBox(width: 30, child: Icon(CupertinoIcons.book)),
             ),
-            label: 'Notificações',
+            label: 'Bíblia',
           ),
-          const BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 4.0),
               child: SizedBox(width: 30, child: Icon(CupertinoIcons.bookmark)),
             ),
             label: 'Favoritos',
           ),
-          const BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 4.0),
               child: SizedBox(

@@ -101,9 +101,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         );
                       },
-                      child: Icon(
-                        CupertinoIcons.bell,
-                        color: context.colors.textSecondary,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Icon(
+                            CupertinoIcons.bell,
+                            color: context.colors.textSecondary,
+                          ),
+                          Positioned(
+                            top: -2,
+                            right: -2,
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: context.colors.primaryButton,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     CupertinoButton(
