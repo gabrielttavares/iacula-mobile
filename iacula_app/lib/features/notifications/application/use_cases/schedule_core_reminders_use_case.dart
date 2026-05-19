@@ -52,10 +52,41 @@ final class ScheduleCoreRemindersUseCase {
       'interval=${settings.intervalMinutes}m showImmediate=$showImmediate',
     );
 
+    // Tracks quote texts already used in this scheduling pass so adjacent slots
+    // don't deliver the same quote twice within a short window. Bounded to the
+    // most recent slots so a small pool still cycles eventually.
+    final recentQuoteTexts = <String>[];
+    const recentLookbackSize = 6;
+
+    Future<Quote> fetchNonRepeatingQuote({
+      required String language,
+      required DateTime slot,
+    }) async {
+      const maxRetries = 3;
+      Quote candidate = await _quoteFetcher(language: language, now: slot);
+      var attempts = 0;
+      while (recentQuoteTexts.contains(candidate.text) &&
+          attempts < maxRetries) {
+        candidate = await _quoteFetcher(language: language, now: slot);
+        attempts++;
+      }
+      recentQuoteTexts.add(candidate.text);
+      if (recentQuoteTexts.length > recentLookbackSize) {
+        recentQuoteTexts.removeAt(0);
+      }
+      return candidate;
+    }
+
     // Show an immediate notification if requested
     if (showImmediate) {
       final quote = immediateQuote ??
-          await _quoteFetcher(language: settings.language, now: current);
+          await fetchNonRepeatingQuote(
+            language: settings.language,
+            slot: current,
+          );
+      if (immediateQuote != null) {
+        recentQuoteTexts.add(immediateQuote.text);
+      }
 
       const immediateId = quoteScheduleIdBase - 1;
       await _scheduler.showNow(
@@ -142,6 +173,10 @@ final class ScheduleCoreRemindersUseCase {
       final existingEntry = existingByTime[quoteAt.toIso8601String()];
 
       if (existingEntry != null) {
+        recentQuoteTexts.add(existingEntry.quoteText);
+        if (recentQuoteTexts.length > recentLookbackSize) {
+          recentQuoteTexts.removeAt(0);
+        }
         await _scheduler.scheduleWithId(
           scheduledId,
           ReminderEvent(
@@ -160,9 +195,9 @@ final class ScheduleCoreRemindersUseCase {
           ),
         );
       } else {
-        final quote = await _quoteFetcher(
+        final quote = await fetchNonRepeatingQuote(
           language: settings.language,
-          now: quoteAt,
+          slot: quoteAt,
         );
 
         await _scheduler.scheduleWithId(
