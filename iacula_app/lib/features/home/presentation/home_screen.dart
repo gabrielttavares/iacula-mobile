@@ -400,7 +400,7 @@ class _FeatureCardsList extends StatelessWidget {
             key: const Key('home_action_intencoes'),
             title: 'Intenções',
             imageAsset: 'assets/placeholders/sections/intencoes/intencoes.jpg',
-            overlayOpacity: 0.45,
+            overlayOpacity: 0.3,
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
@@ -420,7 +420,7 @@ class _FeatureCardsList extends StatelessWidget {
             imageAsset:
                 'assets/placeholders/sections/minhas-frases/minhas-frases.jpeg',
             imageAlignment: const Alignment(0, -0.45),
-            overlayOpacity: 0.45,
+            overlayOpacity: 0.3,
             onTap: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).push(
