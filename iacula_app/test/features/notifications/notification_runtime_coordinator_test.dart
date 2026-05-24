@@ -43,12 +43,20 @@ void main() {
       expect(delegate.rebuildCalls, 1);
     });
 
-    test('skips rebuild when pending quote IDs exist', () async {
-      delegate.nextPendingIds = [9000, 9001, 9002];
+    test('skips rebuild when quotes and Angelus IDs are healthy', () async {
+      delegate.nextPendingIds = [9000, 9001, 9002, 200, 201, 202];
 
       await coordinator.handleAppResume();
 
       expect(delegate.rebuildCalls, 0);
+    });
+
+    test('rebuilds when quotes exist but Angelus is running low', () async {
+      delegate.nextPendingIds = [9000, 9001, 9002, 200];
+
+      await coordinator.handleAppResume();
+
+      expect(delegate.rebuildCalls, 1);
     });
 
     test('throttles rebuild to one per 120 seconds', () async {

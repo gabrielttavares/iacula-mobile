@@ -490,6 +490,72 @@ void main() {
   );
 
   test(
+    'Angelus switches from Regina Caeli to Angelus across Pentecost boundary',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+
+      final useCase = ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher:
+            ({required String language, required DateTime now}) async {
+              return const Quote(
+                text: 'Q',
+                dayOfWeek: 1,
+                theme: 't',
+                season: LiturgicalSeason.ordinary,
+              );
+            },
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+      );
+
+      // Schedule from May 21 2026 — Pentecost is May 24, so days 0-3 are Easter,
+      // days 4-6 are ordinary time.
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 30, angelusEnabled: true),
+        now: DateTime(2026, 5, 21, 8),
+        isEasterSeason: false,
+        showImmediate: false,
+      );
+
+      final angelusEvents = scheduler.events
+          .where((e) => e.type == ReminderEventType.angelusNoon)
+          .toList()
+        ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+
+      // May 21-24 are Easter season → Regina Caeli
+      for (final event in angelusEvents.where(
+        (e) => e.scheduledAt.day <= 24,
+      )) {
+        expect(event.title, 'Regina Caeli',
+            reason: 'May ${event.scheduledAt.day} is still Easter season');
+        expect(event.prayerSlug, 'regina-coeli');
+      }
+
+      // May 25+ are ordinary time → Angelus
+      for (final event in angelusEvents.where(
+        (e) => e.scheduledAt.day > 24,
+      )) {
+        expect(event.title, 'Angelus',
+            reason: 'May ${event.scheduledAt.day} is after Pentecost');
+        expect(event.prayerSlug, 'angelus');
+      }
+
+      expect(
+        angelusEvents.where((e) => e.title == 'Regina Caeli'),
+        isNotEmpty,
+        reason: 'Should have at least one Regina Caeli before Pentecost',
+      );
+      expect(
+        angelusEvents.where((e) => e.title == 'Angelus'),
+        isNotEmpty,
+        reason: 'Should have at least one Angelus after Pentecost',
+      );
+    },
+  );
+
+  test(
     'rebuild reuses existing history entries so OS notifications match the tab',
     () async {
       final scheduler = InMemoryNotificationSchedulerRepository();

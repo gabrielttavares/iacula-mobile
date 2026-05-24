@@ -83,10 +83,22 @@ final class NotificationRuntimeCoordinator {
                   ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders,
     );
 
-    if (hasQuotes) return;
+    final angelusCount = settings.angelusEnabled
+        ? pendingIds.where(
+            (id) =>
+                id >= ScheduleCoreRemindersUseCase.angelusScheduleIdBase &&
+                id <
+                    ScheduleCoreRemindersUseCase.angelusScheduleIdBase +
+                        ScheduleCoreRemindersUseCase.angelusScheduleDays,
+          ).length
+        : ScheduleCoreRemindersUseCase.angelusScheduleDays;
+    final angelusRunningLow = angelusCount <= 2;
+
+    if (hasQuotes && !angelusRunningLow) return;
 
     debugPrint(
-      '[NotificationRuntimeCoordinator] No pending quotes; rebuilding.',
+      '[NotificationRuntimeCoordinator] Rebuilding — '
+      'hasQuotes=$hasQuotes angelusCount=$angelusCount.',
     );
 
     await _rebuild(

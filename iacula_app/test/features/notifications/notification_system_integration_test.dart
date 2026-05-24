@@ -315,7 +315,7 @@ void main() {
       }
     });
 
-    test('schedules Angelus at noon with repeatDaily', () async {
+    test('schedules Angelus at noon for multiple days', () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
@@ -332,12 +332,14 @@ void main() {
           .where((e) => e.type == ReminderEventType.angelusNoon)
           .toList();
 
-      expect(angelusEvents.length, 1);
-      expect(angelusEvents.first.repeatDaily, isTrue);
-      expect(angelusEvents.first.scheduledAt.hour, 12);
-      expect(angelusEvents.first.scheduledAt.minute, 0);
-      expect(angelusEvents.first.title, 'Angelus');
-      expect(angelusEvents.first.isAlarm, isTrue);
+      expect(angelusEvents.length, ScheduleCoreRemindersUseCase.angelusScheduleDays);
+      for (final event in angelusEvents) {
+        expect(event.scheduledAt.hour, 12);
+        expect(event.scheduledAt.minute, 0);
+        expect(event.title, 'Angelus');
+        expect(event.isAlarm, isTrue);
+        expect(event.repeatDaily, isFalse);
+      }
     });
 
     test('uses Regina Caeli title during Easter season', () async {
@@ -356,9 +358,11 @@ void main() {
           .where((e) => e.type == ReminderEventType.angelusNoon)
           .toList();
 
-      expect(angelusEvents.length, 1);
-      expect(angelusEvents.first.title, 'Regina Caeli');
-      expect(angelusEvents.first.prayerSlug, 'regina-coeli');
+      expect(angelusEvents, isNotEmpty);
+      for (final event in angelusEvents) {
+        expect(event.title, 'Regina Caeli');
+        expect(event.prayerSlug, 'regina-coeli');
+      }
     });
 
     test('skips Angelus when disabled', () async {
@@ -463,7 +467,8 @@ void main() {
         final initialAngelus = scheduler.events
             .where((e) => e.type == ReminderEventType.angelusNoon)
             .toList();
-        expect(initialAngelus.length, 1);
+        expect(initialAngelus, isNotEmpty);
+        final initialCount = initialAngelus.length;
 
         // Rebuild again (simulates app resume health check)
         await rebuild.call(
@@ -477,7 +482,7 @@ void main() {
         final afterRebuild = scheduler.events
             .where((e) => e.type == ReminderEventType.angelusNoon)
             .toList();
-        expect(afterRebuild.length, 1);
+        expect(afterRebuild.length, initialCount);
       },
     );
 
@@ -532,7 +537,7 @@ void main() {
       }
     });
 
-    test('Angelus notification ID is 200', () async {
+    test('Angelus notification IDs start at 200', () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
@@ -543,7 +548,14 @@ void main() {
       );
 
       final pendingIds = await scheduler.pendingNotificationIds();
-      expect(pendingIds, contains(200));
+      final angelusIds = pendingIds.where(
+        (id) =>
+            id >= ScheduleCoreRemindersUseCase.angelusScheduleIdBase &&
+            id <
+                ScheduleCoreRemindersUseCase.angelusScheduleIdBase +
+                    ScheduleCoreRemindersUseCase.angelusScheduleDays,
+      );
+      expect(angelusIds, isNotEmpty);
     });
 
     test(

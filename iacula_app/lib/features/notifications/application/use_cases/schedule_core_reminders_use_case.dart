@@ -21,6 +21,8 @@ typedef QuoteFetcher =
 final class ScheduleCoreRemindersUseCase {
   static const int quoteScheduleIdBase = 9000;
   static const int maxQueuedQuoteReminders = 64;
+  static const int angelusScheduleIdBase = 200;
+  static const int angelusScheduleDays = 7;
 
   const ScheduleCoreRemindersUseCase(
     this._scheduler, {
@@ -133,7 +135,7 @@ final class ScheduleCoreRemindersUseCase {
     // iOS allows at most 64 pending notifications total.
     // Reserve slots for non-quote notifications.
     const iosScheduledLimit = 64;
-    const reservedSlots = 6;
+    const reservedSlots = 12;
     final quoteCount = Platform.isIOS
         ? min(maxQueuedQuoteReminders, iosScheduledLimit - reservedSlots)
         : maxQueuedQuoteReminders;
@@ -246,24 +248,32 @@ final class ScheduleCoreRemindersUseCase {
       '[ScheduleCoreRemindersUseCase] queued ${scheduledTimes.length} quote reminders',
     );
 
-    // Schedule Angelus/Regina Caeli
+    // Schedule Angelus/Regina Caeli — one non-repeating notification per day so
+    // the title and prayer slug stay correct across Easter season boundaries.
     if (settings.angelusEnabled) {
-      final noonTitle = effectiveIsEasterSeason ? 'Regina Caeli' : 'Angelus';
-      final noonBody = effectiveIsEasterSeason
-          ? 'Hora de rezar a Regina Caeli.'
-          : 'Hora de rezar o Angelus.';
+      for (var dayOffset = 0; dayOffset < angelusScheduleDays; dayOffset++) {
+        final noonDate = current.add(Duration(days: dayOffset));
+        final noon = DateTime(noonDate.year, noonDate.month, noonDate.day, 12);
+        if (!noon.isAfter(current) && dayOffset == 0) continue;
 
-      final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
-      final noonInQuietHours =
-          settings.quietHoursEnabled &&
-          QuietHoursChecker.isDuringQuietHours(
-            noon,
-            settings.quietHoursStart,
-            settings.quietHoursEnd,
-          );
-      if (!noonInQuietHours) {
-        final prayerSlug = effectiveIsEasterSeason ? 'regina-coeli' : 'angelus';
-        await _scheduler.schedule(
+        final noonInQuietHours =
+            settings.quietHoursEnabled &&
+            QuietHoursChecker.isDuringQuietHours(
+              noon,
+              settings.quietHoursStart,
+              settings.quietHoursEnd,
+            );
+        if (noonInQuietHours) continue;
+
+        final isEasterDay = _isDateWithinEasterSeason(noon);
+        final noonTitle = isEasterDay ? 'Regina Caeli' : 'Angelus';
+        final noonBody = isEasterDay
+            ? 'Hora de rezar a Regina Caeli.'
+            : 'Hora de rezar o Angelus.';
+        final prayerSlug = isEasterDay ? 'regina-coeli' : 'angelus';
+
+        await _scheduler.scheduleWithId(
+          angelusScheduleIdBase + dayOffset,
           ReminderEvent(
             type: ReminderEventType.angelusNoon,
             title: noonTitle,
@@ -271,7 +281,6 @@ final class ScheduleCoreRemindersUseCase {
             scheduledAt: noon,
             withVibration: true,
             isAlarm: true,
-            repeatDaily: true,
             routeTarget: NotificationRouteTarget.prayer,
             prayerSlug: prayerSlug,
           ),

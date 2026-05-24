@@ -63,12 +63,18 @@ final class RebuildNotificationsUseCase {
       return;
     }
 
-    // Cancel only quote notification IDs (8999-9063) instead of wiping everything.
-    // Alarm-type notifications (Angelus, liturgy hours) reschedule by fixed ID,
-    // so re-scheduling naturally replaces them without needing a cancel step.
+    // Cancel quote notification IDs (8999-9063) and Angelus IDs (200-206)
+    // before rescheduling. Liturgy hours still use repeatDaily with fixed IDs,
+    // so re-scheduling naturally replaces them.
     for (var id = ScheduleCoreRemindersUseCase.quoteScheduleIdBase - 1;
         id < ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
             ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders;
+        id++) {
+      await _scheduler.cancelById(id);
+    }
+    for (var id = ScheduleCoreRemindersUseCase.angelusScheduleIdBase;
+        id < ScheduleCoreRemindersUseCase.angelusScheduleIdBase +
+            ScheduleCoreRemindersUseCase.angelusScheduleDays;
         id++) {
       await _scheduler.cancelById(id);
     }
