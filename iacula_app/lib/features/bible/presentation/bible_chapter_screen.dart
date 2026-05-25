@@ -340,33 +340,39 @@ class _ChapterNavigationFooter extends StatelessWidget {
           const SizedBox(height: IaculaSpacing.lg),
           if (nextLocation != null)
             CupertinoButton(
-              padding: const EdgeInsets.symmetric(vertical: IaculaSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: IaculaSpacing.md,
+                vertical: IaculaSpacing.md,
+              ),
               color: context.colors.primaryButton,
               borderRadius: BorderRadius.circular(24),
               onPressed: () => onNavigate(nextLocation!),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Text(
-                      'Próximo capítulo',
-                      textAlign: TextAlign.center,
-                      style: context.textStyles.cardTitle.copyWith(
-                        color: CupertinoColors.white,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Próximo capítulo',
+                          style: context.textStyles.cardTitle.copyWith(
+                            color: CupertinoColors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          nextLocation!.label,
+                          style: context.textStyles.secondary.copyWith(
+                            color: CupertinoColors.white.withValues(alpha: 0.85),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    nextLocation!.label,
-                    style: context.textStyles.secondary.copyWith(
-                      color: CupertinoColors.white.withValues(alpha: 0.85),
-                    ),
-                  ),
-                  const SizedBox(width: IaculaSpacing.xs),
                   const Icon(
                     CupertinoIcons.arrow_right,
                     color: CupertinoColors.white,
-                    size: 18,
+                    size: 20,
                   ),
                 ],
               ),
@@ -374,32 +380,38 @@ class _ChapterNavigationFooter extends StatelessWidget {
           if (previousLocation != null) ...[
             if (nextLocation != null) const SizedBox(height: IaculaSpacing.sm),
             CupertinoButton(
-              padding: const EdgeInsets.symmetric(vertical: IaculaSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: IaculaSpacing.md,
+                vertical: IaculaSpacing.md,
+              ),
               color: context.colors.secondaryButton,
               borderRadius: BorderRadius.circular(24),
               onPressed: () => onNavigate(previousLocation!),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     CupertinoIcons.arrow_left,
                     color: context.colors.textPrimary,
-                    size: 18,
-                  ),
-                  const SizedBox(width: IaculaSpacing.xs),
-                  Text(
-                    previousLocation!.label,
-                    style: context.textStyles.secondary.copyWith(
-                      color: context.colors.textSecondary,
-                    ),
+                    size: 20,
                   ),
                   Expanded(
-                    child: Text(
-                      'Capítulo anterior',
-                      textAlign: TextAlign.center,
-                      style: context.textStyles.cardTitle.copyWith(
-                        color: context.colors.textPrimary,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Capítulo anterior',
+                          style: context.textStyles.cardTitle.copyWith(
+                            color: context.colors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          previousLocation!.label,
+                          style: context.textStyles.secondary.copyWith(
+                            color: context.colors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
