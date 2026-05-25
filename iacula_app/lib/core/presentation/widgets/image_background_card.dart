@@ -4,6 +4,19 @@ import '../../theme/cupertino_tokens.dart';
 import 'premium_touchable_card.dart';
 
 class ImageBackgroundCard extends StatelessWidget {
+  static const double defaultImageOverlayOpacity = 0.3;
+
+  static const LinearGradient imageOverlayGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0.0, 0.3, 1.0],
+    colors: [
+      Color(0x33000000),
+      Color(0x99000000),
+      Color(0xF5000000),
+    ],
+  );
+
   final String title;
   final String? subtitle;
   final String? imageAsset;
@@ -63,18 +76,9 @@ class ImageBackgroundCard extends StatelessWidget {
                   ),
                 ),
               Positioned.fill(
-                child: Container(
+                child: DecoratedBox(
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: [0.0, 0.3, 1.0],
-                      colors: [
-                        Color(0x33000000),
-                        Color(0x99000000),
-                        Color(0xF5000000),
-                      ],
-                    ),
+                    gradient: imageOverlayGradient,
                   ),
                 ),
               ),

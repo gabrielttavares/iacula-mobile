@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Colors;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/presentation/widgets/image_background_card.dart';
 import '../../../../core/presentation/widgets/premium_touchable_card.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
 import '../../../quotes/domain/entities/quote.dart';
@@ -141,23 +142,18 @@ class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(
-                        alpha: isEscrivaPoints ? 0.30 : 0.40,
+                        alpha: isEscrivaPoints
+                            ? 0.30
+                            : ImageBackgroundCard.defaultImageOverlayOpacity,
                       ),
                     ),
                   ),
                 ),
                 if (!isEscrivaPoints)
                   Positioned.fill(
-                    child: DecoratedBox(
+                    child: const DecoratedBox(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            context.colors.homeHeroTop,
-                            context.colors.homeHeroBottom,
-                          ],
-                        ),
+                        gradient: ImageBackgroundCard.imageOverlayGradient,
                       ),
                     ),
                   ),

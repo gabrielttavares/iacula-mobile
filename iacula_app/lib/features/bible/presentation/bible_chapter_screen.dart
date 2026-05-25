@@ -14,6 +14,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../reading/domain/entities/reading_highlight.dart';
+import '../domain/bible_chapter_navigation.dart';
 import '../domain/entities/bible_book.dart';
 import '../domain/entities/bible_chapter_ref.dart';
 import '../domain/entities/bible_verse.dart';
@@ -35,6 +36,7 @@ class BibleChapterScreen extends ConsumerStatefulWidget {
 class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
   List<ReadingHighlight> _highlights = [];
   late final String _documentId;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -47,6 +49,12 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
           );
       _loadHighlights();
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadHighlights() async {
@@ -96,6 +104,34 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
         .toList(growable: false);
   }
 
+  void _navigateToChapter(BibleChapterLocation location) {
+    HapticFeedback.lightImpact();
+    Navigator.of(context).pushReplacement(
+      CupertinoPageRoute(
+        builder: (_) => BibleChapterScreen(
+          book: location.book,
+          chapterNumber: location.chapterNumber,
+        ),
+      ),
+    );
+  }
+
+  ({BibleChapterLocation? previous, BibleChapterLocation? next})
+      _chapterNavigation(List<BibleBook> books) {
+    return (
+      previous: getPreviousChapterLocation(
+        books: books,
+        currentBook: widget.book,
+        currentChapter: widget.chapterNumber,
+      ),
+      next: getNextChapterLocation(
+        books: books,
+        currentBook: widget.book,
+        currentChapter: widget.chapterNumber,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final chapterAsync = ref.watch(
@@ -106,6 +142,11 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
         ),
       ),
     );
+    final booksAsync = ref.watch(bibleBooksProvider);
+    final navigation = booksAsync.maybeWhen(
+      data: _chapterNavigation,
+      orElse: () => (previous: null, next: null),
+    );
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
@@ -113,74 +154,323 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
         backgroundColor: context.colors.background,
         border: null,
         middle: Text('${widget.book.name} ${widget.chapterNumber}'),
+        trailing: _ChapterNavBarActions(
+          previousLocation: navigation.previous,
+          nextLocation: navigation.next,
+          onNavigate: _navigateToChapter,
+        ),
       ),
       child: SafeArea(
-        child: chapterAsync.when(
-          data: (verses) {
-            if (verses.isEmpty) {
-              return Center(
-                child: Text(
-                  'Capítulo vazio',
-                  style: context.textStyles.secondary,
-                ),
-              );
-            }
-            return ListView.separated(
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(
-                IaculaSpacing.md,
-                IaculaSpacing.md,
-                IaculaSpacing.md,
-                IaculaSpacing.xl + MediaQuery.paddingOf(context).bottom,
-              ),
-              itemCount: verses.length,
-              separatorBuilder: (context, index) =>
-                  const SizedBox(height: IaculaSpacing.md),
-              itemBuilder: (context, index) {
-                final verse = verses[index];
-                final verseHighlights = _highlightsForVerse(verse.number);
-                return _BibleVerseBlock(
-                  verse: verse,
-                  highlights: verseHighlights,
-                  onHighlight: ({
-                    required int startOffset,
-                    required int endOffset,
-                    required ReadingHighlight? existingHighlight,
-                  }) {
-                    HapticFeedback.lightImpact();
-                    if (existingHighlight != null) {
-                      _deleteHighlight(existingHighlight.id);
-                    } else {
-                      _saveHighlight(
-                        verseNumber: verse.number,
-                        startOffset: startOffset,
-                        endOffset: endOffset,
-                      );
-                    }
-                  },
-                  onShare: ({required String selectedText}) {
-                    HapticFeedback.lightImpact();
-                    _shareVerseText(
-                      verse: verse,
-                      selectedText: selectedText,
-                    );
-                  },
+        child: _ChapterEdgeSwipeDetector(
+          previousLocation: navigation.previous,
+          nextLocation: navigation.next,
+          onNavigate: _navigateToChapter,
+          child: chapterAsync.when(
+            data: (verses) {
+              if (verses.isEmpty) {
+                return Center(
+                  child: Text(
+                    'Capítulo vazio',
+                    style: context.textStyles.secondary,
+                  ),
                 );
-              },
-            );
-          },
-          loading: () => const Padding(
-            padding: EdgeInsets.all(IaculaSpacing.md),
-            child: IaculaShimmerList(itemCount: 10),
-          ),
-          error: (error, stackTrace) => Center(
-            child: Text(
-              'Não foi possível carregar o capítulo',
-              style: context.textStyles.secondary,
+              }
+              return ListView.separated(
+                controller: _scrollController,
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(
+                  IaculaSpacing.md,
+                  IaculaSpacing.md,
+                  IaculaSpacing.md,
+                  IaculaSpacing.xl + MediaQuery.paddingOf(context).bottom,
+                ),
+                itemCount: verses.length + 1,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: IaculaSpacing.md),
+                itemBuilder: (context, index) {
+                  if (index == verses.length) {
+                    return _ChapterNavigationFooter(
+                      previousLocation: navigation.previous,
+                      nextLocation: navigation.next,
+                      onNavigate: _navigateToChapter,
+                    );
+                  }
+
+                  final verse = verses[index];
+                  final verseHighlights = _highlightsForVerse(verse.number);
+                  return _BibleVerseBlock(
+                    verse: verse,
+                    highlights: verseHighlights,
+                    onHighlight: ({
+                      required int startOffset,
+                      required int endOffset,
+                      required ReadingHighlight? existingHighlight,
+                    }) {
+                      HapticFeedback.lightImpact();
+                      if (existingHighlight != null) {
+                        _deleteHighlight(existingHighlight.id);
+                      } else {
+                        _saveHighlight(
+                          verseNumber: verse.number,
+                          startOffset: startOffset,
+                          endOffset: endOffset,
+                        );
+                      }
+                    },
+                    onShare: ({required String selectedText}) {
+                      HapticFeedback.lightImpact();
+                      _shareVerseText(
+                        verse: verse,
+                        selectedText: selectedText,
+                      );
+                    },
+                  );
+                },
+              );
+            },
+            loading: () => const Padding(
+              padding: EdgeInsets.all(IaculaSpacing.md),
+              child: IaculaShimmerList(itemCount: 10),
+            ),
+            error: (error, stackTrace) => Center(
+              child: Text(
+                'Não foi possível carregar o capítulo',
+                style: context.textStyles.secondary,
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ChapterNavBarActions extends StatelessWidget {
+  const _ChapterNavBarActions({
+    required this.previousLocation,
+    required this.nextLocation,
+    required this.onNavigate,
+  });
+
+  final BibleChapterLocation? previousLocation;
+  final BibleChapterLocation? nextLocation;
+  final ValueChanged<BibleChapterLocation> onNavigate;
+
+  @override
+  Widget build(BuildContext context) {
+    if (previousLocation == null && nextLocation == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _ChapterNavIconButton(
+          icon: CupertinoIcons.chevron_left,
+          enabled: previousLocation != null,
+          onPressed: previousLocation == null
+              ? null
+              : () => onNavigate(previousLocation!),
+        ),
+        _ChapterNavIconButton(
+          icon: CupertinoIcons.chevron_right,
+          enabled: nextLocation != null,
+          onPressed:
+              nextLocation == null ? null : () => onNavigate(nextLocation!),
+        ),
+      ],
+    );
+  }
+}
+
+class _ChapterNavIconButton extends StatelessWidget {
+  const _ChapterNavIconButton({
+    required this.icon,
+    required this.enabled,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final bool enabled;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: const Size(36, 36),
+      onPressed: enabled ? onPressed : null,
+      child: Icon(
+        icon,
+        size: 22,
+        color: enabled
+            ? context.colors.primaryButton
+            : context.colors.textSecondary.withValues(alpha: 0.35),
+      ),
+    );
+  }
+}
+
+class _ChapterNavigationFooter extends StatelessWidget {
+  const _ChapterNavigationFooter({
+    required this.previousLocation,
+    required this.nextLocation,
+    required this.onNavigate,
+  });
+
+  final BibleChapterLocation? previousLocation;
+  final BibleChapterLocation? nextLocation;
+  final ValueChanged<BibleChapterLocation> onNavigate;
+
+  @override
+  Widget build(BuildContext context) {
+    if (previousLocation == null && nextLocation == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: IaculaSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            height: 1,
+            color: context.colors.separator,
+          ),
+          const SizedBox(height: IaculaSpacing.lg),
+          if (nextLocation != null)
+            CupertinoButton(
+              padding: const EdgeInsets.symmetric(vertical: IaculaSpacing.md),
+              color: context.colors.primaryButton,
+              borderRadius: BorderRadius.circular(24),
+              onPressed: () => onNavigate(nextLocation!),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Próximo capítulo',
+                      textAlign: TextAlign.center,
+                      style: context.textStyles.cardTitle.copyWith(
+                        color: CupertinoColors.white,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    nextLocation!.label,
+                    style: context.textStyles.secondary.copyWith(
+                      color: CupertinoColors.white.withValues(alpha: 0.85),
+                    ),
+                  ),
+                  const SizedBox(width: IaculaSpacing.xs),
+                  const Icon(
+                    CupertinoIcons.arrow_right,
+                    color: CupertinoColors.white,
+                    size: 18,
+                  ),
+                ],
+              ),
+            ),
+          if (previousLocation != null) ...[
+            if (nextLocation != null) const SizedBox(height: IaculaSpacing.sm),
+            CupertinoButton(
+              padding: const EdgeInsets.symmetric(vertical: IaculaSpacing.md),
+              color: context.colors.secondaryButton,
+              borderRadius: BorderRadius.circular(24),
+              onPressed: () => onNavigate(previousLocation!),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.arrow_left,
+                    color: context.colors.textPrimary,
+                    size: 18,
+                  ),
+                  const SizedBox(width: IaculaSpacing.xs),
+                  Text(
+                    previousLocation!.label,
+                    style: context.textStyles.secondary.copyWith(
+                      color: context.colors.textSecondary,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Capítulo anterior',
+                      textAlign: TextAlign.center,
+                      style: context.textStyles.cardTitle.copyWith(
+                        color: context.colors.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ChapterEdgeSwipeDetector extends StatefulWidget {
+  const _ChapterEdgeSwipeDetector({
+    required this.previousLocation,
+    required this.nextLocation,
+    required this.onNavigate,
+    required this.child,
+  });
+
+  final BibleChapterLocation? previousLocation;
+  final BibleChapterLocation? nextLocation;
+  final ValueChanged<BibleChapterLocation> onNavigate;
+  final Widget child;
+
+  @override
+  State<_ChapterEdgeSwipeDetector> createState() =>
+      _ChapterEdgeSwipeDetectorState();
+}
+
+class _ChapterEdgeSwipeDetectorState extends State<_ChapterEdgeSwipeDetector> {
+  static const _edgeWidthFraction = 0.18;
+  static const _swipeVelocityThreshold = 350.0;
+
+  double? _dragStartX;
+  bool _startedInEdgeZone = false;
+
+  bool _isInEdgeZone(double localX, double width) {
+    final edgeWidth = width * _edgeWidthFraction;
+    return localX <= edgeWidth || localX >= width - edgeWidth;
+  }
+
+  void _handleDragStart(DragStartDetails details) {
+    final width = context.size?.width ?? MediaQuery.sizeOf(context).width;
+    _dragStartX = details.localPosition.dx;
+    _startedInEdgeZone = _isInEdgeZone(details.localPosition.dx, width);
+  }
+
+  void _handleDragEnd(DragEndDetails details) {
+    if (!_startedInEdgeZone || _dragStartX == null) return;
+
+    final velocity = details.primaryVelocity ?? 0;
+    if (velocity.abs() < _swipeVelocityThreshold) return;
+
+    if (velocity < 0 && widget.nextLocation != null) {
+      widget.onNavigate(widget.nextLocation!);
+    } else if (velocity > 0 && widget.previousLocation != null) {
+      widget.onNavigate(widget.previousLocation!);
+    }
+
+    _dragStartX = null;
+    _startedInEdgeZone = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onHorizontalDragStart: _handleDragStart,
+      onHorizontalDragEnd: _handleDragEnd,
+      child: widget.child,
     );
   }
 }
