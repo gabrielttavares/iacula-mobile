@@ -82,6 +82,7 @@ KEEP_EXTRA_SLUGS = {
     "oracao-antes-do-estudo": ("oracoes-diversas", "Orações Diversas"),
     "oracao-pela-igreja-e-pela-patria": ("oracoes-diversas", "Orações Diversas"),
     "oracao-de-sao-bento": ("oracoes-diversas", "Orações Diversas"),
+    "oracao-sao-jose-sao-pio-x": ("oracoes-diversas", "Orações Diversas"),
 }
 
 

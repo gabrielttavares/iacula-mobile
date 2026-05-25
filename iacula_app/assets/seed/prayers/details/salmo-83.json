@@ -1,0 +1,42 @@
+{
+  "slug": "salmo-83",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Salmo 83",
+    "la": "Psalmus LXXXIII"
+  },
+  "blocks": {
+    "pt-br": [
+      "No fim. Para os lagares dos filhos de Core. Salmo.",
+      "Quão amáveis são os vossos tabernáculos, Senhor dos exércitos! A minha alma suspira e desfalece pelos átrios do Senhor; o meu coração e a minha carne rejubilam no Deus vivo.",
+      "O passarinho encontrou abrigo, e a andorinha ninho onde criar os filhotes: nos vossos altares, Senhor dos exércitos, Rei meu e Deus meu!",
+      "Felizes os que habitam vossa casa; eles Vos louvam eternamente.",
+      "Feliz o homem a quem a vossa ajuda; no coração dispôs subir em degraus, no vale de lágrimas, ao lugar fixado por Vós.",
+      "Pois o legislador dá a bênção; irão de virtude em virtude, Deus de deuses se mostrará em Sião.",
+      "Senhor Deus dos exércitos, ouvi a minha oração; inclinai os ouvidos, Deus de Jacob.",
+      "Olhai, Deus, nosso protetor, e contemplai a face do vosso Cristo.",
+      "Pois vale mais um dia nos vossos átrios do que milhares; preferi ser humilde na casa do meu Deus a habitar nas tendas dos pecadores.",
+      "Porque Deus ama a misericórdia e a verdade; o Senhor dará graça e glória.",
+      "Não negará os bens àqueles que caminham na integridade.",
+      "Senhor dos exércitos, feliz o homem que confia em Vós.",
+      "Glória ao Pai, e ao Filho, e ao Espírito Santo.",
+      "Como era no princípio, agora e sempre, e pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "In finem, pro torcularibus filiis Core. Psalmus.",
+      "Quam dilecta tabernacula tua, Domine virtutum! Concupiscit, et deficit anima mea in atria Domini; cor meum et caro mea exsultaverunt in Deum vivum.",
+      "Etenim passer invenit sibi domum, et turtur nidum sibi, ubi ponat pullos suos. Altaria tua, Domine virtutum, rex meus, et Deus meus.",
+      "Beati qui habitant in domo tua, Domine; in sæcula sæculorum laudabunt te.",
+      "Beatus vir cujus est auxilium abs te, ascensiones in corde suo disposuit, in valle lacrimarum, in loco quem posuit.",
+      "Etenim benedictionem dabit legislator; ibunt de virtute in virtutem, videbitur Deus deorum in Sion.",
+      "Domine Deus virtutum, exaudi orationem meam; auribus percipe, Deus Jacob.",
+      "Protector noster, aspice, Deus, et respice in faciem christi tui.",
+      "Quia melior est dies una in atriis tuis super millia; elegi abjectus esse in domo Dei mei magis quam habitare in tabernaculis peccatorum.",
+      "Quia misericordiam et veritatem diligit Deus, gratiam et gloriam dabit Dominus.",
+      "Non privabit bonis eos qui ambulant in innocentia.",
+      "Domine virtutum, beatus homo qui sperat in te.",
+      "Glória Patri, et Fílio, et Spíritu Sancto.",
+      "Sicut erat in princípio, et nunc, et semper, et in sæcula sæculorum. Amen."
+    ]
+  }
+}

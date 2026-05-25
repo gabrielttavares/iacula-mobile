@@ -807,6 +807,55 @@
     "saints": []
   },
   {
+    "id": "fica-comigo-senhor",
+    "title": "Fica comigo, Senhor!",
+    "content": "Fica Senhor comigo, pois preciso da tua presença para não te esquecer.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": [
+      "padre-pio"
+    ]
+  },
+  {
+    "id": "salmo-83",
+    "title": "Salmo 83",
+    "content": "Quão amáveis são os vossos tabernáculos, Senhor dos exércitos! A minha alma suspira e desfalece pelos átrios do Senhor.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-sao-jose-sao-pio-x",
+    "title": "Oração a São José — São Pio X",
+    "content": "Glorioso São José, modelo de todos os que se dedicam ao trabalho, obtende-me a graça de trabalhar com espírito de penitência para expiação de meus numerosos pecados;",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "diversos",
+      "trabalho"
+    ],
+    "saints": [
+      "sao-jose",
+      "sao-pio-x"
+    ]
+  },
+  {
     "id": "salmo-2",
     "title": "Salmo 2",
     "content": "Por que se amotinam as nações, e os povos tramam em vão? Levantam-se os reis da terra e os príncipes conspiram unidos contra o Senhor e contra o seu Ungido. Rompamos as suas cadeias e lancemos de nós os seus grilhões. Aquele que habita nos céus os escarnecerá, e o Senhor zombará deles. Então lhes falará em sua ira e em seu furor os confundirá.",
