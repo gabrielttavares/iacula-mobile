@@ -12,6 +12,7 @@ import '../../favorites/domain/entities/favorite_item.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
 import '../domain/entities/prayer_detail.dart';
 import 'widgets/font_size_controls.dart';
+import 'widgets/via_sacra_sto_afonso_content.dart';
 
 final _prayerDetailProvider = FutureProvider.family<PrayerDetail, String>((
   ref,
@@ -147,52 +148,56 @@ class _PrayerCatalogDetailScreenState
                   Expanded(
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 200),
-                      child: ListView.separated(
-                        key: ValueKey<String>(selectedLanguage),
-                        physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.paddingOf(context).bottom +
-                            IaculaSpacing.md,
-                      ),
-                      itemCount: contentBlocks.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: IaculaSpacing.md),
-                      itemBuilder: (context, index) {
-                        final block = contentBlocks[index];
-                        if (block.startsWith('℣ ') || block.startsWith('℟ ')) {
-                          final marker = block.substring(0, 1);
-                          final text = block.substring(2);
-                          return Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: '$marker. ',
-                                  style:
-                                      context.textStyles.readingBody.copyWith(
-                                        fontSize: fontSize,
-                                        color: CupertinoColors.systemRed,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                                TextSpan(
-                                  text: text,
-                                  style:
-                                      context.textStyles.readingBody.copyWith(
-                                        fontSize: fontSize,
-                                      ),
-                                ),
-                              ],
+                      child: widget.entry.slug == 'via-sacra-sto-afonso'
+                          ? ViaSacraStoAfonsoContent(
+                              key: ValueKey<String>(selectedLanguage),
+                              blocks: contentBlocks,
+                              fontSize: fontSize,
+                            )
+                          : ListView.separated(
+                              key: ValueKey<String>(selectedLanguage),
+                              physics: const BouncingScrollPhysics(),
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.paddingOf(context).bottom +
+                                    IaculaSpacing.md,
+                              ),
+                              itemCount: contentBlocks.length,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(height: IaculaSpacing.md),
+                              itemBuilder: (context, index) {
+                                final block = contentBlocks[index];
+                                if (block.startsWith('℣ ') ||
+                                    block.startsWith('℟ ')) {
+                                  final marker = block.substring(0, 1);
+                                  final text = block.substring(2);
+                                  return Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: '$marker. ',
+                                          style: context.textStyles.readingBody
+                                              .copyWith(
+                                            fontSize: fontSize,
+                                            color: CupertinoColors.systemRed,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: text,
+                                          style: context.textStyles.readingBody
+                                              .copyWith(fontSize: fontSize),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                                return Text(
+                                  block,
+                                  style: context.textStyles.readingBody
+                                      .copyWith(fontSize: fontSize),
+                                );
+                              },
                             ),
-                          );
-                        }
-                        return Text(
-                          block,
-                          style: context.textStyles.readingBody.copyWith(
-                            fontSize: fontSize,
-                          ),
-                        );
-                      },
-                    ),
                     ),
                   ),
                 ],

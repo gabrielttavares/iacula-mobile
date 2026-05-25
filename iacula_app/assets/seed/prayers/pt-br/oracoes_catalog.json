@@ -544,6 +544,24 @@
     ]
   },
   {
+    "id": "ladainha-de-nossa-senhora",
+    "title": "Ladainha a Nossa Senhora",
+    "content": "℣ Senhor, tende piedade de nós. ℟ Senhor, tende piedade de nós. ℣ Jesus Cristo, tende piedade de nós. ℟ Jesus Cristo, tende piedade de nós. ℣ Santa Maria, ℟ Rogai por nós. Santa Mãe de Deus, Santa Virgem das Virgens, Mãe de Jesus Cristo, Mãe da Igreja.",
+    "section_id": "oracoes-a-nossa-senhora",
+    "section_title": "Orações a Nossa Senhora",
+    "languages": [
+      "la",
+      "pt-br"
+    ],
+    "theme": [
+      "mariano",
+      "rosario"
+    ],
+    "saints": [
+      "virgem-maria"
+    ]
+  },
+  {
     "id": "rosario-portugues",
     "title": "Santo Rosário (Português)",
     "content": "Mistérios Gozosos (segunda-feira e sábado): A Anunciação, A Visitação, O Nascimento, A Purificação, O Menino-Deus no Templo. Mistérios Luminosos (quinta-feira): O Batismo, As Bodas de Caná, O Anúncio do Reino, A Transfiguração, A Eucaristia. Mistérios Dolorosos (terça e sexta-feira): A Oração no Horto, A Flagelação, A Coroação de Espinhos, A Cruz às Costas, Jesus Morre na Cruz. Mistérios Gloriosos (quarta-feira e domingo): A Ressurreição, A Ascensão, A Vinda do Espírito Santo, A Assunção, A Coroação de Maria.",
@@ -1193,7 +1211,7 @@
   },
   {
     "id": "via-sacra",
-    "title": "Via Sacra",
+    "title": "Via Sacra (forma resumida)",
     "content": "–﻿ Em nome do Pai, do Filho e do Espírito Santo. Amém. Oração introdutória",
     "section_id": "outras-devocoes",
     "section_title": "Outras Devoções, Hinos e Salmos",
@@ -1204,6 +1222,22 @@
       "devocoes"
     ],
     "saints": []
+  },
+  {
+    "id": "via-sacra-sto-afonso",
+    "title": "Via Sacra de Santo Afonso de Ligório",
+    "content": "Senhor Jesus Cristo, vós com tanto amor entrastes nesta via para morrerdes por mim; eu porém tantas vezes vos desprezei!",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "devocoes"
+    ],
+    "saints": [
+      "sao-afonso-de-ligorio"
+    ]
   },
   {
     "id": "leitura-espiritual",
