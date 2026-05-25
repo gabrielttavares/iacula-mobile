@@ -14,7 +14,9 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../reading/domain/entities/reading_highlight.dart';
+import '../../reading/presentation/widgets/annotatable_text_block.dart';
 import '../domain/bible_chapter_navigation.dart';
+import '../domain/bible_chapter_selection.dart';
 import '../domain/entities/bible_book.dart';
 import '../domain/entities/bible_chapter_ref.dart';
 import '../domain/entities/bible_verse.dart';
@@ -78,22 +80,80 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
       createdAt: DateTime.now(),
     );
     await ref.read(readingAnnotationRepositoryProvider).saveHighlight(highlight);
-    await _loadHighlights();
+    if (mounted) {
+      setState(() => _highlights = [..._highlights, highlight]);
+    }
   }
 
-  Future<void> _deleteHighlight(String highlightId) async {
+  Future<void> _toggleHighlightsForSelection({
+    required List<BibleVerseHighlightRange> ranges,
+  }) async {
+    if (ranges.isEmpty) return;
+
+    final existingHighlights = ranges
+        .map(
+          (range) => findExactMatchingHighlight(
+            _highlightsForVerse(range.verseNumber),
+            startOffset: range.startOffset,
+            endOffset: range.endOffset,
+          ),
+        )
+        .toList(growable: false);
+
+    final shouldRemove = existingHighlights.every((highlight) => highlight != null);
+    if (shouldRemove) {
+      for (final highlight in existingHighlights) {
+        if (highlight != null) {
+          await _deleteHighlight(highlight.id, reload: false);
+        }
+      }
+      if (mounted) await _loadHighlights();
+      return;
+    }
+
+    for (var index = 0; index < ranges.length; index++) {
+      if (existingHighlights[index] != null) continue;
+      final range = ranges[index];
+      await _saveHighlight(
+        verseNumber: range.verseNumber,
+        startOffset: range.startOffset,
+        endOffset: range.endOffset,
+      );
+    }
+  }
+
+  Future<void> _deleteHighlight(
+    String highlightId, {
+    bool reload = true,
+  }) async {
     await ref
         .read(readingAnnotationRepositoryProvider)
         .deleteHighlight(highlightId);
+    if (!reload) {
+      if (mounted) {
+        setState(
+          () => _highlights =
+              _highlights.where((highlight) => highlight.id != highlightId).toList(),
+        );
+      }
+      return;
+    }
     await _loadHighlights();
   }
 
-  void _shareVerseText({
-    required BibleVerse verse,
+  void _shareSelectedText({
     required String selectedText,
+    required List<BibleVerseSegment> segments,
+    required int globalStart,
+    required int globalEnd,
   }) {
-    final reference =
-        '${widget.book.name} ${widget.chapterNumber},${verse.number}';
+    final reference = formatBibleSelectionReference(
+      bookName: widget.book.name,
+      chapterNumber: widget.chapterNumber,
+      segments: segments,
+      globalStart: globalStart,
+      globalEnd: globalEnd,
+    );
     final formatted = '«$selectedText»\n\n— $reference';
     ref.read(nativeShareServiceProvider).shareText(formatted);
   }
@@ -175,7 +235,7 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
                   ),
                 );
               }
-              return ListView.separated(
+              return ListView(
                 controller: _scrollController,
                 physics: const BouncingScrollPhysics(),
                 padding: EdgeInsets.fromLTRB(
@@ -184,48 +244,20 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
                   IaculaSpacing.md,
                   IaculaSpacing.xl + MediaQuery.paddingOf(context).bottom,
                 ),
-                itemCount: verses.length + 1,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: IaculaSpacing.md),
-                itemBuilder: (context, index) {
-                  if (index == verses.length) {
-                    return _ChapterNavigationFooter(
-                      previousLocation: navigation.previous,
-                      nextLocation: navigation.next,
-                      onNavigate: _navigateToChapter,
-                    );
-                  }
-
-                  final verse = verses[index];
-                  final verseHighlights = _highlightsForVerse(verse.number);
-                  return _BibleVerseBlock(
-                    verse: verse,
-                    highlights: verseHighlights,
-                    onHighlight: ({
-                      required int startOffset,
-                      required int endOffset,
-                      required ReadingHighlight? existingHighlight,
-                    }) {
-                      HapticFeedback.lightImpact();
-                      if (existingHighlight != null) {
-                        _deleteHighlight(existingHighlight.id);
-                      } else {
-                        _saveHighlight(
-                          verseNumber: verse.number,
-                          startOffset: startOffset,
-                          endOffset: endOffset,
-                        );
-                      }
-                    },
-                    onShare: ({required String selectedText}) {
-                      HapticFeedback.lightImpact();
-                      _shareVerseText(
-                        verse: verse,
-                        selectedText: selectedText,
-                      );
-                    },
-                  );
-                },
+                children: [
+                  _BibleChapterSelectableContent(
+                    verses: verses,
+                    highlights: _highlights,
+                    onToggleHighlights: _toggleHighlightsForSelection,
+                    onShareSelectedText: _shareSelectedText,
+                  ),
+                  const SizedBox(height: IaculaSpacing.md),
+                  _ChapterNavigationFooter(
+                    previousLocation: navigation.previous,
+                    nextLocation: navigation.next,
+                    onNavigate: _navigateToChapter,
+                  ),
+                ],
               );
             },
             loading: () => const Padding(
@@ -487,46 +519,49 @@ class _ChapterEdgeSwipeDetectorState extends State<_ChapterEdgeSwipeDetector> {
   }
 }
 
-class _BibleVerseBlock extends StatelessWidget {
-  const _BibleVerseBlock({
-    required this.verse,
+class _BibleChapterSelectableContent extends StatelessWidget {
+  const _BibleChapterSelectableContent({
+    required this.verses,
     required this.highlights,
-    required this.onHighlight,
-    required this.onShare,
+    required this.onToggleHighlights,
+    required this.onShareSelectedText,
   });
 
-  final BibleVerse verse;
+  final List<BibleVerse> verses;
   final List<ReadingHighlight> highlights;
+  final Future<void> Function({
+    required List<BibleVerseHighlightRange> ranges,
+  }) onToggleHighlights;
   final void Function({
-    required int startOffset,
-    required int endOffset,
-    required ReadingHighlight? existingHighlight,
-  }) onHighlight;
-  final void Function({required String selectedText}) onShare;
+    required String selectedText,
+    required List<BibleVerseSegment> segments,
+    required int globalStart,
+    required int globalEnd,
+  }) onShareSelectedText;
 
-  ReadingHighlight? _findMatchingHighlight(int start, int end) {
-    for (final highlight in highlights) {
-      if (highlight.startOffset == start && highlight.endOffset == end) {
-        return highlight;
-      }
-    }
-    return null;
+  List<ReadingHighlight> _highlightsForVerse(int verseNumber) {
+    return highlights
+        .where((highlight) => highlight.blockId == '$verseNumber')
+        .toList(growable: false);
   }
 
-  TextSpan _buildHighlightedSpan(TextStyle style) {
-    final text = verse.text;
-    final validHighlights = highlights
+  TextSpan _buildVerseTextSpan({
+    required String text,
+    required List<ReadingHighlight> verseHighlights,
+    required TextStyle bodyStyle,
+  }) {
+    final validHighlights = verseHighlights
         .where(
-          (h) =>
-              h.startOffset >= 0 &&
-              h.endOffset <= text.length &&
-              h.startOffset < h.endOffset,
+          (highlight) =>
+              highlight.startOffset >= 0 &&
+              highlight.endOffset <= text.length &&
+              highlight.startOffset < highlight.endOffset,
         )
         .toList(growable: false)
       ..sort((a, b) => a.startOffset.compareTo(b.startOffset));
 
     if (validHighlights.isEmpty) {
-      return TextSpan(style: style, text: text);
+      return TextSpan(style: bodyStyle, text: text);
     }
 
     final children = <TextSpan>[];
@@ -540,7 +575,7 @@ class _BibleVerseBlock extends StatelessWidget {
       children.add(
         TextSpan(
           text: text.substring(highlight.startOffset, highlight.endOffset),
-          style: style.copyWith(
+          style: bodyStyle.copyWith(
             backgroundColor: const Color(0x66FFD54F),
           ),
         ),
@@ -552,12 +587,73 @@ class _BibleVerseBlock extends StatelessWidget {
       children.add(TextSpan(text: text.substring(cursor)));
     }
 
-    return TextSpan(style: style, children: children);
+    return TextSpan(style: bodyStyle, children: children);
   }
 
-  Widget _buildContextMenu(BuildContext context, EditableTextState state) {
+  TextSpan _buildChapterSpan({
+    required TextStyle bodyStyle,
+    required TextStyle verseNumberStyle,
+  }) {
+    final children = <InlineSpan>[];
+
+    for (var index = 0; index < verses.length; index++) {
+      final verse = verses[index];
+      final numberPrefix = '${verse.number}  ';
+
+      children
+        ..add(TextSpan(text: numberPrefix, style: verseNumberStyle))
+        ..add(
+          _buildVerseTextSpan(
+            text: verse.text,
+            verseHighlights: _highlightsForVerse(verse.number),
+            bodyStyle: bodyStyle,
+          ),
+        );
+
+      if (index < verses.length - 1) {
+        children.add(const TextSpan(text: '\n\n'));
+      }
+    }
+
+    return TextSpan(style: bodyStyle, children: children);
+  }
+
+  String _combinedPlainText() {
+    final buffer = StringBuffer();
+    for (var index = 0; index < verses.length; index++) {
+      buffer
+        ..write('${verses[index].number}  ')
+        ..write(verses[index].text);
+      if (index < verses.length - 1) {
+        buffer.write('\n\n');
+      }
+    }
+    return buffer.toString();
+  }
+
+  bool _selectionMatchesExistingHighlights({
+    required List<BibleVerseHighlightRange> ranges,
+  }) {
+    if (ranges.isEmpty) return false;
+
+    return ranges.every(
+      (range) =>
+          findExactMatchingHighlight(
+            _highlightsForVerse(range.verseNumber),
+            startOffset: range.startOffset,
+            endOffset: range.endOffset,
+          ) !=
+          null,
+    );
+  }
+
+  Widget _buildContextMenu(
+    BuildContext context,
+    EditableTextState state,
+    List<BibleVerseSegment> segments,
+    String combinedText,
+  ) {
     final selection = state.textEditingValue.selection;
-    final text = verse.text;
     final buttonItems = <ContextMenuButtonItem>[
       ...state.contextMenuButtonItems,
     ];
@@ -566,24 +662,28 @@ class _BibleVerseBlock extends StatelessWidget {
         !selection.isCollapsed &&
         selection.isValid &&
         selection.start >= 0 &&
-        selection.end <= text.length &&
+        selection.end <= combinedText.length &&
         selection.start < selection.end;
 
     if (isValidSelection) {
-      final selectedText = text.substring(selection.start, selection.end);
-      final existingHighlight =
-          _findMatchingHighlight(selection.start, selection.end);
+      final selectedText =
+          combinedText.substring(selection.start, selection.end);
+      final highlightRanges = mapGlobalSelectionToVerseRanges(
+        segments: segments,
+        globalStart: selection.start,
+        globalEnd: selection.end,
+      );
+      final hasExistingHighlights = _selectionMatchesExistingHighlights(
+        ranges: highlightRanges,
+      );
 
       buttonItems.insert(
         0,
         ContextMenuButtonItem(
-          label: existingHighlight == null ? 'Destacar' : 'Remover destaque',
+          label: hasExistingHighlights ? 'Remover destaque' : 'Destacar',
           onPressed: () {
-            onHighlight(
-              startOffset: selection.start,
-              endOffset: selection.end,
-              existingHighlight: existingHighlight,
-            );
+            HapticFeedback.lightImpact();
+            onToggleHighlights(ranges: highlightRanges);
             state.hideToolbar();
           },
         ),
@@ -594,7 +694,13 @@ class _BibleVerseBlock extends StatelessWidget {
         ContextMenuButtonItem(
           label: 'Compartilhar',
           onPressed: () {
-            onShare(selectedText: selectedText);
+            HapticFeedback.lightImpact();
+            onShareSelectedText(
+              selectedText: selectedText,
+              segments: segments,
+              globalStart: selection.start,
+              globalEnd: selection.end,
+            );
             state.hideToolbar();
           },
         ),
@@ -615,21 +721,16 @@ class _BibleVerseBlock extends StatelessWidget {
       fontWeight: FontWeight.bold,
       color: context.colors.primaryButton,
     );
+    final segments = buildVerseSegments(verses);
+    final combinedText = _combinedPlainText();
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 4.0, top: 5.0),
-          child: Text('${verse.number}', style: verseNumberStyle),
-        ),
-        Expanded(
-          child: SelectableText.rich(
-            _buildHighlightedSpan(bodyStyle),
-            contextMenuBuilder: _buildContextMenu,
-          ),
-        ),
-      ],
+    return SelectableText.rich(
+      _buildChapterSpan(
+        bodyStyle: bodyStyle,
+        verseNumberStyle: verseNumberStyle,
+      ),
+      contextMenuBuilder: (context, state) =>
+          _buildContextMenu(context, state, segments, combinedText),
     );
   }
 }
