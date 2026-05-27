@@ -13,6 +13,7 @@ import 'package:uuid/uuid.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../prayers/presentation/widgets/font_size_controls.dart';
 import '../../reading/domain/entities/reading_highlight.dart';
 import '../../reading/presentation/widgets/annotatable_text_block.dart';
 import '../domain/bible_chapter_navigation.dart';
@@ -203,6 +204,7 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
       ),
     );
     final booksAsync = ref.watch(bibleBooksProvider);
+    final settingsAsync = ref.watch(getSettingsUseCaseProvider).call();
     final navigation = booksAsync.maybeWhen(
       data: _chapterNavigation,
       orElse: () => (previous: null, next: null),
@@ -221,56 +223,69 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
         ),
       ),
       child: SafeArea(
-        child: _ChapterEdgeSwipeDetector(
-          previousLocation: navigation.previous,
-          nextLocation: navigation.next,
-          onNavigate: _navigateToChapter,
-          child: chapterAsync.when(
-            data: (verses) {
-              if (verses.isEmpty) {
-                return Center(
+        child: FutureBuilder(
+          future: settingsAsync,
+          builder: (context, settingsSnapshot) {
+            final fontSize = settingsSnapshot.data?.prayerFontSize ?? 15.0;
+
+            return _ChapterEdgeSwipeDetector(
+              previousLocation: navigation.previous,
+              nextLocation: navigation.next,
+              onNavigate: _navigateToChapter,
+              child: chapterAsync.when(
+                data: (verses) {
+                  if (verses.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'Capítulo vazio',
+                        style: context.textStyles.secondary,
+                      ),
+                    );
+                  }
+                  return ListView(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(
+                      IaculaSpacing.md,
+                      IaculaSpacing.md,
+                      IaculaSpacing.md,
+                      IaculaSpacing.xl + MediaQuery.paddingOf(context).bottom,
+                    ),
+                    children: [
+                      const Align(
+                        alignment: Alignment.centerRight,
+                        child: FontSizeControls(),
+                      ),
+                      const SizedBox(height: IaculaSpacing.sm),
+                      _BibleChapterSelectableContent(
+                        verses: verses,
+                        fontSize: fontSize,
+                        highlights: _highlights,
+                        onToggleHighlights: _toggleHighlightsForSelection,
+                        onShareSelectedText: _shareSelectedText,
+                      ),
+                      const SizedBox(height: IaculaSpacing.md),
+                      _ChapterNavigationFooter(
+                        previousLocation: navigation.previous,
+                        nextLocation: navigation.next,
+                        onNavigate: _navigateToChapter,
+                      ),
+                    ],
+                  );
+                },
+                loading: () => const Padding(
+                  padding: EdgeInsets.all(IaculaSpacing.md),
+                  child: IaculaShimmerList(itemCount: 10),
+                ),
+                error: (error, stackTrace) => Center(
                   child: Text(
-                    'Capítulo vazio',
+                    'Não foi possível carregar o capítulo',
                     style: context.textStyles.secondary,
                   ),
-                );
-              }
-              return ListView(
-                controller: _scrollController,
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(
-                  IaculaSpacing.md,
-                  IaculaSpacing.md,
-                  IaculaSpacing.md,
-                  IaculaSpacing.xl + MediaQuery.paddingOf(context).bottom,
                 ),
-                children: [
-                  _BibleChapterSelectableContent(
-                    verses: verses,
-                    highlights: _highlights,
-                    onToggleHighlights: _toggleHighlightsForSelection,
-                    onShareSelectedText: _shareSelectedText,
-                  ),
-                  const SizedBox(height: IaculaSpacing.md),
-                  _ChapterNavigationFooter(
-                    previousLocation: navigation.previous,
-                    nextLocation: navigation.next,
-                    onNavigate: _navigateToChapter,
-                  ),
-                ],
-              );
-            },
-            loading: () => const Padding(
-              padding: EdgeInsets.all(IaculaSpacing.md),
-              child: IaculaShimmerList(itemCount: 10),
-            ),
-            error: (error, stackTrace) => Center(
-              child: Text(
-                'Não foi possível carregar o capítulo',
-                style: context.textStyles.secondary,
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -522,12 +537,14 @@ class _ChapterEdgeSwipeDetectorState extends State<_ChapterEdgeSwipeDetector> {
 class _BibleChapterSelectableContent extends StatelessWidget {
   const _BibleChapterSelectableContent({
     required this.verses,
+    required this.fontSize,
     required this.highlights,
     required this.onToggleHighlights,
     required this.onShareSelectedText,
   });
 
   final List<BibleVerse> verses;
+  final double fontSize;
   final List<ReadingHighlight> highlights;
   final Future<void> Function({
     required List<BibleVerseHighlightRange> ranges,
@@ -715,9 +732,9 @@ class _BibleChapterSelectableContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = context.textStyles.readingBody;
+    final bodyStyle = context.textStyles.readingBody.copyWith(fontSize: fontSize);
     final verseNumberStyle = context.textStyles.secondary.copyWith(
-      fontSize: 11,
+      fontSize: (fontSize - 4).clamp(10.0, 20.0),
       fontWeight: FontWeight.bold,
       color: context.colors.primaryButton,
     );
