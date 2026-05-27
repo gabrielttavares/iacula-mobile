@@ -1738,6 +1738,20 @@
     "saints": []
   },
   {
+    "id": "indulgencia-plenaria-na-hora-da-morte",
+    "title": "Indulgência Plenária na Hora da Morte",
+    "content": "Meu Deus e Senhor, desde já aceito qualquer gênero de morte que vos aprouver mandar-me, com todas as suas angústias, penas e dores, com resignação e de boa vontade.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
     "id": "preparacao-sagrada-comunhao",
     "title": "Primeira Preparação para a Sagrada Comunhão",
     "content": "Vinde! dizeis, ó Jesus, vinde a mim todos os que sofreis e estais oprimidos, e eu vos aliviarei.",
