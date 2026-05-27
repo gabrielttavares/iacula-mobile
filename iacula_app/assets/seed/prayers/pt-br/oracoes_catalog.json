@@ -1320,6 +1320,21 @@
     "saints": []
   },
   {
+    "id": "preces",
+    "title": "Preces dos Fiéis (por São Josemaria Escrivá)",
+    "content": "Servirei! ℣ À Santíssima Trindade.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "devocoes"
+    ],
+    "saints": []
+  },
+  {
     "id": "benedictus",
     "title": "Benedíctus",
     "content": "Benedictus Dominus Deus Israel, quia visitavit et fecit redemptionem plebis suae.",
