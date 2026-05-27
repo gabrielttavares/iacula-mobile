@@ -1,7 +1,7 @@
 name: iacula_app
 description: "Iacula Flutter mobile app"
 publish_to: 'none'
-version: 1.0.22+37
+version: 1.0.23+38
 
 environment:
   sdk: ^3.11.0

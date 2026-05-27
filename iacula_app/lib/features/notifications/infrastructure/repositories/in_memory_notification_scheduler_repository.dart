@@ -20,6 +20,7 @@ final class InMemoryNotificationSchedulerRepository
       ReminderEventType.oraMedia => 304,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
+      ReminderEventType.seasonTransition => 400,
     };
   }
 

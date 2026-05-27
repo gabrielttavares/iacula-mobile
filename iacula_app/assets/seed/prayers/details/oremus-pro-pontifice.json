@@ -2,18 +2,35 @@
   "slug": "oremus-pro-pontifice",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Oração pelo Romano Pontífice",
-    "la": "Oremus pro Pontífice"
+    "pt-br": "Oração pelo Santo Padre",
+    "la": "Oremus pro Pontifice"
   },
   "blocks": {
     "pt-br": [
-      "℣ Oremos pelo nosso Pontífice (Nome).",
-      "℟ O Senhor o conserve, lhe dê vida e o torne feliz na Terra, e não o entregue em poder dos seus inimigos.",
-      "Oremos: Ó Deus, que na Vossa Providência quisestes edificar a Vossa Igreja sobre São Pedro, chefe dos Apóstolos, fazei que o nosso Papa (Nome), que constituístes sucessor de Pedro, seja para o Vosso povo o princípio e o fundamento visível da unidade da fé e da comunhão na caridade. Por Nosso Senhor Jesus Cristo, Vosso Filho, na unidade do Espírito Santo. Amém."
+      "℣. Oremos pelo nosso Pontífice Leão.",
+      "℟. O Senhor o guarde e o fortaleça, lhe dê a felicidade nesta terra e não o abandone à perversidade dos seus inimigos.",
+      "℣. Tu és Pedro,",
+      "℟. E sobre esta pedra edificarei a minha Igreja.",
+      "Oremos.",
+      "Ó Deus, pastor e guia de todos os fiéis,",
+      "olhai benigno o vosso servo, Leão,",
+      "que constituístes pastor da vossa Igreja;",
+      "concedei-lhe que, com sua palavra e exemplo",
+      "edifique aqueles a quem preside",
+      "e chegue à vida eterna",
+      "com o rebanho que lhe foi confiado.",
+      "Por Nosso Senhor Jesus Cristo.",
+      "Amém."
     ],
     "la": [
-      "℣ Oremus pro pontífice nostro N.",
-      "℟ Dóminus consérvet eum, et vivíficet eum, et beátum fáciat eum in terra, et non tradat eum in ánimam inimicórum éius."
+      "℣. Oremus pro Pontifice nostro Leone.",
+      "℟. Dominus conservet eum, et vivificet eum, et beatum faciat eum in terra, et non tradat eum in animam inimicorum eius.",
+      "℣. Tu es Petrus,",
+      "℟. Et super hanc petram aedificabo Ecclesiam meam.",
+      "Oremus.",
+      "Deus, omnium fidelium pastor et rector, famulum tuum Leonem, quem pastorem Ecclesiae tuae praeesse voluisti, propitius respice: da ei, quaesumus, verbo et exemplo, quibus praeest, proficere: ut ad vitam, una cum grege sibi credito, perveniat sempiternam.",
+      "Per Christum, Dominum nostrum.",
+      "℟. Amen."
     ]
   }
 }

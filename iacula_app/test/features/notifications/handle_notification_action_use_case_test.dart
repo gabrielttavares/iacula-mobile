@@ -11,6 +11,7 @@ final class _FakeNotificationSchedulerRepository
     implements NotificationSchedulerRepository {
   final _controller = StreamController<NotificationActionEvent>.broadcast();
   final List<ReminderEvent> scheduled = [];
+  final List<int> cancelledIds = [];
 
   @override
   Stream<NotificationActionEvent> get actions => _controller.stream;
@@ -19,7 +20,9 @@ final class _FakeNotificationSchedulerRepository
   Future<void> cancelAll() async {}
 
   @override
-  Future<void> cancelById(int id) async {}
+  Future<void> cancelById(int id) async {
+    cancelledIds.add(id);
+  }
 
   @override
   Future<void> cancelByType(ReminderEventType type) async {}
@@ -147,6 +150,75 @@ void main() {
     expect(shouldOpen, isFalse);
     expect(scheduler.scheduled, hasLength(1));
     expect(scheduler.scheduled.single.snoozeCount, 2);
+  });
+
+  test('season transition reschedules Angelus as Regina Caeli', () async {
+    final scheduler = _FakeNotificationSchedulerRepository();
+    final useCase = HandleNotificationActionUseCase(scheduler);
+
+    final shouldOpen = await useCase.call(
+      NotificationActionEvent(
+        actionId: null,
+        event: ReminderEvent(
+          type: ReminderEventType.seasonTransition,
+          title: 'Season Transition',
+          body: '',
+          scheduledAt: DateTime(2026, 4, 5, 0, 0),
+          withVibration: false,
+          isAlarm: false,
+          repeatDaily: false,
+          routeTarget: NotificationRouteTarget.home,
+          prayerSlug: 'regina-coeli',
+        ),
+      ),
+    );
+
+    expect(shouldOpen, isFalse);
+    expect(scheduler.cancelledIds, contains(200));
+
+    final angelusReschedule = scheduler.scheduled.where(
+      (e) => e.type == ReminderEventType.angelusNoon,
+    );
+    expect(angelusReschedule, hasLength(1));
+    expect(angelusReschedule.first.prayerSlug, 'regina-coeli');
+    expect(angelusReschedule.first.title, 'Regina Caeli');
+    expect(angelusReschedule.first.body, 'Hora de rezar a Regina Caeli.');
+    expect(angelusReschedule.first.repeatDaily, isTrue);
+    expect(angelusReschedule.first.isAlarm, isTrue);
+  });
+
+  test('season transition reschedules Regina Caeli back to Angelus', () async {
+    final scheduler = _FakeNotificationSchedulerRepository();
+    final useCase = HandleNotificationActionUseCase(scheduler);
+
+    final shouldOpen = await useCase.call(
+      NotificationActionEvent(
+        actionId: null,
+        event: ReminderEvent(
+          type: ReminderEventType.seasonTransition,
+          title: 'Season Transition',
+          body: '',
+          scheduledAt: DateTime(2026, 5, 25, 0, 0),
+          withVibration: false,
+          isAlarm: false,
+          repeatDaily: false,
+          routeTarget: NotificationRouteTarget.home,
+          prayerSlug: 'angelus',
+        ),
+      ),
+    );
+
+    expect(shouldOpen, isFalse);
+    expect(scheduler.cancelledIds, contains(200));
+
+    final angelusReschedule = scheduler.scheduled.where(
+      (e) => e.type == ReminderEventType.angelusNoon,
+    );
+    expect(angelusReschedule, hasLength(1));
+    expect(angelusReschedule.first.prayerSlug, 'angelus');
+    expect(angelusReschedule.first.title, 'Angelus');
+    expect(angelusReschedule.first.body, 'Hora de rezar o Angelus.');
+    expect(angelusReschedule.first.repeatDaily, isTrue);
   });
 
   test('does not reschedule after three consecutive snoozes', () async {

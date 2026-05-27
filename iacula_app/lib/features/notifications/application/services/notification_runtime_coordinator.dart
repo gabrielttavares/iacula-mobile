@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../liturgical/domain/easter_calculator.dart';
 import '../../../settings/domain/entities/settings.dart';
 import '../use_cases/schedule_core_reminders_use_case.dart';
 
@@ -12,6 +13,7 @@ typedef NotificationRebuilder = Future<void> Function(
 typedef PendingQuoteIdsFetcher = Future<List<int>> Function();
 typedef WidgetRefresher = Future<void> Function();
 typedef NotificationCanceller = Future<void> Function();
+typedef Clock = DateTime Function();
 
 final class NotificationRuntimeCoordinator {
   NotificationRuntimeCoordinator({
@@ -20,17 +22,20 @@ final class NotificationRuntimeCoordinator {
     required PendingQuoteIdsFetcher pendingQuoteIds,
     required WidgetRefresher refreshWidget,
     required NotificationCanceller cancelAll,
+    DateTime? now,
   })  : _loadSettings = loadSettings,
        _rebuild = rebuild,
        _pendingQuoteIds = pendingQuoteIds,
        _refreshWidget = refreshWidget,
-       _cancelAll = cancelAll;
+       _cancelAll = cancelAll,
+       _fixedNow = now;
 
   final SettingsLoader _loadSettings;
   final NotificationRebuilder _rebuild;
   final PendingQuoteIdsFetcher _pendingQuoteIds;
   final WidgetRefresher _refreshWidget;
   final NotificationCanceller _cancelAll;
+  final DateTime? _fixedNow;
 
   DateTime? _lastRebuildTime;
 
@@ -63,7 +68,7 @@ final class NotificationRuntimeCoordinator {
   }
 
   Future<void> _healthCheckAndRebuildIfNeeded() async {
-    final now = DateTime.now();
+    final now = _fixedNow ?? DateTime.now();
     if (_lastRebuildTime != null &&
         now.difference(_lastRebuildTime!).inSeconds < 120) {
       return;
@@ -91,9 +96,9 @@ final class NotificationRuntimeCoordinator {
 
     await _rebuild(
       settings,
-      isEasterSeason: false,
+      isEasterSeason: EasterCalculator.isWithinEasterSeason(now),
       showImmediate: false,
     );
-    _lastRebuildTime = DateTime.now();
+    _lastRebuildTime = now;
   }
 }

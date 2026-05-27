@@ -251,7 +251,8 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.laudes ||
       ReminderEventType.vespers ||
       ReminderEventType.compline ||
-      ReminderEventType.oraMedia => false,
+      ReminderEventType.oraMedia ||
+      ReminderEventType.seasonTransition => false,
     };
   }
 
@@ -418,6 +419,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.oraMedia => 304,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
+      ReminderEventType.seasonTransition => 400,
     };
   }
 
@@ -431,6 +433,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.oraMedia => 'liturgy_hours_alarm',
       ReminderEventType.customPhrase => 'custom_phrases',
       ReminderEventType.prayerIntentionReminder => 'prayer_intention_reminder',
+      ReminderEventType.seasonTransition => 'season_transition',
     };
   }
 
@@ -444,6 +447,7 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.oraMedia => 'Liturgia das Horas',
       ReminderEventType.customPhrase => 'Minhas frases',
       ReminderEventType.prayerIntentionReminder => 'Intenções',
+      ReminderEventType.seasonTransition => 'Transição litúrgica',
     };
   }
 
@@ -458,6 +462,8 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.customPhrase => 'Notificações de frases personalizadas',
       ReminderEventType.prayerIntentionReminder =>
         'Lembretes para rezar por intenções',
+      ReminderEventType.seasonTransition =>
+        'Transição automática do tempo litúrgico',
     };
   }
 }

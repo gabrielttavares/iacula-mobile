@@ -82,6 +82,30 @@ void main() {
     },
   );
 
+  test('seasonTransition event type serializes and restores through payload roundtrip', () {
+    final event = ReminderEvent(
+      type: ReminderEventType.seasonTransition,
+      title: 'Season Transition',
+      body: '',
+      scheduledAt: DateTime(2026, 4, 5, 0, 0),
+      withVibration: false,
+      isAlarm: false,
+      repeatDaily: false,
+      routeTarget: NotificationRouteTarget.home,
+      prayerSlug: 'regina-coeli',
+    );
+
+    final payload = NotificationActionEvent(
+      actionId: null,
+      event: event,
+    ).toPayload();
+    final restored = NotificationActionEvent.fromPayload(payload);
+
+    expect(restored, isNotNull);
+    expect(restored!.event.type, ReminderEventType.seasonTransition);
+    expect(restored.event.prayerSlug, 'regina-coeli');
+  });
+
   test('preserves prayer slug through payload roundtrip', () {
     final event = ReminderEvent(
       type: ReminderEventType.angelusNoon,

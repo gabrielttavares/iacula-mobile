@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show SelectableText;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -35,177 +36,290 @@ class PrayerCatalogDetailScreen extends ConsumerStatefulWidget {
 class _PrayerCatalogDetailScreenState
     extends ConsumerState<PrayerCatalogDetailScreen> {
   String _selectedLanguage = 'pt-br';
+  Future<double>? _fontSizeFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFontSize();
+  }
+
+  void _loadFontSize() {
+    _fontSizeFuture = ref
+        .read(getSettingsUseCaseProvider)
+        .call()
+        .then((settings) => settings.prayerFontSize);
+  }
 
   @override
   Widget build(BuildContext context) {
     final detailAsync = ref.watch(_prayerDetailProvider(widget.entry.slug));
-    final settingsAsync = ref.watch(getSettingsUseCaseProvider).call();
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(widget.entry.title),
-        backgroundColor: context.colors.background,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _PrayerAlarmButton(entry: widget.entry),
-            _PrayerBookmarkButton(entry: widget.entry),
-          ],
-        ),
-      ),
-      child: SafeArea(
-        child: FutureBuilder(
-          future: settingsAsync,
-          builder: (context, settingsSnapshot) {
-            final fontSize = settingsSnapshot.data?.prayerFontSize ?? 15.0;
+      child: FutureBuilder<double>(
+        future: _fontSizeFuture,
+        builder: (context, fontSizeSnapshot) {
+          final fontSize = fontSizeSnapshot.data ?? 15.0;
+          final navigationTitle = _resolveNavigationTitle(detailAsync);
 
-            return detailAsync.when(
-              loading: () => Padding(
-                padding: const EdgeInsets.all(IaculaSpacing.md),
-                child: Column(
-                  children: const [
-                    IaculaShimmerText(width: 200, height: 20),
-                    SizedBox(height: IaculaSpacing.md),
-                    IaculaShimmerText(),
-                    SizedBox(height: IaculaSpacing.xs),
-                    IaculaShimmerText(),
-                    SizedBox(height: IaculaSpacing.xs),
-                    IaculaShimmerText(width: 160),
+          return CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              CupertinoSliverNavigationBar(
+                backgroundColor: context.colors.background,
+                border: null,
+                largeTitle: const SizedBox.shrink(),
+                middle: Text(
+                  navigationTitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                alwaysShowMiddle: false,
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _PrayerAlarmButton(entry: widget.entry),
+                    _PrayerBookmarkButton(entry: widget.entry),
                   ],
                 ),
               ),
-              error: (error, stackTrace) => Center(
-                child: IaculaErrorState(
-                  title: 'Erro ao carregar oracao',
-                  message: 'Tente novamente para abrir o conteudo.',
-                  onRetry: () => ref.invalidate(
-                    _prayerDetailProvider(widget.entry.slug),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    IaculaSpacing.md,
+                    0,
+                    IaculaSpacing.md,
+                    IaculaSpacing.sm,
+                  ),
+                  child: Text(
+                    navigationTitle,
+                    style: CupertinoTheme.of(context)
+                        .textTheme
+                        .navLargeTitleTextStyle,
                   ),
                 ),
               ),
-              data: (detail) {
-                final available = detail.blocksByLanguage.keys.toList(
-                  growable: false,
-                );
-                final selectedLanguage =
-                    _isLanguageAvailable(_selectedLanguage, available)
-                    ? _selectedLanguage
-                    : (available.contains(detail.defaultLanguage)
-                          ? detail.defaultLanguage
-                          : (available.isNotEmpty ? available.first : 'pt-br'));
-
-                final contentBlocks =
-                    detail.blocksByLanguage[selectedLanguage] ??
-                    const <String>['Conteúdo indisponível.'];
-
-                return Padding(
-                  padding: const EdgeInsets.all(IaculaSpacing.md),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          if (available.length > 1) ...[
-                            Expanded(
-                              child: CupertinoSlidingSegmentedControl<String>(
-                                groupValue: selectedLanguage,
-                                children: const {
-                                  'pt-br': Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 12),
-                                    child: Text('PT'),
-                                  ),
-                                  'la': Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 12),
-                                    child: Text('LAT'),
-                                  ),
-                                },
-                                onValueChanged: (value) {
-                                  if (value == null) {
-                                    return;
-                                  }
-                                  if (_isLanguageAvailable(value, available)) {
-                                    setState(() => _selectedLanguage = value);
-                                  }
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: IaculaSpacing.md),
-                          ],
-                          const FontSizeControls(),
-                        ],
-                      ),
-                      const SizedBox(height: IaculaSpacing.lg),
-                      Text(
-                        detail.titlesByLanguage[selectedLanguage] ??
-                            widget.entry.title,
-                        style: context.textStyles.sectionTitle.copyWith(
-                          fontSize: fontSize + 7,
-                        ),
-                      ),
-                  const SizedBox(height: IaculaSpacing.lg),
-                  Expanded(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: ListView.separated(
-                        key: ValueKey<String>(selectedLanguage),
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(
-                          bottom: MediaQuery.paddingOf(context).bottom +
-                              IaculaSpacing.md,
-                        ),
-                        itemCount: contentBlocks.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: IaculaSpacing.md),
-                        itemBuilder: (context, index) {
-                          final block = contentBlocks[index];
-                          if (block.startsWith('℣ ') || block.startsWith('℟ ')) {
-                            final marker = block.substring(0, 1);
-                            final text = block.substring(2);
-                            return Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: '$marker. ',
-                                    style: context.textStyles.readingBody
-                                        .copyWith(
-                                      fontSize: fontSize,
-                                      color: CupertinoColors.systemRed,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: text,
-                                    style: context.textStyles.readingBody
-                                        .copyWith(fontSize: fontSize),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                          return Text(
-                            block,
-                            style: context.textStyles.readingBody.copyWith(
-                              fontSize: fontSize,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
+              ...detailAsync.when(
+                loading: () => _buildLoadingContentSlivers(),
+                error: (error, stackTrace) => _buildErrorContentSlivers(),
+                data: (detail) => _buildLoadedContentSlivers(
+                  detail: detail,
+                  fontSize: fontSize,
+                ),
               ),
-            );
-          },
-        );
-      },
-    ),
-    ),
+            ],
+          );
+        },
+      ),
     );
+  }
+
+  String _resolveNavigationTitle(AsyncValue<PrayerDetail> detailAsync) {
+    return detailAsync.when(
+      data: (detail) {
+        final available =
+            detail.blocksByLanguage.keys.toList(growable: false);
+        final selectedLanguage = _resolveSelectedLanguage(
+          detail: detail,
+          available: available,
+        );
+        return detail.titlesByLanguage[selectedLanguage] ??
+            widget.entry.title;
+      },
+      loading: () => widget.entry.title,
+      error: (error, stackTrace) => widget.entry.title,
+    );
+  }
+
+  List<Widget> _buildLoadingContentSlivers() {
+    return [
+      SliverPadding(
+        padding: const EdgeInsets.all(IaculaSpacing.md),
+        sliver: SliverToBoxAdapter(
+          child: Column(
+            children: const [
+              IaculaShimmerText(width: 200, height: 20),
+              SizedBox(height: IaculaSpacing.md),
+              IaculaShimmerText(),
+              SizedBox(height: IaculaSpacing.xs),
+              IaculaShimmerText(),
+              SizedBox(height: IaculaSpacing.xs),
+              IaculaShimmerText(width: 160),
+            ],
+          ),
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> _buildErrorContentSlivers() {
+    return [
+      SliverFillRemaining(
+        child: IaculaErrorState(
+          title: 'Erro ao carregar oracao',
+          message: 'Tente novamente para abrir o conteudo.',
+          onRetry: () => ref.invalidate(
+            _prayerDetailProvider(widget.entry.slug),
+          ),
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> _buildLoadedContentSlivers({
+    required PrayerDetail detail,
+    required double fontSize,
+  }) {
+    final available = detail.blocksByLanguage.keys.toList(growable: false);
+    final selectedLanguage = _resolveSelectedLanguage(
+      detail: detail,
+      available: available,
+    );
+
+    final contentBlocks =
+        detail.blocksByLanguage[selectedLanguage] ??
+        const <String>['Conteúdo indisponível.'];
+
+    final bottomPadding =
+        MediaQuery.paddingOf(context).bottom + IaculaSpacing.md;
+
+    return [
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            IaculaSpacing.md,
+            IaculaSpacing.md,
+            IaculaSpacing.md,
+            IaculaSpacing.lg,
+          ),
+          child: Row(
+            children: [
+              if (available.length > 1) ...[
+                Expanded(
+                  child: CupertinoSlidingSegmentedControl<String>(
+                    groupValue: selectedLanguage,
+                    children: const {
+                      'pt-br': Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        child: Text('PT'),
+                      ),
+                      'la': Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        child: Text('LAT'),
+                      ),
+                    },
+                    onValueChanged: (value) {
+                      if (value == null) {
+                        return;
+                      }
+                      if (_isLanguageAvailable(value, available)) {
+                        setState(() => _selectedLanguage = value);
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: IaculaSpacing.md),
+              ],
+              const FontSizeControls(),
+            ],
+          ),
+        ),
+      ),
+      SliverPadding(
+        key: ValueKey<String>(selectedLanguage),
+        padding: EdgeInsets.fromLTRB(
+          IaculaSpacing.md,
+          0,
+          IaculaSpacing.md,
+          bottomPadding,
+        ),
+        sliver: SliverToBoxAdapter(
+          child: SelectableText.rich(
+            TextSpan(
+              children: _buildPrayerTextSpans(
+                blocks: contentBlocks,
+                fontSize: fontSize,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ];
+  }
+
+  String _resolveSelectedLanguage({
+    required PrayerDetail detail,
+    required List<String> available,
+  }) {
+    if (_isLanguageAvailable(_selectedLanguage, available)) {
+      return _selectedLanguage;
+    }
+    if (available.contains(detail.defaultLanguage)) {
+      return detail.defaultLanguage;
+    }
+    return available.isNotEmpty ? available.first : 'pt-br';
+  }
+
+  List<InlineSpan> _buildPrayerTextSpans({
+    required List<String> blocks,
+    required double fontSize,
+  }) {
+    final spans = <InlineSpan>[];
+    for (var index = 0; index < blocks.length; index++) {
+      if (index > 0) {
+        spans.add(const TextSpan(text: '\n\n'));
+      }
+      final block = blocks[index];
+
+      if (_isItalicBlock(block)) {
+        spans.add(TextSpan(
+          text: block.substring(1, block.length - 1),
+          style: context.textStyles.readingBody.copyWith(
+            fontSize: fontSize,
+            fontStyle: FontStyle.italic,
+            color: context.colors.textSecondary,
+          ),
+        ));
+      } else if (block.startsWith('℣ ') || block.startsWith('℟ ')) {
+        final marker = block.substring(0, 1);
+        final text = block.substring(2);
+        spans.add(TextSpan(
+          children: [
+            TextSpan(
+              text: '$marker. ',
+              style: context.textStyles.readingBody.copyWith(
+                fontSize: fontSize,
+                color: CupertinoColors.systemRed,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            TextSpan(
+              text: text,
+              style: context.textStyles.readingBody.copyWith(
+                fontSize: fontSize,
+              ),
+            ),
+          ],
+        ));
+      } else {
+        spans.add(TextSpan(
+          text: block,
+          style: context.textStyles.readingBody.copyWith(fontSize: fontSize),
+        ));
+      }
+    }
+    return spans;
   }
 
   bool _isLanguageAvailable(String language, List<String> available) {
     return available.contains(language);
+  }
+
+  bool _isItalicBlock(String block) {
+    return block.startsWith('*') &&
+        block.endsWith('*') &&
+        block.length > 2;
   }
 }
 

@@ -146,6 +146,51 @@ void main() {
       expect(delegate.refreshWidgetCalls, 1);
     });
   });
+
+  group('health check Easter season', () {
+    test('passes correct isEasterSeason when rebuilding during Easter', () async {
+      // 2026 Easter: April 5 – Pentecost: May 24
+      final easterDate = DateTime(2026, 4, 10, 12, 0);
+
+      delegate = _FakeRebuildDelegate();
+      delegate.nextPendingIds = [];
+
+      coordinator = NotificationRuntimeCoordinator(
+        loadSettings: () async => enabledSettings(),
+        rebuild: delegate.rebuild,
+        pendingQuoteIds: delegate.pendingQuoteIds,
+        refreshWidget: delegate.refreshWidget,
+        cancelAll: delegate.cancelAll,
+        now: easterDate,
+      );
+
+      await coordinator.handleAppResume();
+
+      expect(delegate.rebuildCalls, 1);
+      expect(delegate.lastIsEasterSeason, isTrue);
+    });
+
+    test('passes isEasterSeason false when rebuilding outside Easter', () async {
+      final ordinaryDate = DateTime(2026, 2, 15, 12, 0);
+
+      delegate = _FakeRebuildDelegate();
+      delegate.nextPendingIds = [];
+
+      coordinator = NotificationRuntimeCoordinator(
+        loadSettings: () async => enabledSettings(),
+        rebuild: delegate.rebuild,
+        pendingQuoteIds: delegate.pendingQuoteIds,
+        refreshWidget: delegate.refreshWidget,
+        cancelAll: delegate.cancelAll,
+        now: ordinaryDate,
+      );
+
+      await coordinator.handleAppResume();
+
+      expect(delegate.rebuildCalls, 1);
+      expect(delegate.lastIsEasterSeason, isFalse);
+    });
+  });
 }
 
 final class _FakeRebuildDelegate {

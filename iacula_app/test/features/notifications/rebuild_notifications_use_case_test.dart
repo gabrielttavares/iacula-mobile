@@ -7,6 +7,7 @@ import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
+import 'package:iacula_app/features/notifications/application/use_cases/schedule_season_transitions_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
@@ -231,6 +232,47 @@ void main() {
     expect(
       scheduler.events.where((e) => e.type == ReminderEventType.quoteInterval).length,
       64,
+    );
+  });
+
+  test('rebuild schedules season transition notifications', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final rebuild = _makeRebuild(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return const Quote(
+          text: 'x',
+          dayOfWeek: 1,
+          theme: 't',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+    );
+
+    final settings = Settings.defaults.copyWith(notificationsEnabled: true);
+    // January 2026: both Easter (April 5) and Pentecost+1 (May 25) are future
+    final now = DateTime(2026, 1, 15, 10, 0);
+
+    await rebuild.call(
+      settings,
+      isEasterSeason: false,
+      showImmediate: false,
+      now: now,
+    );
+
+    final transitions = scheduler.events
+        .where((e) => e.type == ReminderEventType.seasonTransition)
+        .toList()
+      ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+
+    expect(transitions, hasLength(2));
+    expect(
+      transitions[0].scheduledId,
+      ScheduleSeasonTransitionsUseCase.easterTransitionId,
+    );
+    expect(
+      transitions[1].scheduledId,
+      ScheduleSeasonTransitionsUseCase.pentecostTransitionId,
     );
   });
 }

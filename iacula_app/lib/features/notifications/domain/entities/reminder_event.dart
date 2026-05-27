@@ -7,6 +7,7 @@ enum ReminderEventType {
   oraMedia,
   customPhrase,
   prayerIntentionReminder,
+  seasonTransition,
 }
 
 enum NotificationRouteTarget {
@@ -183,6 +184,7 @@ final class ReminderEvent {
       ReminderEventType.customPhrase => NotificationRouteTarget.home,
       ReminderEventType.prayerIntentionReminder =>
         NotificationRouteTarget.prayerIntention,
+      ReminderEventType.seasonTransition => NotificationRouteTarget.home,
     };
   }
 }

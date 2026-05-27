@@ -12,6 +12,7 @@ import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 import 'schedule_core_reminders_use_case.dart';
 import 'schedule_liturgy_reminders_use_case.dart';
+import 'schedule_season_transitions_use_case.dart';
 
 final class RebuildNotificationsUseCase {
   RebuildNotificationsUseCase({
@@ -90,6 +91,7 @@ final class RebuildNotificationsUseCase {
       _schedulePhraseNotifications.call(settings: settings),
       _scheduleLiturgyReminders.call(settings, now: now),
       _scheduleIntentionNotifications.call(),
+      ScheduleSeasonTransitionsUseCase(_scheduler).call(now: now),
     ]);
 
     final pendingAfter = await _scheduler.pendingNotificationIds();
