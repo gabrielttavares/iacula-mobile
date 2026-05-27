@@ -1,13 +1,19 @@
 {
   "slug": "oremus-pro-pontifice",
-  "default_language": "la",
+  "default_language": "pt-br",
   "titles": {
-    "la": "Oremus pro pontífice"
+    "pt-br": "Oração pelo Romano Pontífice",
+    "la": "Oremus pro Pontífice"
   },
   "blocks": {
+    "pt-br": [
+      "℣ Oremos pelo nosso Pontífice (Nome).",
+      "℟ O Senhor o conserve, lhe dê vida e o torne feliz na Terra, e não o entregue em poder dos seus inimigos.",
+      "Oremos: Ó Deus, que na Vossa Providência quisestes edificar a Vossa Igreja sobre São Pedro, chefe dos Apóstolos, fazei que o nosso Papa (Nome), que constituístes sucessor de Pedro, seja para o Vosso povo o princípio e o fundamento visível da unidade da fé e da comunhão na caridade. Por Nosso Senhor Jesus Cristo, Vosso Filho, na unidade do Espírito Santo. Amém."
+    ],
     "la": [
-      "Oremus pro pontífice nostro N.",
-      "Dóminus consérvet eum,et vivíficet eum,et beátum fáciat eum in terra,et non tradat eum in ánimam inimicórum éius."
+      "℣ Oremus pro pontífice nostro N.",
+      "℟ Dóminus consérvet eum, et vivíficet eum, et beátum fáciat eum in terra, et non tradat eum in ánimam inimicórum éius."
     ]
   }
 }

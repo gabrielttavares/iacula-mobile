@@ -1,0 +1,17 @@
+{
+  "slug": "consagracao-do-dia",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Consagração do Dia",
+    "la": "Dirígere et sanctificáre"
+  },
+  "blocks": {
+    "pt-br": [
+      "Senhor Deus, Rei do Céu e da Terra, dignai-vos dirigir e santificar, mandar e governar os nossos corações e os nossos corpos, os nossos pensamentos, as nossas palavras e as nossas ações, segundo a Vossa lei e no cumprimento dos Vossos Mandamentos, a fim de que aqui e eternamente com Vosso auxílio mereçamos alcançar a salvação e a liberdade, ó Salvador do mundo, que viveis e reinais por todos os séculos dos séculos. Amém.",
+      "Pai-Nosso, Ave-Maria, Glória."
+    ],
+    "la": [
+      "Dirígere et sanctificáre, régere et gubernáre dignáre, Dómine Deus, Rex cæli et terræ, hódie corda et córpora nostra, sensus, sermónes et actus nostros in lege tua et in opéribus mandatórum tuórum, ut hic et in ætérnum, te auxiliánte, salvi et líberi esse mereámur, Salvátor mundi, qui vivis et regnas in sǽcula sæculórum. Amen."
+    ]
+  }
+}

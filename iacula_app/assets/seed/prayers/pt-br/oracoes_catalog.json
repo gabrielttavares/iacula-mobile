@@ -1320,21 +1320,6 @@
     "saints": []
   },
   {
-    "id": "preces",
-    "title": "Preces",
-    "content": "Servirei! ℣ À Santíssima Trindade.",
-    "section_id": "outras-devocoes",
-    "section_title": "Outras Devoções, Hinos e Salmos",
-    "languages": [
-      "pt-br",
-      "la"
-    ],
-    "theme": [
-      "devocoes"
-    ],
-    "saints": []
-  },
-  {
     "id": "benedictus",
     "title": "Benedíctus",
     "content": "Benedictus Dominus Deus Israel, quia visitavit et fecit redemptionem plebis suae.",
@@ -1454,15 +1439,16 @@
   },
   {
     "id": "oremus-pro-pontifice",
-    "title": "Oremus pro pontífice",
-    "content": "Oremus pro pontífice nostro N. Dóminus consérvet eum,et vivíficet eum,et beátum fáciat eum in terra,et non tradat eum in ánimam inimicórum éius.",
-    "section_id": "hinos",
-    "section_title": "Hinos",
+    "title": "Oração pelo Romano Pontífice",
+    "content": "Oremos pelo nosso Pontífice (Nome). O Senhor o conserve, lhe dê vida e o torne feliz na Terra, e não o entregue em poder dos seus inimigos.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
     "languages": [
+      "pt-br",
       "la"
     ],
     "theme": [
-      "hinos"
+      "outras-devocoes"
     ],
     "saints": []
   },
@@ -1525,5 +1511,305 @@
     "saints": [
       "sao-bento"
     ]
+  },
+  {
+    "id": "oferecimento-i",
+    "title": "Oferecimento I",
+    "content": "Meu Senhor e meu Deus, humildemente Vos adoro em união com todos os anjos e santos.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "outras-devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oferecimento-ii",
+    "title": "Oferecimento II",
+    "content": "Inspirai, Senhor, as nossas ações, e ajudai-nos a realizá-las, para que em Vós comece e para Vós termine tudo aquilo que fizermos.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "outras-devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "consagracao-do-dia",
+    "title": "Consagração do Dia",
+    "content": "Senhor Deus, Rei do Céu e da Terra, dignai-vos dirigir e santificar, mandar e governar os nossos corações e os nossos corpos.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "outras-devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-sao-miguel-arcanjo-longa",
+    "title": "Oração a São Miguel Arcanjo (Leão XIII)",
+    "content": "Ó glorioso príncipe da milícia celeste, São Miguel Arcanjo, defendei-nos no combate e na terrível luta contra os principados e as potestades.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "outras-devocoes",
+      "protecao"
+    ],
+    "saints": [
+      "sao-miguel-arcanjo"
+    ]
+  },
+  {
+    "id": "oracao-santa-teresinha-sacerdotes",
+    "title": "Oração de Santa Teresinha pelos Sacerdotes",
+    "content": "Ó Jesus, Sacerdote Eterno, guardai os Vossos sacerdotes no Vosso sagrado Coração.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "outras-devocoes"
+    ],
+    "saints": [
+      "santa-teresinha"
+    ]
+  },
+  {
+    "id": "oracao-cardeal-leme-clero",
+    "title": "Oração do Cardeal Leme pelo Clero",
+    "content": "Deixai, ó Jesus, que em Vosso Coração Eucarístico, depositemos as mais ardentes preces pelo nosso clero.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "outras-devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-sao-pio-x-santa-igreja",
+    "title": "Oração a São Pio X pela Santa Igreja de Deus",
+    "content": "Ó Santo Pontífice, fiel servo do Senhor, fiel e humilde discípulo do divino Mestre.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "outras-devocoes"
+    ],
+    "saints": [
+      "sao-pio-x"
+    ]
+  },
+  {
+    "id": "oracao-pelo-bispo",
+    "title": "Oração pelo Bispo",
+    "content": "Oremos pelo nosso Bispo (Nome). Que permaneça firme e apascente a grei com a Vossa fortaleza, Senhor.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "outras-devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-santa-rita-causas-impossiveis",
+    "title": "Oração a Santa Rita de Cássia por Causas Impossíveis",
+    "content": "Ó Poderosa e gloriosa Santa Rita, eis a vossos pés uma alma desamparada que, necessitando de auxílio, a vós recorre.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": [
+      "santa-rita-de-cassia"
+    ]
+  },
+  {
+    "id": "oracao-sao-francisco-xavier-conversao",
+    "title": "Oração de São Francisco Xavier pela Conversão dos Infiéis",
+    "content": "Deus eterno, Criador de todas as coisas, lembrai-vos de que as almas dos infiéis são obras de Vossas mãos.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": [
+      "sao-francisco-xavier"
+    ]
+  },
+  {
+    "id": "oracao-anjo-guarda-brasil",
+    "title": "Oração ao Santo Anjo da Guarda do Brasil",
+    "content": "Santo Anjo da Guarda do Brasil, a vós que Deus confiou a proteção desta nação, nós vos suplicamos.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas",
+      "protecao"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-antes-de-viajar",
+    "title": "Oração antes de Viajar",
+    "content": "Senhor, Tu conheces todos os caminhos e, diante de Ti, não há segredos.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "ato-de-abandono-divina-providencia",
+    "title": "Ato de Abandono à Divina Providência",
+    "content": "Ó meu Deus, eu não sei o que hoje me há de suceder, ignoro-o por completo; mas sei certamente que nada poderá acontecer-me que Tu não tenhas previsto.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "boa-preparacao-para-a-morte",
+    "title": "Boa Preparação para a Morte — Ato de Protestações",
+    "content": "Meu Deus, prostrado na Vossa santíssima presença, Vos adoro e faço as seguintes protestações como já estivesse prestes a passar desta vida para a eternidade.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "indulgencia-plenaria-hora-da-morte",
+    "title": "Indulgência Plenária na Hora da Morte",
+    "content": "Meu Deus e Senhor, desde já aceito qualquer gênero de morte que vos aprouver mandar-me.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "suplica-maria-mae-agonizantes",
+    "title": "Súplica a Maria, Mãe dos Agonizantes",
+    "content": "Ó Maria, concebida sem pecado, rogai por nós que recorremos a vós. Ó refúgio dos pecados, Mãe dos agonizantes.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas",
+      "mariano"
+    ],
+    "saints": []
+  },
+  {
+    "id": "suplica-a-maria",
+    "title": "Súplica a Maria",
+    "content": "Santíssima Virgem Maria, minha advogada e Mãe, vós, depois de Deus, sois e sereis a minha esperança.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas",
+      "mariano"
+    ],
+    "saints": []
+  },
+  {
+    "id": "suplica-aos-santos",
+    "title": "Súplica aos Santos",
+    "content": "São José, meu glorioso protetor, São Miguel Arcanjo, Anjo da minha guarda, meus santos padroeiros, vinde todos em meu auxílio.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": [
+      "sao-jose",
+      "sao-miguel-arcanjo"
+    ]
+  },
+  {
+    "id": "suplica-a-jesus",
+    "title": "Súplica a Jesus",
+    "content": "E Vós, meu amor crucificado, Vós, meu Jesus, que quisestes escolher uma morte tão dolorosa para que a minha fosse feliz.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "preparacao-sagrada-comunhao",
+    "title": "Primeira Preparação para a Sagrada Comunhão",
+    "content": "Vinde! dizeis, ó Jesus, vinde a mim todos os que sofreis e estais oprimidos, e eu vos aliviarei.",
+    "section_id": "preparacao-santa-missa",
+    "section_title": "Preparação para a Santa Missa",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "preparacao-santa-missa",
+      "eucaristia"
+    ],
+    "saints": []
   }
 ]

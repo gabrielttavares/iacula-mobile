@@ -11,5 +11,7 @@
   "trabalho": {"section_id": "vida-ordinaria", "section_title": "Vida Ordinária"},
   "devocoes": {"section_id": "devocoes", "section_title": "Devoções"},
   "defuntos": {"section_id": "defuntos", "section_title": "Sufrágios pelos Defuntos"},
-  "diversos": {"section_id": "diversos", "section_title": "Orações Diversas"}
+  "diversos": {"section_id": "diversos", "section_title": "Orações Diversas"},
+  "oracoes-da-manha": {"section_id": "oracoes-da-manha", "section_title": "Orações da Manhã"},
+  "santa-igreja": {"section_id": "santa-igreja", "section_title": "Orações pela Santa Igreja"}
 }

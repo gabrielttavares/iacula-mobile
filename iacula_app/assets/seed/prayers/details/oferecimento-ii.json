@@ -1,0 +1,18 @@
+{
+  "slug": "oferecimento-ii",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oferecimento II",
+    "la": "Actiones nostras"
+  },
+  "blocks": {
+    "pt-br": [
+      "Inspirai, Senhor, as nossas ações, e ajudai-nos a realizá-las, para que em Vós comece e para Vós termine tudo aquilo que fizermos.",
+      "Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Actiones nostras, quaesumus, Domine, aspirando praeveni et adiuvando prosequere: ut cuncta nostra oratio et operatio a te semper incipiat, et per te coepta finiatur.",
+      "Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

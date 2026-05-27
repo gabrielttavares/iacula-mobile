@@ -1,0 +1,13 @@
+{
+  "slug": "oracao-anjo-guarda-brasil",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração ao Santo Anjo da Guarda do Brasil"
+  },
+  "blocks": {
+    "pt-br": [
+      "Santo Anjo da Guarda do Brasil, a vós que Deus confiou a proteção desta nação, nós vos suplicamos: guardai o nosso povo, defendei-o dos perigos que o ameaçam, iluminai os nossos governantes e todos os que têm responsabilidade sobre o destino desta pátria.",
+      "Intercedei junto a Deus para que o Brasil seja fiel à sua vocação cristã e caminhe sempre na verdade, na justiça e na paz. Amém."
+    ]
+  }
+}

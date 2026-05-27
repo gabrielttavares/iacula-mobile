@@ -1,0 +1,14 @@
+{
+  "slug": "oracao-pelo-bispo",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração pelo Bispo"
+  },
+  "blocks": {
+    "pt-br": [
+      "Oremos pelo nosso Bispo (Nome).",
+      "Que permaneça firme e apascente a grei com a Vossa fortaleza, Senhor, conforme a grandeza do Vosso nome.",
+      "Oremos: Ó Deus, Pastor eterno dos fiéis, que governais com amor a Vossa Igreja por diversos ministérios, dai que o Vosso servo (Nome), colocado à frente do Vosso povo, presida em nome de Cristo o rebanho de que é pastor, sendo mestre fiel da doutrina, sacerdote da santa liturgia e servidor daqueles que governa. Por Nosso Senhor Jesus Cristo, Vosso Filho, na unidade do Espírito Santo. Amém."
+    ]
+  }
+}
