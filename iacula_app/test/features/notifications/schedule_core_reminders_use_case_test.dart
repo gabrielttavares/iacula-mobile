@@ -99,7 +99,7 @@ void main() {
       lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
     );
 
-    // interval 3h, default window 08:00-22:00 -> 5 slots/weekday -> 35 cells.
+    // interval 3h, default window 07:00-22:00 -> 6 slots/weekday -> 42 cells.
     final settings = Settings.defaults.copyWith(intervalMinutes: 180);
     await useCase(
       settings,
@@ -111,12 +111,12 @@ void main() {
         .where((e) => e.type == ReminderEventType.quoteInterval)
         .toList();
 
-    expect(quoteEvents, hasLength(35));
+    expect(quoteEvents, hasLength(42));
     expect(quoteEvents.every((e) => e.repeatWeekly), isTrue);
 
     // Ids are stable, unique, and within the reserved range.
     final ids = quoteEvents.map((e) => e.scheduledId!).toSet();
-    expect(ids.length, 35);
+    expect(ids.length, 42);
     expect(ids.every((id) => id >= 9000 && id < 9000 + 7 * 6), isTrue);
   });
 

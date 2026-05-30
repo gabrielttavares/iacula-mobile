@@ -288,7 +288,7 @@ void main() {
       final rebuild = _makeRebuild(scheduler, history);
 
       final now = DateTime(2026, 5, 12, 8, 0);
-      // interval 180m, window 08:00-22:00 -> 5 slots/weekday -> 35 cells.
+      // interval 180m, window 07:00-22:00 -> 6 slots/weekday -> 42 cells.
       await rebuild.call(
         _baseSettings(intervalMinutes: 180),
         isEasterSeason: false,
@@ -300,7 +300,7 @@ void main() {
           .where((e) => e.type == ReminderEventType.quoteInterval)
           .toList();
 
-      expect(quoteEvents.length, 35);
+      expect(quoteEvents.length, 42);
       // Every cell is an OS-owned weekly repeat.
       expect(quoteEvents.every((e) => e.repeatWeekly), isTrue);
 
@@ -698,7 +698,7 @@ void main() {
 
       final now = DateTime(2026, 5, 12, 8, 0);
 
-      // 180m interval over the 08:00-22:00 window -> 5 slots/weekday.
+      // 180m interval over 07:00-22:00 -> 6 slots/weekday (capped).
       await rebuild.call(
         _baseSettings(intervalMinutes: 180),
         isEasterSeason: false,
@@ -708,9 +708,9 @@ void main() {
       final cellsAt180 = scheduler.events
           .where((e) => e.type == ReminderEventType.quoteInterval)
           .length;
-      expect(cellsAt180, 5 * 7);
+      expect(cellsAt180, 6 * 7);
 
-      // 360m interval -> 3 slots/weekday (08:00, 14:00, 20:00).
+      // 360m interval over 07:00-22:00 -> 3 slots/weekday (07:00, 13:00, 19:00).
       await rebuild.call(
         _baseSettings(intervalMinutes: 360),
         isEasterSeason: false,

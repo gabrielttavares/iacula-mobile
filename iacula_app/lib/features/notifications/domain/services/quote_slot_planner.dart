@@ -1,7 +1,7 @@
 import 'quiet_hours_checker.dart';
 
 /// Default daily active window used when quiet hours are disabled.
-const int kQuoteWindowStartMinutes = 8 * 60; // 08:00
+const int kQuoteWindowStartMinutes = 7 * 60; // 07:00
 const int kQuoteWindowEndMinutes = 22 * 60; // 22:00
 
 /// Maximum quote notification slots per weekday. With a 7-weekday grid this

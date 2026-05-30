@@ -64,14 +64,14 @@ Replace `now + i*interval` drifting slots with **fixed daily clock times** sprea
 across a daily active window. The same set of clock times applies to every weekday:
 
 - Active window: the part of the day outside quiet hours (reuse `QuietHoursChecker`).
-  When quiet hours are disabled, default window `08:00–22:00` (constants, tunable).
+  When quiet hours are disabled, default window `07:00–22:00` (constants, tunable).
 - Slots per weekday = `floor(activeWindowMinutes / intervalMinutes)`, clamped to
   `kMaxQuoteSlotsPerWeekday = 6` (max) and 1 (min).
 - Slot times = walk from the window start in `intervalMinutes` steps, skipping any time
   that lands in quiet hours, until the window end or the slot cap is reached.
 - Times are whole-minute, deterministic for a given (interval, quiet-hours) pair.
 
-Example: interval 3h, window 08:00–22:00 → 08:00, 11:00, 14:00, 17:00, 20:00 (5 slots).
+Example: interval 3h, window 07:00–22:00 → 07:00, 10:00, 13:00, 16:00, 19:00, 22:00 (6 slots).
 
 The existing interval picker UI stays meaningful: smaller interval → more slots/day.
 
@@ -207,5 +207,5 @@ predicted-row writes also lets us drop the `clearBetweenExcept` churn entirely.
    future quote rows. Keep the immediate-notification delivery row + last-delivered card
    (as today). The grid registration no longer touches the history table. This ends the
    churn behind the original display bug; the tab reflects real deliveries.
-2. **Default active window** (quiet hours off) — `08:00–22:00`, as constants.
+2. **Default active window** (quiet hours off) — `07:00–22:00`, as constants.
 3. **`kMaxQuoteSlotsPerWeekday = 6`** — 7 × 6 = 42, ~7 cushion under the 64 cap.
