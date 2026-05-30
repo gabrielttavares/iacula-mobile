@@ -90,10 +90,6 @@ final class RebuildNotificationsUseCase {
     // liturgy hours → prayer intentions (promises) → custom phrases → quotes.
     final budget = NotificationBudget(capacity: maxPendingNotifications);
 
-    // Angelus daily repeat (id 200) is scheduled inside the quote pass below but
-    // is sacred, so reserve its slot up front.
-    if (settings.angelusEnabled) budget.reserve(1);
-
     bool isQuietAt(DateTime time) =>
         settings.quietHoursEnabled &&
         QuietHoursChecker.isDuringQuietHours(
@@ -102,31 +98,30 @@ final class RebuildNotificationsUseCase {
           settings.quietHoursEnd,
         );
 
+    // Tiers that schedule by fixed id (season transitions + bridge, liturgy)
+    // run first and own their slots. The quote pass later also schedules the
+    // Angelus daily repeat and the immediate notification, so reserve those up
+    // front too — otherwise intentions/phrases could fill the slots they need.
     await ScheduleSeasonTransitionsUseCase(_scheduler).call(
       now: now,
       angelusEnabled: settings.angelusEnabled,
       isQuietAt: isQuietAt,
     );
     await _scheduleLiturgyReminders.call(settings, now: now);
-    // Re-sync the budget to whatever those fixed-id tiers actually scheduled.
-    budget.reserve(
-      (await _scheduler.pendingNotificationIds()).length - budget.consumed,
-    );
+    final fixedIdTierCount = (await _scheduler.pendingNotificationIds()).length;
+    final quotePassSelfSlots =
+        (settings.angelusEnabled ? 1 : 0) + (showImmediate ? 1 : 0);
+    budget.reserve(fixedIdTierCount + quotePassSelfSlots);
 
     await _scheduleIntentionNotifications.call(budget: budget);
     await _schedulePhraseNotifications.call(settings: settings, budget: budget);
 
-    // Quotes fill only what remains. The quote pass also schedules the Angelus
-    // daily repeat (≤1) and the immediate notification (≤1) on top of its grid
-    // + today slots, so reserve those alongside what the sacred tiers already
-    // took. quoteSlotBudget inside the quote pass = 64 − reservedForOthers, and
-    // that budget must leave room for Angelus + immediate too.
-    final takenBySacredTiers =
-        (await _scheduler.pendingNotificationIds()).length;
-    final angelusSlot = settings.angelusEnabled ? 1 : 0;
-    final immediateSlot = showImmediate ? 1 : 0;
+    // Quotes fill only what remains. The reserve = everything already pending
+    // (sacred fixed-id tiers + intentions + phrases). The quote pass internally
+    // also reserves for its own Angelus + immediate, so the grand total can
+    // never exceed the 64 cap.
     final reservedForOthers =
-        (takenBySacredTiers + angelusSlot + immediateSlot)
+        (await _scheduler.pendingNotificationIds()).length
             .clamp(0, maxPendingNotifications);
 
     await ScheduleCoreRemindersUseCase(

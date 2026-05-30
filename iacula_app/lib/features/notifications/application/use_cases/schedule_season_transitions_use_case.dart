@@ -14,22 +14,32 @@ final class ScheduleSeasonTransitionsUseCase {
   /// from each season boundary. iOS runs no code on background delivery, so the
   /// silent 401/402 re-bake trigger cannot flip the daily Angelus while the app
   /// is closed. This window of one-shots fires the *correct* prayer at noon on
-  /// the boundary days regardless of whether the user opens the app; the next
-  /// open re-bakes the daily repeat (id 200) to cover the rest of the season.
-  static const int boundaryBridgeDays = 7;
+  /// the boundary days regardless of whether the user opens the app — covering
+  /// the first two weeks of each season so a long-closed app still shows the
+  /// right prayer well into the season. The daily repeat (id 200) only ever
+  /// reflects the current season (never switches early), so the bridge is what
+  /// makes the boundary correct closed-app.
+  static const int boundaryBridgeDays = 14;
 
-  /// Id block for the Easter (Regina Caeli) noon bridge one-shots: 410..416.
+  /// Id block for the Easter (Regina Caeli) noon bridge one-shots: 410..423.
   /// Distinct from Angelus(200) and the 401/402 transition triggers.
   static const int easterNoonIdBase = 410;
 
   /// Id block for the day-after-Pentecost (Angelus) noon bridge one-shots:
-  /// 420..426.
-  static const int pentecostNoonIdBase = 420;
+  /// 430..443. Kept clear of the Easter block above (which now spans 14 ids).
+  static const int pentecostNoonIdBase = 430;
 
   /// Appended to the body of the LAST scheduled bridge day per window.
   /// Nudges the user to open the app before the stale daily repeat resurfaces.
   static const String bridgeRenewalCta =
       'Toque para manter as orações da estação atualizadas.';
+
+  /// The noon bridge one-shots are only pre-scheduled once a boundary is within
+  /// this many days. Scheduling 28 noon notifications months ahead would waste
+  /// slots that prayer intentions and quotes need year-round, with no benefit
+  /// (a closed app re-arms on its next open anyway). The silent transition
+  /// triggers (401/402) still schedule early — they cost only one slot each.
+  static const int bridgeLeadDays = 30;
 
   Future<void> call({
     DateTime? now,
@@ -132,6 +142,11 @@ final class ScheduleSeasonTransitionsUseCase {
     required DateTime current,
     required bool Function(DateTime) isQuiet,
   }) async {
+    // Don't pre-schedule the noon bridge months ahead — only once the boundary
+    // is within the lead window. Far out, those slots are better left to prayer
+    // intentions and quotes; a closed app re-arms the bridge on its next open.
+    if (from.difference(current).inDays > bridgeLeadDays) return;
+
     final today = DateTime(current.year, current.month, current.day);
 
     // Collect all eligible (dayOffset, noon) pairs before scheduling so we

@@ -157,10 +157,19 @@ final class ScheduleCoreRemindersUseCase {
     final plannedGridFloorCount = gridFloorWeekdays * gridSlotMinutes.length;
 
     // Total slots quotes may occupy = the 64 cap minus everything reserved for
-    // higher-priority (sacred) consumers. Grid floor fills first, then the today
-    // layer takes whatever is left. Under heavy sacred load this shrinks quotes
-    // to zero before it would ever push the app past the cap.
-    final quoteSlotBudget = max(0, maxQueuedQuoteReminders - reservedForOthers);
+    // higher-priority (sacred) consumers, minus the Angelus daily repeat this
+    // same pass also schedules (so it is not double-spent). Grid floor fills
+    // first, then the today layer takes whatever is left. Under heavy sacred
+    // load this shrinks quotes to zero before it would ever push past the cap.
+    final angelusOwnSlot = settings.angelusEnabled ? 1 : 0;
+    final immediateOwnSlot = showImmediate ? 1 : 0;
+    final quoteSlotBudget = max(
+      0,
+      maxQueuedQuoteReminders -
+          reservedForOthers -
+          angelusOwnSlot -
+          immediateOwnSlot,
+    );
     final gridFloorCount = min(plannedGridFloorCount, quoteSlotBudget);
 
     // Reserved-budget guard: keep the today layer below the iOS 64-pending cap
@@ -231,7 +240,8 @@ final class ScheduleCoreRemindersUseCase {
 
     debugPrint(
       '[ScheduleCoreRemindersUseCase] registered today layer: '
-      '${todaySlots.length} one-shots (cadence=${preset.todayCadenceMinutes}m)',
+      '${scheduledSlots.length} one-shots '
+      '(of ${todaySlots.length} natural, cadence=${preset.todayCadenceMinutes}m)',
     );
 
     // ---- Layer B: weekly grid floor ----
@@ -285,17 +295,15 @@ final class ScheduleCoreRemindersUseCase {
       '${gridSlotMinutes.length} slots x 6 weekdays (skipped today=$skipWeekday)',
     );
 
-    // Schedule the daily noon repeat (Angelus / Regina Caeli). It carries the
-    // season-specific prayer name. This repeat cannot re-bake itself while the
-    // app is closed, so if a season boundary falls within the next
-    // [boundaryBridgeDays] it is baked for the season the boundary is ENTERING —
-    // matching the season noon bridge, so the two never show contradictory
-    // prayer names on a bridge day. Far from a boundary this is simply today's
-    // season.
+    // Schedule the daily noon repeat (Angelus / Regina Caeli) for the season
+    // that is true RIGHT NOW — never a future season. It must never show Regina
+    // Caeli before Easter begins, nor Angelus before Easter ends. The widened
+    // season noon bridge carries the correct prayer across each boundary while
+    // the app is closed; this repeat only ever reflects the present season.
     if (settings.angelusEnabled) {
       final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
       final repeatIsEasterSeason =
-          isEasterSeason || _seasonForDailyRepeat(current);
+          isEasterSeason || _isDateWithinEasterSeason(current);
       final noonTitle = repeatIsEasterSeason ? 'Regina Caeli' : 'Angelus';
       final noonBody = repeatIsEasterSeason
           ? 'Hora de rezar a Regina Caeli.'
@@ -328,20 +336,6 @@ final class ScheduleCoreRemindersUseCase {
 
   bool _isDateWithinEasterSeason(DateTime date) =>
       EasterCalculator.isWithinEasterSeason(date);
-
-  /// Season to bake into the daily noon repeat. The repeat cannot re-bake itself
-  /// while the app is closed, so it looks [_dailyRepeatLookaheadDays] ahead: if a
-  /// boundary falls within that window it is baked for the season just past that
-  /// horizon, matching the season noon bridge so the two never contradict each
-  /// other on a bridge day. Far from any boundary the horizon lands in today's
-  /// season, so this is simply the current season.
-  bool _seasonForDailyRepeat(DateTime current) => _isDateWithinEasterSeason(
-        current.add(const Duration(days: _dailyRepeatLookaheadDays)),
-      );
-
-  /// Matches the season noon bridge window so the daily repeat pre-switches in
-  /// lockstep with the bridge.
-  static const int _dailyRepeatLookaheadDays = 7;
 
   /// Next DateTime at the given weekday (1=Mon..7=Sun) and clock time, at or
   /// after [from]. Used as the first fire time for a weekly-repeating slot.

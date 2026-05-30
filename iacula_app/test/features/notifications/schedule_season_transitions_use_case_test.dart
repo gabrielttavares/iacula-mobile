@@ -137,20 +137,22 @@ void main() {
       ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 
     test(
-      'schedules a 7-day window of Regina Caeli noon one-shots from Easter Sunday',
+      'schedules a 14-day window of Regina Caeli noon one-shots from Easter Sunday',
       () async {
-        // 2026: Easter = April 5. Both boundaries in the future.
-        final now = DateTime(2026, 1, 15, 10, 0);
+        // 2026: Easter = April 5. now is within the 30-day lead window so the
+        // Easter bridge materializes (Pentecost is still > 30 days out).
+        final now = DateTime(2026, 3, 25, 10, 0);
         await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
 
         final reginaNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'regina-coeli')
             .toList();
 
-        expect(reginaNoon, hasLength(7));
-        for (var dayOffset = 0; dayOffset < 7; dayOffset++) {
+        expect(reginaNoon, hasLength(14));
+        for (var dayOffset = 0; dayOffset < 14; dayOffset++) {
           final fireAt = reginaNoon[dayOffset].scheduledAt;
-          expect(fireAt, DateTime(2026, 4, 5 + dayOffset, 12, 0));
+          expect(fireAt, DateTime(2026, 4, 5).add(Duration(days: dayOffset))
+              .copyWith(hour: 12));
           expect(reginaNoon[dayOffset].title, 'Regina Caeli');
           expect(reginaNoon[dayOffset].isAlarm, isTrue);
           expect(reginaNoon[dayOffset].repeatDaily, isFalse);
@@ -159,21 +161,23 @@ void main() {
     );
 
     test(
-      'schedules a 7-day window of Angelus noon one-shots from the day after Pentecost',
+      'schedules a 14-day window of Angelus noon one-shots from the day after Pentecost',
       () async {
-        // 2026: Pentecost = May 24, day after = May 25.
-        final now = DateTime(2026, 1, 15, 10, 0);
+        // 2026: Pentecost = May 24, day after = May 25. now within the lead
+        // window of that boundary.
+        final now = DateTime(2026, 5, 15, 10, 0);
         await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
 
         final angelusNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'angelus')
             .toList();
 
-        expect(angelusNoon, hasLength(7));
-        for (var dayOffset = 0; dayOffset < 7; dayOffset++) {
+        expect(angelusNoon, hasLength(14));
+        for (var dayOffset = 0; dayOffset < 14; dayOffset++) {
           expect(
             angelusNoon[dayOffset].scheduledAt,
-            DateTime(2026, 5, 25 + dayOffset, 12, 0),
+            DateTime(2026, 5, 25).add(Duration(days: dayOffset))
+                .copyWith(hour: 12),
           );
           expect(angelusNoon[dayOffset].title, 'Angelus');
         }
@@ -182,14 +186,15 @@ void main() {
 
     test('noon one-shots use a stable, non-colliding id block (idempotent rebuild)',
         () async {
-      final now = DateTime(2026, 1, 15, 10, 0);
+      // Within the Easter lead window only one window (14) materializes.
+      final now = DateTime(2026, 3, 25, 10, 0);
       final useCase = ScheduleSeasonTransitionsUseCase(scheduler);
 
       await useCase.call(now: now);
       final firstPass = noonOneShots().map((e) => e.scheduledId).toSet();
 
-      // 14 one-shots (7 + 7), all distinct, none clashing with Angelus(200) or
-      // the 401/402 transition triggers.
+      // 14 one-shots, all distinct, none clashing with Angelus(200) or the
+      // 401/402 transition triggers.
       expect(firstPass, hasLength(14));
       expect(firstPass, isNot(contains(200)));
       expect(firstPass, isNot(contains(401)));
@@ -200,9 +205,18 @@ void main() {
       expect(noonOneShots(), hasLength(14));
     });
 
+    test('does not pre-schedule the noon bridge months before the boundary', () async {
+      // Jan 15: Easter (Apr 5) and Pentecost (May 25) are both > 30 days away,
+      // so NO noon one-shots are scheduled yet (they would waste slots).
+      final now = DateTime(2026, 1, 15, 10, 0);
+      await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+      expect(noonOneShots(), isEmpty);
+    });
+
     test('only schedules noon one-shots whose day is still in the future', () async {
-      // Mid-Easter-season: Easter (Apr 5) is past, three of its 7 bridge days
-      // are already gone; Pentecost window is fully future.
+      // Mid-Easter-season: Easter (Apr 5) is past, the first bridge days are
+      // already gone; remaining future days within the 14-day window stay.
       final now = DateTime(2026, 4, 8, 10, 0);
       await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
 
@@ -210,14 +224,15 @@ void main() {
           .where((e) => e.prayerSlug == 'regina-coeli')
           .toList();
 
-      // Apr 5,6,7 noon are past (now is Apr 8 10:00); Apr 8 noon is still
-      // future but skipped because it is today (daily Angelus covers it), so
-      // Apr 9,10,11 remain.
-      expect(reginaNoon.map((e) => e.scheduledAt), <DateTime>[
-        DateTime(2026, 4, 9, 12, 0),
-        DateTime(2026, 4, 10, 12, 0),
-        DateTime(2026, 4, 11, 12, 0),
-      ]);
+      // Window is Apr 5..18. Apr 5,6,7 noon are past (now Apr 8 10:00); Apr 8 is
+      // today (skipped — daily repeat covers it); Apr 9..18 remain (10 days).
+      expect(
+        reginaNoon.map((e) => e.scheduledAt),
+        List.generate(
+          10,
+          (i) => DateTime(2026, 4, 9).add(Duration(days: i)).copyWith(hour: 12),
+        ),
+      );
     });
 
     test('schedules no noon one-shots once both boundaries are fully past', () async {
@@ -248,34 +263,35 @@ void main() {
           .where((e) => e.prayerSlug == 'regina-coeli')
           .toList();
 
-      // Today (Apr 5) is skipped; Apr 6..11 remain → 6 one-shots.
-      expect(reginaNoon.map((e) => e.scheduledAt), <DateTime>[
-        DateTime(2026, 4, 6, 12, 0),
-        DateTime(2026, 4, 7, 12, 0),
-        DateTime(2026, 4, 8, 12, 0),
-        DateTime(2026, 4, 9, 12, 0),
-        DateTime(2026, 4, 10, 12, 0),
-        DateTime(2026, 4, 11, 12, 0),
-      ]);
+      // Window is Apr 5..18. Today (Apr 5) is skipped; Apr 6..18 remain (13).
+      expect(
+        reginaNoon.map((e) => e.scheduledAt),
+        List.generate(
+          13,
+          (i) => DateTime(2026, 4, 6).add(Duration(days: i)).copyWith(hour: 12),
+        ),
+      );
     });
 
     group('bridge renewal CTA on the final scheduled day', () {
-      // 2026: Easter = Apr 5 (window: Apr 5..11), day-after-Pentecost = May 25
-      // (window: May 25..31). now = Jan 15 10:00 → all 7 days of each window
-      // are future and not today, so the last scheduled day is offset 6 (Apr 11
-      // for Regina Caeli, May 31 for Angelus).
-      final now = DateTime(2026, 1, 15, 10, 0);
+      // 2026: Easter = Apr 5 (window: Apr 5..18), day-after-Pentecost = May 25
+      // (window: May 25..Jun 7). Each window only materializes within its 30-day
+      // lead, so the Regina tests use a late-March now and the Angelus tests a
+      // mid-May now. The last scheduled day is offset 13 (Apr 18 / Jun 7).
+      final nowEaster = DateTime(2026, 3, 25, 10, 0);
+      final nowPentecost = DateTime(2026, 5, 15, 10, 0);
+      final lastReginaDay = DateTime(2026, 4, 18, 12, 0);
+      final lastAngelusDay = DateTime(2026, 6, 7, 12, 0);
 
       test('the last Regina Caeli bridge day body ends with the CTA', () async {
-        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: nowEaster);
 
         final reginaNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'regina-coeli')
             .toList();
 
-        // Apr 11 is the last bridge day — its body must end with the CTA.
         final lastDay =
-            reginaNoon.firstWhere((e) => e.scheduledAt == DateTime(2026, 4, 11, 12, 0));
+            reginaNoon.firstWhere((e) => e.scheduledAt == lastReginaDay);
         expect(
           lastDay.body,
           endsWith(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta),
@@ -283,15 +299,14 @@ void main() {
       });
 
       test('earlier Regina Caeli bridge days do NOT carry the CTA', () async {
-        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: nowEaster);
 
         final reginaNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'regina-coeli')
             .toList();
 
-        // All days except the last (Apr 5..10) must NOT contain the CTA.
         final earlierDays =
-            reginaNoon.where((e) => e.scheduledAt != DateTime(2026, 4, 11, 12, 0));
+            reginaNoon.where((e) => e.scheduledAt != lastReginaDay);
         for (final day in earlierDays) {
           expect(
             day.body,
@@ -301,7 +316,7 @@ void main() {
       });
 
       test('exactly one Regina Caeli bridge notification carries the CTA', () async {
-        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: nowEaster);
 
         final reginaNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'regina-coeli')
@@ -314,15 +329,14 @@ void main() {
       });
 
       test('the last Angelus bridge day body ends with the CTA', () async {
-        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: nowPentecost);
 
         final angelusNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'angelus')
             .toList();
 
-        // May 31 is the last bridge day — its body must end with the CTA.
         final lastDay =
-            angelusNoon.firstWhere((e) => e.scheduledAt == DateTime(2026, 5, 31, 12, 0));
+            angelusNoon.firstWhere((e) => e.scheduledAt == lastAngelusDay);
         expect(
           lastDay.body,
           endsWith(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta),
@@ -330,15 +344,15 @@ void main() {
       });
 
       test('earlier Angelus bridge days do NOT carry the CTA', () async {
-        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: nowPentecost);
 
         final angelusNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'angelus')
             .toList();
 
-        // All days except the last (May 25..30) must NOT contain the CTA.
+        // All days except the last (May 25..Jun 6) must NOT contain the CTA.
         final earlierDays =
-            angelusNoon.where((e) => e.scheduledAt != DateTime(2026, 5, 31, 12, 0));
+            angelusNoon.where((e) => e.scheduledAt != lastAngelusDay);
         for (final day in earlierDays) {
           expect(
             day.body,
@@ -348,7 +362,7 @@ void main() {
       });
 
       test('exactly one Angelus bridge notification carries the CTA', () async {
-        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: nowPentecost);
 
         final angelusNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'angelus')
@@ -361,7 +375,7 @@ void main() {
       });
 
       test('CTA day title and prayerSlug are unchanged (Regina Caeli)', () async {
-        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: nowEaster);
 
         final reginaNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'regina-coeli')
@@ -374,7 +388,7 @@ void main() {
       });
 
       test('CTA day title and prayerSlug are unchanged (Angelus)', () async {
-        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: nowPentecost);
 
         final angelusNoon = noonOneShots()
             .where((e) => e.prayerSlug == 'angelus')
@@ -386,9 +400,9 @@ void main() {
         expect(ctaDay.prayerSlug, 'angelus');
       });
 
-      test('when earlier days are skipped the single remaining day gets the CTA', () async {
-        // Mid-Easter: now = Apr 8 10:00. Bridge window: Apr 5..11. Past: Apr 5,6,7.
-        // Today (Apr 8) is skipped. Remaining: Apr 9, 10, 11 → last is Apr 11.
+      test('when earlier days are skipped the final remaining day gets the CTA', () async {
+        // Mid-Easter: now = Apr 8 10:00. Bridge window: Apr 5..18. Past: Apr
+        // 5,6,7. Today (Apr 8) is skipped. Remaining: Apr 9..18 (10) → last Apr 18.
         final midSeason = DateTime(2026, 4, 8, 10, 0);
         await ScheduleSeasonTransitionsUseCase(scheduler).call(now: midSeason);
 
@@ -396,10 +410,9 @@ void main() {
             .where((e) => e.prayerSlug == 'regina-coeli')
             .toList();
 
-        // Only Apr 9, 10, 11 scheduled; Apr 11 is the final one and gets the CTA.
-        expect(reginaNoon, hasLength(3));
+        expect(reginaNoon, hasLength(10));
         final lastDay =
-            reginaNoon.firstWhere((e) => e.scheduledAt == DateTime(2026, 4, 11, 12, 0));
+            reginaNoon.firstWhere((e) => e.scheduledAt == DateTime(2026, 4, 18, 12, 0));
         expect(
           lastDay.body,
           endsWith(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta),

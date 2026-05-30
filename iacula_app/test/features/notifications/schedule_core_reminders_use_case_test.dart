@@ -597,12 +597,12 @@ void main() {
   );
 
   test(
-    'daily noon repeat pre-switches to the season entering within the bridge window',
+    'daily noon repeat NEVER switches early — stays current season before a boundary',
     () async {
-      // 2026 Easter = April 5. Two days before (Apr 3), the daily repeat is
-      // about to be stranded across the boundary while the app is closed, so it
-      // is baked for the season the bridge is ENTERING (Regina Caeli) — matching
-      // the bridge, so the two never contradict each other on a bridge day.
+      // 2026 Easter = April 5. Two days before (Apr 3) it is still ordinary
+      // time. The daily repeat must show Angelus — it must NOT pre-show Regina
+      // Caeli before Easter has actually begun. The widened bridge (not the
+      // repeat) carries the correct prayer once Easter starts.
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryNotificationHistoryRepository();
       final useCase = makeUseCase(scheduler, history);
@@ -610,16 +610,40 @@ void main() {
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 30, angelusEnabled: true),
         now: DateTime(2026, 4, 3, 8),
-        // Still ordinary on Apr 3, but Easter (Apr 5) is within the 7-day bridge.
         isEasterSeason: false,
         showImmediate: false,
       );
 
       final angelus = scheduler.events.firstWhere(
-        (e) => e.type == ReminderEventType.angelusNoon,
+        (e) => e.type == ReminderEventType.angelusNoon && e.repeatDaily,
+      );
+      expect(angelus.title, 'Angelus');
+      expect(angelus.body, 'Hora de rezar o Angelus.');
+      expect(angelus.prayerSlug, 'angelus');
+    },
+  );
+
+  test(
+    'daily noon repeat does not stay Regina Caeli right before Pentecost ends',
+    () async {
+      // 2026 Pentecost = May 24 (still Easter season). On May 22 it is still
+      // Easter → Regina Caeli. It must NOT pre-switch to Angelus before the
+      // season has actually ended.
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+      final useCase = makeUseCase(scheduler, history);
+
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 30, angelusEnabled: true),
+        now: DateTime(2026, 5, 22, 8),
+        isEasterSeason: true,
+        showImmediate: false,
+      );
+
+      final angelus = scheduler.events.firstWhere(
+        (e) => e.type == ReminderEventType.angelusNoon && e.repeatDaily,
       );
       expect(angelus.title, 'Regina Caeli');
-      expect(angelus.body, 'Hora de rezar a Regina Caeli.');
       expect(angelus.prayerSlug, 'regina-coeli');
     },
   );
@@ -641,8 +665,9 @@ void main() {
         .where((e) => e.scheduledId! >= 9100)
         .toList();
     // 27 natural 30-min slots (07:00-21:00 skipping the noon hour) are trimmed
-    // by the reserved-budget guard to min(28, 64 - 30 grid - 10 reserved) = 24.
-    expect(todayLayer, hasLength(24));
+    // by the reserved-budget guard to fit the 64 cap:
+    // min(28, 64 - 10 reserved - 1 Angelus - 30 grid) = 23.
+    expect(todayLayer, hasLength(23));
     expect(todayLayer.every((e) => !e.repeatWeekly), isTrue);
     expect(todayLayer.every((e) => e.scheduledAt.hour != 12), isTrue);
     // ids stay inside the reserved today block, clear of the grid (9000-9034).
