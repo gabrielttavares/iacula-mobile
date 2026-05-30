@@ -1,3 +1,5 @@
+import 'quiet_hours_checker.dart';
+
 /// Default daily active window used when quiet hours are disabled.
 const int kQuoteWindowStartMinutes = 8 * 60; // 08:00
 const int kQuoteWindowEndMinutes = 22 * 60; // 22:00
@@ -25,39 +27,25 @@ final class QuoteSlotPlanner {
       return const <int>[];
     }
 
-    final quietStart = _parseMinutes(quietHoursStart);
-    final quietEnd = _parseMinutes(quietHoursEnd);
+    // Reference date is arbitrary: the quiet-hours check only reads the
+    // hour/minute of the supplied time, so any date works for a slot's
+    // clock-time lookup.
+    final referenceDate = DateTime(2026);
 
     final slots = <int>[];
     var cursor = windowStartMinutes;
     while (cursor <= windowEndMinutes && slots.length < maxSlots) {
       final isQuiet = quietHoursEnabled &&
-          quietStart != null &&
-          quietEnd != null &&
-          _isWithinQuiet(cursor, quietStart, quietEnd);
+          QuietHoursChecker.isDuringQuietHours(
+            referenceDate.add(Duration(minutes: cursor)),
+            quietHoursStart,
+            quietHoursEnd,
+          );
       if (!isQuiet) {
         slots.add(cursor);
       }
       cursor += intervalMinutes;
     }
     return slots;
-  }
-
-  /// Quiet window may wrap past midnight (e.g. 22:00 -> 07:00).
-  static bool _isWithinQuiet(int minutes, int start, int end) {
-    if (start == end) return false;
-    if (start < end) {
-      return minutes >= start && minutes < end;
-    }
-    return minutes >= start || minutes < end;
-  }
-
-  static int? _parseMinutes(String hhmm) {
-    final parts = hhmm.split(':');
-    if (parts.length < 2) return null;
-    final hour = int.tryParse(parts[0]);
-    final minute = int.tryParse(parts[1]);
-    if (hour == null || minute == null) return null;
-    return hour * 60 + minute;
   }
 }

@@ -38,7 +38,10 @@ final class ReminderEvent {
     this.quoteFeastName,
     this.quoteImagePath,
     this.snoozeCount = 0,
-  });
+  }) : assert(
+         !(repeatDaily && repeatWeekly),
+         'repeatDaily and repeatWeekly are mutually exclusive',
+       );
 
   final ReminderEventType type;
   final String title;
