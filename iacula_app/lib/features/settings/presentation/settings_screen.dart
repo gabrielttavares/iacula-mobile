@@ -6,7 +6,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
-import '../../../core/presentation/widgets/interval_selector.dart';
+import '../../../core/presentation/widgets/cadence_preset_selector.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../jaculatorias/presentation/minhas_jaculatorias_screen.dart';
@@ -14,6 +14,7 @@ import '../../home_widget/home_widget_service.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../domain/entities/settings.dart';
+import '../domain/jaculatoria_cadence_preset.dart';
 import '../domain/jaculatoria_interval.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -80,6 +81,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       );
     }
 
+    final cadencePreset =
+        JaculatoriaCadencePreset.fromIntervalMinutes(_intervalMinutes);
+
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
       child: IaculaKeyboardDismiss(
@@ -127,8 +131,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         Text(
                           _notificationsEnabled
                               ? _angelusEnabled
-                                    ? 'Jaculatória ${formatJaculatoriaIntervalEveryPhrase(_intervalMinutes)} e Angelus ao meio-dia.'
-                                    : 'Jaculatória ${formatJaculatoriaIntervalEveryPhrase(_intervalMinutes)}.'
+                                    ? 'Jaculatórias ${cadencePreset.cadencePhrasePtBr} e Angelus ao meio-dia.'
+                                    : 'Jaculatórias ${cadencePreset.cadencePhrasePtBr}.'
                               : 'As notificações estão desativadas.',
                           style: context.textStyles.secondary,
                         ),
@@ -160,15 +164,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ],
                           ),
                           const SizedBox(height: IaculaRadius.elementSpacing),
-                          _fieldLabel(context, 'Intervalo entre jaculatórias'),
+                          _fieldLabel(context, 'Frequência das jaculatórias'),
                           const SizedBox(height: 8),
-                          IntervalSelector(
-                            selectedMinutes: _intervalMinutes,
-                            onChanged: (value) => setState(() => _intervalMinutes = value),
-                            showCustomLabel: true,
+                          CadencePresetSelector(
+                            selected: cadencePreset,
+                            onChanged: (preset) => setState(() => _intervalMinutes = preset.intervalMinutes),
                           ),
                           const SizedBox(height: IaculaSpacing.sm),
-                          _buildNextNotificationEstimate(context),
+                          _buildNextNotificationEstimate(context, cadencePreset),
                           const SizedBox(height: IaculaRadius.elementSpacing),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -463,11 +466,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
 
-  Widget _buildNextNotificationEstimate(BuildContext context) {
-    final nextAt = DateTime.now().add(Duration(minutes: _intervalMinutes));
-    final hh = nextAt.hour.toString().padLeft(2, '0');
-    final mm = nextAt.minute.toString().padLeft(2, '0');
-
+  Widget _buildNextNotificationEstimate(
+    BuildContext context,
+    JaculatoriaCadencePreset preset,
+  ) {
     return Row(
       children: [
         Icon(
@@ -476,9 +478,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           color: context.colors.textSecondary,
         ),
         const SizedBox(width: 6),
-        Text(
-          'Próxima estimada: $hh:$mm',
-          style: context.textStyles.secondary.copyWith(fontSize: 13),
+        Expanded(
+          child: Text(
+            preset.dailyVolumeDescriptionPtBr,
+            style: context.textStyles.secondary.copyWith(fontSize: 13),
+          ),
         ),
       ],
     );

@@ -96,20 +96,7 @@ final class ScheduleCoreRemindersUseCase {
       const immediateId = quoteScheduleIdBase - 1;
       await _scheduler.showNow(
         immediateId,
-        ReminderEvent(
-          type: ReminderEventType.quoteInterval,
-          title: 'Iacula',
-          body: quote.text,
-          scheduledAt: current,
-          withVibration: true,
-          isAlarm: false,
-          routeTarget: NotificationRouteTarget.home,
-          scheduledId: immediateId,
-          quoteTheme: quote.theme,
-          quoteSeason: quote.season.name,
-          quoteFeastName: quote.feastName,
-          quoteImagePath: quote.imagePath,
-        ),
+        _buildQuoteEvent(id: immediateId, fireAt: current, quote: quote),
       );
 
       final deliveredCard = LastDeliveredCard.fromQuote(
@@ -164,20 +151,7 @@ final class ScheduleCoreRemindersUseCase {
       final scheduledId = todayLayerIdBase + slotIndex;
       await _scheduler.scheduleWithId(
         scheduledId,
-        ReminderEvent(
-          type: ReminderEventType.quoteInterval,
-          title: 'Iacula',
-          body: quote.text,
-          scheduledAt: fireAt,
-          withVibration: true,
-          isAlarm: false,
-          routeTarget: NotificationRouteTarget.home,
-          scheduledId: scheduledId,
-          quoteTheme: quote.theme,
-          quoteSeason: quote.season.name,
-          quoteFeastName: quote.feastName,
-          quoteImagePath: quote.imagePath,
-        ),
+        _buildQuoteEvent(id: scheduledId, fireAt: fireAt, quote: quote),
       );
     }
 
@@ -226,20 +200,11 @@ final class ScheduleCoreRemindersUseCase {
 
         await _scheduler.scheduleWithId(
           scheduledId,
-          ReminderEvent(
-            type: ReminderEventType.quoteInterval,
-            title: 'Iacula',
-            body: quote.text,
-            scheduledAt: fireAt,
-            withVibration: true,
-            isAlarm: false,
+          _buildQuoteEvent(
+            id: scheduledId,
+            fireAt: fireAt,
+            quote: quote,
             repeatWeekly: true,
-            routeTarget: NotificationRouteTarget.home,
-            scheduledId: scheduledId,
-            quoteTheme: quote.theme,
-            quoteSeason: quote.season.name,
-            quoteFeastName: quote.feastName,
-            quoteImagePath: quote.imagePath,
           ),
         );
       }
@@ -302,5 +267,32 @@ final class ScheduleCoreRemindersUseCase {
       candidate = candidate.add(const Duration(days: 7));
     }
     return candidate;
+  }
+
+  /// Builds a quote-interval [ReminderEvent] from a fetched quote. Shared by the
+  /// immediate notification, the today layer, and the weekly grid floor so the
+  /// 13 shared fields live in one place; [repeatWeekly] is the only behavioural
+  /// difference (true for grid-floor cells, false for one-shots).
+  ReminderEvent _buildQuoteEvent({
+    required int id,
+    required DateTime fireAt,
+    required Quote quote,
+    bool repeatWeekly = false,
+  }) {
+    return ReminderEvent(
+      type: ReminderEventType.quoteInterval,
+      title: 'Iacula',
+      body: quote.text,
+      scheduledAt: fireAt,
+      withVibration: true,
+      isAlarm: false,
+      repeatWeekly: repeatWeekly,
+      routeTarget: NotificationRouteTarget.home,
+      scheduledId: id,
+      quoteTheme: quote.theme,
+      quoteSeason: quote.season.name,
+      quoteFeastName: quote.feastName,
+      quoteImagePath: quote.imagePath,
+    );
   }
 }

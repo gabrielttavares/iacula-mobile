@@ -132,7 +132,7 @@ void main() {
     expect(find.text('Notificações'), findsOneWidget);
     expect(find.text('Aparência'), findsOneWidget);
     expect(find.text('Notificações ativas'), findsOneWidget);
-    expect(find.text('Intervalo entre jaculatórias'), findsOneWidget);
+    expect(find.text('Frequência das jaculatórias'), findsOneWidget);
     expect(find.text('Horário silencioso'), findsOneWidget);
     expect(find.text('Tema'), findsOneWidget);
     expect(find.text('Tamanho da fonte'), findsOneWidget);
