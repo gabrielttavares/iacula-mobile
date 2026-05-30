@@ -118,7 +118,9 @@ void main() {
             .where((e) => e.type == ReminderEventType.quoteInterval)
             .map((e) => e.scheduledId)
             .toSet();
-    expect(quoteScheduled.length, 64);
+    // Full weekly grid: 7 weekdays x 6 slots (15m interval caps at 6/weekday),
+    // with no overlapping/duplicate ids from the concurrent rebuilds.
+    expect(quoteScheduled.length, 7 * 6);
   });
 
   test('showImmediate true keeps immediate quote channel (id 8999)', () async {
@@ -190,7 +192,7 @@ void main() {
     );
     expect(
       scheduler.events.where((e) => e.type == ReminderEventType.quoteInterval).length,
-      64,
+      7 * 6,
     );
   });
 
@@ -231,7 +233,7 @@ void main() {
     await second;
     expect(
       scheduler.events.where((e) => e.type == ReminderEventType.quoteInterval).length,
-      64,
+      7 * 6,
     );
   });
 

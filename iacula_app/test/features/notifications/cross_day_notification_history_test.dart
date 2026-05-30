@@ -52,7 +52,7 @@ void main() {
       expect(tomorrowEvents, isNotEmpty, reason: 'should have events for tomorrow');
     });
 
-    test('history entries written for both immediate and scheduled quotes', () async {
+    test('only the immediate notification writes a history entry', () async {
       final now = DateTime(2026, 3, 10, 20, 0);
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 60),
@@ -60,26 +60,22 @@ void main() {
         showImmediate: true,
       );
 
-      // Today (20:00 immediate, 21:00, 22:00, 23:00) = 4 entries
-      final todayEntries = await history.listForDay(DateTime(2026, 3, 10));
-      expect(todayEntries, hasLength(4));
-      expect(todayEntries.last.deliveredAt, now);
-
-      // Tomorrow should have entries too
-      final tomorrowEntries = await history.listForDay(DateTime(2026, 3, 11));
-      expect(tomorrowEntries, isNotEmpty);
+      // The grid no longer predicts future rows; only the immediate delivery
+      // is recorded, on `now`'s day.
+      final allEntries = await history.listForDay(DateTime(2026, 3, 10));
+      expect(allEntries, hasLength(1));
+      expect(allEntries.single.deliveredAt, now);
     });
 
-    test('showImmediate false still writes scheduled history entries', () async {
+    test('showImmediate false writes no history entries', () async {
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 60),
         now: DateTime(2026, 3, 10, 8, 0),
         showImmediate: false,
       );
 
-      // Today (09:00 through 23:00 at 60-min intervals) = 15 entries
       final todayEntries = await history.listForDay(DateTime(2026, 3, 10));
-      expect(todayEntries, hasLength(15));
+      expect(todayEntries, isEmpty);
     });
 
     test('two-day gap: scheduled notifications span multiple days', () async {

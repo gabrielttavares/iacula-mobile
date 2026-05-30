@@ -282,37 +282,33 @@ RebuildNotificationsUseCase _makeRebuildWithQuoteUseCase(
 
 void main() {
   group('Full notification scheduling pipeline', () {
-    test('schedules 64 quote notifications at correct intervals', () async {
+    test('registers a weekly grid of repeating quote notifications', () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
 
       final now = DateTime(2026, 5, 12, 8, 0);
+      // interval 180m, window 08:00-22:00 -> 5 slots/weekday -> 35 cells.
       await rebuild.call(
-        _baseSettings(intervalMinutes: 30),
+        _baseSettings(intervalMinutes: 180),
         isEasterSeason: false,
         showImmediate: false,
         now: now,
       );
 
-      final quoteEvents =
-          scheduler.events
-              .where((e) => e.type == ReminderEventType.quoteInterval)
-              .toList()
-            ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+      final quoteEvents = scheduler.events
+          .where((e) => e.type == ReminderEventType.quoteInterval)
+          .toList();
 
-      expect(quoteEvents.length, 64);
+      expect(quoteEvents.length, 35);
+      // Every cell is an OS-owned weekly repeat.
+      expect(quoteEvents.every((e) => e.repeatWeekly), isTrue);
 
-      // First quote is 30 minutes from now
-      expect(quoteEvents.first.scheduledAt, DateTime(2026, 5, 12, 8, 30));
-
-      // Each subsequent quote is 30 minutes apart
-      for (var i = 1; i < quoteEvents.length; i++) {
-        final gap = quoteEvents[i].scheduledAt.difference(
-          quoteEvents[i - 1].scheduledAt,
-        );
-        expect(gap.inMinutes, 30, reason: 'gap between quote $i and ${i - 1}');
-      }
+      // All 7 weekdays are represented.
+      final weekdays = quoteEvents
+          .map((e) => e.scheduledAt.weekday)
+          .toSet();
+      expect(weekdays.length, 7);
     });
 
     test('schedules Angelus at noon with repeatDaily', () async {
@@ -398,20 +394,13 @@ void main() {
           now: now,
         );
 
-        final quoteEvents =
-            scheduler.events
-                .where((e) => e.type == ReminderEventType.quoteInterval)
-                .toList()
-              ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+        final quoteEvents = scheduler.events
+            .where((e) => e.type == ReminderEventType.quoteInterval)
+            .toList();
 
-        // First slot: 21:00 (OK, before quiet hours)
-        expect(quoteEvents.first.scheduledAt.hour, 21);
+        expect(quoteEvents, isNotEmpty);
 
-        // Second slot should jump to 07:00 next day (after quiet hours)
-        expect(quoteEvents[1].scheduledAt.hour, 7);
-        expect(quoteEvents[1].scheduledAt.day, 13);
-
-        // No notification should be in 22:00-06:59 range
+        // No cell may fire inside the 22:00-06:59 quiet window, on any weekday.
         for (final event in quoteEvents) {
           final hour = event.scheduledAt.hour;
           final inQuietHours = hour >= 22 || hour < 7;
@@ -504,13 +493,13 @@ void main() {
         );
         expect(hasImmediate, isTrue);
 
-        // 1 immediate + 64 scheduled = 65 history entries
-        expect(history.entries.length, 65);
+        // Only the immediate delivery is recorded; the grid writes no rows.
+        expect(history.entries.length, 1);
         expect(history.entries.first.deliveredAt, now);
       },
     );
 
-    test('quote notification IDs use expected range 9000-9063', () async {
+    test('quote notification IDs stay within the weekly-grid range', () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
@@ -526,9 +515,10 @@ void main() {
           .map((e) => e.scheduledId!)
           .toSet();
 
+      // Grid ids span 9000 .. 9000 + 7*6 (exclusive).
       for (final id in quoteIds) {
         expect(id, greaterThanOrEqualTo(9000));
-        expect(id, lessThan(9064));
+        expect(id, lessThan(9000 + 7 * 6));
       }
     });
 
@@ -559,7 +549,7 @@ void main() {
               '5': const DayQuotes(
                 day: 'Quinta-feira',
                 theme: 'Eucaristia',
-                quotes: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
+                quotes: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9'],
               ),
               '6': const DayQuotes(
                 day: 'Sexta-feira',
@@ -581,6 +571,19 @@ void main() {
           ),
         );
 
+        // Helper: the Thursday (weekday 4) grid cells' quote texts.
+        Set<String> thursdayQuotes() => scheduler.events
+            .where(
+              (e) =>
+                  e.type == ReminderEventType.quoteInterval &&
+                  e.scheduledAt.weekday == DateTime.thursday,
+            )
+            .map((e) => e.body)
+            .toSet();
+
+        // First build. interval 60m over 08:00-22:00 capped at 6 -> 6 cells
+        // per weekday, but Thursday's bucket only has 6 quotes, so the bag
+        // yields all 6 distinct before repeating.
         final firstNow = DateTime(2026, 5, 14, 20, 0);
         await rebuild.call(
           _baseSettings(intervalMinutes: 60),
@@ -588,66 +591,36 @@ void main() {
           showImmediate: false,
           now: firstNow,
         );
+        const thursdayBucket = {
+          'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9',
+        };
+        final firstQuotes = thursdayQuotes();
+        expect(firstQuotes, isNotEmpty);
+        // Every Thursday quote drawn must come from Thursday's bucket.
+        expect(firstQuotes.every(thursdayBucket.contains), isTrue);
 
-        final firstThursdayEntries = (await history.listForDay(firstNow))
-            .where(
-              (entry) =>
-                  entry.deliveredAt.year == firstNow.year &&
-                  entry.deliveredAt.month == firstNow.month &&
-                  entry.deliveredAt.day == firstNow.day &&
-                  entry.deliveredAt.hour >= 21,
-            )
-            .toList(growable: false);
+        // Rebuild a few times: the bag keeps advancing through Thursday's
+        // bucket rather than resetting to the same draw every time.
+        final draws = <Set<String>>[firstQuotes];
+        for (var i = 0; i < 3; i++) {
+          await scheduler.cancelAll();
+          await rebuild.call(
+            _baseSettings(intervalMinutes: 60),
+            isEasterSeason: false,
+            showImmediate: false,
+            now: firstNow.add(Duration(minutes: 10 * (i + 1))),
+          );
+          draws.add(thursdayQuotes());
+        }
+
+        // The bag rotates: not every rebuild produces the identical set.
+        final allIdentical = draws.every((d) => d.containsAll(draws.first) &&
+            draws.first.containsAll(d));
         expect(
-          firstThursdayEntries.map((entry) => entry.quoteText).toSet(),
-          hasLength(3),
+          allIdentical,
+          isFalse,
+          reason: 'weekday bag must advance across rebuilds, not repeat',
         );
-        expect(
-          firstThursdayEntries.map((entry) => entry.imagePath).toSet(),
-          hasLength(3),
-        );
-
-        final secondNow = DateTime(2026, 5, 14, 20, 10);
-        await rebuild.call(
-          _baseSettings(intervalMinutes: 60),
-          isEasterSeason: false,
-          showImmediate: false,
-          now: secondNow,
-        );
-
-        final secondThursdayEntries = (await history.listForDay(secondNow))
-            .where(
-              (entry) =>
-                  entry.deliveredAt.year == secondNow.year &&
-                  entry.deliveredAt.month == secondNow.month &&
-                  entry.deliveredAt.day == secondNow.day &&
-                  entry.deliveredAt.hour >= 21,
-            )
-            .toList(growable: false);
-        expect(
-          secondThursdayEntries.map((entry) => entry.quoteText).toSet(),
-          hasLength(3),
-        );
-        expect(
-          secondThursdayEntries.map((entry) => entry.imagePath).toSet(),
-          hasLength(3),
-        );
-
-        final firstQuotes = firstThursdayEntries
-            .map((entry) => entry.quoteText)
-            .toSet();
-        final secondQuotes = secondThursdayEntries
-            .map((entry) => entry.quoteText)
-            .toSet();
-        final firstImages = firstThursdayEntries
-            .map((entry) => entry.imagePath)
-            .toSet();
-        final secondImages = secondThursdayEntries
-            .map((entry) => entry.imagePath)
-            .toSet();
-
-        expect(firstQuotes.intersection(secondQuotes), isEmpty);
-        expect(firstImages.intersection(secondImages), isEmpty);
       },
     );
 
@@ -718,42 +691,36 @@ void main() {
       expect(phraseEvents.first.body, 'Minha frase pessoal');
     });
 
-    test('changing interval reschedules at new cadence', () async {
+    test('changing interval changes the number of daily slots', () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
 
       final now = DateTime(2026, 5, 12, 8, 0);
 
-      // Schedule at 30min interval
+      // 180m interval over the 08:00-22:00 window -> 5 slots/weekday.
       await rebuild.call(
-        _baseSettings(intervalMinutes: 30),
+        _baseSettings(intervalMinutes: 180),
         isEasterSeason: false,
         showImmediate: false,
         now: now,
       );
+      final cellsAt180 = scheduler.events
+          .where((e) => e.type == ReminderEventType.quoteInterval)
+          .length;
+      expect(cellsAt180, 5 * 7);
 
-      final firstQuoteAt30 =
-          scheduler.events
-              .where((e) => e.type == ReminderEventType.quoteInterval)
-              .toList()
-            ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
-      expect(firstQuoteAt30.first.scheduledAt, DateTime(2026, 5, 12, 8, 30));
-
-      // Reschedule at 60min interval
+      // 360m interval -> 3 slots/weekday (08:00, 14:00, 20:00).
       await rebuild.call(
-        _baseSettings(intervalMinutes: 60),
+        _baseSettings(intervalMinutes: 360),
         isEasterSeason: false,
         showImmediate: false,
         now: now,
       );
-
-      final firstQuoteAt60 =
-          scheduler.events
-              .where((e) => e.type == ReminderEventType.quoteInterval)
-              .toList()
-            ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
-      expect(firstQuoteAt60.first.scheduledAt, DateTime(2026, 5, 12, 9, 0));
+      final cellsAt360 = scheduler.events
+          .where((e) => e.type == ReminderEventType.quoteInterval)
+          .length;
+      expect(cellsAt360, 3 * 7);
     });
 
     test('all notification types coexist without ID collision', () async {
@@ -867,279 +834,73 @@ void main() {
     });
   });
 
-  group('Notification history stability across rebuilds', () {
-    test(
-      'OS notifications match history entries after multiple rebuilds',
-      () async {
-        final scheduler = InMemoryNotificationSchedulerRepository();
-        final history = _InMemoryHistoryRepository();
-        final rebuild = _makeRebuild(scheduler, history);
 
-        final now = DateTime(2026, 5, 16, 9, 0);
-        final settings = _baseSettings(intervalMinutes: 30);
+  group('Weekly-grid quote scheduling', () {
+    test('grid scheduling writes no future history rows', () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryHistoryRepository();
+      final rebuild = _makeRebuild(scheduler, history);
 
-        // First build: seeds history and schedules notifications.
-        await rebuild.call(
-          settings,
-          isEasterSeason: false,
-          showImmediate: false,
-          now: now,
-        );
+      final now = DateTime(2026, 5, 16, 9, 0);
 
-        // Capture the quote text for each time slot after the first build.
-        final firstBuildByTimestamp = <String, String>{};
-        for (final entry in history.entries) {
-          firstBuildByTimestamp[entry.deliveredAt.toIso8601String()] =
-              entry.quoteText;
-        }
+      // showImmediate:false -> the grid must not write any history entries.
+      await rebuild.call(
+        _baseSettings(intervalMinutes: 180),
+        isEasterSeason: false,
+        showImmediate: false,
+        now: now,
+      );
 
-        // Simulate two rebuilds at the same base time (e.g. settings toggle,
-        // coordinator health check). Same `now` = same time slots.
-        for (var i = 0; i < 2; i++) {
-          await rebuild.call(
-            settings,
-            isEasterSeason: false,
-            showImmediate: false,
-            now: now,
-          );
-        }
+      final quoteEntries = history.entries
+          .where((e) => e.deliveredAt.isAfter(now))
+          .toList();
+      expect(
+        quoteEntries,
+        isEmpty,
+        reason: 'weekly-grid quotes no longer predict future history rows',
+      );
+    });
 
-        // Only check same-day slots — cross-day entries are outside the
-        // scope of listFromUntilEndOfDay and are expected to vary.
-        final todayEnd = DateTime(now.year, now.month, now.day + 1);
-        final todayNotifications =
-            scheduler.events
-                .where(
-                  (e) =>
-                      e.type == ReminderEventType.quoteInterval &&
-                      e.scheduledAt.isBefore(todayEnd),
-                )
-                .toList();
+    test('immediate delivery is recorded and past entries survive rebuild',
+        () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryHistoryRepository();
+      final rebuild = _makeRebuild(scheduler, history);
 
-        // Every same-day OS notification must have exactly one matching
-        // history entry with the same quote text.
-        for (final notification in todayNotifications) {
-          final matchingHistoryEntry = history.entries.where(
-            (entry) => entry.deliveredAt == notification.scheduledAt,
-          );
-          expect(
-            matchingHistoryEntry,
-            hasLength(1),
-            reason:
-                'Exactly one history entry for ${notification.scheduledAt}',
-          );
-          expect(
-            notification.body,
-            matchingHistoryEntry.first.quoteText,
-            reason:
-                'OS notification body at ${notification.scheduledAt} must '
-                'match history entry',
-          );
-        }
+      // Seed a past, already-delivered entry.
+      final pastDelivery = DateTime(2026, 5, 16, 8, 0);
+      history.entries.add(
+        NotificationHistoryEntry(
+          quoteText: 'Past delivered quote',
+          theme: 'tema',
+          season: LiturgicalSeason.ordinary.name,
+          deliveredAt: pastDelivery,
+        ),
+      );
 
-        // Same-day slots must keep their original text from the first build.
-        for (final entry in history.entries) {
-          if (entry.deliveredAt.isBefore(todayEnd)) {
-            final key = entry.deliveredAt.toIso8601String();
-            final originalText = firstBuildByTimestamp[key];
-            if (originalText != null) {
-              expect(
-                entry.quoteText,
-                originalText,
-                reason:
-                    'Slot at ${entry.deliveredAt} must keep original text '
-                    '"$originalText", not "${entry.quoteText}"',
-              );
-            }
-          }
-        }
-      },
-    );
+      final now = DateTime(2026, 5, 16, 10, 0);
 
-    test(
-      'interval change replaces history with correct new quotes',
-      () async {
-        final scheduler = InMemoryNotificationSchedulerRepository();
-        final history = _InMemoryHistoryRepository();
-        final rebuild = _makeRebuild(scheduler, history);
+      // Rebuild with an immediate notification: records exactly one new row.
+      await rebuild.call(
+        _baseSettings(intervalMinutes: 180),
+        isEasterSeason: false,
+        showImmediate: true,
+        now: now,
+      );
 
-        final now = DateTime(2026, 5, 16, 9, 0);
+      // The past delivery survives untouched.
+      final survivingPast = history.entries.where(
+        (e) =>
+            e.deliveredAt == pastDelivery &&
+            e.quoteText == 'Past delivered quote',
+      );
+      expect(survivingPast, hasLength(1));
 
-        // Build at 15-minute intervals.
-        await rebuild.call(
-          _baseSettings(intervalMinutes: 15),
-          isEasterSeason: false,
-          showImmediate: false,
-          now: now,
-        );
-
-        final entriesAt15m = history.entries.length;
-        expect(entriesAt15m, 64);
-
-        // User changes interval to 60 minutes — rebuild.
-        await rebuild.call(
-          _baseSettings(intervalMinutes: 60),
-          isEasterSeason: false,
-          showImmediate: false,
-          now: now,
-        );
-
-        // Orphaned 15m-only slots must be cleaned up.
-        final fifteenMinSlot = now.add(const Duration(minutes: 15));
-        final orphanAt15 = history.entries.where(
-          (entry) => entry.deliveredAt == fifteenMinSlot,
-        );
-        expect(
-          orphanAt15,
-          isEmpty,
-          reason: '15m-only slot must be removed after switching to 60m',
-        );
-
-        // 60m slots must exist and have OS notifications matching them.
-        final sixtyMinSlot = now.add(const Duration(minutes: 60));
-        final entryAt60 = history.entries.where(
-          (entry) => entry.deliveredAt == sixtyMinSlot,
-        );
-        expect(entryAt60, hasLength(1));
-
-        final osNotificationAt60 = scheduler.events.firstWhere(
-          (e) =>
-              e.type == ReminderEventType.quoteInterval &&
-              e.scheduledAt == sixtyMinSlot,
-        );
-        expect(osNotificationAt60.body, entryAt60.first.quoteText);
-      },
-    );
-
-    test(
-      'rebuild after some notifications have been delivered preserves past entries',
-      () async {
-        final scheduler = InMemoryNotificationSchedulerRepository();
-        final history = _InMemoryHistoryRepository();
-        final rebuild = _makeRebuild(scheduler, history);
-
-        final morningStart = DateTime(2026, 5, 16, 8, 0);
-        final settings = _baseSettings(intervalMinutes: 30);
-
-        // 8:00 AM: initial build.
-        await rebuild.call(
-          settings,
-          isEasterSeason: false,
-          showImmediate: true,
-          now: morningStart,
-        );
-
-        // Record what was written for the 8:00 (immediate), 8:30, 9:00 slots.
-        final eightOClockEntry = history.entries.firstWhere(
-          (e) => e.deliveredAt == morningStart,
-        );
-        final eightThirtyEntry = history.entries.firstWhere(
-          (e) => e.deliveredAt == DateTime(2026, 5, 16, 8, 30),
-        );
-        final nineOClockEntry = history.entries.firstWhere(
-          (e) => e.deliveredAt == DateTime(2026, 5, 16, 9, 0),
-        );
-
-        // 10:00 AM: app resumes, rebuild fires.
-        // By now, 8:00, 8:30, and 9:00 notifications have already been
-        // "delivered" by the OS.
-        await rebuild.call(
-          settings,
-          isEasterSeason: false,
-          showImmediate: false,
-          now: DateTime(2026, 5, 16, 10, 0),
-        );
-
-        // Past entries must survive untouched.
-        final survivingEight = history.entries.where(
-          (e) =>
-              e.deliveredAt == morningStart &&
-              e.quoteText == eightOClockEntry.quoteText,
-        );
-        expect(
-          survivingEight,
-          hasLength(1),
-          reason: '8:00 immediate entry must survive rebuild at 10:00',
-        );
-
-        final survivingEightThirty = history.entries.where(
-          (e) =>
-              e.deliveredAt == DateTime(2026, 5, 16, 8, 30) &&
-              e.quoteText == eightThirtyEntry.quoteText,
-        );
-        expect(
-          survivingEightThirty,
-          hasLength(1),
-          reason: '8:30 entry must survive rebuild at 10:00',
-        );
-
-        final survivingNine = history.entries.where(
-          (e) =>
-              e.deliveredAt == DateTime(2026, 5, 16, 9, 0) &&
-              e.quoteText == nineOClockEntry.quoteText,
-        );
-        expect(
-          survivingNine,
-          hasLength(1),
-          reason: '9:00 entry must survive rebuild at 10:00',
-        );
-      },
-    );
-
-    test(
-      'Notificações tab shows same quotes the OS would display',
-      () async {
-        final scheduler = InMemoryNotificationSchedulerRepository();
-        final history = _InMemoryHistoryRepository();
-        final rebuild = _makeRebuild(scheduler, history);
-
-        final now = DateTime(2026, 5, 16, 8, 0);
-        final settings = _baseSettings(intervalMinutes: 30);
-
-        // Initial build.
-        await rebuild.call(
-          settings,
-          isEasterSeason: false,
-          showImmediate: false,
-          now: now,
-        );
-
-        // Simulate user opening the app at 12:00 (rebuild fires).
-        final noon = DateTime(2026, 5, 16, 12, 0);
-        await rebuild.call(
-          settings,
-          isEasterSeason: false,
-          showImmediate: false,
-          now: noon,
-        );
-
-        // What the Notificações tab would show: history entries up to now.
-        final tabEntries = history.entries
-            .where((e) => !e.deliveredAt.isAfter(noon))
-            .toList();
-
-        // What iOS notification center would have shown: OS notifications
-        // with scheduledAt <= noon.
-        // Since we can't query "actually delivered" in tests, we verify
-        // the invariant: for every time slot, the OS notification body and
-        // the history entry text are identical.
-        for (final tabEntry in tabEntries) {
-          final osNotification = scheduler.events.where(
-            (e) =>
-                e.type == ReminderEventType.quoteInterval &&
-                e.scheduledAt == tabEntry.deliveredAt,
-          );
-          if (osNotification.isEmpty) continue;
-          expect(
-            osNotification.first.body,
-            tabEntry.quoteText,
-            reason:
-                'At ${tabEntry.deliveredAt}: tab shows '
-                '"${tabEntry.quoteText}" but OS would show '
-                '"${osNotification.first.body}"',
-          );
-        }
-      },
-    );
+      // Exactly one new delivery row at `now` for the immediate notification.
+      final immediateRows = history.entries.where(
+        (e) => e.deliveredAt == now,
+      );
+      expect(immediateRows, hasLength(1));
+    });
   });
 }
