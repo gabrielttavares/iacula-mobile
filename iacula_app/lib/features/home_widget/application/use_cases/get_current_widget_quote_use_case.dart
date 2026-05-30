@@ -1,4 +1,3 @@
-import '../../../liturgical/domain/liturgical_season.dart';
 import '../../../notifications/domain/entities/last_delivered_card.dart';
 import '../../../notifications/domain/entities/notification_history_entry.dart';
 import '../../../notifications/domain/repositories/last_delivered_card_repository.dart';
@@ -37,8 +36,7 @@ final class GetCurrentWidgetQuoteUseCase {
     }
 
     if (latestDue != null) {
-      final dueQuote = _toQuote(latestDue, current);
-      return dueQuote;
+      return latestDue.toQuote(dayOfWeek: current.weekday);
     }
 
     final lastCard = await _lastDeliveredCardRepository.load();
@@ -63,21 +61,5 @@ final class GetCurrentWidgetQuoteUseCase {
     return left.year == right.year &&
         left.month == right.month &&
         left.day == right.day;
-  }
-
-  Quote _toQuote(NotificationHistoryEntry entry, DateTime now) {
-    final season = LiturgicalSeason.values.firstWhere(
-      (candidate) => candidate.name == entry.season,
-      orElse: () => LiturgicalSeason.ordinary,
-    );
-
-    return Quote(
-      text: entry.quoteText,
-      dayOfWeek: now.weekday,
-      theme: entry.theme,
-      season: season,
-      imagePath: entry.imagePath,
-      feastName: entry.feastName,
-    );
   }
 }

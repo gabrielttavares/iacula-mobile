@@ -502,9 +502,22 @@ void main() {
         );
         expect(hasImmediate, isTrue);
 
-        // Only the immediate delivery is recorded; the grid writes no rows.
-        expect(history.entries.length, 1);
-        expect(history.entries.first.deliveredAt, now);
+        // The immediate delivery is recorded at `now`, alongside the today
+        // layer's future slot assignments (the per-delivery shuffle-bag cache).
+        expect(
+          history.entries.where((entry) => entry.deliveredAt == now),
+          isNotEmpty,
+        );
+        // Today-layer rows exist beyond the immediate one (future slots).
+        expect(
+          history.entries.where((entry) => entry.deliveredAt.isAfter(now)),
+          isNotEmpty,
+        );
+        // All rows are today's; the grid (other weekdays) writes none.
+        expect(
+          history.entries.every((entry) => entry.deliveredAt.day == now.day),
+          isTrue,
+        );
       },
     );
 
@@ -844,14 +857,14 @@ void main() {
 
 
   group('Weekly-grid quote scheduling', () {
-    test('grid scheduling writes no future history rows', () async {
+    test('only the today layer writes future history rows, never the grid',
+        () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
 
       final now = DateTime(2026, 5, 16, 9, 0);
 
-      // showImmediate:false -> the grid must not write any history entries.
       await rebuild.call(
         _baseSettings(intervalMinutes: 180),
         isEasterSeason: false,
@@ -859,13 +872,18 @@ void main() {
         now: now,
       );
 
-      final quoteEntries = history.entries
-          .where((e) => e.deliveredAt.isAfter(now))
+      final futureEntries = history.entries
+          .where((entry) => entry.deliveredAt.isAfter(now))
           .toList();
+      // The today layer caches its future slot assignments, so future rows
+      // exist ...
+      expect(futureEntries, isNotEmpty);
+      // ... but every one is on TODAY; the weekly grid (other weekdays) writes
+      // no history rows, so nothing lands on a different day.
       expect(
-        quoteEntries,
-        isEmpty,
-        reason: 'weekly-grid quotes no longer predict future history rows',
+        futureEntries.every((entry) => entry.deliveredAt.day == now.day),
+        isTrue,
+        reason: 'weekly-grid cells must not predict cross-day history rows',
       );
     });
 

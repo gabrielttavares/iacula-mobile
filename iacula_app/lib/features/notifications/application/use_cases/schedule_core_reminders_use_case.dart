@@ -109,16 +109,7 @@ final class ScheduleCoreRemindersUseCase {
         intervalMinutes: settings.intervalMinutes,
       );
       await _notificationHistoryRepository.add(
-        NotificationHistoryEntry(
-          quoteText: quote.text,
-          theme: quote.theme,
-          season: quote.season.name,
-          deliveredAt: current,
-          imagePath: quote.imagePath,
-          feastName: quote.feastName,
-          source: quote.resolvedSource.name,
-          referenceLabel: quote.referenceLabel,
-        ),
+        NotificationHistoryEntry.fromQuote(quote, deliveredAt: current),
       );
     }
 
@@ -140,20 +131,60 @@ final class ScheduleCoreRemindersUseCase {
       quietHoursEnd: settings.quietHoursEnd,
     );
 
-    for (var slotIndex = 0;
-        slotIndex < todaySlots.length && slotIndex < maxTodayLayerSlots;
-        slotIndex++) {
-      final fireAt = todaySlots[slotIndex];
-      final quote = await fetchNonRepeatingQuote(
-        language: settings.language,
-        slot: fireAt,
-      );
+    // Assignment cache: a today slot (identified by its concrete fire DateTime)
+    // is assigned a quote once and persisted as a future history row. While that
+    // fire time is still ahead, re-running this pass on a same-day reopen reuses
+    // the cached assignment instead of drawing again — so the shuffle bag advances
+    // ~once per delivered quote, not once per scheduled slot per reopen. Rows whose
+    // fire time has already passed are real past deliveries and are never reused
+    // for a future slot, so an elapsed-then-recreated slot redraws exactly once.
+    final existingAssignments =
+        await _notificationHistoryRepository.listFromUntilEndOfDay(current);
+    final assignmentByFireTime = {
+      for (final entry in existingAssignments)
+        entry.deliveredAt.toIso8601String(): entry,
+    };
+    // The fire times we will (re)schedule this pass; every other future row on
+    // today's calendar day is stale and gets pruned below.
+    final scheduledSlots = todaySlots.take(maxTodayLayerSlots).toList();
+    final keepFireTimes = {
+      for (final slot in scheduledSlots) slot.toIso8601String(),
+    };
+
+    for (var slotIndex = 0; slotIndex < scheduledSlots.length; slotIndex++) {
+      final fireAt = scheduledSlots[slotIndex];
+      final cached = assignmentByFireTime[fireAt.toIso8601String()];
+
+      final Quote quote;
+      if (cached != null) {
+        // Slot already assigned and still in the future: reuse, no bag draw.
+        quote = cached.toQuote(dayOfWeek: fireAt.weekday);
+        recentQuoteTexts.add(quote.text);
+        if (recentQuoteTexts.length > recentLookbackSize) {
+          recentQuoteTexts.removeAt(0);
+        }
+      } else {
+        // New (or newly elapsed) slot: draw once and persist the assignment.
+        quote = await fetchNonRepeatingQuote(
+          language: settings.language,
+          slot: fireAt,
+        );
+        await _notificationHistoryRepository.add(
+          NotificationHistoryEntry.fromQuote(quote, deliveredAt: fireAt),
+        );
+      }
+
       final scheduledId = todayLayerIdBase + slotIndex;
       await _scheduler.scheduleWithId(
         scheduledId,
         _buildQuoteEvent(id: scheduledId, fireAt: fireAt, quote: quote),
       );
     }
+
+    // Prune stale future assignment rows (e.g. cadence changed so a previously
+    // scheduled fire time no longer exists). clearFromExcept only touches rows
+    // after `current` on today's calendar day, so real past deliveries survive.
+    await _notificationHistoryRepository.clearFromExcept(current, keepFireTimes);
 
     debugPrint(
       '[ScheduleCoreRemindersUseCase] registered today layer: '

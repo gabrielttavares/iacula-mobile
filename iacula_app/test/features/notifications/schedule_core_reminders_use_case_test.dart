@@ -265,15 +265,17 @@ void main() {
     expect(secondTimes.contains(17), isFalse);
   });
 
-  test('immediate notification still records exactly one delivery', () async {
+  test('immediate notification records a delivery row', () async {
     final scheduler = InMemoryNotificationSchedulerRepository();
     final history = _InMemoryNotificationHistoryRepository();
     final useCase = makeUseCase(
       scheduler,
       history,
       fetcher: ({required String language, required DateTime now}) async {
-        return const Quote(
-          text: 'Immediate quote',
+        // Distinct text per fire time so today-layer assignment rows don't
+        // collapse via the (quoteText, deliveredAt) dedup.
+        return Quote(
+          text: 'quote-${now.toIso8601String()}',
           dayOfWeek: 1,
           theme: 't',
           season: LiturgicalSeason.ordinary,
@@ -284,13 +286,151 @@ void main() {
     final now = DateTime(2026, 5, 31, 8, 0);
     await useCase(Settings.defaults.copyWith(intervalMinutes: 60), now: now);
 
-    // Only the immediate delivery is recorded; layers write no future rows.
-    expect(history.entries, hasLength(1));
-    expect(history.entries.single.deliveredAt, now);
+    // The immediate delivery is recorded at `now` ...
+    expect(
+      history.entries.where((entry) => entry.deliveredAt == now),
+      hasLength(1),
+    );
+    // ... and the today layer persists one assignment row per future slot.
+    // Frequente at 08:00 = 13 slots (08-21 skipping noon); the 08:00 slot
+    // shares `now` with the immediate row, so 13 distinct rows total.
+    expect(history.entries, hasLength(13));
 
     final immediate =
         scheduler.events.firstWhere((e) => e.scheduledId == 8999);
     expect(immediate.repeatWeekly, isFalse);
+  });
+
+  // Counts only TODAY-layer draws. The today layer fetches with `now` on the
+  // current day (2026-05-31); the grid floor fetches for other weekdays (future
+  // days) and is intentionally NOT cached, so it draws every pass — excluding it
+  // isolates the assignment-cache behaviour under test.
+  ({int Function() todayDraws, QuoteFetcher fetcher}) makeTodayDrawCounter(
+    DateTime passDay,
+  ) {
+    var todayDrawCount = 0;
+    Future<Quote> fetcher({
+      required String language,
+      required DateTime now,
+    }) async {
+      final isTodayLayerDraw = now.year == passDay.year &&
+          now.month == passDay.month &&
+          now.day == passDay.day;
+      if (isTodayLayerDraw) todayDrawCount++;
+      return Quote(
+        text: 'draw-${now.toIso8601String()}',
+        dayOfWeek: (now.weekday % 7) + 1,
+        theme: 'tema',
+        season: LiturgicalSeason.ordinary,
+      );
+    }
+
+    return (todayDraws: () => todayDrawCount, fetcher: fetcher);
+  }
+
+  test('same-day reopen reuses today assignments without redrawing', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final counter = makeTodayDrawCounter(DateTime(2026, 5, 31));
+
+    final useCase = makeUseCase(scheduler, history, fetcher: counter.fetcher);
+    final settings = Settings.defaults.copyWith(intervalMinutes: 60);
+
+    // First pass at 08:00 draws once per today slot.
+    await useCase(settings, now: DateTime(2026, 5, 31, 8, 0),
+        showImmediate: false);
+    final todayDrawsAfterFirstPass = counter.todayDraws();
+    expect(todayDrawsAfterFirstPass, 13); // hourly 08-21 skipping noon
+
+    // Reopen at 08:30 (same day, every future slot fire time is unchanged).
+    for (var id = 9100; id < 9100 + 27; id++) {
+      await scheduler.cancelById(id);
+    }
+    await useCase(settings, now: DateTime(2026, 5, 31, 8, 30),
+        showImmediate: false);
+
+    // No extra today-layer draws: all future slots reused their cached rows.
+    expect(counter.todayDraws(), todayDrawsAfterFirstPass);
+
+    // And the reused events carry the originally drawn quote texts.
+    final reused = quoteEventsOf(scheduler)
+        .where((e) => e.scheduledId! >= 9100)
+        .map((e) => e.body)
+        .toList();
+    expect(reused.every((text) => text.startsWith('draw-')), isTrue);
+  });
+
+  test('elapsed today slot is not reused; only it redraws on reopen', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final counter = makeTodayDrawCounter(DateTime(2026, 5, 31));
+
+    final useCase = makeUseCase(scheduler, history, fetcher: counter.fetcher);
+    final settings = Settings.defaults.copyWith(intervalMinutes: 60);
+
+    // First pass at 08:00: today slots 08:00..21:00.
+    await useCase(settings, now: DateTime(2026, 5, 31, 8, 0),
+        showImmediate: false);
+    final todayDrawsAfterFirstPass = counter.todayDraws();
+    expect(todayDrawsAfterFirstPass, 13);
+
+    // Reopen at 10:30: 08:00, 09:00, 10:00 have elapsed; 11:00.. remain future.
+    for (var id = 9100; id < 9100 + 27; id++) {
+      await scheduler.cancelById(id);
+    }
+    await useCase(settings, now: DateTime(2026, 5, 31, 10, 30),
+        showImmediate: false);
+
+    // The remaining future slots (11:00..21:00) reuse their cached rows, so the
+    // bag does not advance on reopen: no new today-layer draws.
+    expect(counter.todayDraws(), todayDrawsAfterFirstPass);
+
+    // The elapsed rows (08/09/10) are past deliveries and must survive.
+    final eightAm = DateTime(2026, 5, 31, 8, 0);
+    expect(
+      history.entries.where((entry) => entry.deliveredAt == eightAm),
+      hasLength(1),
+    );
+  });
+
+  test('stale future assignment rows are pruned when cadence changes', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final useCase = makeUseCase(scheduler, history);
+
+    final now = DateTime(2026, 5, 31, 8, 0);
+
+    // Frequente (hourly) lays down many today rows.
+    await useCase(Settings.defaults.copyWith(intervalMinutes: 60), now: now,
+        showImmediate: false);
+    final hourlyFutureRows = history.entries
+        .where((entry) => entry.deliveredAt.isAfter(now))
+        .length;
+
+    // Switch to Suave (2h) at the same instant: rows for hourly-only fire times
+    // (e.g. 09:00, 10:00) no longer correspond to a slot and must be pruned.
+    for (var id = 9100; id < 9100 + 27; id++) {
+      await scheduler.cancelById(id);
+    }
+    await useCase(Settings.defaults.copyWith(intervalMinutes: 180), now: now,
+        showImmediate: false);
+
+    final remainingFutureRows = history.entries
+        .where((entry) => entry.deliveredAt.isAfter(now))
+        .toList();
+    // Fewer future rows than the hourly pass (the 2h cadence has fewer slots).
+    expect(remainingFutureRows.length, lessThan(hourlyFutureRows));
+    // Every surviving future row maps to a currently scheduled today slot.
+    final scheduledFireTimes = quoteEventsOf(scheduler)
+        .where((e) => e.scheduledId! >= 9100)
+        .map((e) => e.scheduledAt)
+        .toSet();
+    expect(
+      remainingFutureRows.every(
+        (entry) => scheduledFireTimes.contains(entry.deliveredAt),
+      ),
+      isTrue,
+    );
   });
 
   test('total pending quote notifications stay within the iOS budget',

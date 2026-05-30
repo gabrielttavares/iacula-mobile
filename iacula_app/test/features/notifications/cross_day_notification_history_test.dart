@@ -52,7 +52,8 @@ void main() {
       expect(tomorrowEvents, isNotEmpty, reason: 'should have events for tomorrow');
     });
 
-    test('only the immediate notification writes a history entry', () async {
+    test('immediate delivery and today-layer assignments are recorded',
+        () async {
       final now = DateTime(2026, 3, 10, 20, 0);
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 60),
@@ -60,22 +61,34 @@ void main() {
         showImmediate: true,
       );
 
-      // The grid no longer predicts future rows; only the immediate delivery
-      // is recorded, on `now`'s day.
+      // The today layer persists one assignment row per future slot (used as
+      // the per-delivery shuffle-bag cache); the immediate delivery is one of
+      // them, recorded at `now`. From 20:00 the hourly today slots are 20:00 and
+      // 21:00; the 20:00 slot shares its row with the immediate, so 2 distinct.
       final allEntries = await history.listForDay(DateTime(2026, 3, 10));
-      expect(allEntries, hasLength(1));
-      expect(allEntries.single.deliveredAt, now);
+      expect(allEntries, hasLength(2));
+      expect(
+        allEntries.where((entry) => entry.deliveredAt == now),
+        hasLength(1),
+      );
     });
 
-    test('showImmediate false writes no history entries', () async {
+    test('today-layer assignments are recorded even without immediate',
+        () async {
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 60),
         now: DateTime(2026, 3, 10, 8, 0),
         showImmediate: false,
       );
 
+      // No immediate delivery, but the today layer still writes its future slot
+      // assignments (08:00..21:00 skipping noon = 13 rows).
       final todayEntries = await history.listForDay(DateTime(2026, 3, 10));
-      expect(todayEntries, isEmpty);
+      expect(todayEntries, hasLength(13));
+      expect(
+        todayEntries.every((entry) => entry.deliveredAt.day == 10),
+        isTrue,
+      );
     });
 
     test('two-day gap: scheduled notifications span multiple days', () async {
