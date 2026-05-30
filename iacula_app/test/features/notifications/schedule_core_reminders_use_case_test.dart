@@ -523,9 +523,12 @@ void main() {
       final angelus = scheduler.events.firstWhere(
         (e) => e.type == ReminderEventType.angelusNoon,
       );
-      // During Easter, the notification MUST say Regina Caeli
-      expect(angelus.title, 'Regina Caeli');
-      expect(angelus.body, 'Hora de rezar a Regina Caeli.');
+      // The DAILY repeat carries season-neutral text (it cannot re-bake itself
+      // while the app is closed, so it must never be the WRONG prayer). Season
+      // correctness is preserved via the routing slug and the noon bridge.
+      expect(angelus.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
+      expect(angelus.body, ScheduleCoreRemindersUseCase.dailyNoonBody);
+      // During Easter the routing slug still points at Regina Caeli.
       expect(angelus.prayerSlug, 'regina-coeli');
     },
   );
@@ -566,9 +569,48 @@ void main() {
       final angelus = scheduler.events.firstWhere(
         (e) => e.type == ReminderEventType.angelusNoon,
       );
-      expect(angelus.title, 'Regina Caeli');
-      expect(angelus.body, 'Hora de rezar a Regina Caeli.');
+      expect(angelus.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
+      expect(angelus.body, ScheduleCoreRemindersUseCase.dailyNoonBody);
       expect(angelus.prayerSlug, 'regina-coeli');
+    },
+  );
+
+  test(
+    'daily noon repeat text is season-neutral in BOTH seasons (never stale-wrong)',
+    () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+      final useCase = makeUseCase(scheduler, history);
+
+      // Outside Easter.
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 30, angelusEnabled: true),
+        now: DateTime(2026, 2, 10, 8),
+        isEasterSeason: false,
+        showImmediate: false,
+      );
+      final ordinary = scheduler.events.firstWhere(
+        (e) => e.type == ReminderEventType.angelusNoon,
+      );
+      expect(ordinary.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
+      expect(ordinary.body, ScheduleCoreRemindersUseCase.dailyNoonBody);
+      expect(ordinary.prayerSlug, 'angelus');
+
+      // Inside Easter — same neutral text, only the slug changes.
+      final easterScheduler = InMemoryNotificationSchedulerRepository();
+      final easterUseCase = makeUseCase(easterScheduler, history);
+      await easterUseCase(
+        Settings.defaults.copyWith(intervalMinutes: 30, angelusEnabled: true),
+        now: DateTime(2026, 4, 10, 8),
+        isEasterSeason: true,
+        showImmediate: false,
+      );
+      final easter = easterScheduler.events.firstWhere(
+        (e) => e.type == ReminderEventType.angelusNoon,
+      );
+      expect(easter.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
+      expect(easter.body, ScheduleCoreRemindersUseCase.dailyNoonBody);
+      expect(easter.prayerSlug, 'regina-coeli');
     },
   );
 

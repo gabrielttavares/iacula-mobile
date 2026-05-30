@@ -24,6 +24,16 @@ final class ScheduleCoreRemindersUseCase {
   static const int quoteScheduleIdBase = 9000;
   static const int maxQueuedQuoteReminders = 64;
 
+  /// Season-neutral text for the DAILY repeating noon notification (id 200).
+  /// iOS repeats this text every day without the app running and cannot re-bake
+  /// itself, so it must never name a specific season's prayer — otherwise it
+  /// goes stale-wrong (e.g. shows "Angelus" through Eastertide if the app stays
+  /// closed past the boundary bridge). The exact prayer for the boundary days is
+  /// carried by the season noon bridge; tapping resolves the live prayer via the
+  /// season-accurate [ReminderEvent.prayerSlug] below.
+  static const String dailyNoonTitle = 'Oração do meio-dia';
+  static const String dailyNoonBody = 'Hora da oração do meio-dia.';
+
   /// Reserved id block for the dense "today" one-shot layer (Layer A), distinct
   /// from the weekly grid floor (9000-9034), Angelus (200), immediate (8999).
   /// 28 covers a full-window 30-min day (27 slots) without the id ceiling
@@ -287,12 +297,13 @@ final class ScheduleCoreRemindersUseCase {
       '${gridSlotMinutes.length} slots x 6 weekdays (skipped today=$skipWeekday)',
     );
 
-    // Schedule Angelus/Regina Caeli
+    // Schedule the daily noon repeat (Angelus / Regina Caeli). Its text is
+    // season-NEUTRAL because this repeat cannot re-bake itself while the app is
+    // closed; the season noon bridge carries the exact prayer for the boundary
+    // days, and the slug below keeps tap-routing season-accurate.
     if (settings.angelusEnabled) {
-      final noonTitle = effectiveIsEasterSeason ? 'Regina Caeli' : 'Angelus';
-      final noonBody = effectiveIsEasterSeason
-          ? 'Hora de rezar a Regina Caeli.'
-          : 'Hora de rezar o Angelus.';
+      const noonTitle = dailyNoonTitle;
+      const noonBody = dailyNoonBody;
 
       final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
       final noonInQuietHours =
