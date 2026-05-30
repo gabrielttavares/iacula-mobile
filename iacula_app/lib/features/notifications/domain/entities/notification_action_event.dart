@@ -12,6 +12,10 @@ final class NotificationActionEvent {
   static const String snooze1hAction = 'snooze_1h';
   static const String dismissAction = 'dismiss';
 
+  /// "Rezei" — a one-tap engagement action: the user marks that they prayed.
+  /// Opens the app, records today's prayer (feeding the streak), and confirms.
+  static const String rezeiAction = 'rezei';
+
   static const String openAction = 'open_now';
   static const String snooze10Action = 'snooze_10';
 

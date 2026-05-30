@@ -264,8 +264,9 @@ final class LocalNotificationSchedulerRepository
           showsUserInterface: true,
         ),
         AndroidNotificationAction(
-          NotificationActionEvent.snooze1hAction,
-          'Adiar 1h',
+          NotificationActionEvent.rezeiAction,
+          'Rezei 🙏',
+          showsUserInterface: true,
         ),
       ];
 
@@ -282,8 +283,11 @@ final class LocalNotificationSchedulerRepository
               },
             ),
             DarwinNotificationAction.plain(
-              NotificationActionEvent.snooze1hAction,
-              'Adiar 1h',
+              NotificationActionEvent.rezeiAction,
+              'Rezei 🙏',
+              options: <DarwinNotificationActionOption>{
+                DarwinNotificationActionOption.foreground,
+              },
             ),
           ],
           options: <DarwinNotificationCategoryOption>{

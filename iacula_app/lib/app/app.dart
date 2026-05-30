@@ -53,7 +53,10 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
     _loadSettings();
 
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
-    final handler = HandleNotificationActionUseCase(scheduler);
+    final handler = HandleNotificationActionUseCase(
+      scheduler,
+      prayerActivityLogger: ref.read(prayerActivityLoggerProvider),
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final connectivity = ref.read(connectivityProvider);

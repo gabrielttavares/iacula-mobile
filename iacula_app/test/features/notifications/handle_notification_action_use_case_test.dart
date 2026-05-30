@@ -6,6 +6,9 @@ import 'package:iacula_app/features/notifications/domain/entities/notification_a
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/domain/entities/short_interval_reliability.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_scheduler_repository.dart';
+import 'package:iacula_app/features/prayer_activity/application/prayer_activity_logger.dart';
+import 'package:iacula_app/features/prayer_activity/domain/entities/prayer_activity_entry.dart';
+import 'package:iacula_app/features/prayer_activity/domain/repositories/prayer_activity_repository.dart';
 
 final class _FakeNotificationSchedulerRepository
     implements NotificationSchedulerRepository {
@@ -244,4 +247,84 @@ void main() {
     expect(shouldOpen, isFalse);
     expect(scheduler.scheduled, isEmpty);
   });
+
+  test('Rezei records today\'s prayer and opens the app', () async {
+    final scheduler = _FakeNotificationSchedulerRepository();
+    final activityRepo = _FakePrayerActivityRepository();
+    final useCase = HandleNotificationActionUseCase(
+      scheduler,
+      prayerActivityLogger: PrayerActivityLogger(repository: activityRepo),
+    );
+
+    final shouldOpen = await useCase.call(
+      NotificationActionEvent(
+        actionId: NotificationActionEvent.rezeiAction,
+        event: ReminderEvent(
+          type: ReminderEventType.angelusNoon,
+          title: 'Angelus',
+          body: 'Hora de rezar o Angelus.',
+          scheduledAt: DateTime(2026, 2, 24, 12),
+          withVibration: true,
+          isAlarm: true,
+          routeTarget: NotificationRouteTarget.prayer,
+        ),
+      ),
+    );
+
+    // Opens the app so the user sees the confirmation/streak.
+    expect(shouldOpen, isTrue);
+    // Records a prayer for today with positive duration → counts toward streak.
+    expect(activityRepo.saved, hasLength(1));
+    expect(activityRepo.saved.single.activityType, PrayerActivityType.prayer);
+    expect(activityRepo.saved.single.durationSeconds, greaterThan(0));
+    // It does NOT snooze/reschedule.
+    expect(scheduler.scheduled, isEmpty);
+  });
+
+  test('Rezei without a logger still opens the app (no crash)', () async {
+    final scheduler = _FakeNotificationSchedulerRepository();
+    final useCase = HandleNotificationActionUseCase(scheduler);
+
+    final shouldOpen = await useCase.call(
+      NotificationActionEvent(
+        actionId: NotificationActionEvent.rezeiAction,
+        event: ReminderEvent(
+          type: ReminderEventType.angelusNoon,
+          title: 'Angelus',
+          body: 'Hora de rezar o Angelus.',
+          scheduledAt: DateTime(2026, 2, 24, 12),
+          withVibration: true,
+          isAlarm: true,
+          routeTarget: NotificationRouteTarget.prayer,
+        ),
+      ),
+    );
+
+    expect(shouldOpen, isTrue);
+  });
+}
+
+class _FakePrayerActivityRepository implements PrayerActivityRepository {
+  final List<PrayerActivityEntry> saved = [];
+
+  @override
+  Future<void> save(PrayerActivityEntry entry) async => saved.add(entry);
+
+  @override
+  Future<List<PrayerActivityEntry>> listAll() async => saved;
+
+  @override
+  Future<List<PrayerActivityEntry>> listByDateRange(
+    DateTime start,
+    DateTime end,
+  ) async => saved;
+
+  @override
+  Future<int> totalMinutesForDate(DateTime date) async => 0;
+
+  @override
+  Future<Map<String, int>> minutesByDateRange(
+    DateTime start,
+    DateTime end,
+  ) async => {};
 }

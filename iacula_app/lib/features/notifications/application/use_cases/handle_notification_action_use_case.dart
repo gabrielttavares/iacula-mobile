@@ -1,12 +1,18 @@
-﻿import '../../../prayers/domain/services/prayer_scheduler.dart';
+﻿import '../../../prayer_activity/application/prayer_activity_logger.dart';
+import '../../../prayer_activity/domain/entities/prayer_activity_entry.dart';
+import '../../../prayers/domain/services/prayer_scheduler.dart';
 import '../../domain/entities/notification_action_event.dart';
 import '../../domain/entities/reminder_event.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 
 final class HandleNotificationActionUseCase {
-  const HandleNotificationActionUseCase(this._scheduler);
+  const HandleNotificationActionUseCase(
+    this._scheduler, {
+    PrayerActivityLogger? prayerActivityLogger,
+  }) : _prayerActivityLogger = prayerActivityLogger;
 
   final NotificationSchedulerRepository _scheduler;
+  final PrayerActivityLogger? _prayerActivityLogger;
   static const int maxConsecutiveSnoozes = 3;
   static const int _angelusNotificationId = 200;
 
@@ -17,6 +23,16 @@ final class HandleNotificationActionUseCase {
     }
 
     switch (action.actionId) {
+      case NotificationActionEvent.rezeiAction:
+        // The user marked that they prayed — record it (feeds the streak) and
+        // open the app so they see the confirmation. A minimal positive
+        // duration is enough for the day to count toward the streak.
+        await _prayerActivityLogger?.logActivity(
+          type: PrayerActivityType.prayer,
+          durationSeconds: 1,
+          featureSlug: 'rezei',
+        );
+        return true;
       case NotificationActionEvent.snooze1hAction:
       case NotificationActionEvent.dismissAction:
       case NotificationActionEvent.snooze10Action:

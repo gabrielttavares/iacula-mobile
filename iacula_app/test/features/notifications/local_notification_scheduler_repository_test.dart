@@ -135,9 +135,10 @@ void main() {
       expect(details.actions![0].id, 'pray_now');
       expect(details.actions![0].title, 'Rezar agora');
       expect(details.actions![0].showsUserInterface, isTrue);
-      expect(details.actions![1].id, 'snooze_1h');
-      expect(details.actions![1].title, 'Adiar 1h');
-      expect(details.actions![1].showsUserInterface, isFalse);
+      // Second action is the engagement 'Rezei' (replaced the dead snooze).
+      expect(details.actions![1].id, 'rezei');
+      expect(details.actions![1].title, 'Rezei 🙏');
+      expect(details.actions![1].showsUserInterface, isTrue);
       expect(details.fullScreenIntent, isFalse);
       expect(details.category, isNull);
       expect(details.ongoing, isFalse);
