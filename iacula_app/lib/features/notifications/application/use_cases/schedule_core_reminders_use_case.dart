@@ -1,6 +1,3 @@
-import 'dart:io' show Platform;
-import 'dart:math' show min;
-
 import 'package:flutter/foundation.dart';
 
 import '../../../home_widget/home_widget_service.dart';
@@ -15,6 +12,7 @@ import '../../domain/repositories/last_delivered_card_repository.dart';
 import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 import '../../domain/services/quiet_hours_checker.dart';
+import '../../domain/services/quote_slot_planner.dart';
 
 typedef QuoteFetcher =
     Future<Quote> Function({required String language, required DateTime now});
@@ -131,75 +129,47 @@ final class ScheduleCoreRemindersUseCase {
       );
     }
 
-    // iOS allows at most 64 pending notifications total.
-    // Reserve slots for non-quote notifications.
-    const iosScheduledLimit = 64;
-    const reservedSlots = 6;
-    final quoteCount = Platform.isIOS
-        ? min(maxQueuedQuoteReminders, iosScheduledLimit - reservedSlots)
-        : maxQueuedQuoteReminders;
+    // Register a weekly grid of OS-owned repeating quote notifications:
+    // (each weekday 1..7) x (each daily slot time). Each cell repeats weekly
+    // via DateTimeComponents.dayOfWeekAndTime, so iOS fires the correct
+    // weekday's quote even if the app is never reopened. Quote text comes from
+    // the shuffle-bag fetcher called with a `now` on that weekday, so the right
+    // quotes.json bucket is used and its cursor advances over time.
+    //
+    // The active window is the fixed daily window; the planner additionally
+    // skips any individual slot that lands inside quiet hours, which handles
+    // both overnight (22:00->07:00) and daytime (11:00->13:00) quiet windows
+    // without collapsing the window.
+    final slotMinutes = QuoteSlotPlanner.slotMinutesOfDay(
+      intervalMinutes: settings.intervalMinutes,
+      windowStartMinutes: kQuoteWindowStartMinutes,
+      windowEndMinutes: kQuoteWindowEndMinutes,
+      quietHoursEnabled: settings.quietHoursEnabled,
+      quietHoursStart: settings.quietHoursStart,
+      quietHoursEnd: settings.quietHoursEnd,
+      maxSlots: kMaxQuoteSlotsPerWeekday,
+    );
 
-    // Compute future time slots respecting quiet hours
-    final scheduledTimes = <DateTime>[];
-    var cursor = current;
-    for (var i = 0; i < quoteCount; i++) {
-      cursor = cursor.add(Duration(minutes: settings.intervalMinutes));
-      if (settings.quietHoursEnabled) {
-        while (QuietHoursChecker.isDuringQuietHours(
-          cursor,
-          settings.quietHoursStart,
-          settings.quietHoursEnd,
-        )) {
-          cursor = QuietHoursChecker.nextActiveTime(
-            cursor,
-            settings.quietHoursEnd,
-          );
-        }
-      }
-      scheduledTimes.add(cursor);
-    }
-
-    // Reuse existing history entries so rebuilds don't replace quotes that
-    // the OS already delivered (or will deliver) to the notification center.
-    final existingFutureEntries =
-        await _notificationHistoryRepository.listFromUntilEndOfDay(current);
-    final existingByTime = <String, NotificationHistoryEntry>{};
-    for (final entry in existingFutureEntries) {
-      existingByTime[entry.deliveredAt.toIso8601String()] = entry;
-    }
-
-    for (var i = 0; i < scheduledTimes.length; i++) {
-      final quoteAt = scheduledTimes[i];
-      final scheduledId = quoteScheduleIdBase + i;
-      final existingEntry = existingByTime[quoteAt.toIso8601String()];
-
-      if (existingEntry != null) {
-        recentQuoteTexts.add(existingEntry.quoteText);
-        if (recentQuoteTexts.length > recentLookbackSize) {
-          recentQuoteTexts.removeAt(0);
-        }
-        await _scheduler.scheduleWithId(
-          scheduledId,
-          ReminderEvent(
-            type: ReminderEventType.quoteInterval,
-            title: 'Iacula',
-            body: existingEntry.quoteText,
-            scheduledAt: quoteAt,
-            withVibration: true,
-            isAlarm: false,
-            routeTarget: NotificationRouteTarget.home,
-            scheduledId: scheduledId,
-            quoteTheme: existingEntry.theme,
-            quoteSeason: existingEntry.season,
-            quoteFeastName: existingEntry.feastName,
-            quoteImagePath: existingEntry.imagePath,
-          ),
+    for (var weekdayIndex = 0; weekdayIndex < 7; weekdayIndex++) {
+      // Dart DateTime.weekday is 1=Mon..7=Sun. weekdayIndex 0..6 maps to that.
+      final weekday = weekdayIndex + 1;
+      for (var slotIndex = 0; slotIndex < slotMinutes.length; slotIndex++) {
+        final minutesOfDay = slotMinutes[slotIndex];
+        final fireAt = _nextOccurrenceOnWeekday(
+          current,
+          weekday,
+          minutesOfDay ~/ 60,
+          minutesOfDay % 60,
         );
-      } else {
+
         final quote = await fetchNonRepeatingQuote(
           language: settings.language,
-          slot: quoteAt,
+          slot: fireAt,
         );
+
+        final scheduledId = quoteScheduleIdBase +
+            (weekdayIndex * kMaxQuoteSlotsPerWeekday) +
+            slotIndex;
 
         await _scheduler.scheduleWithId(
           scheduledId,
@@ -207,9 +177,10 @@ final class ScheduleCoreRemindersUseCase {
             type: ReminderEventType.quoteInterval,
             title: 'Iacula',
             body: quote.text,
-            scheduledAt: quoteAt,
+            scheduledAt: fireAt,
             withVibration: true,
             isAlarm: false,
+            repeatWeekly: true,
             routeTarget: NotificationRouteTarget.home,
             scheduledId: scheduledId,
             quoteTheme: quote.theme,
@@ -218,33 +189,12 @@ final class ScheduleCoreRemindersUseCase {
             quoteImagePath: quote.imagePath,
           ),
         );
-
-        await _notificationHistoryRepository.add(
-          NotificationHistoryEntry(
-            quoteText: quote.text,
-            theme: quote.theme,
-            season: quote.season.name,
-            deliveredAt: quoteAt,
-            imagePath: quote.imagePath,
-            feastName: quote.feastName,
-            source: quote.resolvedSource.name,
-            referenceLabel: quote.referenceLabel,
-          ),
-        );
       }
     }
 
-    // Remove orphaned future entries that no longer match any scheduled slot
-    // (e.g. after an interval change shifted all time slots).
-    final scheduledTimestamps =
-        scheduledTimes.map((dt) => dt.toIso8601String()).toSet();
-    await _notificationHistoryRepository.clearFromExcept(
-      current,
-      scheduledTimestamps,
-    );
-
     debugPrint(
-      '[ScheduleCoreRemindersUseCase] queued ${scheduledTimes.length} quote reminders',
+      '[ScheduleCoreRemindersUseCase] registered weekly grid: '
+      '${slotMinutes.length} slots x 7 weekdays',
     );
 
     // Schedule Angelus/Regina Caeli
@@ -283,4 +233,21 @@ final class ScheduleCoreRemindersUseCase {
 
   bool _isDateWithinEasterSeason(DateTime date) =>
       EasterCalculator.isWithinEasterSeason(date);
+
+  /// Next DateTime at the given weekday (1=Mon..7=Sun) and clock time, at or
+  /// after [from]. Used as the first fire time for a weekly-repeating slot.
+  DateTime _nextOccurrenceOnWeekday(
+    DateTime from,
+    int weekday,
+    int hour,
+    int minute,
+  ) {
+    var candidate = DateTime(from.year, from.month, from.day, hour, minute);
+    final dayDelta = (weekday - candidate.weekday + 7) % 7;
+    candidate = candidate.add(Duration(days: dayDelta));
+    if (!candidate.isAfter(from)) {
+      candidate = candidate.add(const Duration(days: 7));
+    }
+    return candidate;
+  }
 }
