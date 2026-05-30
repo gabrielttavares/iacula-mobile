@@ -23,7 +23,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('renders all four presets in increasing-density order',
+  testWidgets('renders all four presets in a density-ordered 2x2 grid',
       (tester) async {
     await pumpSelector(tester, selected: JaculatoriaCadencePreset.frequente);
 
@@ -31,14 +31,18 @@ void main() {
       expect(find.text(label), findsOneWidget);
     }
 
-    // Density order: their cards appear left-to-right in increasing frequency.
-    final suaveX = tester.getCenter(find.text('Suave')).dx;
-    final regularX = tester.getCenter(find.text('Regular')).dx;
-    final frequenteX = tester.getCenter(find.text('Frequente')).dx;
-    final maisX = tester.getCenter(find.text('Mais frequente')).dx;
-    expect(suaveX, lessThan(regularX));
-    expect(regularX, lessThan(frequenteX));
-    expect(frequenteX, lessThan(maisX));
+    final suaveCenter = tester.getCenter(find.text('Suave'));
+    final regularCenter = tester.getCenter(find.text('Regular'));
+    final frequenteCenter = tester.getCenter(find.text('Frequente'));
+    final maisCenter = tester.getCenter(find.text('Mais frequente'));
+
+    // 2x2 grid in increasing-density reading order:
+    // row 1: Suave (left) , Regular (right)
+    // row 2: Frequente (left), Mais frequente (right)
+    expect(suaveCenter.dx, lessThan(regularCenter.dx)); // row 1 left-to-right
+    expect(frequenteCenter.dx, lessThan(maisCenter.dx)); // row 2 left-to-right
+    expect(suaveCenter.dy, lessThan(frequenteCenter.dy)); // left column top-to-bottom
+    expect(regularCenter.dy, lessThan(maisCenter.dy)); // right column top-to-bottom
   });
 
   testWidgets('Mais frequente card shows the 30-min cadence subtitle',

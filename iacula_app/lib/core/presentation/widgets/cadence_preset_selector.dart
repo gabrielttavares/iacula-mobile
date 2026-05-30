@@ -13,10 +13,14 @@ const _presetLabels = {
   JaculatoriaCadencePreset.maisFrequente: 'Mais frequente',
 };
 
-/// A row of 3 selectable preset buttons for jaculatória notification cadence.
+/// A 2×2 grid of selectable preset buttons for jaculatória notification cadence.
 ///
 /// Mirrors the visual language of `_IntervalButton` in `interval_selector.dart`:
 /// animated container with selected highlight, haptic feedback on tap.
+///
+/// Presets are laid out in density order (left-to-right, top-to-bottom):
+/// Suave | Regular
+/// Frequente | Mais frequente
 class CadencePresetSelector extends StatelessWidget {
   const CadencePresetSelector({
     super.key,
@@ -27,30 +31,57 @@ class CadencePresetSelector extends StatelessWidget {
   final JaculatoriaCadencePreset selected;
   final ValueChanged<JaculatoriaCadencePreset> onChanged;
 
+  static const int _columnsPerRow = 2;
+  static const double _columnGap = 8;
+  static const double _rowGap = 8;
+
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: JaculatoriaCadencePreset.values.map((preset) {
-        final isLastItem =
-            preset == JaculatoriaCadencePreset.values.last;
-        return Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(right: isLastItem ? 0 : 8),
-            child: _CadencePresetButton(
-              label: _presetLabels[preset]!,
-              subtitle: preset.cadenceLabelPtBr,
-              isSelected: preset == selected,
-              onPressed: () {
-                HapticFeedback.selectionClick();
-                onChanged(preset);
-              },
+    final allPresets = JaculatoriaCadencePreset.values;
+
+    // Chunk the flat list into rows of [_columnsPerRow].
+    final presetRows = <List<JaculatoriaCadencePreset>>[];
+    for (var startIndex = 0; startIndex < allPresets.length; startIndex += _columnsPerRow) {
+      final endIndex = (startIndex + _columnsPerRow).clamp(0, allPresets.length);
+      presetRows.add(allPresets.sublist(startIndex, endIndex));
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: presetRows.indexed.map((indexedRow) {
+        final rowIndex = indexedRow.$1;
+        final rowPresets = indexedRow.$2;
+        final isLastRow = rowIndex == presetRows.length - 1;
+
+        return Padding(
+          padding: EdgeInsets.only(bottom: isLastRow ? 0 : _rowGap),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: rowPresets.indexed.map((indexedPreset) {
+                final columnIndex = indexedPreset.$1;
+                final preset = indexedPreset.$2;
+                final isLastColumn = columnIndex == rowPresets.length - 1;
+
+                return Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: isLastColumn ? 0 : _columnGap),
+                    child: _CadencePresetButton(
+                      label: _presetLabels[preset]!,
+                      subtitle: preset.cadenceLabelPtBr,
+                      isSelected: preset == selected,
+                      onPressed: () {
+                        HapticFeedback.selectionClick();
+                        onChanged(preset);
+                      },
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         );
       }).toList(),
-    ),
     );
   }
 }

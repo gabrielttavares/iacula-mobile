@@ -170,8 +170,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             selected: cadencePreset,
                             onChanged: (preset) => setState(() => _intervalMinutes = preset.intervalMinutes),
                           ),
-                          const SizedBox(height: IaculaSpacing.sm),
-                          _buildNextNotificationEstimate(context, cadencePreset),
                           const SizedBox(height: IaculaRadius.elementSpacing),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -462,54 +460,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ],
       ),
-    );
-  }
-
-
-  Widget _buildNextNotificationEstimate(
-    BuildContext context,
-    JaculatoriaCadencePreset preset,
-  ) {
-    final estimateRow = Row(
-      children: [
-        Icon(
-          CupertinoIcons.clock,
-          size: 14,
-          color: context.colors.textSecondary,
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            preset.dailyVolumeDescriptionPtBr,
-            style: context.textStyles.secondary.copyWith(fontSize: 13),
-          ),
-        ),
-      ],
-    );
-
-    // "Mais frequente" is dense-today-only: closed days fall back to the gentle
-    // grid floor. Disclose that (and the quiet-hours comfort lever) only for this
-    // preset, so the other three keep an uncluttered single-line estimate.
-    if (preset != JaculatoriaCadencePreset.maisFrequente) {
-      return estimateRow;
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        estimateRow,
-        const SizedBox(height: 6),
-        Text(
-          'Nos dias sem abrir o app, mantemos um ritmo suave.',
-          style: context.textStyles.secondary.copyWith(fontSize: 12),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          'Dica: um horário silencioso mais longo deixa o ritmo mais '
-          'tranquilo de manhã e à noite.',
-          style: context.textStyles.secondary.copyWith(fontSize: 12),
-        ),
-      ],
     );
   }
 

@@ -57,18 +57,6 @@ enum JaculatoriaCadencePreset {
         JaculatoriaCadencePreset.maisFrequente => 'a cada 30 minutos',
       };
 
-  /// pt-BR honest description of the daily volume for the settings estimate.
-  String get dailyVolumeDescriptionPtBr => switch (this) {
-        JaculatoriaCadencePreset.suave =>
-          'Cerca de 7 lembranças por dia, da manhã à noite.',
-        JaculatoriaCadencePreset.regular =>
-          'Cerca de 9 lembranças por dia.',
-        JaculatoriaCadencePreset.frequente =>
-          'Cerca de 13 lembranças por dia, de hora em hora.',
-        JaculatoriaCadencePreset.maisFrequente =>
-          'Cerca de 24 lembranças por dia — só nos dias em que você abre o app.',
-      };
-
   /// Maps a stored/legacy interval to the nearest preset.
   ///
   /// Thresholds (midpoints between adjacent representative intervals 30/60/90/
