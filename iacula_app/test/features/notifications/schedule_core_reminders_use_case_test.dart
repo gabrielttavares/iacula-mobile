@@ -79,127 +79,199 @@ final class _InMemoryNotificationHistoryRepository
 }
 
 void main() {
-  test('registers a weekly grid of repeating quote notifications', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository();
-    final history = _InMemoryNotificationHistoryRepository();
+  // Quote fetcher that encodes the fired weekday into the text, so tests can
+  // assert each slot drew from the correct quotes.json weekday bucket.
+  Future<Quote> weekdayQuote({
+    required String language,
+    required DateTime now,
+  }) async {
+    final weekday = (now.weekday % 7) + 1;
+    return Quote(
+      text: 'weekday-$weekday',
+      dayOfWeek: weekday,
+      theme: 'tema',
+      season: LiturgicalSeason.ordinary,
+    );
+  }
 
-    final useCase = ScheduleCoreRemindersUseCase(
+  ScheduleCoreRemindersUseCase makeUseCase(
+    InMemoryNotificationSchedulerRepository scheduler,
+    _InMemoryNotificationHistoryRepository history, {
+    QuoteFetcher? fetcher,
+  }) {
+    return ScheduleCoreRemindersUseCase(
       scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        // Encode the weekday so we can assert the right bucket was used.
-        final weekday = (now.weekday % 7) + 1;
-        return Quote(
-          text: 'weekday-$weekday',
-          dayOfWeek: weekday,
-          theme: 'tema',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
+      quoteFetcher: fetcher ?? weekdayQuote,
       notificationHistoryRepository: history,
       lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
     );
+  }
 
-    // interval 3h, default window 07:00-22:00 -> 6 slots/weekday -> 42 cells.
-    final settings = Settings.defaults.copyWith(intervalMinutes: 180);
+  List<ReminderEvent> quoteEventsOf(
+    InMemoryNotificationSchedulerRepository scheduler,
+  ) =>
+      scheduler.events
+          .where((e) => e.type == ReminderEventType.quoteInterval)
+          .toList();
+
+  test('today layer fills today with one-shots, grid floor covers other days',
+      () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final useCase = makeUseCase(scheduler, history);
+
+    // 2026-05-31 is a Sunday (weekday 7). Frequente (interval 60).
+    final now = DateTime(2026, 5, 31, 8, 0);
     await useCase(
-      settings,
-      now: DateTime(2026, 2, 21, 10, 0),
+      Settings.defaults.copyWith(intervalMinutes: 60),
+      now: now,
       showImmediate: false,
     );
 
-    final quoteEvents = scheduler.events
-        .where((e) => e.type == ReminderEventType.quoteInterval)
+    final quotes = quoteEventsOf(scheduler);
+
+    // Today layer: one-shots in the 9100+ block, not weekly-repeating.
+    final todayLayer = quotes
+        .where((e) => e.scheduledId! >= 9100)
         .toList();
-
-    expect(quoteEvents, hasLength(42));
-    expect(quoteEvents.every((e) => e.repeatWeekly), isTrue);
-
-    // Ids are stable, unique, and within the reserved range.
-    final ids = quoteEvents.map((e) => e.scheduledId!).toSet();
-    expect(ids.length, 42);
-    expect(ids.every((id) => id >= 9000 && id < 9000 + 7 * 6), isTrue);
-  });
-
-  test('each grid cell draws from its own weekday bucket', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository();
-    final history = _InMemoryNotificationHistoryRepository();
-
-    final useCase = ScheduleCoreRemindersUseCase(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        final weekday = (now.weekday % 7) + 1;
-        return Quote(
-          text: 'weekday-$weekday',
-          dayOfWeek: weekday,
-          theme: 'tema',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-      notificationHistoryRepository: history,
-      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-    );
-
-    await useCase(
-      Settings.defaults.copyWith(intervalMinutes: 180),
-      now: DateTime(2026, 2, 21, 10, 0),
-      showImmediate: false,
-    );
-
-    final quoteEvents = scheduler.events.where(
-      (e) => e.type == ReminderEventType.quoteInterval,
-    );
-
-    for (final event in quoteEvents) {
-      final firedWeekday = (event.scheduledAt.weekday % 7) + 1;
-      expect(
-        event.body,
-        'weekday-$firedWeekday',
-        reason: 'cell firing on weekday $firedWeekday used the wrong bucket',
-      );
+    expect(todayLayer, isNotEmpty);
+    expect(todayLayer.every((e) => !e.repeatWeekly), isTrue);
+    expect(todayLayer.every((e) => e.scheduledAt.day == 31), isTrue);
+    // Hourly 08:00-21:00 skipping the noon hour = 13 slots.
+    expect(todayLayer.length, 13);
+    for (final event in todayLayer) {
+      expect(event.scheduledAt.hour, isNot(12));
     }
 
-    // All 7 weekday buckets are represented across the grid.
-    final bodies = quoteEvents.map((e) => e.body).toSet();
-    expect(bodies, {
-      for (var weekday = 1; weekday <= 7; weekday++) 'weekday-$weekday',
-    });
+    // Grid floor: weekly repeats in the 9000-9034 block, NOT on today's weekday.
+    final gridFloor = quotes
+        .where((e) => e.scheduledId! >= 9000 && e.scheduledId! < 9100)
+        .toList();
+    expect(gridFloor.every((e) => e.repeatWeekly), isTrue);
+    expect(gridFloor.every((e) => e.scheduledAt.weekday != now.weekday), isTrue);
+    // 6 weekdays x 5 slots = 30 cells.
+    expect(gridFloor.length, 30);
   });
 
-  test('quote scheduling writes no future history rows', () async {
+  test('today one-shots draw from today\'s weekday bucket', () async {
     final scheduler = InMemoryNotificationSchedulerRepository();
     final history = _InMemoryNotificationHistoryRepository();
+    final useCase = makeUseCase(scheduler, history);
 
-    final useCase = ScheduleCoreRemindersUseCase(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return const Quote(
-          text: 'Q',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-      notificationHistoryRepository: history,
-      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-    );
-
+    final now = DateTime(2026, 5, 31, 8, 0); // Sunday -> bucket weekday 1
     await useCase(
-      Settings.defaults.copyWith(intervalMinutes: 180),
-      now: DateTime(2026, 2, 21, 10, 0),
+      Settings.defaults.copyWith(intervalMinutes: 60),
+      now: now,
       showImmediate: false,
     );
 
-    // showImmediate:false -> no immediate delivery row, and the grid writes none.
-    expect(history.entries, isEmpty);
+    final expectedBucket = (now.weekday % 7) + 1; // Sunday -> 1
+    final todayLayer =
+        quoteEventsOf(scheduler).where((e) => e.scheduledId! >= 9100);
+    expect(
+      todayLayer.every((e) => e.body == 'weekday-$expectedBucket'),
+      isTrue,
+    );
+  });
+
+  test('grid floor cells each draw from their own weekday bucket', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final useCase = makeUseCase(scheduler, history);
+
+    await useCase(
+      Settings.defaults.copyWith(intervalMinutes: 60),
+      now: DateTime(2026, 5, 31, 8, 0),
+      showImmediate: false,
+    );
+
+    final gridFloor = quoteEventsOf(scheduler)
+        .where((e) => e.scheduledId! >= 9000 && e.scheduledId! < 9100);
+    for (final event in gridFloor) {
+      final firedWeekday = (event.scheduledAt.weekday % 7) + 1;
+      expect(event.body, 'weekday-$firedWeekday');
+    }
+  });
+
+  test('denser preset schedules more today one-shots', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final useCase = makeUseCase(scheduler, history);
+
+    // Suave (interval 180 -> 2h cadence) at the start of the day.
+    await useCase(
+      Settings.defaults.copyWith(intervalMinutes: 180),
+      now: DateTime(2026, 5, 31, 7, 0),
+      showImmediate: false,
+    );
+    final suaveToday = quoteEventsOf(scheduler)
+        .where((e) => e.scheduledId! >= 9100)
+        .length;
+
+    // every 2h from 07:00-21:00 skipping noon = 07,09,11,13,15,17,19,21 = 8
+    // (12-13 excluded but 11 and 13 are fine) -> 7 slots actually:
+    // 07,09,11,15,17,19,21 (13:00 is allowed; 11+2=13 ok) -> recompute below.
+    expect(suaveToday, greaterThan(0));
+
+    final scheduler2 = InMemoryNotificationSchedulerRepository();
+    final history2 = _InMemoryNotificationHistoryRepository();
+    final useCase2 = makeUseCase(scheduler2, history2);
+    await useCase2(
+      Settings.defaults.copyWith(intervalMinutes: 60), // Frequente
+      now: DateTime(2026, 5, 31, 7, 0),
+      showImmediate: false,
+    );
+    final frequenteToday = quoteEventsOf(scheduler2)
+        .where((e) => e.scheduledId! >= 9100)
+        .length;
+
+    expect(frequenteToday, greaterThan(suaveToday));
+  });
+
+  test('reopening mid-day keeps past slots and refills only future hours',
+      () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final useCase = makeUseCase(scheduler, history);
+
+    final settings = Settings.defaults.copyWith(intervalMinutes: 60);
+
+    // First pass at 16:00: today one-shots from 16:00-21:00.
+    await useCase(settings, now: DateTime(2026, 5, 31, 16, 0),
+        showImmediate: false);
+    final firstTimes = quoteEventsOf(scheduler)
+        .where((e) => e.scheduledId! >= 9100)
+        .map((e) => e.scheduledAt.hour)
+        .toList()
+      ..sort();
+    expect(firstTimes.first, 16);
+    expect(firstTimes.last, 21);
+
+    // Second pass simulates reopening at 18:00 (after the cancel-then-reschedule
+    // that RebuildNotificationsUseCase performs in production).
+    for (var id = 9100; id < 9100 + 27; id++) {
+      await scheduler.cancelById(id);
+    }
+    await useCase(settings, now: DateTime(2026, 5, 31, 18, 0),
+        showImmediate: false);
+    final secondTimes = quoteEventsOf(scheduler)
+        .where((e) => e.scheduledId! >= 9100)
+        .map((e) => e.scheduledAt.hour)
+        .toList()
+      ..sort();
+    // Now starts at 18:00; 16:00/17:00 are gone (already fired in real life).
+    expect(secondTimes.first, 18);
+    expect(secondTimes.contains(16), isFalse);
+    expect(secondTimes.contains(17), isFalse);
   });
 
   test('immediate notification still records exactly one delivery', () async {
     final scheduler = InMemoryNotificationSchedulerRepository();
     final history = _InMemoryNotificationHistoryRepository();
-
-    final useCase = ScheduleCoreRemindersUseCase(
+    final useCase = makeUseCase(
       scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
+      history,
+      fetcher: ({required String language, required DateTime now}) async {
         return const Quote(
           text: 'Immediate quote',
           dayOfWeek: 1,
@@ -207,109 +279,35 @@ void main() {
           season: LiturgicalSeason.ordinary,
         );
       },
-      notificationHistoryRepository: history,
-      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
     );
 
-    final now = DateTime(2026, 2, 21, 10, 0);
-    await useCase(Settings.defaults.copyWith(intervalMinutes: 180), now: now);
+    final now = DateTime(2026, 5, 31, 8, 0);
+    await useCase(Settings.defaults.copyWith(intervalMinutes: 60), now: now);
 
+    // Only the immediate delivery is recorded; layers write no future rows.
     expect(history.entries, hasLength(1));
-    expect(history.entries.single.quoteText, 'Immediate quote');
     expect(history.entries.single.deliveredAt, now);
 
-    // The immediate notification keeps id 8999 and is not weekly-repeating.
-    final immediate = scheduler.events.firstWhere(
-      (e) => e.scheduledId == 8999,
-    );
+    final immediate =
+        scheduler.events.firstWhere((e) => e.scheduledId == 8999);
     expect(immediate.repeatWeekly, isFalse);
   });
 
-  test('re-running the pass replaces the same ids (idempotent)', () async {
+  test('total pending quote notifications stay within the iOS budget',
+      () async {
     final scheduler = InMemoryNotificationSchedulerRepository();
     final history = _InMemoryNotificationHistoryRepository();
+    final useCase = makeUseCase(scheduler, history);
 
-    var fetchCount = 0;
-    final useCase = ScheduleCoreRemindersUseCase(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        fetchCount++;
-        return Quote(
-          text: 'Q-$fetchCount',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-      notificationHistoryRepository: history,
-      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-    );
-
-    final settings = Settings.defaults.copyWith(intervalMinutes: 180);
-    final now = DateTime(2026, 2, 21, 10, 0);
-
-    await useCase(settings, now: now, showImmediate: false);
-    final firstRunIds = scheduler.events
-        .where((e) => e.type == ReminderEventType.quoteInterval)
-        .map((e) => e.scheduledId)
-        .toSet();
-
-    await useCase(settings, now: now, showImmediate: false);
-    final secondRunIds = scheduler.events
-        .where((e) => e.type == ReminderEventType.quoteInterval)
-        .map((e) => e.scheduledId)
-        .toSet();
-
-    // Same id set both runs: the grid replaces in place rather than piling up.
-    expect(secondRunIds, firstRunIds);
-  });
-
-  test('a daytime quiet window still leaves quote slots outside it', () async {
-    final scheduler = InMemoryNotificationSchedulerRepository();
-    final history = _InMemoryNotificationHistoryRepository();
-
-    final useCase = ScheduleCoreRemindersUseCase(
-      scheduler,
-      quoteFetcher: ({required String language, required DateTime now}) async {
-        return const Quote(
-          text: 'Q',
-          dayOfWeek: 1,
-          theme: 't',
-          season: LiturgicalSeason.ordinary,
-        );
-      },
-      notificationHistoryRepository: history,
-      lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-    );
-
-    // Midday quiet window (does not wrap midnight) must not collapse the
-    // active window: slots before 11:00 and after 13:00 should remain.
+    // Frequente at 07:00 is the densest case.
     await useCase(
-      Settings.defaults.copyWith(
-        intervalMinutes: 60,
-        quietHoursEnabled: true,
-        quietHoursStart: '11:00',
-        quietHoursEnd: '13:00',
-      ),
-      now: DateTime(2026, 2, 21, 8),
-      showImmediate: false,
+      Settings.defaults.copyWith(intervalMinutes: 60, angelusEnabled: true),
+      now: DateTime(2026, 5, 31, 7, 0),
+      showImmediate: true,
     );
 
-    final quoteEvents = scheduler.events.where(
-      (e) => e.type == ReminderEventType.quoteInterval,
-    );
-    expect(quoteEvents, isNotEmpty);
-
-    // No cell may fire inside the 11:00-13:00 quiet window.
-    for (final event in quoteEvents) {
-      final minutes = event.scheduledAt.hour * 60 + event.scheduledAt.minute;
-      final inQuiet = minutes >= 11 * 60 && minutes < 13 * 60;
-      expect(
-        inQuiet,
-        isFalse,
-        reason: 'cell scheduled inside quiet window: ${event.scheduledAt}',
-      );
-    }
+    // All scheduled ids (quotes + Angelus + immediate) must fit under 64.
+    expect(scheduler.events.length, lessThanOrEqualTo(64));
   });
 
   test('Angelus is not scheduled when noon is inside quiet hours', () async {

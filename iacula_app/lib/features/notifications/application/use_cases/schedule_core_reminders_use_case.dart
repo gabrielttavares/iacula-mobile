@@ -5,6 +5,7 @@ import '../../../liturgical/domain/easter_calculator.dart';
 import '../../../prayers/domain/services/prayer_scheduler.dart';
 import '../../../quotes/domain/entities/quote.dart';
 import '../../../settings/domain/entities/settings.dart';
+import '../../../settings/domain/jaculatoria_cadence_preset.dart';
 import '../../domain/entities/last_delivered_card.dart';
 import '../../domain/entities/notification_history_entry.dart';
 import '../../domain/entities/reminder_event.dart';
@@ -20,6 +21,11 @@ typedef QuoteFetcher =
 final class ScheduleCoreRemindersUseCase {
   static const int quoteScheduleIdBase = 9000;
   static const int maxQueuedQuoteReminders = 64;
+
+  /// Reserved id block for the dense "today" one-shot layer (Layer A), distinct
+  /// from the weekly grid floor (9000-9034), Angelus (200), immediate (8999).
+  static const int todayLayerIdBase = 9100;
+  static const int maxTodayLayerSlots = 27;
 
   const ScheduleCoreRemindersUseCase(
     this._scheduler, {
@@ -129,30 +135,77 @@ final class ScheduleCoreRemindersUseCase {
       );
     }
 
-    // Register a weekly grid of OS-owned repeating quote notifications:
-    // (each weekday 1..7) x (each daily slot time). Each cell repeats weekly
-    // via DateTimeComponents.dayOfWeekAndTime, so iOS fires the correct
-    // weekday's quote even if the app is never reopened. Quote text comes from
-    // the shuffle-bag fetcher called with a `now` on that weekday, so the right
-    // quotes.json bucket is used and its cursor advances over time.
-    //
-    // The active window is the fixed daily window; the planner additionally
-    // skips any individual slot that lands inside quiet hours, which handles
-    // both overnight (22:00->07:00) and daytime (11:00->13:00) quiet windows
-    // without collapsing the window.
-    final slotMinutes = QuoteSlotPlanner.slotMinutesOfDay(
-      intervalMinutes: settings.intervalMinutes,
+    final preset =
+        JaculatoriaCadencePreset.fromIntervalMinutes(settings.intervalMinutes);
+
+    // ---- Layer A: today's dense one-shots ----
+    // Fill the rest of today at the preset's cadence with fresh one-shot quotes
+    // (not OS-repeating). Past hours are left untouched and future hours refilled
+    // on each pass, so reopening the app never re-rolls a slot that hasn't fired.
+    // The grid floor (Layer B) skips today's weekday so today isn't double-fired.
+    final todaySlots = QuoteSlotPlanner.todaySlotsFrom(
+      now: current,
+      cadenceMinutes: preset.todayCadenceMinutes,
       windowStartMinutes: kQuoteWindowStartMinutes,
       windowEndMinutes: kQuoteWindowEndMinutes,
       quietHoursEnabled: settings.quietHoursEnabled,
       quietHoursStart: settings.quietHoursStart,
       quietHoursEnd: settings.quietHoursEnd,
-      maxSlots: kMaxQuoteSlotsPerWeekday,
     );
 
+    for (var slotIndex = 0;
+        slotIndex < todaySlots.length && slotIndex < maxTodayLayerSlots;
+        slotIndex++) {
+      final fireAt = todaySlots[slotIndex];
+      final quote = await fetchNonRepeatingQuote(
+        language: settings.language,
+        slot: fireAt,
+      );
+      final scheduledId = todayLayerIdBase + slotIndex;
+      await _scheduler.scheduleWithId(
+        scheduledId,
+        ReminderEvent(
+          type: ReminderEventType.quoteInterval,
+          title: 'Iacula',
+          body: quote.text,
+          scheduledAt: fireAt,
+          withVibration: true,
+          isAlarm: false,
+          routeTarget: NotificationRouteTarget.home,
+          scheduledId: scheduledId,
+          quoteTheme: quote.theme,
+          quoteSeason: quote.season.name,
+          quoteFeastName: quote.feastName,
+          quoteImagePath: quote.imagePath,
+        ),
+      );
+    }
+
+    debugPrint(
+      '[ScheduleCoreRemindersUseCase] registered today layer: '
+      '${todaySlots.length} one-shots (cadence=${preset.todayCadenceMinutes}m)',
+    );
+
+    // ---- Layer B: weekly grid floor ----
+    // (each weekday 1..7 EXCEPT today) x (each daily slot time). Each cell
+    // repeats weekly via DateTimeComponents.dayOfWeekAndTime, so iOS fires the
+    // correct weekday's quote even if the app is never reopened. Today's weekday
+    // is skipped because Layer A already covers today densely.
+    final slotMinutes = QuoteSlotPlanner.slotMinutesOfDay(
+      intervalMinutes: preset.todayCadenceMinutes,
+      windowStartMinutes: kQuoteWindowStartMinutes,
+      windowEndMinutes: kQuoteWindowEndMinutes,
+      quietHoursEnabled: settings.quietHoursEnabled,
+      quietHoursStart: settings.quietHoursStart,
+      quietHoursEnd: settings.quietHoursEnd,
+      maxSlots: preset.weeklyFloorSlotsPerWeekday,
+    );
+
+    final skipWeekday = current.weekday;
     for (var weekdayIndex = 0; weekdayIndex < 7; weekdayIndex++) {
       // Dart DateTime.weekday is 1=Mon..7=Sun. weekdayIndex 0..6 maps to that.
       final weekday = weekdayIndex + 1;
+      if (weekday == skipWeekday) continue; // today is covered by Layer A
       for (var slotIndex = 0; slotIndex < slotMinutes.length; slotIndex++) {
         final minutesOfDay = slotMinutes[slotIndex];
         final fireAt = _nextOccurrenceOnWeekday(
@@ -193,8 +246,8 @@ final class ScheduleCoreRemindersUseCase {
     }
 
     debugPrint(
-      '[ScheduleCoreRemindersUseCase] registered weekly grid: '
-      '${slotMinutes.length} slots x 7 weekdays',
+      '[ScheduleCoreRemindersUseCase] registered weekly grid floor: '
+      '${slotMinutes.length} slots x 6 weekdays (skipped today=$skipWeekday)',
     );
 
     // Schedule Angelus/Regina Caeli

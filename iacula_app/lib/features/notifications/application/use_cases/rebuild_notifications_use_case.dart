@@ -64,12 +64,14 @@ final class RebuildNotificationsUseCase {
       return;
     }
 
-    // Cancel only quote notification IDs (8999-9063) instead of wiping everything.
+    // Cancel only quote notification IDs instead of wiping everything. This must
+    // span the immediate id (8999), the weekly grid floor (9000+), AND the dense
+    // today layer (9100+), so reopening replaces quotes rather than accumulating.
     // Alarm-type notifications (Angelus, liturgy hours) reschedule by fixed ID,
     // so re-scheduling naturally replaces them without needing a cancel step.
     for (var id = ScheduleCoreRemindersUseCase.quoteScheduleIdBase - 1;
-        id < ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
-            ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders;
+        id < ScheduleCoreRemindersUseCase.todayLayerIdBase +
+            ScheduleCoreRemindersUseCase.maxTodayLayerSlots;
         id++) {
       await _scheduler.cancelById(id);
     }

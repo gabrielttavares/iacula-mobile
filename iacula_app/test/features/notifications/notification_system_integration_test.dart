@@ -282,15 +282,14 @@ RebuildNotificationsUseCase _makeRebuildWithQuoteUseCase(
 
 void main() {
   group('Full notification scheduling pipeline', () {
-    test('registers a weekly grid of repeating quote notifications', () async {
+    test('schedules a dense today layer plus a weekly grid floor', () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
 
-      final now = DateTime(2026, 5, 12, 8, 0);
-      // interval 180m, window 07:00-22:00 -> 6 slots/weekday -> 42 cells.
+      final now = DateTime(2026, 5, 12, 8, 0); // Tuesday (weekday 2)
       await rebuild.call(
-        _baseSettings(intervalMinutes: 180),
+        _baseSettings(intervalMinutes: 180), // Suave -> 2h today cadence
         isEasterSeason: false,
         showImmediate: false,
         now: now,
@@ -300,15 +299,25 @@ void main() {
           .where((e) => e.type == ReminderEventType.quoteInterval)
           .toList();
 
-      expect(quoteEvents.length, 42);
-      // Every cell is an OS-owned weekly repeat.
-      expect(quoteEvents.every((e) => e.repeatWeekly), isTrue);
+      // Today layer: one-shots in 9100+, all on today, not weekly-repeating.
+      final todayLayer =
+          quoteEvents.where((e) => e.scheduledId! >= 9100).toList();
+      expect(todayLayer, isNotEmpty);
+      expect(todayLayer.every((e) => !e.repeatWeekly), isTrue);
+      expect(todayLayer.every((e) => e.scheduledAt.day == 12), isTrue);
 
-      // All 7 weekdays are represented.
-      final weekdays = quoteEvents
-          .map((e) => e.scheduledAt.weekday)
-          .toSet();
-      expect(weekdays.length, 7);
+      // Grid floor: weekly repeats in 9000-9099, covering the other 6 weekdays.
+      final gridFloor = quoteEvents
+          .where((e) => e.scheduledId! >= 9000 && e.scheduledId! < 9100)
+          .toList();
+      expect(gridFloor.every((e) => e.repeatWeekly), isTrue);
+      // 6 weekdays x 5 slots.
+      expect(gridFloor.length, 30);
+      // Today's weekday is not in the floor (it is covered by the today layer).
+      expect(
+        gridFloor.every((e) => e.scheduledAt.weekday != now.weekday),
+        isTrue,
+      );
     });
 
     test('schedules Angelus at noon with repeatDaily', () async {
@@ -499,7 +508,7 @@ void main() {
       },
     );
 
-    test('quote notification IDs stay within the weekly-grid range', () async {
+    test('quote notification IDs stay within the reserved ranges', () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
@@ -515,10 +524,15 @@ void main() {
           .map((e) => e.scheduledId!)
           .toSet();
 
-      // Grid ids span 9000 .. 9000 + 7*6 (exclusive).
+      // Grid floor ids in 9000..9034; today-layer ids in 9100..9126.
       for (final id in quoteIds) {
-        expect(id, greaterThanOrEqualTo(9000));
-        expect(id, lessThan(9000 + 7 * 6));
+        final inGrid = id >= 9000 && id < 9000 + 7 * 5;
+        final inTodayLayer = id >= 9100 && id < 9100 + 27;
+        expect(
+          inGrid || inTodayLayer,
+          isTrue,
+          reason: 'id $id outside both reserved quote ranges',
+        );
       }
     });
 
@@ -691,36 +705,30 @@ void main() {
       expect(phraseEvents.first.body, 'Minha frase pessoal');
     });
 
-    test('changing interval changes the number of daily slots', () async {
-      final scheduler = InMemoryNotificationSchedulerRepository();
-      final history = _InMemoryHistoryRepository();
-      final rebuild = _makeRebuild(scheduler, history);
+    test('denser preset schedules more today-layer one-shots', () async {
+      final now = DateTime(2026, 5, 12, 7, 0);
 
-      final now = DateTime(2026, 5, 12, 8, 0);
+      Future<int> todayCountFor(int intervalMinutes) async {
+        final scheduler = InMemoryNotificationSchedulerRepository();
+        final history = _InMemoryHistoryRepository();
+        final rebuild = _makeRebuild(scheduler, history);
+        await rebuild.call(
+          _baseSettings(intervalMinutes: intervalMinutes),
+          isEasterSeason: false,
+          showImmediate: false,
+          now: now,
+        );
+        return scheduler.events
+            .where((e) =>
+                e.type == ReminderEventType.quoteInterval &&
+                e.scheduledId! >= 9100)
+            .length;
+      }
 
-      // 180m interval over 07:00-22:00 -> 6 slots/weekday (capped).
-      await rebuild.call(
-        _baseSettings(intervalMinutes: 180),
-        isEasterSeason: false,
-        showImmediate: false,
-        now: now,
-      );
-      final cellsAt180 = scheduler.events
-          .where((e) => e.type == ReminderEventType.quoteInterval)
-          .length;
-      expect(cellsAt180, 6 * 7);
-
-      // 360m interval over 07:00-22:00 -> 3 slots/weekday (07:00, 13:00, 19:00).
-      await rebuild.call(
-        _baseSettings(intervalMinutes: 360),
-        isEasterSeason: false,
-        showImmediate: false,
-        now: now,
-      );
-      final cellsAt360 = scheduler.events
-          .where((e) => e.type == ReminderEventType.quoteInterval)
-          .length;
-      expect(cellsAt360, 3 * 7);
+      // Suave (180 -> 2h cadence) vs Frequente (60 -> hourly).
+      final suave = await todayCountFor(180);
+      final frequente = await todayCountFor(60);
+      expect(frequente, greaterThan(suave));
     });
 
     test('all notification types coexist without ID collision', () async {
