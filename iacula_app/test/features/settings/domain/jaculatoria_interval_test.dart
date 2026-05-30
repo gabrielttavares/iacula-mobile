@@ -8,15 +8,17 @@ void main() {
       expect(clampJaculatoriaIntervalMinutes(4), 5);
     });
 
-    test('clamps above max to 80', () {
-      expect(clampJaculatoriaIntervalMinutes(81), 80);
-      expect(clampJaculatoriaIntervalMinutes(200), 80);
+    test('clamps above max to 360 (6h)', () {
+      expect(clampJaculatoriaIntervalMinutes(361), kJaculatoriaIntervalMax);
+      expect(clampJaculatoriaIntervalMinutes(1000), kJaculatoriaIntervalMax);
     });
 
     test('leaves values in range unchanged', () {
       expect(clampJaculatoriaIntervalMinutes(5), 5);
       expect(clampJaculatoriaIntervalMinutes(42), 42);
-      expect(clampJaculatoriaIntervalMinutes(80), 80);
+      // Preset representatives must survive the clamp untouched.
+      expect(clampJaculatoriaIntervalMinutes(180), 180); // Suave
+      expect(clampJaculatoriaIntervalMinutes(360), 360);
     });
   });
 
