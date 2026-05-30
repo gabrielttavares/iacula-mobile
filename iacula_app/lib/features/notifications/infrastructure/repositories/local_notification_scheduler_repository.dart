@@ -313,7 +313,14 @@ final class LocalNotificationSchedulerRepository
       actionId: null,
       event: event,
     ).toPayload();
-    final repeat = event.repeatDaily ? DateTimeComponents.time : null;
+    final DateTimeComponents? repeat;
+    if (event.repeatWeekly) {
+      repeat = DateTimeComponents.dayOfWeekAndTime;
+    } else if (event.repeatDaily) {
+      repeat = DateTimeComponents.time;
+    } else {
+      repeat = null;
+    }
 
     final title = notificationTitleForPlugin(event);
 
