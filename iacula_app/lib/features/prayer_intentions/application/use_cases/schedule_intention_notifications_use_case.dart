@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../../../../features/notifications/domain/entities/reminder_event.dart';
 import '../../../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
+import '../../../../features/notifications/domain/services/notification_budget.dart';
 import '../../domain/entities/intention_schedule.dart';
 import '../../../spiritual_data/domain/entities/spiritual_entry.dart';
 import '../../../spiritual_data/domain/repositories/spiritual_entry_repository.dart';
@@ -12,21 +13,24 @@ class ScheduleIntentionNotificationsUseCase {
   final NotificationSchedulerRepository _scheduler;
   final SpiritualEntryRepository _repository;
 
-  Future<void> call({String? intentionId}) async {
+  Future<void> call({String? intentionId, NotificationBudget? budget}) async {
     if (intentionId != null) {
       final entry = await _getEntry(intentionId);
       if (entry != null) {
-        await _scheduleForEntry(entry);
+        await _scheduleForEntry(entry, budget: budget);
       }
     } else {
       final entries = await _repository.listLocal();
       for (final entry in entries) {
-        await _scheduleForEntry(entry);
+        await _scheduleForEntry(entry, budget: budget);
       }
     }
   }
 
-  Future<void> _scheduleForEntry(SpiritualEntry entry) async {
+  Future<void> _scheduleForEntry(
+    SpiritualEntry entry, {
+    NotificationBudget? budget,
+  }) async {
     if (entry.respondedAt != null) return;
 
     final schedule = _parseSchedule(entry.scheduleJson);
@@ -53,6 +57,11 @@ class ScheduleIntentionNotificationsUseCase {
         now,
       );
       if (nextOccurrence == null) continue;
+
+      // Stop once the shared notification budget is spent — prayer intentions
+      // are user-set promises and rank above quotes, but still must not push the
+      // app past the iOS 64-pending cap (where excess is silently dropped).
+      if (budget != null && !budget.tryConsume()) return;
 
       final id = _deriveId(entry.id, i);
       await _scheduler.scheduleWithId(

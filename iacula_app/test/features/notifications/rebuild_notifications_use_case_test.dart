@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import 'package:iacula_app/features/custom_phrases/domain/entities/custom_phrase.dart';
+import 'package:iacula_app/features/custom_phrases/domain/entities/phrase_schedule.dart';
 import 'package:iacula_app/features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
@@ -65,6 +66,71 @@ class _EmptySpiritualEntryRepository implements SpiritualEntryRepository {
   Future<void> markClean(String id, {required DateTime syncedAt}) async {}
 }
 
+final class _ManyPhrasesRepository implements CustomPhraseRepository {
+  _ManyPhrasesRepository(this.count);
+  final int count;
+
+  @override
+  Future<List<CustomPhrase>> listAll() async => List.generate(
+        count,
+        (i) => CustomPhrase(
+          id: 'phrase-$i',
+          text: 'Frase $i',
+          isActive: true,
+          displayAsNotification: true,
+          useFixedSchedule: true,
+          schedule: const PhraseSchedule(
+            type: PhraseScheduleType.daily,
+            times: ['08:00'],
+          ),
+          createdAt: DateTime(2024, 1, 1),
+          updatedAt: DateTime(2024, 1, 1),
+        ),
+      );
+
+  @override
+  Future<void> delete(String id) async {}
+  @override
+  Future<CustomPhrase?> getById(String id) async => null;
+  @override
+  Future<void> save(CustomPhrase phrase) async {}
+  @override
+  Stream<List<CustomPhrase>> watchAll() => const Stream.empty();
+}
+
+final class _ManyIntentionsRepository implements SpiritualEntryRepository {
+  _ManyIntentionsRepository(this.count);
+  final int count;
+
+  @override
+  SpiritualModule get module => SpiritualModule.prayerIntention;
+  @override
+  Future<List<SpiritualEntry>> listLocal({bool includeDeleted = false}) async =>
+      List.generate(
+        count,
+        (i) => SpiritualEntry(
+          id: 'intention-$i',
+          module: SpiritualModule.prayerIntention,
+          title: 'Intenção $i',
+          body: 'Reze por $i',
+          scheduleJson: '{"type":"daily","times":["09:00"]}',
+          createdAt: DateTime(2024, 1, 1),
+          updatedAt: DateTime(2024, 1, 1),
+        ),
+      );
+
+  @override
+  Future<List<SpiritualEntry>> listDirty() async => [];
+  @override
+  Future<void> saveLocal(SpiritualEntry entry) async {}
+  @override
+  Future<void> upsertMany(List<SpiritualEntry> entries) async {}
+  @override
+  Future<void> markDeleted(String id, {required DateTime deletedAt}) async {}
+  @override
+  Future<void> markClean(String id, {required DateTime syncedAt}) async {}
+}
+
 RebuildNotificationsUseCase _makeRebuild(
   InMemoryNotificationSchedulerRepository scheduler, {
   required Future<Quote> Function({
@@ -72,6 +138,8 @@ RebuildNotificationsUseCase _makeRebuild(
     required DateTime now,
   })
   quoteFetcher,
+  CustomPhraseRepository? phraseRepository,
+  SpiritualEntryRepository? intentionRepository,
 }) {
   return RebuildNotificationsUseCase(
     scheduler: scheduler,
@@ -80,11 +148,11 @@ RebuildNotificationsUseCase _makeRebuild(
     scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(scheduler),
     schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
       scheduler,
-      _EmptyCustomPhraseRepository(),
+      phraseRepository ?? _EmptyCustomPhraseRepository(),
     ),
     scheduleIntentionNotifications: ScheduleIntentionNotificationsUseCase(
       scheduler,
-      _EmptySpiritualEntryRepository(),
+      intentionRepository ?? _EmptySpiritualEntryRepository(),
     ),
     quoteFetcher: quoteFetcher,
   );
@@ -276,5 +344,80 @@ void main() {
       transitions[1].scheduledId,
       ScheduleSeasonTransitionsUseCase.pentecostTransitionId,
     );
+  });
+
+  test('total pending never exceeds the 64 iOS cap under heavy load', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final rebuild = _makeRebuild(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return const Quote(
+          text: 'x',
+          dayOfWeek: 1,
+          theme: 't',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+      // Far more reminders than the budget can hold.
+      phraseRepository: _ManyPhrasesRepository(40),
+      intentionRepository: _ManyIntentionsRepository(40),
+    );
+
+    final settings = Settings.defaults.copyWith(
+      notificationsEnabled: true,
+      angelusEnabled: true,
+    );
+
+    await rebuild.call(
+      settings,
+      isEasterSeason: false,
+      showImmediate: false,
+      now: DateTime(2026, 1, 15, 10, 0),
+    );
+
+    expect(scheduler.events.length, lessThanOrEqualTo(64));
+  });
+
+  test('sacred reminders win over quotes when the budget is tight', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final rebuild = _makeRebuild(
+      scheduler,
+      quoteFetcher: ({required String language, required DateTime now}) async {
+        return const Quote(
+          text: 'x',
+          dayOfWeek: 1,
+          theme: 't',
+          season: LiturgicalSeason.ordinary,
+        );
+      },
+      // 40 intentions × 1 time would alone exceed the post-quote headroom;
+      // they must still all be scheduled, with quotes ceding slots first.
+      intentionRepository: _ManyIntentionsRepository(40),
+    );
+
+    final settings = Settings.defaults.copyWith(
+      notificationsEnabled: true,
+      angelusEnabled: true,
+    );
+
+    await rebuild.call(
+      settings,
+      isEasterSeason: false,
+      showImmediate: false,
+      now: DateTime(2026, 1, 15, 10, 0),
+    );
+
+    expect(scheduler.events.length, lessThanOrEqualTo(64));
+
+    final intentionCount = scheduler.events
+        .where((e) => e.type == ReminderEventType.prayerIntentionReminder)
+        .length;
+    final quoteCount = scheduler.events
+        .where((e) => e.type == ReminderEventType.quoteInterval)
+        .length;
+
+    // Every intention got a slot; quotes absorbed the squeeze.
+    expect(intentionCount, 40);
+    expect(quoteCount, greaterThan(0));
   });
 }

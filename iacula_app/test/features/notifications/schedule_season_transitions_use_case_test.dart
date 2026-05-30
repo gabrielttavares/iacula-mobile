@@ -258,5 +258,158 @@ void main() {
         DateTime(2026, 4, 11, 12, 0),
       ]);
     });
+
+    group('bridge renewal CTA on the final scheduled day', () {
+      // 2026: Easter = Apr 5 (window: Apr 5..11), day-after-Pentecost = May 25
+      // (window: May 25..31). now = Jan 15 10:00 → all 7 days of each window
+      // are future and not today, so the last scheduled day is offset 6 (Apr 11
+      // for Regina Caeli, May 31 for Angelus).
+      final now = DateTime(2026, 1, 15, 10, 0);
+
+      test('the last Regina Caeli bridge day body ends with the CTA', () async {
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final reginaNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'regina-coeli')
+            .toList();
+
+        // Apr 11 is the last bridge day — its body must end with the CTA.
+        final lastDay =
+            reginaNoon.firstWhere((e) => e.scheduledAt == DateTime(2026, 4, 11, 12, 0));
+        expect(
+          lastDay.body,
+          endsWith(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta),
+        );
+      });
+
+      test('earlier Regina Caeli bridge days do NOT carry the CTA', () async {
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final reginaNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'regina-coeli')
+            .toList();
+
+        // All days except the last (Apr 5..10) must NOT contain the CTA.
+        final earlierDays =
+            reginaNoon.where((e) => e.scheduledAt != DateTime(2026, 4, 11, 12, 0));
+        for (final day in earlierDays) {
+          expect(
+            day.body,
+            isNot(contains(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta)),
+          );
+        }
+      });
+
+      test('exactly one Regina Caeli bridge notification carries the CTA', () async {
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final reginaNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'regina-coeli')
+            .toList();
+
+        final withCta = reginaNoon
+            .where((e) => e.body.contains(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta))
+            .toList();
+        expect(withCta, hasLength(1));
+      });
+
+      test('the last Angelus bridge day body ends with the CTA', () async {
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final angelusNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'angelus')
+            .toList();
+
+        // May 31 is the last bridge day — its body must end with the CTA.
+        final lastDay =
+            angelusNoon.firstWhere((e) => e.scheduledAt == DateTime(2026, 5, 31, 12, 0));
+        expect(
+          lastDay.body,
+          endsWith(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta),
+        );
+      });
+
+      test('earlier Angelus bridge days do NOT carry the CTA', () async {
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final angelusNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'angelus')
+            .toList();
+
+        // All days except the last (May 25..30) must NOT contain the CTA.
+        final earlierDays =
+            angelusNoon.where((e) => e.scheduledAt != DateTime(2026, 5, 31, 12, 0));
+        for (final day in earlierDays) {
+          expect(
+            day.body,
+            isNot(contains(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta)),
+          );
+        }
+      });
+
+      test('exactly one Angelus bridge notification carries the CTA', () async {
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final angelusNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'angelus')
+            .toList();
+
+        final withCta = angelusNoon
+            .where((e) => e.body.contains(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta))
+            .toList();
+        expect(withCta, hasLength(1));
+      });
+
+      test('CTA day title and prayerSlug are unchanged (Regina Caeli)', () async {
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final reginaNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'regina-coeli')
+            .toList();
+
+        final ctaDay = reginaNoon
+            .firstWhere((e) => e.body.contains(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta));
+        expect(ctaDay.title, 'Regina Caeli');
+        expect(ctaDay.prayerSlug, 'regina-coeli');
+      });
+
+      test('CTA day title and prayerSlug are unchanged (Angelus)', () async {
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final angelusNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'angelus')
+            .toList();
+
+        final ctaDay = angelusNoon
+            .firstWhere((e) => e.body.contains(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta));
+        expect(ctaDay.title, 'Angelus');
+        expect(ctaDay.prayerSlug, 'angelus');
+      });
+
+      test('when earlier days are skipped the single remaining day gets the CTA', () async {
+        // Mid-Easter: now = Apr 8 10:00. Bridge window: Apr 5..11. Past: Apr 5,6,7.
+        // Today (Apr 8) is skipped. Remaining: Apr 9, 10, 11 → last is Apr 11.
+        final midSeason = DateTime(2026, 4, 8, 10, 0);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: midSeason);
+
+        final reginaNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'regina-coeli')
+            .toList();
+
+        // Only Apr 9, 10, 11 scheduled; Apr 11 is the final one and gets the CTA.
+        expect(reginaNoon, hasLength(3));
+        final lastDay =
+            reginaNoon.firstWhere((e) => e.scheduledAt == DateTime(2026, 4, 11, 12, 0));
+        expect(
+          lastDay.body,
+          endsWith(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta),
+        );
+
+        final withCta = reginaNoon
+            .where((e) => e.body.contains(ScheduleSeasonTransitionsUseCase.bridgeRenewalCta))
+            .toList();
+        expect(withCta, hasLength(1));
+      });
+    });
   });
 }

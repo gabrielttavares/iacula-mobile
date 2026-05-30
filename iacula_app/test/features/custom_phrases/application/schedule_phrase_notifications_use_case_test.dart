@@ -8,6 +8,7 @@ import 'package:iacula_app/features/custom_phrases/domain/repositories/custom_ph
 import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_scheduler_repository.dart';
+import 'package:iacula_app/features/notifications/domain/services/notification_budget.dart';
 
 class _FakeScheduler implements NotificationSchedulerRepository {
   final List<({int id, ReminderEvent event})> scheduledEvents = [];
@@ -177,5 +178,50 @@ void main() {
 
     expect(scheduler.cancelledIds, hasLength(10));
     expect(scheduler.scheduledEvents, hasLength(1));
+  });
+
+  CustomPhrase _dailyPhrase(String id, String time) => CustomPhrase(
+        id: id,
+        text: 'Frase $id',
+        isActive: true,
+        displayAsNotification: true,
+        useFixedSchedule: true,
+        schedule: PhraseSchedule(
+          type: PhraseScheduleType.daily,
+          times: [time],
+        ),
+        createdAt: DateTime(2024, 1, 1),
+        updatedAt: DateTime(2024, 1, 1),
+      );
+
+  test('stops scheduling once the shared budget is exhausted', () async {
+    final repository = _FakeRepository([
+      _dailyPhrase('a', '08:00'),
+      _dailyPhrase('b', '09:00'),
+      _dailyPhrase('c', '10:00'),
+    ]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+    final budget = NotificationBudget(capacity: 2);
+
+    await useCase(budget: budget);
+
+    // Only 2 of the 3 phrases get a slot; the budget is fully consumed.
+    expect(scheduler.scheduledEvents, hasLength(2));
+    expect(budget.remaining, 0);
+    // Cancellation of stale ids still runs for every phrase (3 × 10).
+    expect(scheduler.cancelledIds, hasLength(30));
+  });
+
+  test('without a budget, scheduling is unbounded (back-compat)', () async {
+    final repository = _FakeRepository([
+      _dailyPhrase('a', '08:00'),
+      _dailyPhrase('b', '09:00'),
+      _dailyPhrase('c', '10:00'),
+    ]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+
+    await useCase();
+
+    expect(scheduler.scheduledEvents, hasLength(3));
   });
 }

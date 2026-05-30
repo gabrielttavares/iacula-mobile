@@ -1,5 +1,6 @@
 import '../../../../features/notifications/domain/entities/reminder_event.dart';
 import '../../../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
+import '../../../../features/notifications/domain/services/notification_budget.dart';
 import '../../../../features/notifications/domain/services/quiet_hours_checker.dart';
 import '../../../../features/settings/domain/entities/settings.dart';
 import '../../domain/entities/custom_phrase.dart';
@@ -12,16 +13,20 @@ class SchedulePhraseNotificationsUseCase {
   final NotificationSchedulerRepository _scheduler;
   final CustomPhraseRepository _repository;
 
-  Future<void> call({String? phraseId, Settings? settings}) async {
+  Future<void> call({
+    String? phraseId,
+    Settings? settings,
+    NotificationBudget? budget,
+  }) async {
     if (phraseId != null) {
       final phrase = await _repository.getById(phraseId);
       if (phrase != null) {
-        await _scheduleForPhrase(phrase, settings: settings);
+        await _scheduleForPhrase(phrase, settings: settings, budget: budget);
       }
     } else {
       final phrases = await _repository.listAll();
       for (final phrase in phrases) {
-        await _scheduleForPhrase(phrase, settings: settings);
+        await _scheduleForPhrase(phrase, settings: settings, budget: budget);
       }
     }
   }
@@ -29,6 +34,7 @@ class SchedulePhraseNotificationsUseCase {
   Future<void> _scheduleForPhrase(
     CustomPhrase phrase, {
     Settings? settings,
+    NotificationBudget? budget,
   }) async {
     // 1. Cancel existing notifications for this phrase (IDs 1000-1999)
     for (var i = 0; i < 10; i++) {
@@ -64,6 +70,10 @@ class SchedulePhraseNotificationsUseCase {
           )) {
         continue;
       }
+
+      // Stop once the shared notification budget is spent — do not push the app
+      // past the iOS 64-pending cap (where excess is silently dropped).
+      if (budget != null && !budget.tryConsume()) return;
 
       final id = _deriveId(phrase.id, i);
       final isPrayerAlarm = phrase.isPrayerAlarm;

@@ -26,6 +26,11 @@ final class ScheduleSeasonTransitionsUseCase {
   /// 420..426.
   static const int pentecostNoonIdBase = 420;
 
+  /// Appended to the body of the LAST scheduled bridge day per window.
+  /// Nudges the user to open the app before the stale daily repeat resurfaces.
+  static const String bridgeRenewalCta =
+      'Toque para manter as orações da estação atualizadas.';
+
   Future<void> call({
     DateTime? now,
     bool angelusEnabled = true,
@@ -116,6 +121,8 @@ final class ScheduleSeasonTransitionsUseCase {
 
   /// Schedules [boundaryBridgeDays] real noon prayer notifications starting on
   /// the day of [from], one per day, skipping any whose noon is already past.
+  /// The final scheduled day appends [bridgeRenewalCta] to its body to nudge
+  /// the user to open the app before the stale daily repeat resurfaces.
   Future<void> _scheduleNoonBridge({
     required DateTime from,
     required int idBase,
@@ -126,6 +133,10 @@ final class ScheduleSeasonTransitionsUseCase {
     required bool Function(DateTime) isQuiet,
   }) async {
     final today = DateTime(current.year, current.month, current.day);
+
+    // Collect all eligible (dayOffset, noon) pairs before scheduling so we
+    // know which one is the last and can attach the CTA exclusively to it.
+    final eligibleDays = <(int dayOffset, DateTime noon)>[];
     for (var dayOffset = 0; dayOffset < boundaryBridgeDays; dayOffset++) {
       final day = from.add(Duration(days: dayOffset));
       final noon = DateTime(day.year, day.month, day.day, 12);
@@ -135,14 +146,22 @@ final class ScheduleSeasonTransitionsUseCase {
       if (DateTime(day.year, day.month, day.day) == today) continue;
       // Honor quiet hours exactly like the daily noon prayer does.
       if (isQuiet(noon)) continue;
+      eligibleDays.add((dayOffset, noon));
+    }
 
+    for (var index = 0; index < eligibleDays.length; index++) {
+      final (dayOffset, noon) = eligibleDays[index];
+      final isLastDay = index == eligibleDays.length - 1;
       final scheduledId = idBase + dayOffset;
+      final notificationBody =
+          isLastDay ? '$body $bridgeRenewalCta' : body;
+
       await _scheduler.scheduleWithId(
         scheduledId,
         ReminderEvent(
           type: ReminderEventType.angelusNoon,
           title: title,
-          body: body,
+          body: notificationBody,
           scheduledAt: noon,
           withVibration: true,
           isAlarm: true,

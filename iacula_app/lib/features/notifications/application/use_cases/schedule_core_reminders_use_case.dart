@@ -57,7 +57,9 @@ final class ScheduleCoreRemindersUseCase {
     bool isEasterSeason = false,
     Quote? immediateQuote,
     bool showImmediate = true,
+    int? reservedNonQuoteBudget,
   }) async {
+    final reservedForOthers = reservedNonQuoteBudget ?? kReservedNonQuoteBudget;
     final current = now ?? DateTime.now();
     final effectiveIsEasterSeason =
         isEasterSeason || _isDateWithinEasterSeason(current);
@@ -154,7 +156,14 @@ final class ScheduleCoreRemindersUseCase {
     );
     // 6 weekdays carry the grid floor (today's weekday is covered by Layer A).
     const gridFloorWeekdays = 6;
-    final gridFloorCount = gridFloorWeekdays * gridSlotMinutes.length;
+    final plannedGridFloorCount = gridFloorWeekdays * gridSlotMinutes.length;
+
+    // Total slots quotes may occupy = the 64 cap minus everything reserved for
+    // higher-priority (sacred) consumers. Grid floor fills first, then the today
+    // layer takes whatever is left. Under heavy sacred load this shrinks quotes
+    // to zero before it would ever push the app past the cap.
+    final quoteSlotBudget = max(0, maxQueuedQuoteReminders - reservedForOthers);
+    final gridFloorCount = min(plannedGridFloorCount, quoteSlotBudget);
 
     // Reserved-budget guard: keep the today layer below the iOS 64-pending cap
     // with headroom for the grid floor and non-quote consumers. The denser the
@@ -164,10 +173,7 @@ final class ScheduleCoreRemindersUseCase {
     // rather than passing a negative count to take().
     final effectiveTodayCap = max(
       0,
-      min(
-        maxTodayLayerSlots,
-        maxQueuedQuoteReminders - gridFloorCount - kReservedNonQuoteBudget,
-      ),
+      min(maxTodayLayerSlots, quoteSlotBudget - gridFloorCount),
     );
 
     // Assignment cache: a today slot (identified by its concrete fire DateTime)
@@ -237,11 +243,16 @@ final class ScheduleCoreRemindersUseCase {
     // is skipped because Layer A already covers today densely. The slot times
     // (gridSlotMinutes) were computed above to size the today-layer budget.
     final skipWeekday = current.weekday;
+    var gridFloorScheduled = 0;
     for (var weekdayIndex = 0; weekdayIndex < 7; weekdayIndex++) {
       // Dart DateTime.weekday is 1=Mon..7=Sun. weekdayIndex 0..6 maps to that.
       final weekday = weekdayIndex + 1;
       if (weekday == skipWeekday) continue; // today is covered by Layer A
       for (var slotIndex = 0; slotIndex < gridSlotMinutes.length; slotIndex++) {
+        // Respect the quote slot budget — grid cells beyond it are dropped so
+        // sacred reminders keep their slots under the 64-pending cap.
+        if (gridFloorScheduled >= gridFloorCount) break;
+        gridFloorScheduled++;
         final minutesOfDay = gridSlotMinutes[slotIndex];
         final fireAt = _nextOccurrenceOnWeekday(
           current,
