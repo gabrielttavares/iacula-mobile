@@ -1,4 +1,4 @@
-# Quote notifications: OS-owned daily-repeat slots with long-run rotation
+# Quote notifications: OS-owned weekly-grid slots with long-run rotation
 
 **Date:** 2026-05-30
 **Branch:** `feat/quote-daily-repeat-rotation` (worktree off `main`)
@@ -164,11 +164,12 @@ unchanged.
 
 The history table currently stores *predicted future* quote rows and the tab reads
 `deliveredAt <= now`. With weekly-grid repeats, "future predicted rows" no longer map
-cleanly (a cell has no single future timestamp — it repeats weekly). Proposed: stop writing
-predicted future rows for quotes; instead record an actual-delivery row when the app can
-observe a delivery (or, minimally, record the immediate-notification delivery and the
-last-delivered card as today). This keeps the tab showing real deliveries rather than a
-churning prediction table. **This is the main open design question — see below.**
+cleanly (a cell has no single future timestamp — it repeats weekly). **Decision:** stop
+writing predicted future rows for quotes. The grid registration does not write to the
+history table at all. Keep the immediate-notification delivery row and the
+last-delivered card exactly as today. The tab/hero therefore show real deliveries rather
+than a churning prediction table — which ends the original display bug. Removing the
+predicted-row writes also lets us drop the `clearBetweenExcept` churn entirely.
 
 ## Error handling
 
@@ -200,11 +201,11 @@ churning prediction table. **This is the main open design question — see below
 - Reworking the interval picker UI.
 - Per-slot custom times chosen by the user (could be a later feature).
 
-## Open questions for review
+## Resolved decisions
 
-1. **History/tab semantics** — adopt the "record actual deliveries, stop predicting
-   future rows" approach above, or keep the current table and just stop the churn? This
-   affects what the Notificações tab and home hero show.
-2. **Default active window** when quiet hours are off — `08:00–22:00` acceptable, or
-   derive from something already in settings?
-3. **`kMaxQuoteSlotsPerWeekday = 6`** confirmed (7 × 6 = 42, ~7 cushion under 64).
+1. **History/tab semantics** — *Record actual deliveries only.* Stop writing predicted
+   future quote rows. Keep the immediate-notification delivery row + last-delivered card
+   (as today). The grid registration no longer touches the history table. This ends the
+   churn behind the original display bug; the tab reflects real deliveries.
+2. **Default active window** (quiet hours off) — `08:00–22:00`, as constants.
+3. **`kMaxQuoteSlotsPerWeekday = 6`** — 7 × 6 = 42, ~7 cushion under the 64 cap.
