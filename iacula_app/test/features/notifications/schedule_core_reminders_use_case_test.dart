@@ -523,12 +523,10 @@ void main() {
       final angelus = scheduler.events.firstWhere(
         (e) => e.type == ReminderEventType.angelusNoon,
       );
-      // The DAILY repeat carries season-neutral text (it cannot re-bake itself
-      // while the app is closed, so it must never be the WRONG prayer). Season
-      // correctness is preserved via the routing slug and the noon bridge.
-      expect(angelus.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
-      expect(angelus.body, ScheduleCoreRemindersUseCase.dailyNoonBody);
-      // During Easter the routing slug still points at Regina Caeli.
+      // Mid-Easter (Apr 10), far from a boundary: the daily repeat shows the
+      // named season prayer, Regina Caeli.
+      expect(angelus.title, 'Regina Caeli');
+      expect(angelus.body, 'Hora de rezar a Regina Caeli.');
       expect(angelus.prayerSlug, 'regina-coeli');
     },
   );
@@ -569,20 +567,20 @@ void main() {
       final angelus = scheduler.events.firstWhere(
         (e) => e.type == ReminderEventType.angelusNoon,
       );
-      expect(angelus.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
-      expect(angelus.body, ScheduleCoreRemindersUseCase.dailyNoonBody);
+      expect(angelus.title, 'Regina Caeli');
+      expect(angelus.body, 'Hora de rezar a Regina Caeli.');
       expect(angelus.prayerSlug, 'regina-coeli');
     },
   );
 
   test(
-    'daily noon repeat text is season-neutral in BOTH seasons (never stale-wrong)',
+    'daily noon repeat is named per season far from a boundary',
     () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryNotificationHistoryRepository();
       final useCase = makeUseCase(scheduler, history);
 
-      // Outside Easter.
+      // Deep in ordinary time (Feb 10), nowhere near a boundary.
       await useCase(
         Settings.defaults.copyWith(intervalMinutes: 30, angelusEnabled: true),
         now: DateTime(2026, 2, 10, 8),
@@ -592,25 +590,37 @@ void main() {
       final ordinary = scheduler.events.firstWhere(
         (e) => e.type == ReminderEventType.angelusNoon,
       );
-      expect(ordinary.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
-      expect(ordinary.body, ScheduleCoreRemindersUseCase.dailyNoonBody);
+      expect(ordinary.title, 'Angelus');
+      expect(ordinary.body, 'Hora de rezar o Angelus.');
       expect(ordinary.prayerSlug, 'angelus');
+    },
+  );
 
-      // Inside Easter — same neutral text, only the slug changes.
-      final easterScheduler = InMemoryNotificationSchedulerRepository();
-      final easterUseCase = makeUseCase(easterScheduler, history);
-      await easterUseCase(
+  test(
+    'daily noon repeat pre-switches to the season entering within the bridge window',
+    () async {
+      // 2026 Easter = April 5. Two days before (Apr 3), the daily repeat is
+      // about to be stranded across the boundary while the app is closed, so it
+      // is baked for the season the bridge is ENTERING (Regina Caeli) — matching
+      // the bridge, so the two never contradict each other on a bridge day.
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = _InMemoryNotificationHistoryRepository();
+      final useCase = makeUseCase(scheduler, history);
+
+      await useCase(
         Settings.defaults.copyWith(intervalMinutes: 30, angelusEnabled: true),
-        now: DateTime(2026, 4, 10, 8),
-        isEasterSeason: true,
+        now: DateTime(2026, 4, 3, 8),
+        // Still ordinary on Apr 3, but Easter (Apr 5) is within the 7-day bridge.
+        isEasterSeason: false,
         showImmediate: false,
       );
-      final easter = easterScheduler.events.firstWhere(
+
+      final angelus = scheduler.events.firstWhere(
         (e) => e.type == ReminderEventType.angelusNoon,
       );
-      expect(easter.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
-      expect(easter.body, ScheduleCoreRemindersUseCase.dailyNoonBody);
-      expect(easter.prayerSlug, 'regina-coeli');
+      expect(angelus.title, 'Regina Caeli');
+      expect(angelus.body, 'Hora de rezar a Regina Caeli.');
+      expect(angelus.prayerSlug, 'regina-coeli');
     },
   );
 

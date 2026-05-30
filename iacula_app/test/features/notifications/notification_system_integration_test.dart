@@ -341,14 +341,13 @@ void main() {
       expect(angelusEvents.first.repeatDaily, isTrue);
       expect(angelusEvents.first.scheduledAt.hour, 12);
       expect(angelusEvents.first.scheduledAt.minute, 0);
-      // The daily repeat carries season-neutral text; routing stays accurate.
-      expect(angelusEvents.first.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
+      // June 15 is deep in ordinary time, far from any boundary → named Angelus.
+      expect(angelusEvents.first.title, 'Angelus');
       expect(angelusEvents.first.prayerSlug, 'angelus');
       expect(angelusEvents.first.isAlarm, isTrue);
     });
 
-    test('daily repeat routes to Regina Caeli during Easter (neutral text)',
-        () async {
+    test('daily repeat shows Regina Caeli during Easter season', () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
@@ -362,9 +361,8 @@ void main() {
 
       // The daily noon repeat (repeatDaily) is the steady-state prayer. During
       // Easter season the boundary-bridge one-shots (repeatDaily == false) also
-      // exist, so filter to the daily repeat. Its text is season-neutral (it
-      // cannot re-bake itself while closed), but its routing slug points at
-      // Regina Caeli during Easter.
+      // exist, so filter to the daily repeat. Mid-Easter (Apr 10) it carries the
+      // named Regina Caeli prayer.
       final dailyNoon = scheduler.events
           .where(
             (e) =>
@@ -373,8 +371,8 @@ void main() {
           .toList();
 
       expect(dailyNoon.length, 1);
-      expect(dailyNoon.first.title, ScheduleCoreRemindersUseCase.dailyNoonTitle);
-      expect(dailyNoon.first.body, ScheduleCoreRemindersUseCase.dailyNoonBody);
+      expect(dailyNoon.first.title, 'Regina Caeli');
+      expect(dailyNoon.first.body, 'Hora de rezar a Regina Caeli.');
       expect(dailyNoon.first.prayerSlug, 'regina-coeli');
     });
 

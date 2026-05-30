@@ -24,16 +24,6 @@ final class ScheduleCoreRemindersUseCase {
   static const int quoteScheduleIdBase = 9000;
   static const int maxQueuedQuoteReminders = 64;
 
-  /// Season-neutral text for the DAILY repeating noon notification (id 200).
-  /// iOS repeats this text every day without the app running and cannot re-bake
-  /// itself, so it must never name a specific season's prayer — otherwise it
-  /// goes stale-wrong (e.g. shows "Angelus" through Eastertide if the app stays
-  /// closed past the boundary bridge). The exact prayer for the boundary days is
-  /// carried by the season noon bridge; tapping resolves the live prayer via the
-  /// season-accurate [ReminderEvent.prayerSlug] below.
-  static const String dailyNoonTitle = 'Oração do meio-dia';
-  static const String dailyNoonBody = 'Hora da oração do meio-dia.';
-
   /// Reserved id block for the dense "today" one-shot layer (Layer A), distinct
   /// from the weekly grid floor (9000-9034), Angelus (200), immediate (8999).
   /// 28 covers a full-window 30-min day (27 slots) without the id ceiling
@@ -71,8 +61,6 @@ final class ScheduleCoreRemindersUseCase {
   }) async {
     final reservedForOthers = reservedNonQuoteBudget ?? kReservedNonQuoteBudget;
     final current = now ?? DateTime.now();
-    final effectiveIsEasterSeason =
-        isEasterSeason || _isDateWithinEasterSeason(current);
 
     debugPrint(
       '[ScheduleCoreRemindersUseCase] scheduling at ${current.toIso8601String()} '
@@ -297,15 +285,21 @@ final class ScheduleCoreRemindersUseCase {
       '${gridSlotMinutes.length} slots x 6 weekdays (skipped today=$skipWeekday)',
     );
 
-    // Schedule the daily noon repeat (Angelus / Regina Caeli). Its text is
-    // season-NEUTRAL because this repeat cannot re-bake itself while the app is
-    // closed; the season noon bridge carries the exact prayer for the boundary
-    // days, and the slug below keeps tap-routing season-accurate.
+    // Schedule the daily noon repeat (Angelus / Regina Caeli). It carries the
+    // season-specific prayer name. This repeat cannot re-bake itself while the
+    // app is closed, so if a season boundary falls within the next
+    // [boundaryBridgeDays] it is baked for the season the boundary is ENTERING —
+    // matching the season noon bridge, so the two never show contradictory
+    // prayer names on a bridge day. Far from a boundary this is simply today's
+    // season.
     if (settings.angelusEnabled) {
-      const noonTitle = dailyNoonTitle;
-      const noonBody = dailyNoonBody;
-
       final noon = PrayerScheduler.calculateNextNoon(current).nextTriggerTime;
+      final repeatIsEasterSeason =
+          isEasterSeason || _seasonForDailyRepeat(current);
+      final noonTitle = repeatIsEasterSeason ? 'Regina Caeli' : 'Angelus';
+      final noonBody = repeatIsEasterSeason
+          ? 'Hora de rezar a Regina Caeli.'
+          : 'Hora de rezar o Angelus.';
       final noonInQuietHours =
           settings.quietHoursEnabled &&
           QuietHoursChecker.isDuringQuietHours(
@@ -314,7 +308,7 @@ final class ScheduleCoreRemindersUseCase {
             settings.quietHoursEnd,
           );
       if (!noonInQuietHours) {
-        final prayerSlug = effectiveIsEasterSeason ? 'regina-coeli' : 'angelus';
+        final prayerSlug = repeatIsEasterSeason ? 'regina-coeli' : 'angelus';
         await _scheduler.schedule(
           ReminderEvent(
             type: ReminderEventType.angelusNoon,
@@ -334,6 +328,20 @@ final class ScheduleCoreRemindersUseCase {
 
   bool _isDateWithinEasterSeason(DateTime date) =>
       EasterCalculator.isWithinEasterSeason(date);
+
+  /// Season to bake into the daily noon repeat. The repeat cannot re-bake itself
+  /// while the app is closed, so it looks [_dailyRepeatLookaheadDays] ahead: if a
+  /// boundary falls within that window it is baked for the season just past that
+  /// horizon, matching the season noon bridge so the two never contradict each
+  /// other on a bridge day. Far from any boundary the horizon lands in today's
+  /// season, so this is simply the current season.
+  bool _seasonForDailyRepeat(DateTime current) => _isDateWithinEasterSeason(
+        current.add(const Duration(days: _dailyRepeatLookaheadDays)),
+      );
+
+  /// Matches the season noon bridge window so the daily repeat pre-switches in
+  /// lockstep with the bridge.
+  static const int _dailyRepeatLookaheadDays = 7;
 
   /// Next DateTime at the given weekday (1=Mon..7=Sun) and clock time, at or
   /// after [from]. Used as the first fire time for a weekly-repeating slot.
