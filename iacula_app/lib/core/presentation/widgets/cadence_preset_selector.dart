@@ -10,6 +10,7 @@ const _presetLabels = {
   JaculatoriaCadencePreset.suave: 'Suave',
   JaculatoriaCadencePreset.regular: 'Regular',
   JaculatoriaCadencePreset.frequente: 'Frequente',
+  JaculatoriaCadencePreset.maisFrequente: 'Mais frequente',
 };
 
 /// A row of 3 selectable preset buttons for jaculatória notification cadence.

@@ -6,30 +6,52 @@ void main() {
     expect(JaculatoriaCadencePreset.suave.intervalMinutes, 180);
     expect(JaculatoriaCadencePreset.regular.intervalMinutes, 90);
     expect(JaculatoriaCadencePreset.frequente.intervalMinutes, 60);
+    expect(JaculatoriaCadencePreset.maisFrequente.intervalMinutes, 30);
   });
 
-  test('today cadence is the real slot spacing (2h / 90min / 1h)', () {
+  test('today cadence is the real slot spacing (2h / 90min / 1h / 30min)', () {
     expect(JaculatoriaCadencePreset.suave.todayCadenceMinutes, 120);
     expect(JaculatoriaCadencePreset.regular.todayCadenceMinutes, 90);
     expect(JaculatoriaCadencePreset.frequente.todayCadenceMinutes, 60);
+    expect(JaculatoriaCadencePreset.maisFrequente.todayCadenceMinutes, 30);
   });
 
   test('minutes map to the nearest preset (migration thresholds)', () {
-    // <= 60 -> Frequente
+    // <= 45 -> Mais frequente
     expect(JaculatoriaCadencePreset.fromIntervalMinutes(5),
+        JaculatoriaCadencePreset.maisFrequente);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(30),
+        JaculatoriaCadencePreset.maisFrequente);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(45),
+        JaculatoriaCadencePreset.maisFrequente);
+    // <= 75 -> Frequente
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(46),
         JaculatoriaCadencePreset.frequente);
     expect(JaculatoriaCadencePreset.fromIntervalMinutes(60),
         JaculatoriaCadencePreset.frequente);
-    // <= 120 -> Regular
-    expect(JaculatoriaCadencePreset.fromIntervalMinutes(61),
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(75),
+        JaculatoriaCadencePreset.frequente);
+    // <= 135 -> Regular
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(76),
         JaculatoriaCadencePreset.regular);
-    expect(JaculatoriaCadencePreset.fromIntervalMinutes(120),
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(90),
         JaculatoriaCadencePreset.regular);
-    // > 120 -> Suave
-    expect(JaculatoriaCadencePreset.fromIntervalMinutes(121),
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(135),
+        JaculatoriaCadencePreset.regular);
+    // > 135 -> Suave
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(136),
+        JaculatoriaCadencePreset.suave);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(180),
         JaculatoriaCadencePreset.suave);
     expect(JaculatoriaCadencePreset.fromIntervalMinutes(360),
         JaculatoriaCadencePreset.suave);
+  });
+
+  test('legacy custom intervals migrate to the nearest preset', () {
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(40),
+        JaculatoriaCadencePreset.maisFrequente);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(50),
+        JaculatoriaCadencePreset.frequente);
   });
 
   test('preset round-trips through its representative interval', () {

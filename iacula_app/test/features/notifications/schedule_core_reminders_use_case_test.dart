@@ -571,4 +571,84 @@ void main() {
       expect(angelus.prayerSlug, 'regina-coeli');
     },
   );
+
+  test('Mais frequente schedules a dense 30-min today layer', () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final useCase = makeUseCase(scheduler, history);
+
+    // interval 30 -> Mais frequente -> 30-min today cadence. No quiet hours,
+    // start at window open so the today layer is at its densest.
+    await useCase(
+      Settings.defaults.copyWith(intervalMinutes: 30, quietHoursEnabled: false),
+      now: DateTime(2026, 5, 31, 7, 0),
+      showImmediate: false,
+    );
+
+    final todayLayer = quoteEventsOf(scheduler)
+        .where((e) => e.scheduledId! >= 9100)
+        .toList();
+    // 27 natural 30-min slots (07:00-21:00 skipping the noon hour) are trimmed
+    // by the reserved-budget guard to min(28, 64 - 30 grid - 10 reserved) = 24.
+    expect(todayLayer, hasLength(24));
+    expect(todayLayer.every((e) => !e.repeatWeekly), isTrue);
+    expect(todayLayer.every((e) => e.scheduledAt.hour != 12), isTrue);
+    // ids stay inside the reserved today block, clear of the grid (9000-9034).
+    expect(
+      todayLayer.every((e) => e.scheduledId! >= 9100 && e.scheduledId! <= 9127),
+      isTrue,
+    );
+  });
+
+  test('Mais frequente stays within the iOS 64-pending budget with headroom',
+      () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final useCase = makeUseCase(scheduler, history);
+
+    await useCase(
+      Settings.defaults.copyWith(
+        intervalMinutes: 30,
+        quietHoursEnabled: false,
+        angelusEnabled: true,
+      ),
+      now: DateTime(2026, 5, 31, 7, 0),
+      showImmediate: true,
+    );
+
+    // 24 today + 30 grid + 1 immediate + 1 Angelus = 56, under 64 with 8 left
+    // for custom phrases and prayer intentions.
+    expect(scheduler.events.length, lessThanOrEqualTo(64));
+    final reservedHeadroom = 64 - scheduler.events.length;
+    expect(reservedHeadroom, greaterThanOrEqualTo(8));
+  });
+
+  test('Mais frequente reopen reuses today assignments (no extra draws)',
+      () async {
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final counter = makeTodayDrawCounter(DateTime(2026, 5, 31));
+    final useCase = makeUseCase(scheduler, history, fetcher: counter.fetcher);
+    final settings =
+        Settings.defaults.copyWith(intervalMinutes: 30, quietHoursEnabled: false);
+
+    await useCase(settings, now: DateTime(2026, 5, 31, 8, 0),
+        showImmediate: false);
+    final drawsAfterFirstPass = counter.todayDraws();
+    expect(drawsAfterFirstPass, greaterThan(0));
+
+    for (var id = 9100; id < 9100 + 28; id++) {
+      await scheduler.cancelById(id);
+    }
+    await useCase(settings, now: DateTime(2026, 5, 31, 8, 15),
+        showImmediate: false);
+
+    // Same-day reopen reuses every still-future cached slot. The reserved-budget
+    // cap truncates the today layer's tail, so advancing `now` can pull at most
+    // one new slot into the capped window — never a re-roll of cached slots.
+    expect(
+      counter.todayDraws() - drawsAfterFirstPass,
+      lessThanOrEqualTo(1),
+    );
+  });
 }

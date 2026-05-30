@@ -1,3 +1,5 @@
+import 'dart:math' show max, min;
+
 import 'package:flutter/foundation.dart';
 
 import '../../../home_widget/home_widget_service.dart';
@@ -24,8 +26,16 @@ final class ScheduleCoreRemindersUseCase {
 
   /// Reserved id block for the dense "today" one-shot layer (Layer A), distinct
   /// from the weekly grid floor (9000-9034), Angelus (200), immediate (8999).
+  /// 28 covers a full-window 30-min day (27 slots) without the id ceiling
+  /// clipping it; the binding limit is the reserved-budget guard below.
   static const int todayLayerIdBase = 9100;
-  static const int maxTodayLayerSlots = 27;
+  static const int maxTodayLayerSlots = 28;
+
+  /// Pending notifications reserved for non-quote consumers so the today layer
+  /// never pushes the app over the 64-pending iOS cap: 1 Angelus + ~9 headroom
+  /// for custom phrases and prayer intentions. (Liturgy hours are not a live
+  /// consumer — no settings toggle — so they are not counted.)
+  static const int kReservedNonQuoteBudget = 10;
 
   const ScheduleCoreRemindersUseCase(
     this._scheduler, {
@@ -131,6 +141,35 @@ final class ScheduleCoreRemindersUseCase {
       quietHoursEnd: settings.quietHoursEnd,
     );
 
+    // Weekly grid floor slot times (Layer B), computed up front because the
+    // today layer's budget depends on how many grid cells we will register.
+    final gridSlotMinutes = QuoteSlotPlanner.slotMinutesOfDay(
+      intervalMinutes: preset.todayCadenceMinutes,
+      windowStartMinutes: kQuoteWindowStartMinutes,
+      windowEndMinutes: kQuoteWindowEndMinutes,
+      quietHoursEnabled: settings.quietHoursEnabled,
+      quietHoursStart: settings.quietHoursStart,
+      quietHoursEnd: settings.quietHoursEnd,
+      maxSlots: preset.weeklyFloorSlotsPerWeekday,
+    );
+    // 6 weekdays carry the grid floor (today's weekday is covered by Layer A).
+    const gridFloorWeekdays = 6;
+    final gridFloorCount = gridFloorWeekdays * gridSlotMinutes.length;
+
+    // Reserved-budget guard: keep the today layer below the iOS 64-pending cap
+    // with headroom for the grid floor and non-quote consumers. The denser the
+    // preset, the more this binds (e.g. 30-min full window: min(28, 64-30-10)=24).
+    // The max(0, …) floor is defensive: if the reserve/grid constants are ever
+    // tuned so the budget goes negative, the loop schedules zero today slots
+    // rather than passing a negative count to take().
+    final effectiveTodayCap = max(
+      0,
+      min(
+        maxTodayLayerSlots,
+        maxQueuedQuoteReminders - gridFloorCount - kReservedNonQuoteBudget,
+      ),
+    );
+
     // Assignment cache: a today slot (identified by its concrete fire DateTime)
     // is assigned a quote once and persisted as a future history row. While that
     // fire time is still ahead, re-running this pass on a same-day reopen reuses
@@ -146,7 +185,7 @@ final class ScheduleCoreRemindersUseCase {
     };
     // The fire times we will (re)schedule this pass; every other future row on
     // today's calendar day is stale and gets pruned below.
-    final scheduledSlots = todaySlots.take(maxTodayLayerSlots).toList();
+    final scheduledSlots = todaySlots.take(effectiveTodayCap).toList();
     final keepFireTimes = {
       for (final slot in scheduledSlots) slot.toIso8601String(),
     };
@@ -195,24 +234,15 @@ final class ScheduleCoreRemindersUseCase {
     // (each weekday 1..7 EXCEPT today) x (each daily slot time). Each cell
     // repeats weekly via DateTimeComponents.dayOfWeekAndTime, so iOS fires the
     // correct weekday's quote even if the app is never reopened. Today's weekday
-    // is skipped because Layer A already covers today densely.
-    final slotMinutes = QuoteSlotPlanner.slotMinutesOfDay(
-      intervalMinutes: preset.todayCadenceMinutes,
-      windowStartMinutes: kQuoteWindowStartMinutes,
-      windowEndMinutes: kQuoteWindowEndMinutes,
-      quietHoursEnabled: settings.quietHoursEnabled,
-      quietHoursStart: settings.quietHoursStart,
-      quietHoursEnd: settings.quietHoursEnd,
-      maxSlots: preset.weeklyFloorSlotsPerWeekday,
-    );
-
+    // is skipped because Layer A already covers today densely. The slot times
+    // (gridSlotMinutes) were computed above to size the today-layer budget.
     final skipWeekday = current.weekday;
     for (var weekdayIndex = 0; weekdayIndex < 7; weekdayIndex++) {
       // Dart DateTime.weekday is 1=Mon..7=Sun. weekdayIndex 0..6 maps to that.
       final weekday = weekdayIndex + 1;
       if (weekday == skipWeekday) continue; // today is covered by Layer A
-      for (var slotIndex = 0; slotIndex < slotMinutes.length; slotIndex++) {
-        final minutesOfDay = slotMinutes[slotIndex];
+      for (var slotIndex = 0; slotIndex < gridSlotMinutes.length; slotIndex++) {
+        final minutesOfDay = gridSlotMinutes[slotIndex];
         final fireAt = _nextOccurrenceOnWeekday(
           current,
           weekday,
@@ -243,7 +273,7 @@ final class ScheduleCoreRemindersUseCase {
 
     debugPrint(
       '[ScheduleCoreRemindersUseCase] registered weekly grid floor: '
-      '${slotMinutes.length} slots x 6 weekdays (skipped today=$skipWeekday)',
+      '${gridSlotMinutes.length} slots x 6 weekdays (skipped today=$skipWeekday)',
     );
 
     // Schedule Angelus/Regina Caeli

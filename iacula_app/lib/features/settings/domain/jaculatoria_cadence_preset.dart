@@ -7,7 +7,7 @@
 /// - the weekly grid floor ([weeklyFloorSlotsPerWeekday] cells per weekday).
 enum JaculatoriaCadencePreset {
   /// ~every 2h across the active window. Representative interval sits inside the
-  /// suave bucket (> 120) so preset⇄minutes round-trips; the today layer treats
+  /// suave bucket (> 135) so preset⇄minutes round-trips; the today layer treats
   /// it as a 120-min (2h) cadence (see [todayCadenceMinutes]).
   suave(intervalMinutes: 180),
 
@@ -15,7 +15,12 @@ enum JaculatoriaCadencePreset {
   regular(intervalMinutes: 90),
 
   /// ~every hour.
-  frequente(intervalMinutes: 60);
+  frequente(intervalMinutes: 60),
+
+  /// ~every 30min on the today layer. Dense-today-only: the weekly grid floor
+  /// stays at 5/weekday, so this density applies only on days the app is opened
+  /// (closed days fall back to the gentle floor like every other preset).
+  maisFrequente(intervalMinutes: 30);
 
   const JaculatoriaCadencePreset({required this.intervalMinutes});
 
@@ -28,6 +33,7 @@ enum JaculatoriaCadencePreset {
         JaculatoriaCadencePreset.suave => 120,
         JaculatoriaCadencePreset.regular => 90,
         JaculatoriaCadencePreset.frequente => 60,
+        JaculatoriaCadencePreset.maisFrequente => 30,
       };
 
   /// Weekly grid floor density (cells per weekday) — same for all presets.
@@ -39,6 +45,7 @@ enum JaculatoriaCadencePreset {
         JaculatoriaCadencePreset.suave => 'A cada 2h',
         JaculatoriaCadencePreset.regular => 'A cada 1h30',
         JaculatoriaCadencePreset.frequente => 'A cada hora',
+        JaculatoriaCadencePreset.maisFrequente => 'A cada 30min',
       };
 
   /// pt-BR cadence phrase for inline use (lowercase), e.g.
@@ -47,6 +54,7 @@ enum JaculatoriaCadencePreset {
         JaculatoriaCadencePreset.suave => 'a cada 2 horas',
         JaculatoriaCadencePreset.regular => 'a cada 1h30',
         JaculatoriaCadencePreset.frequente => 'a cada hora',
+        JaculatoriaCadencePreset.maisFrequente => 'a cada 30 minutos',
       };
 
   /// pt-BR honest description of the daily volume for the settings estimate.
@@ -57,14 +65,20 @@ enum JaculatoriaCadencePreset {
           'Cerca de 9 lembranças por dia.',
         JaculatoriaCadencePreset.frequente =>
           'Cerca de 13 lembranças por dia, de hora em hora.',
+        JaculatoriaCadencePreset.maisFrequente =>
+          'Cerca de 24 lembranças por dia — só nos dias em que você abre o app.',
       };
 
   /// Maps a stored/legacy interval to the nearest preset.
   ///
-  /// Thresholds: `<= 60 -> frequente`, `<= 120 -> regular`, else `suave`.
+  /// Thresholds (midpoints between adjacent representative intervals 30/60/90/
+  /// 180): `<= 45 -> maisFrequente`, `<= 75 -> frequente`, `<= 135 -> regular`,
+  /// else `suave`. Each preset's representative interval lands in its own band,
+  /// so preset⇄minutes round-trips without collision.
   static JaculatoriaCadencePreset fromIntervalMinutes(int minutes) {
-    if (minutes <= 60) return JaculatoriaCadencePreset.frequente;
-    if (minutes <= 120) return JaculatoriaCadencePreset.regular;
+    if (minutes <= 45) return JaculatoriaCadencePreset.maisFrequente;
+    if (minutes <= 75) return JaculatoriaCadencePreset.frequente;
+    if (minutes <= 135) return JaculatoriaCadencePreset.regular;
     return JaculatoriaCadencePreset.suave;
   }
 }
