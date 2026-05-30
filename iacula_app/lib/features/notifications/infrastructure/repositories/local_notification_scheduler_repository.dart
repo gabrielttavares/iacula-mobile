@@ -337,7 +337,8 @@ final class LocalNotificationSchedulerRepository
       );
       debugPrint(
         '[LocalNotificationScheduler] scheduleWithId exactAllowWhileIdle id=$id type=${event.type.name} '
-        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily}',
+        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily} '
+        'repeatWeekly=${event.repeatWeekly} match=${repeat?.name ?? 'none'}',
       );
     } on PlatformException catch (e) {
       if (e.code != 'exact_alarms_not_permitted') {
@@ -347,7 +348,8 @@ final class LocalNotificationSchedulerRepository
 
       debugPrint(
         '[LocalNotificationScheduler] scheduleWithId fell back to inexactAllowWhileIdle id=$id type=${event.type.name} '
-        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily}',
+        'at=${event.scheduledAt.toIso8601String()} repeatDaily=${event.repeatDaily} '
+        'repeatWeekly=${event.repeatWeekly} match=${repeat?.name ?? 'none'}',
       );
       await _plugin.zonedSchedule(
         id,
