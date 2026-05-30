@@ -119,4 +119,144 @@ void main() {
     expect(transitions[0].scheduledAt, DateTime(2025, 4, 20, 0, 0));
     expect(transitions[1].scheduledAt, DateTime(2025, 6, 9, 0, 0));
   });
+
+  group('pre-baked boundary noon prayer one-shots', () {
+    // These fire the *correct* prayer at noon on the boundary days even if the
+    // app is never opened — iOS runs no code on background delivery, so the
+    // silent 401/402 re-bake trigger alone cannot flip the daily Angelus while
+    // closed. A short window of real noon notifications bridges each boundary
+    // until the user's next open re-bakes the daily repeat.
+
+    List<ReminderEvent> noonOneShots() => scheduler.events
+        .where(
+          (e) =>
+              e.type == ReminderEventType.angelusNoon &&
+              e.repeatDaily == false,
+        )
+        .toList()
+      ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+
+    test(
+      'schedules a 7-day window of Regina Caeli noon one-shots from Easter Sunday',
+      () async {
+        // 2026: Easter = April 5. Both boundaries in the future.
+        final now = DateTime(2026, 1, 15, 10, 0);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final reginaNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'regina-coeli')
+            .toList();
+
+        expect(reginaNoon, hasLength(7));
+        for (var dayOffset = 0; dayOffset < 7; dayOffset++) {
+          final fireAt = reginaNoon[dayOffset].scheduledAt;
+          expect(fireAt, DateTime(2026, 4, 5 + dayOffset, 12, 0));
+          expect(reginaNoon[dayOffset].title, 'Regina Caeli');
+          expect(reginaNoon[dayOffset].isAlarm, isTrue);
+          expect(reginaNoon[dayOffset].repeatDaily, isFalse);
+        }
+      },
+    );
+
+    test(
+      'schedules a 7-day window of Angelus noon one-shots from the day after Pentecost',
+      () async {
+        // 2026: Pentecost = May 24, day after = May 25.
+        final now = DateTime(2026, 1, 15, 10, 0);
+        await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+        final angelusNoon = noonOneShots()
+            .where((e) => e.prayerSlug == 'angelus')
+            .toList();
+
+        expect(angelusNoon, hasLength(7));
+        for (var dayOffset = 0; dayOffset < 7; dayOffset++) {
+          expect(
+            angelusNoon[dayOffset].scheduledAt,
+            DateTime(2026, 5, 25 + dayOffset, 12, 0),
+          );
+          expect(angelusNoon[dayOffset].title, 'Angelus');
+        }
+      },
+    );
+
+    test('noon one-shots use a stable, non-colliding id block (idempotent rebuild)',
+        () async {
+      final now = DateTime(2026, 1, 15, 10, 0);
+      final useCase = ScheduleSeasonTransitionsUseCase(scheduler);
+
+      await useCase.call(now: now);
+      final firstPass = noonOneShots().map((e) => e.scheduledId).toSet();
+
+      // 14 one-shots (7 + 7), all distinct, none clashing with Angelus(200) or
+      // the 401/402 transition triggers.
+      expect(firstPass, hasLength(14));
+      expect(firstPass, isNot(contains(200)));
+      expect(firstPass, isNot(contains(401)));
+      expect(firstPass, isNot(contains(402)));
+
+      // Re-running the pass overwrites in place — still 14, no duplicates.
+      await useCase.call(now: now);
+      expect(noonOneShots(), hasLength(14));
+    });
+
+    test('only schedules noon one-shots whose day is still in the future', () async {
+      // Mid-Easter-season: Easter (Apr 5) is past, three of its 7 bridge days
+      // are already gone; Pentecost window is fully future.
+      final now = DateTime(2026, 4, 8, 10, 0);
+      await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+      final reginaNoon = noonOneShots()
+          .where((e) => e.prayerSlug == 'regina-coeli')
+          .toList();
+
+      // Apr 5,6,7 noon are past (now is Apr 8 10:00); Apr 8 noon is still
+      // future but skipped because it is today (daily Angelus covers it), so
+      // Apr 9,10,11 remain.
+      expect(reginaNoon.map((e) => e.scheduledAt), <DateTime>[
+        DateTime(2026, 4, 9, 12, 0),
+        DateTime(2026, 4, 10, 12, 0),
+        DateTime(2026, 4, 11, 12, 0),
+      ]);
+    });
+
+    test('schedules no noon one-shots once both boundaries are fully past', () async {
+      final now = DateTime(2026, 6, 10, 10, 0);
+      await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+      expect(noonOneShots(), isEmpty);
+    });
+
+    test('schedules no noon one-shots when the noon prayer is disabled', () async {
+      final now = DateTime(2026, 1, 15, 10, 0);
+      await ScheduleSeasonTransitionsUseCase(scheduler)
+          .call(now: now, angelusEnabled: false);
+
+      expect(noonOneShots(), isEmpty);
+    });
+
+    test('skips the bridge one-shot for today (the daily Angelus already covers it)',
+        () async {
+      // It is Easter Sunday morning. A rebuild just re-baked the daily Angelus
+      // (id 200) to Regina Caeli for today, so a bridge one-shot for today would
+      // be a duplicate noon notification. Future bridge days are still needed
+      // because id 200 stays stale-baked until the next open.
+      final now = DateTime(2026, 4, 5, 9, 0);
+      await ScheduleSeasonTransitionsUseCase(scheduler).call(now: now);
+
+      final reginaNoon = noonOneShots()
+          .where((e) => e.prayerSlug == 'regina-coeli')
+          .toList();
+
+      // Today (Apr 5) is skipped; Apr 6..11 remain → 6 one-shots.
+      expect(reginaNoon.map((e) => e.scheduledAt), <DateTime>[
+        DateTime(2026, 4, 6, 12, 0),
+        DateTime(2026, 4, 7, 12, 0),
+        DateTime(2026, 4, 8, 12, 0),
+        DateTime(2026, 4, 9, 12, 0),
+        DateTime(2026, 4, 10, 12, 0),
+        DateTime(2026, 4, 11, 12, 0),
+      ]);
+    });
+  });
 }

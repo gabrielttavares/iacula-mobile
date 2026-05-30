@@ -357,13 +357,19 @@ void main() {
         now: now,
       );
 
-      final angelusEvents = scheduler.events
-          .where((e) => e.type == ReminderEventType.angelusNoon)
+      // The daily noon repeat (repeatDaily) is the steady-state prayer. During
+      // Easter season the boundary-bridge one-shots (repeatDaily == false) also
+      // exist, so filter to the daily repeat to assert its title.
+      final dailyNoon = scheduler.events
+          .where(
+            (e) =>
+                e.type == ReminderEventType.angelusNoon && e.repeatDaily,
+          )
           .toList();
 
-      expect(angelusEvents.length, 1);
-      expect(angelusEvents.first.title, 'Regina Caeli');
-      expect(angelusEvents.first.prayerSlug, 'regina-coeli');
+      expect(dailyNoon.length, 1);
+      expect(dailyNoon.first.title, 'Regina Caeli');
+      expect(dailyNoon.first.prayerSlug, 'regina-coeli');
     });
 
     test('skips Angelus when disabled', () async {
@@ -458,9 +464,13 @@ void main() {
           now: now,
         );
 
-        final initialAngelus = scheduler.events
-            .where((e) => e.type == ReminderEventType.angelusNoon)
-            .toList();
+        // The daily noon repeat is the alarm that must survive rebuilds; the
+        // boundary-bridge one-shots (repeatDaily == false) are a separate layer.
+        bool isDailyNoon(ReminderEvent e) =>
+            e.type == ReminderEventType.angelusNoon && e.repeatDaily;
+
+        final initialAngelus =
+            scheduler.events.where(isDailyNoon).toList();
         expect(initialAngelus.length, 1);
 
         // Rebuild again (simulates app resume health check)
@@ -472,9 +482,8 @@ void main() {
         );
 
         // Angelus should still be present (not wiped by targeted cancel)
-        final afterRebuild = scheduler.events
-            .where((e) => e.type == ReminderEventType.angelusNoon)
-            .toList();
+        final afterRebuild =
+            scheduler.events.where(isDailyNoon).toList();
         expect(afterRebuild.length, 1);
       },
     );

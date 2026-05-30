@@ -10,6 +10,7 @@ import '../../../settings/domain/entities/settings.dart';
 import '../../domain/repositories/last_delivered_card_repository.dart';
 import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
+import '../../domain/services/quiet_hours_checker.dart';
 import 'schedule_core_reminders_use_case.dart';
 import 'schedule_liturgy_reminders_use_case.dart';
 import 'schedule_season_transitions_use_case.dart';
@@ -93,7 +94,17 @@ final class RebuildNotificationsUseCase {
       _schedulePhraseNotifications.call(settings: settings),
       _scheduleLiturgyReminders.call(settings, now: now),
       _scheduleIntentionNotifications.call(),
-      ScheduleSeasonTransitionsUseCase(_scheduler).call(now: now),
+      ScheduleSeasonTransitionsUseCase(_scheduler).call(
+        now: now,
+        angelusEnabled: settings.angelusEnabled,
+        isQuietAt: (time) =>
+            settings.quietHoursEnabled &&
+            QuietHoursChecker.isDuringQuietHours(
+              time,
+              settings.quietHoursStart,
+              settings.quietHoursEnd,
+            ),
+      ),
     ]);
 
     final pendingAfter = await _scheduler.pendingNotificationIds();
