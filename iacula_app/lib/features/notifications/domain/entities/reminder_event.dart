@@ -28,6 +28,7 @@ final class ReminderEvent {
     required this.withVibration,
     required this.isAlarm,
     this.repeatDaily = false,
+    this.repeatWeekly = false,
     this.routeTarget = NotificationRouteTarget.alarm,
     this.prayerSlug,
     this.scheduledId,
@@ -46,6 +47,7 @@ final class ReminderEvent {
   final bool withVibration;
   final bool isAlarm;
   final bool repeatDaily;
+  final bool repeatWeekly;
   final NotificationRouteTarget routeTarget;
 
   /// Optional prayer slug for NotificationRouteTarget.prayer navigation.
@@ -70,6 +72,7 @@ final class ReminderEvent {
     bool? withVibration,
     bool? isAlarm,
     bool? repeatDaily,
+    bool? repeatWeekly,
     NotificationRouteTarget? routeTarget,
     String? prayerSlug,
     int? scheduledId,
@@ -88,6 +91,7 @@ final class ReminderEvent {
       withVibration: withVibration ?? this.withVibration,
       isAlarm: isAlarm ?? this.isAlarm,
       repeatDaily: repeatDaily ?? this.repeatDaily,
+      repeatWeekly: repeatWeekly ?? this.repeatWeekly,
       routeTarget: routeTarget ?? this.routeTarget,
       prayerSlug: prayerSlug ?? this.prayerSlug,
       scheduledId: scheduledId ?? this.scheduledId,
@@ -109,6 +113,7 @@ final class ReminderEvent {
       'withVibration': withVibration,
       'isAlarm': isAlarm,
       'repeatDaily': repeatDaily,
+      'repeatWeekly': repeatWeekly,
       'routeTarget': routeTarget.name,
       if (prayerSlug != null) 'prayerSlug': prayerSlug,
       if (scheduledId != null) 'scheduledId': scheduledId,
@@ -161,6 +166,7 @@ final class ReminderEvent {
       withVibration: map['withVibration'] == true,
       isAlarm: map['isAlarm'] == true,
       repeatDaily: map['repeatDaily'] == true,
+      repeatWeekly: map['repeatWeekly'] == true,
       routeTarget: routeTarget,
       prayerSlug: prayerSlug,
       scheduledId: sid,
