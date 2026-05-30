@@ -28,7 +28,9 @@ class CadencePresetSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return IntrinsicHeight(
+      child: Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: JaculatoriaCadencePreset.values.map((preset) {
         final isLastItem =
             preset == JaculatoriaCadencePreset.values.last;
@@ -47,6 +49,7 @@ class CadencePresetSelector extends StatelessWidget {
           ),
         );
       }).toList(),
+    ),
     );
   }
 }
@@ -71,7 +74,7 @@ class _CadencePresetButton extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
           color: isSelected
               ? context.colors.primaryButton
@@ -96,7 +99,7 @@ class _CadencePresetButton extends StatelessWidget {
                 fontSize: 14,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               subtitle,
               style: TextStyle(

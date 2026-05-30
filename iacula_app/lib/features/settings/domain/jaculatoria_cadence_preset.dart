@@ -34,8 +34,9 @@ enum JaculatoriaCadencePreset {
   int get weeklyFloorSlotsPerWeekday => 5;
 
   /// pt-BR cadence label for a standalone subtitle (capitalized).
+  /// Kept short so none of the 3 preset cards wraps onto a second line.
   String get cadenceLabelPtBr => switch (this) {
-        JaculatoriaCadencePreset.suave => 'A cada 2 horas',
+        JaculatoriaCadencePreset.suave => 'A cada 2h',
         JaculatoriaCadencePreset.regular => 'A cada 1h30',
         JaculatoriaCadencePreset.frequente => 'A cada hora',
       };
