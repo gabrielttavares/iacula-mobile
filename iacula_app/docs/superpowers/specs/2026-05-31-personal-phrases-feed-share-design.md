@@ -24,7 +24,7 @@ Personal phrases are a **power-user niche**: most users never add one; a few lea
 
 Drop the prominent global mode. When the user has active personal phrases opted into the feed, a **predictable, bounded slice** of feed slots is filled with their phrases instead of a liturgical draw. The rest stays liturgical. No mode, no cliff, no setting to forget.
 
-- **Share target:** roughly **1 in N** feed slots becomes a personal phrase when eligible personal phrases exist (default N ≈ 4, capped so personal phrases never dominate; exact N pinned in the implementation plan). When the user has zero eligible personal phrases, the share is 0 and the feed is 100% liturgical.
+- **Share target:** **1 in 4** feed slots becomes a personal phrase when eligible personal phrases exist (liturgical content still clearly dominates). When the user has zero eligible personal phrases, the share is 0 and the feed is 100% liturgical.
 - **Scope:** applies to BOTH the home hero and notifications, so a phrase the user added actually shows up where they'd expect.
 
 ### 2. Extend the share to notifications WITHOUT changing default-mode scheduling
@@ -34,7 +34,7 @@ Drop the prominent global mode. When the user has active personal phrases opted 
 **Mechanism:** the weighting lives **inside `quoteFetcher`**, which already produces one `Quote` per slot. For a slot selected as a "personal" slot, the fetcher returns a `Quote` built from a personal phrase with `source: QuoteSource.personal` *instead of* drawing a liturgical quote. Same slot, same notification id, same budget, same total count. `ScheduleCoreRemindersUseCase` is untouched. `Quote` already supports `QuoteSource.personal` end-to-end (the hero builds one at `home_screen.dart:519`; history/widget/routing already handle it).
 
 - **Slot selection must be deterministic per fire time** so the scheduler's assignment cache (`schedule_core_reminders_use_case.dart:193-227`, keyed by fire `DateTime`) stays stable across same-day reschedules — re-running a pass must not re-roll whether a future slot is personal or liturgical.
-- Personal phrases enter the feed only when **eligible**: active + opted into the feed. Fixed-schedule phrases keep their existing independent notification path unchanged; they are not double-counted into the share.
+- Personal phrases enter the feed only when **eligible**, expressed by **reusing existing flags** (no new field, no migration): for the hero, `isActive && displayOnHero`; for notifications, `isActive && displayAsNotification`. Fixed-schedule phrases keep their existing independent notification path unchanged; they are not double-counted into the share.
 
 ### 3. Bury the pure-replace escape hatch
 
@@ -69,12 +69,16 @@ No global behavior mode on this screen.
 | `_homeQuoteProvider` (`home_screen.dart`) | Align hero selection with the same share logic (replacing the current all-or-nothing `customPhrasesOnly` branch for the default case; keep the branch only for the buried replace mode). |
 | Phrase eligibility (`CustomPhrase` / repository query) | Define "eligible for feed share" (active + feed opt-in). Confirm whether `displayOnHero`/`displayAsNotification` already express opt-in or a new flag is needed — resolve in the plan. |
 
+## Decisions locked
+
+- **Share ratio:** 1 in 4 feed slots when eligible phrases exist.
+- **Eligibility:** reuse existing flags — hero `isActive && displayOnHero`, notifications `isActive && displayAsNotification`. No new field, no migration, no edit-screen change.
+
 ## Open items for the implementation plan
 
-1. Pin exact share ratio N and the cap, and how multiple eligible phrases rotate within personal slots (deterministic, day-of-year style already used at `home_screen.dart:517`).
-2. Decide the eligibility flag: reuse `displayOnHero` + `displayAsNotification`, or introduce a single explicit "incluir no rodízio" opt-in. Prefer reusing existing fields if their semantics fit.
-3. Confirm the deterministic per-fire-time selection function and unit-test it against the assignment-cache reuse path.
-4. Exact placement + copy of the buried replace control in Settings.
+1. How multiple eligible phrases rotate *within* the personal slots (deterministic, day-of-year style already used at `home_screen.dart:517`).
+2. Confirm the deterministic per-fire-time selection function (which slots are "personal") and unit-test it against the assignment-cache reuse path so reschedules don't re-roll a future slot.
+3. Exact placement + copy of the buried replace control in Settings → Personalização.
 
 ## Non-goals
 
