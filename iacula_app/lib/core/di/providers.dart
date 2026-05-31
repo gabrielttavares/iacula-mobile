@@ -13,7 +13,6 @@ import '../../features/favorites/domain/repositories/favorite_repository.dart';
 import '../../features/favorites/infrastructure/repositories/in_memory_favorite_repository.dart';
 import '../../features/liturgical/domain/repositories/liturgical_season_cache_repository.dart';
 import '../../features/liturgical/domain/liturgical_context.dart';
-import '../../features/liturgical/domain/liturgical_season.dart';
 import '../../features/liturgical/domain/services/liturgical_season_service.dart';
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
@@ -629,13 +628,9 @@ final rebuildNotificationsUseCaseProvider =
                   eligible: eligiblePhrases,
                 );
                 if (selectedPhrase != null) {
-                  return Quote(
+                  return Quote.personal(
                     text: selectedPhrase.text,
                     dayOfWeek: now.weekday,
-                    theme: 'personal',
-                    season: LiturgicalSeason.ordinary,
-                    imagePath: null,
-                    source: QuoteSource.personal,
                   );
                 }
               }

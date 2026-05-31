@@ -517,14 +517,7 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     if (activePhrases.isNotEmpty) {
       final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
       final selected = activePhrases[dayOfYear % activePhrases.length];
-      return Quote(
-        text: selected.text,
-        dayOfWeek: now.weekday,
-        theme: 'personal',
-        season: LiturgicalSeason.ordinary,
-        imagePath: null,
-        source: QuoteSource.personal,
-      );
+      return Quote.personal(text: selected.text, dayOfWeek: now.weekday);
     }
     // No user phrases - fall through to default quotes
   }
@@ -572,14 +565,7 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     eligible: heroEligiblePhrases,
   );
   if (heroPersonalPhrase != null) {
-    return Quote(
-      text: heroPersonalPhrase.text,
-      dayOfWeek: now.weekday,
-      theme: 'personal',
-      season: LiturgicalSeason.ordinary,
-      imagePath: null,
-      source: QuoteSource.personal,
-    );
+    return Quote.personal(text: heroPersonalPhrase.text, dayOfWeek: now.weekday);
   }
 
   // Fallback: fetch a quote but accept it may advance the index.

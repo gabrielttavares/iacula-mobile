@@ -25,5 +25,17 @@ final class Quote {
   final QuoteSource? source;
   final String? referenceLabel;
 
+  /// A quote sourced from one of the user's own personal phrases. Personal
+  /// phrases carry no season or imagery of their own, so they render as plain
+  /// ordinary-time text.
+  factory Quote.personal({required String text, required int dayOfWeek}) =>
+      Quote(
+        text: text,
+        dayOfWeek: dayOfWeek,
+        theme: 'personal',
+        season: LiturgicalSeason.ordinary,
+        source: QuoteSource.personal,
+      );
+
   QuoteSource get resolvedSource => source ?? QuoteSource.liturgical;
 }
