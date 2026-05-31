@@ -13,6 +13,7 @@ import '../../features/favorites/domain/repositories/favorite_repository.dart';
 import '../../features/favorites/infrastructure/repositories/in_memory_favorite_repository.dart';
 import '../../features/liturgical/domain/repositories/liturgical_season_cache_repository.dart';
 import '../../features/liturgical/domain/liturgical_context.dart';
+import '../../features/liturgical/domain/liturgical_season.dart';
 import '../../features/liturgical/domain/services/liturgical_season_service.dart';
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
@@ -38,6 +39,7 @@ import '../../features/prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_catalog_repository.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_content_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
+import '../../features/quotes/domain/entities/quote.dart';
 import '../../features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
 import '../../features/quotes/domain/repositories/disabled_quotes_repository.dart';
 import '../../features/quotes/domain/repositories/quote_content_repository.dart';
@@ -72,6 +74,7 @@ import '../../features/custom_phrases/application/custom_phrases_notifier.dart';
 import '../../features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import '../../features/custom_phrases/domain/entities/custom_phrase.dart';
 import '../../features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
+import '../../features/custom_phrases/domain/services/personal_phrase_feed_selector.dart';
 import '../../features/custom_phrases/infrastructure/repositories/isar_custom_phrase_repository.dart';
 import '../../features/prayer_activity/application/prayer_activity_logger.dart';
 import '../../features/prayer_activity/application/streak_calculator.dart';
@@ -609,6 +612,34 @@ final rebuildNotificationsUseCaseProvider =
               final settings = await ref
                   .read(getSettingsUseCaseProvider)
                   .call();
+
+              // Personal phrase share: when not in the buried replace mode, a
+              // 1-in-4 slot is filled by an eligible personal phrase. An empty
+              // pool falls through to the liturgical draw, so a user with no
+              // eligible phrases gets identical scheduling to before.
+              if (!settings.customPhrasesOnly) {
+                final phrases =
+                    await ref.read(customPhraseRepositoryProvider).listAll();
+                final eligiblePhrases =
+                    PersonalPhraseFeedSelector.eligibleForNotifications(phrases);
+                final slotIndex =
+                    PersonalPhraseFeedSelector.slotIndexForFireTime(now);
+                final selectedPhrase = PersonalPhraseFeedSelector.phraseForSlot(
+                  slotIndex: slotIndex,
+                  eligible: eligiblePhrases,
+                );
+                if (selectedPhrase != null) {
+                  return Quote(
+                    text: selectedPhrase.text,
+                    dayOfWeek: now.weekday,
+                    theme: 'personal',
+                    season: LiturgicalSeason.ordinary,
+                    imagePath: null,
+                    source: QuoteSource.personal,
+                  );
+                }
+              }
+
               if (settings.escrivaPointsFeedEnabled) {
                 return ref
                     .read(getNextEscrivaPointsQuoteUseCaseProvider)
