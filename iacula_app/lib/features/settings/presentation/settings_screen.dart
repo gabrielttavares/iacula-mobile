@@ -36,6 +36,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _quietHoursEnabled = false;
   String _quietHoursStart = '22:00';
   String _quietHoursEnd = '07:00';
+  bool _customPhrasesOnly = false;
   bool _loading = true;
   bool _saving = false;
   String? _validationMessage;
@@ -63,6 +64,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _quietHoursEnabled = settings.quietHoursEnabled;
     _quietHoursStart = settings.quietHoursStart;
     _quietHoursEnd = settings.quietHoursEnd;
+    _customPhrasesOnly = settings.customPhrasesOnly;
     final scheduler = ref.read(notificationSchedulerRepositoryProvider);
     if (scheduler is LocalNotificationSchedulerRepository) {
       _permissionGranted = await scheduler.checkPermission();
@@ -389,6 +391,43 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ],
                           ),
                         ),
+                        Container(height: 1, color: context.colors.separator),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: IaculaRadius.innerPadding,
+                            vertical: 14,
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Mostrar só minhas frases',
+                                      style: context.textStyles.cardTitle
+                                          .copyWith(fontSize: 16),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Substitui as frases do tempo no início.',
+                                      style: context.textStyles.secondary,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              CupertinoSwitch(
+                                value: _customPhrasesOnly,
+                                activeTrackColor: context.colors.primaryButton,
+                                onChanged: (value) {
+                                  HapticFeedback.selectionClick();
+                                  setState(() => _customPhrasesOnly = value);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                         // Pontos de Caminho/Sulco/Forja toggle hidden from UI
                       ],
                     ),
@@ -554,6 +593,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       quietHoursEnabled: _quietHoursEnabled,
       quietHoursStart: _quietHoursStart,
       quietHoursEnd: _quietHoursEnd,
+      customPhrasesOnly: _customPhrasesOnly,
     );
 
     await ref.read(updateSettingsUseCaseProvider).call(settings);

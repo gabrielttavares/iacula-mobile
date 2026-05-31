@@ -12,7 +12,6 @@ import '../../custom_phrases/domain/entities/custom_phrase.dart';
 import '../../custom_phrases/presentation/edit_prayer_alarm_screen.dart';
 import '../../custom_phrases/presentation/edit_text_phrase_screen.dart';
 import '../../custom_phrases/presentation/widgets/phrase_row.dart';
-import '../../liturgical/domain/liturgical_season.dart';
 import 'builtin_quotes_screen.dart';
 
 class MinhasJaculatoriasScreen extends ConsumerStatefulWidget {
@@ -25,46 +24,6 @@ class MinhasJaculatoriasScreen extends ConsumerStatefulWidget {
 
 class _MinhasJaculatoriasScreenState
     extends ConsumerState<MinhasJaculatoriasScreen> {
-  bool _customPhrasesOnly = false;
-  bool _settingsLoaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    final settings = await ref.read(getSettingsUseCaseProvider).call();
-    if (!mounted) return;
-    setState(() {
-      _customPhrasesOnly = settings.customPhrasesOnly;
-      _settingsLoaded = true;
-    });
-  }
-
-  Future<void> _toggleCustomPhrasesOnly(bool value) async {
-    final previous = _customPhrasesOnly;
-    setState(() => _customPhrasesOnly = value);
-
-    try {
-      final current = await ref.read(getSettingsUseCaseProvider).call();
-      final updated = current.copyWith(customPhrasesOnly: value);
-      await ref.read(updateSettingsUseCaseProvider).call(updated);
-
-      final season =
-          await ref.read(liturgicalSeasonServiceProvider).getCurrentSeason();
-      await ref.read(rebuildNotificationsUseCaseProvider).call(
-        updated,
-        isEasterSeason: season == LiturgicalSeason.easter,
-        showImmediate: false,
-      );
-    } catch (_) {
-      if (!mounted) return;
-      setState(() => _customPhrasesOnly = previous);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
@@ -153,42 +112,6 @@ class _MinhasJaculatoriasScreenState
                           CupertinoPageRoute(
                             builder: (_) => const EditTextPhraseScreen(),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: IaculaSpacing.md),
-                      IaculaSoftCard(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Usar apenas minhas frases',
-                                    style: context.textStyles.cardTitle
-                                        .copyWith(fontSize: 15),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Substitui as jaculatórias do tempo pelas suas frases personalizadas.',
-                                    style: context.textStyles.secondary
-                                        .copyWith(fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            CupertinoSwitch(
-                              value: _customPhrasesOnly,
-                              onChanged: _settingsLoaded
-                                  ? (value) {
-                                      HapticFeedback.selectionClick();
-                                      _toggleCustomPhrasesOnly(value);
-                                    }
-                                  : null,
-                              activeTrackColor: context.colors.primaryButton,
-                            ),
-                          ],
                         ),
                       ),
                       const SizedBox(height: IaculaSpacing.lg),
