@@ -1,3 +1,5 @@
+import '../entities/custom_phrase.dart';
+
 /// Pure, deterministic decisions for the guaranteed 1-in-4 personal-phrase
 /// feed share.
 ///
@@ -18,4 +20,24 @@ final class PersonalPhraseFeedSelector {
   /// personal while 0, 1, 2 are not.
   static bool isPersonalSlot(int slotIndex) =>
       slotIndex % shareStride == shareStride - 1;
+
+  /// Personal phrases that may fill a hero feed slot: active, opted in to the
+  /// hero card, and rotating (fixed-schedule phrases own their own slots).
+  static List<CustomPhrase> eligibleForHero(List<CustomPhrase> phrases) =>
+      phrases
+          .where((phrase) =>
+              phrase.isActive && phrase.displayOnHero && phrase.isRotationMode)
+          .toList();
+
+  /// Personal phrases that may fill a notification feed slot: active, opted in
+  /// to notifications, and rotating.
+  static List<CustomPhrase> eligibleForNotifications(
+    List<CustomPhrase> phrases,
+  ) =>
+      phrases
+          .where((phrase) =>
+              phrase.isActive &&
+              phrase.displayAsNotification &&
+              phrase.isRotationMode)
+          .toList();
 }
