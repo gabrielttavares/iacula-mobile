@@ -40,4 +40,18 @@ final class PersonalPhraseFeedSelector {
               phrase.displayAsNotification &&
               phrase.isRotationMode)
           .toList();
+
+  /// The personal phrase that fills the slot at [slotIndex], or null when the
+  /// slot is not personal or [eligible] is empty.
+  ///
+  /// Picks by personal-slot ordinal (how many personal slots precede this one)
+  /// modulo the pool size, so the pool cycles in stable order across slots.
+  static CustomPhrase? phraseForSlot({
+    required int slotIndex,
+    required List<CustomPhrase> eligible,
+  }) {
+    if (eligible.isEmpty || !isPersonalSlot(slotIndex)) return null;
+    final personalOrdinal = slotIndex ~/ shareStride;
+    return eligible[personalOrdinal % eligible.length];
+  }
 }

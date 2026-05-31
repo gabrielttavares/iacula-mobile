@@ -74,4 +74,48 @@ void main() {
       expect(result.map((p) => p.id), ['eligible', 'hero-off']);
     });
   });
+
+  group('PersonalPhraseFeedSelector.phraseForSlot', () {
+    final phraseA = _makePhrase(id: 'a');
+    final phraseB = _makePhrase(id: 'b');
+
+    test('returns null when the eligible pool is empty', () {
+      final picked = PersonalPhraseFeedSelector.phraseForSlot(
+        slotIndex: 3,
+        eligible: const [],
+      );
+      expect(picked, isNull);
+    });
+
+    test('returns null for a non-personal slot even with phrases', () {
+      final picked = PersonalPhraseFeedSelector.phraseForSlot(
+        slotIndex: 0,
+        eligible: [phraseA, phraseB],
+      );
+      expect(picked, isNull);
+    });
+
+    test('cycles a two-phrase pool across personal slots a, b, a, b', () {
+      final ids = [3, 7, 11, 15]
+          .map((slotIndex) => PersonalPhraseFeedSelector.phraseForSlot(
+                slotIndex: slotIndex,
+                eligible: [phraseA, phraseB],
+              )?.id)
+          .toList();
+      expect(ids, ['a', 'b', 'a', 'b']);
+    });
+
+    test('is deterministic for slot 7', () {
+      final first = PersonalPhraseFeedSelector.phraseForSlot(
+        slotIndex: 7,
+        eligible: [phraseA, phraseB],
+      );
+      final second = PersonalPhraseFeedSelector.phraseForSlot(
+        slotIndex: 7,
+        eligible: [phraseA, phraseB],
+      );
+      expect(first?.id, second?.id);
+      expect(first?.id, 'b');
+    });
+  });
 }
