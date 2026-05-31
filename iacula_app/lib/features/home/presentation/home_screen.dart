@@ -21,6 +21,7 @@ import '../../search/presentation/search_screen.dart';
 import '../../prayers/presentation/prayer_collections_screen.dart';
 import '../../prayer_intentions/presentation/prayer_intentions_screen.dart';
 import '../../confession/presentation/confession_flow_screen.dart';
+import '../../custom_phrases/domain/services/personal_phrase_feed_selector.dart';
 import '../../quotes/domain/entities/quote.dart';
 import '../../settings/domain/jaculatoria_interval.dart';
 import '../../examination/presentation/examination_reading_screen.dart';
@@ -560,18 +561,19 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
     }
   }
 
-  // Fallback: if no regular quote has been delivered today and a personal
-  // phrase matches the current schedule, show it. This only applies when
-  // using phrases "alongside others" (customPhrasesOnly = false).
-  final matching = phrases
-      .where((p) => p.isActive && p.displayOnHero && p.schedule.matchesNow(now))
-      .toList();
-
-  if (matching.isNotEmpty) {
-    final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
-    final selected = matching[dayOfYear % matching.length];
+  // Default-mode personal share: if no regular quote has been delivered today
+  // and the current time maps to a personal slot, show an eligible phrase.
+  // 1-in-4 cadence, consistent with the notification feed.
+  final heroEligiblePhrases =
+      PersonalPhraseFeedSelector.eligibleForHero(phrases);
+  final heroSlotIndex = PersonalPhraseFeedSelector.slotIndexForFireTime(now);
+  final heroPersonalPhrase = PersonalPhraseFeedSelector.phraseForSlot(
+    slotIndex: heroSlotIndex,
+    eligible: heroEligiblePhrases,
+  );
+  if (heroPersonalPhrase != null) {
     return Quote(
-      text: selected.text,
+      text: heroPersonalPhrase.text,
       dayOfWeek: now.weekday,
       theme: 'personal',
       season: LiturgicalSeason.ordinary,
