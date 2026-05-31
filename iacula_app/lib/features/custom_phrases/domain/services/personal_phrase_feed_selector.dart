@@ -54,4 +54,18 @@ final class PersonalPhraseFeedSelector {
     final personalOrdinal = slotIndex ~/ shareStride;
     return eligible[personalOrdinal % eligible.length];
   }
+
+  /// Width of each fire-time bucket, in minutes. Fire times within the same
+  /// bucket map to the same slot index.
+  static const int _bucketMinutes = 15;
+
+  /// A stable slot index derived from a fire time's clock position in the day.
+  ///
+  /// Buckets the time-of-day into [_bucketMinutes] windows so that a given
+  /// notification time always lands on the same slot, keeping the personal
+  /// share decision stable across reschedules.
+  static int slotIndexForFireTime(DateTime fireAt) {
+    final minutesOfDay = fireAt.hour * 60 + fireAt.minute;
+    return minutesOfDay ~/ _bucketMinutes;
+  }
 }

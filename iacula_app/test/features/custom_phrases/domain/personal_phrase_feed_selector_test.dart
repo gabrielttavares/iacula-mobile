@@ -118,4 +118,29 @@ void main() {
       expect(first?.id, 'b');
     });
   });
+
+  group('PersonalPhraseFeedSelector.slotIndexForFireTime', () {
+    test('07:00 maps to slot index 28', () {
+      expect(
+        PersonalPhraseFeedSelector.slotIndexForFireTime(DateTime(2026, 1, 1, 7)),
+        28,
+      );
+    });
+
+    test('07:15 maps to slot index 29', () {
+      expect(
+        PersonalPhraseFeedSelector.slotIndexForFireTime(
+            DateTime(2026, 1, 1, 7, 15)),
+        29,
+      );
+    });
+
+    test('is deterministic for 09:30', () {
+      final fireAt = DateTime(2026, 1, 1, 9, 30);
+      expect(
+        PersonalPhraseFeedSelector.slotIndexForFireTime(fireAt),
+        PersonalPhraseFeedSelector.slotIndexForFireTime(fireAt),
+      );
+    });
+  });
 }
