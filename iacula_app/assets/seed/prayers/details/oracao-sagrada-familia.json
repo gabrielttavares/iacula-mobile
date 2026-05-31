@@ -1,0 +1,20 @@
+{
+  "slug": "oracao-sagrada-familia",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração à Sagrada Família",
+    "la": "Oratio ad Sacram Familiam"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Jesus, nosso amabilíssimo Redentor, que, vindo iluminar o mundo com a vossa doutrina e o vosso exemplo, quisestes passar a maior parte da vossa vida humilde e submisso a Maria e a José na pobre casa de Nazaré, santificando assim a família que havia de ser modelo de todas as famílias cristãs:",
+      "acolhei benignamente a nossa família, que a Vós se consagra e dedica. Dignai-Vos protegê-la, guardá-la e nela firmar o vosso santo temor, com a paz e a concórdia da caridade cristã, para que, conformando-nos com o divino modelo da vossa família, possamos todos, sem exceção, alcançar a eterna felicidade.",
+      "Maria, Mãe amabilíssima de Jesus e Mãe nossa, alcançai-nos pela vossa piedosa intercessão esta graça. E vós, José, santíssimo patriarca, socorrei-nos com o vosso poderoso patrocínio e ponde nas mãos de Maria todas as nossas súplicas, para que ela as apresente a Jesus Cristo. Amém."
+    ],
+    "la": [
+      "O Iesu, amabilissime Redemptor noster, qui, ad mundum doctrina et exemplo tuo illuminandum veniens, maiorem vitae tuae partem humilis et Mariae Iosephque subditus in paupere domo Nazarethana degere voluisti, familiam ita sanctificans quae omnium familiarum christianarum exemplar futura erat:",
+      "familiam nostram, quae Tibi se devovet ac dedicat, benigne suscipe. Dignare eam protegere, custodire, et in ea sanctum tui timorem cum pace et concordia christianae caritatis firmare, ut, divino familiae tuae exemplari conformes, aeternam beatitudinem omnes consequi valeamus.",
+      "Maria, amabilissima Mater Iesu et Mater nostra, pia tua intercessione hanc nobis gratiam impetra. Et tu, Ioseph, sanctissime Patriarcha, potenti patrocinio tuo nos adiuva, et omnes preces nostras in manus Mariae pone, ut eas Iesu Christo offerat. Amen."
+    ]
+  }
+}

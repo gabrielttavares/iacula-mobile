@@ -1,0 +1,16 @@
+{
+  "slug": "oracao-vespertina",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração vespertina",
+    "la": "Oratio vespertina"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó clementíssimo Deus, criador, protetor e redentor meu, bendigo-vos com todos os vossos anjos e eleitos e do mais íntimo do coração vos rendo graças por todos os dons e benefícios de corpo e de alma que hoje e sempre, com suma liberalidade, me haveis concedido. Mas que vos hei de retribuir, Senhor, por tudo o que me tendes dado? A mim mesmo e tudo o que me destes, assim como os louvores e afetos de amor de todos os santos, unido à Paixão e aos méritos de Cristo, como devida ação de graças: eis o que vos ofereço. Recebei, ó Pai eterno, esta minha oblação; oxalá pudesse eu, com maior afeto, vos louvar e glorificar agora e para sempre com todas as criaturas!"
+    ],
+    "la": [
+      "O clementissime Deus, creator, protector ac redemptor meus, te benedico, laudo, glorifico cum omnibus angelis et electis tuis gratiasque ago pro animi et corporis donis ac beneficiis mihi hodie et alias liberalissime collatis. Quid retribuam tibi, Domine, pro omnibus quæ retribuisti mihi? Me totum et omnia quæ dedisti mihi, insuper et omnium sanctorum laudes et amoris affectus, in unione passionis ac meritorum Christi, tibi pro debita gratiarum actione offero. Suscipe, o Pater æterne, hanc oblationem meam; utinam maiori affectu nunc et in æternum cum omnibus creaturis te laudare et glorificare possem!"
+    ]
+  }
+}

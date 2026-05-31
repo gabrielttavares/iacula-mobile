@@ -1,0 +1,18 @@
+{
+  "slug": "ao-levantar-se",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ao levantar-se",
+    "la": "Ad surgendum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus, vós sois o meu Deus, com ardor vos procuro. Minha alma está sedenta de vós, e minha carne por vós anseia. Bendita seja a santa e indivisa Trindade, agora e sempre, por todos os séculos dos séculos. Amém.",
+      "Em nome de Nosso Senhor Jesus Cristo, levanto-me. Que ele me abençoe, governe, guarde e conduza à vida eterna. Amém. — Com vosso divino Filho, abençoai-nos, Virgem Maria!"
+    ],
+    "la": [
+      "Deus, Deus meus, ad te de luce vigilo. Sitivit in te anima mea, quam multipliciter tibi caro mea. Benedicta sit sancta atque individua Trinitas, nunc et semper et per infinita sæcula sæculorum. Amen.",
+      "In nomine Domini nostri Iesu Christi surgo; ipse me benedicat, regat, custodiat et ad vitam perducat æternam. Amen. — Nos cum prole pia benedicat Virgo Maria."
+    ]
+  }
+}

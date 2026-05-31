@@ -1,0 +1,18 @@
+{
+  "slug": "para-pedir-caridade",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Para pedir caridade",
+    "la": "Pro caritate impetranda"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus, que tudo fazeis concorrer para o bem dos que vos amam, dai a nossos corações o inviolável afeto de vossa caridade, de modo que tentação alguma altere os desejos que nos inspirais. Por Cristo, Senhor nosso. Amém.",
+      "Deus eterno e todo-poderoso, aumentai em nós a fé, a esperança e a caridade, e, para merecermos alcançar o que prometeis, fazei-nos amar o que ordenais. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Deus, qui diligentibus te facis cuncta prodesse, da cordibus nostris inviolabilem tuæ caritatis affectum, ut desideria de tua inspiratione concepta nulla possint tentatione mutari. Per Christum Dominum nostrum. Amen.",
+      "Omnipotens sempiterne Deus, da nobis fidei, spei et caritatis augmentum, et, ut mereamur assequi quod promittis, fac nos amare quod præcipis. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

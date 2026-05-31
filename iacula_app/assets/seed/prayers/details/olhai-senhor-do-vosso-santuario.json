@@ -1,0 +1,16 @@
+{
+  "slug": "olhai-senhor-do-vosso-santuario",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Olhai, Senhor, do vosso santuário",
+    "la": "Respice, Domine, de sanctuario tuo"
+  },
+  "blocks": {
+    "pt-br": [
+      "Olhai, Senhor, do vosso santuário e da excelsa morada dos céus, e vede esta sacrossanta Hóstia que o nosso sumo Pontífice e Senhor Jesus, vosso santo Filho, vos oferece pelos pecados de seus irmãos. Aplaque-se a vossa ira, e perdoai nossa iniquidade. Eis que a voz do sangue de nosso irmão Jesus ergue da cruz até vós o seu clamor: «Ouvi, Senhor. Aplacai-vos, Senhor. Atendei e ponde mãos à obra; não tardeis mais, Deus meu, por amor de vós mesmo», e tratai-nos segundo a vossa misericórdia. Amém."
+    ],
+    "la": [
+      "Respice, Domine, de sanctuario tuo et de excelso cælorum habitaculo, et vide hanc sacrosanctam Hostiam quam tibi offert magnus Pontifex noster, sanctus puer tuus Dominus Iesus, pro peccatis fratrum suorum, et esto placabilis super multitudinem malitiæ nostræ. Ecce vox sanguinis fratris nostri Iesu clamat ad te de cruce: «Exaudi, Domine. Placare, Domine. Attende et fac; ne moreris propter temetipsum, Deus meus», et fac nobiscum secundum misericordiam tuam. Amen."
+    ]
+  }
+}

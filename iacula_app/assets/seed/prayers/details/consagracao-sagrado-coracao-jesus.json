@@ -1,0 +1,22 @@
+{
+  "slug": "consagracao-sagrado-coracao-jesus",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Consagração ao Sagrado Coração de Jesus",
+    "la": "Consecratio ad Sacratissimum Cor Iesu"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó dulcíssimo Jesus, ó Redentor do gênero humano, olhai para nós, humildemente prostrados ante o vosso altar. Nós somos vossos e queremos ser vossos; e para podermos viver mais estreitamente unidos a Vós, hoje cada um de nós se consagra espontaneamente ao vosso Sacratíssimo Coração.",
+      "Muitos jamais Vos conheceram; muitos, desprezando os vossos mandamentos, Vos repeliram. Tende compaixão de uns e de outros, ó benigníssimo Jesus, e atraí a todos ao vosso Sagrado Coração.",
+      "Sede, ó Senhor, o Rei não somente dos fiéis que nunca se afastaram de Vós, mas também dos filhos pródigos que Vos abandonaram; fazei que estes voltem quanto antes à casa paterna, para não perecerem de miséria e de fome.",
+      "Sede o Rei daqueles que vivem enganados, ou que estão separados de Vós pela discórdia, e reconduzi-os ao porto da verdade e à unidade da fé, para que em breve haja um só rebanho e um só pastor. Dai, Senhor, incolumidade e segura liberdade à vossa Igreja; dai a todos os povos a tranquilidade da ordem; fazei que de um a outro confim da terra ressoe esta só voz: Louvado seja o Coração divino, que nos trouxe a salvação; a Ele honra e glória pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Iesu dulcissime, Redemptor humani generis, respice nos ad altare tuum humillime provolutos. Tui sumus, tui esse volumus; quo autem tibi coniuncti firmius esse possimus, en hodie Sacratissimo Cordi tuo se quisque nostrum sponte dedicat.",
+      "Te quidem multi novere numquam; te, spretis mandatis tuis, multi repudiarunt. Miserere utrorumque, benignissime Iesu, atque ad sanctum Cor tuum rape universos.",
+      "Rex esto, Domine, nec fidelium eorum tantum qui nullo tempore discessere a te, sed etiam filiorum prodigorum, qui te reliquerunt; fac hos, ut domum paternam cito repetant, ne miseria et fame pereant.",
+      "Rex esto eorum quos aut opinionum error deceptos habet, aut discordia separatos, eosque ad portum veritatis atque ad unitatem fidei revoca, ut brevi fiat unum ovile et unus pastor. Largire, Domine, Ecclesiae tuae securam cum incolumitate libertatem; largire cunctis gentibus tranquillitatem ordinis; perfice ut ab utroque terrae vertice una resonet vox: Sit laus divino Cordi per quod nobis parta salus; ipsi gloria et honor in saecula. Amen."
+    ]
+  }
+}

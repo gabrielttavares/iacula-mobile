@@ -1,0 +1,20 @@
+{
+  "slug": "para-pedir-pureza",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Para pedir pureza",
+    "la": "Pro castitate impetranda"
+  },
+  "blocks": {
+    "pt-br": [
+      "Purificai, Senhor, com o fogo do Espírito Santo os nossos rins e o nosso coração, para que vos sirvamos de corpo casto e de coração puro vos sejamos gratos. Por Cristo, Senhor nosso. Amém.",
+      "Por vossa imaculada conceição e perpétua virgindade, ó puríssima Virgem Maria, purificai o meu coração e a minha carne.",
+      "Dai-nos, Deus eterno e todo-poderoso, alcançar pela inviolável virgindade da puríssima Virgem Maria pureza de mente e de corpo. Amém. — Coração de Maria, refúgio dos pecadores, rogai por nós que recorremos a vós!"
+    ],
+    "la": [
+      "Ure, Domine, igne sancti Spiritus renes nostros et cor nostrum, ut tibi casto corpore serviamus et mundo corde placeamus. Per Christum Dominum nostrum. Amen.",
+      "Per immaculatam conceptionem tuam et perpetuam virginitatem tuam, o purissima Virgo Maria, emunda cor meum et carnem meam.",
+      "Da, quæsumus omnipotens æterne Deus, ut per integerrimam virginitatem purissimæ Virginis Mariæ puritatem mentis et corporis consequamur. Amen. — Cor Mariæ, refugium peccatorum, ora pro nobis confugientibus ad te!"
+    ]
+  }
+}

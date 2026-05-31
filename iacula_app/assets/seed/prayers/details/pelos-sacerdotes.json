@@ -1,0 +1,18 @@
+{
+  "slug": "pelos-sacerdotes",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos sacerdotes",
+    "la": "Pro sacerdotibus"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus, que constituístes o vosso Filho unigênito sumo e eterno sacerdote, dai aos que ele escolheu por ministros e dispensadores dos vossos mistérios fidelidade no cumprimento da missão que receberam. Pelo mesmo Cristo, Senhor nosso. Amém.",
+      "Jesus, Salvador do mundo, santificai os vossos sacerdotes e levitas!"
+    ],
+    "la": [
+      "Deus, qui Unigenitum tuum summum æternumque constituisti sacerdotem, præsta, ut, quos ministros tuorumque mysteriorum dispensatores elegit, in accepto ministerio adimplendo fideles inveniantur. Per eundem Christum Dominum nostrum. Amen.",
+      "Iesu, salvator mundi, sanctifica sacerdotes et levitas tuos!"
+    ]
+  }
+}

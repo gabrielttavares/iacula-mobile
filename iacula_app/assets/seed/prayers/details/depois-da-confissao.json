@@ -1,0 +1,16 @@
+{
+  "slug": "depois-da-confissao",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Depois da Confissão",
+    "la": "Post confessionem"
+  },
+  "blocks": {
+    "pt-br": [
+      "Senhor, eu vos suplico que, pelos méritos da bem-aventurada sempre Virgem Maria, vossa Mãe, e de todos os santos, vos seja grata e aceitável esta minha confissão. Supra vossa piedade e misericórdia o que me houver faltado de suficiência de contrição, de pureza e integridade de confissão, e dignai-vos acolher-me plena e perfeitamente absolvido no céu. Vós, que viveis e reinais com Deus Pai na unidade do Espírito Santo e sois Deus pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Sit tibi, Domine, obsecro, meritis beatæ semper Virginis Genetricis tuæ Mariæ et omnium sanctorum, grata et accepta ista confessio mea, et quidquid mihi defuit nunc et alias de sufficientia contritionis, de puritate et integritate confessionis, suppleat pietas et misericordia tua, et secundum illam digneris me habere plenius et perfectius absolutum in cælo. Qui vivis et regnas cum Deo Patre in unitate Spiritus sancti, Deus, per omnia sæcula sæculorum. Amen."
+    ]
+  }
+}

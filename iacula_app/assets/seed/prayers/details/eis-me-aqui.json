@@ -1,0 +1,18 @@
+{
+  "slug": "eis-me-aqui",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Eis-me aqui",
+    "la": "En ego, o bone et dulcissime Iesu"
+  },
+  "blocks": {
+    "pt-br": [
+      "Eis-me aqui, ó bom e dulcíssimo Jesus, prostrado em vossa presença. Peço-Vos e suplico-Vos, com o maior fervor da minha alma, que Vos digneis gravar no meu coração vivos sentimentos de fé, esperança e caridade, verdadeira contrição dos meus pecados e firme propósito de emenda.",
+      "Enquanto considero comigo mesmo, com grande amor e dor, as vossas cinco chagas, tendo diante dos olhos aquilo que de Vós já dizia, ó bom Jesus, o profeta Davi: «Transpassaram as minhas mãos e os meus pés; contaram todos os meus ossos.» Amém."
+    ],
+    "la": [
+      "En ego, o bone et dulcissime Iesu, ante conspectum tuum genibus me provolvo, ac maximo animi ardore te oro atque obtestor, ut meum in cor vividos fidei, spei et caritatis sensus, atque veram peccatorum meorum paenitentiam, eaque emendandi firmissimam voluntatem velis imprimere;",
+      "dum magno animi affectu et dolore tua quinque vulnera mecum ipse considero ac mente contemplor, illud prae oculis habens, quod iam in ore ponebat tuo David propheta de te, o bone Iesu: «Foderunt manus meas et pedes meos: dinumeraverunt omnia ossa mea.» Amen."
+    ]
+  }
+}

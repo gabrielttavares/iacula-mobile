@@ -1,0 +1,18 @@
+{
+  "slug": "oracao-de-sao-francisco",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração de São Francisco",
+    "la": "Oratio Sancti Francisci"
+  },
+  "blocks": {
+    "pt-br": [
+      "Senhor, fazei de mim um instrumento da vossa paz; onde houver ódio, que eu leve o amor; onde houver ofensa, que eu leve o perdão; onde houver discórdia, que eu leve a união; onde houver dúvida, que eu leve a fé; onde houver erro, que eu leve a verdade; onde houver desespero, que eu leve a esperança; onde houver tristeza, que eu leve a alegria; onde houver trevas, que eu leve a luz.",
+      "Ó Mestre, fazei que eu procure mais consolar que ser consolado, compreender que ser compreendido, amar que ser amado. Pois é dando que se recebe, é perdoando que se é perdoado, e é morrendo que se vive para a vida eterna. Amém."
+    ],
+    "la": [
+      "Domine, fac me instrumentum pacis tuae: ubi odium, ibi amorem seram; ubi iniuria, veniam; ubi dubium, fidem; ubi desperatio, spem; ubi caligo, lucem; ubi tristitia, laetitiam.",
+      "O Magister, fac ut non tam consolari quam consolari quaeram, non tam intellegi quam intellegere, non tam amari quam amare. Quia dando accipimus, ignoscendo ignoscimur, et moriendo in vitam aeternam resurgimus. Amen."
+    ]
+  }
+}

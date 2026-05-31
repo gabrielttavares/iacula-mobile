@@ -1,0 +1,16 @@
+{
+  "slug": "pelos-judeus",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos judeus",
+    "la": "Pro Iudaeis"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus eterno e todo-poderoso, que tampouco à infidelidade dos judeus negais a vossa misericórdia, atendei às preces que pela cegueira daquele povo vos apresentamos, a fim de que, reconhecida a luz da vossa verdade, que é Cristo, sejam libertos de suas trevas. Pelo mesmo Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Omnipotens sempiterne Deus, qui etiam Iudaicam perfidiam a tua misericordia non repellis, exaudi preces nostras quas pro illius populi obcæcatione deferimus, ut, agnita veritatis tuæ luce, quæ Christus est, a suis tenebris eruatur. Per eundem Christum Dominum nostrum. Amen."
+    ]
+  }
+}

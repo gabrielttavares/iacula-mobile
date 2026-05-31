@@ -1,0 +1,18 @@
+{
+  "slug": "antes-e-depois-do-oficio",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Antes e depois do Ofício",
+    "la": "Ante et post Officium"
+  },
+  "blocks": {
+    "pt-br": [
+      "A sacrossanta e indivisa Trindade, à beatíssima e gloriosíssima humanidade de Nosso Senhor Jesus Cristo crucificado, à fecunda integridade de Maria sempre Virgem e a todo o coro dos santos sejam dados louvor, honra, poder e glória por toda a criatura, e a nós a remissão dos nossos pecados, por todos os séculos dos séculos. Amém.",
+      "℣. Benditas as entranhas da Virgem Maria, que portaram o Filho do eterno Pai.\n℟. E benditos os seios que amamentaram o Cristo Senhor."
+    ],
+    "la": [
+      "Sacrosanctæ et individuæ Trinitati, crucifixi Domini nostri Iesu Christi humanitati beatissimæ et gloriosissimæ semperque Virginis Mariæ fecundæ integritati et omnium sanctorum universitati sit sempiterna laus, honor, virtus et gloria ab omni creatura, nobisque remissio omnium peccatorum, per infinita sæcula sæculorum. Amen.",
+      "℣. Beata viscera Mariæ Virginis, quæ portaverunt æterni Patris Filium.\n℟. Et beata ubera quæ lactaverunt Christum Dominum."
+    ]
+  }
+}

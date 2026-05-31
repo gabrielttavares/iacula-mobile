@@ -1,0 +1,16 @@
+{
+  "slug": "laudate-dominum",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Laudate Dominum (Salmo 116)",
+    "la": "Laudate Dominum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Louvai o Senhor, todas as nações; louvai-o, todos os povos, porque se confirmou sobre nós a sua misericórdia, e a verdade do Senhor permanece eternamente. Glória ao Pai e ao Filho e ao Espírito Santo, assim como era no princípio, agora e sempre, e pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Laudate Dominum, omnes gentes; laudate eum, omnes populi, quoniam confirmata est super nos misericordia eius, et veritas Domini manet in æternum. Gloria Patri et Filio et Spiritui Sancto, sicut erat in principio et nunc et semper et in sæcula sæculorum. Amen."
+    ]
+  }
+}

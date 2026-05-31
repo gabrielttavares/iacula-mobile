@@ -1518,7 +1518,8 @@
     "section_id": "oracoes-diversas",
     "section_title": "Orações Diversas",
     "languages": [
-      "pt-br"
+      "pt-br",
+      "la"
     ],
     "theme": [
       "protecao"
@@ -1752,6 +1753,157 @@
     "saints": []
   },
   {
+    "id": "oracao-da-serenidade",
+    "title": "Oração da Serenidade",
+    "content": "Concedei-me, Senhor, a serenidade necessária para aceitar as coisas que não posso modificar, coragem para modificar aquelas que posso e sabedoria para conhecer a diferença entre elas. Vivendo um dia de cada vez, desfrutando um momento de cada vez, aceitando que as dificuldades constituem o caminho à paz. Aceitando, como Ele aceitou, este mundo tal como é, e não como eu queria que fosse, confiando que Ele acertará tudo, contanto que eu me entregue à Sua vontade. Para que eu seja razoavelmente feliz nesta vida e supremamente feliz com Ele eternamente na próxima. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-de-sao-francisco",
+    "title": "Oração de São Francisco",
+    "content": "Senhor, fazei de mim um instrumento da vossa paz; onde houver ódio, que eu leve o amor; onde houver ofensa, que eu leve o perdão; onde houver discórdia, que eu leve a união; onde houver dúvida, que eu leve a fé; onde houver erro, que eu leve a verdade; onde houver desespero, que eu leve a esperança; onde houver tristeza, que eu leve a alegria; onde houver trevas, que eu leve a luz. Ó Mestre, fazei que eu procure mais consolar que ser consolado, compreender que ser compreendido, amar que ser amado. Pois é dando que se recebe, é perdoando que se é perdoado, e é morrendo que se vive para a vida eterna. Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-a-sao-paulo",
+    "title": "Oração a São Paulo",
+    "content": "Ó glorioso São Paulo Apóstolo, que de perseguidor do nome cristão vos tornastes um zeloso apóstolo, e que, para fazer conhecer o Salvador Jesus Cristo até os confins da terra, sofrestes prisões, açoites, lapidações, naufrágios e perseguições de toda espécie, e por fim derramastes o vosso sangue até a última gota: alcançai-nos a graça de receber, como favores da divina misericórdia, as enfermidades, as tribulações e as desgraças da vida presente, a fim de que as vicissitudes do tempo não nos esfriem no serviço de Deus, mas nos tornem cada vez mais fiéis e fervorosos. Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-pastores-fatima",
+    "title": "Oração aos pastores de Fátima",
+    "content": "Meu Deus, eu creio, adoro, espero e amo-Vos! Peço-Vos perdão para os que não creem, não adoram, não esperam e não Vos amam. Santíssima Trindade, Pai, Filho e Espírito Santo, adoro-Vos profundamente e ofereço-Vos o preciosíssimo Corpo, Sangue, Alma e Divindade de Jesus Cristo, presente em todos os sacrários da terra, em reparação dos ultrajes, sacrilégios e indiferenças com que Ele mesmo é ofendido. E pelos méritos infinitos do seu Sacratíssimo Coração e do Coração Imaculado de Maria, peço-Vos a conversão dos pobres pecadores. Ó meu Jesus, perdoai-nos, livrai-nos do fogo do inferno; levai as almas todas para o Céu, principalmente as que mais precisarem da vossa misericórdia. Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-santissima-trindade-acao",
+    "title": "Oração à Santíssima Trindade",
+    "content": "Ó Trindade Santíssima, Pai, Filho e Espírito Santo, eu Vos adoro profundamente e Vos agradeço todos os benefícios com que me cumulastes. Por Jesus Cristo, vosso Filho, recebido nesta Comunhão, fazei de mim um templo vivo da vossa glória. Concedei-me que Vos ame com todo o coração, com toda a alma e com todas as forças, e que sirva fielmente até a morte, para Vos louvar e bendizer eternamente no Céu. Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas",
+      "santissima-trindade"
+    ],
+    "saints": []
+  },
+  {
+    "id": "eis-me-aqui",
+    "title": "Eis-me aqui",
+    "content": "Eis-me aqui, ó bom e dulcíssimo Jesus, prostrado em vossa presença. Peço-Vos e suplico-Vos, com o maior fervor da minha alma, que Vos digneis gravar no meu coração vivos sentimentos de fé, esperança e caridade, verdadeira contrição dos meus pecados e firme propósito de emenda. Enquanto considero comigo mesmo, com grande amor e dor, as vossas cinco chagas, tendo diante dos olhos aquilo que de Vós já dizia, ó bom Jesus, o profeta Davi: «Transpassaram as minhas mãos e os meus pés; contaram todos os meus ossos.» Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas",
+      "paixao-de-cristo"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-sagrada-familia",
+    "title": "Oração à Sagrada Família",
+    "content": "Ó Jesus, nosso amabilíssimo Redentor, que, vindo iluminar o mundo com a vossa doutrina e o vosso exemplo, quisestes passar a maior parte da vossa vida humilde e submisso a Maria e a José na pobre casa de Nazaré, santificando assim a família que havia de ser modelo de todas as famílias cristãs: acolhei benignamente a nossa família, que a Vós se consagra e dedica. Dignai-Vos protegê-la, guardá-la e nela firmar o vosso santo temor, com a paz e a concórdia da caridade cristã, para que, conformando-nos com o divino modelo da vossa família, possamos todos alcançar a eterna felicidade. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "consagracao-sagrado-coracao-jesus",
+    "title": "Consagração ao Sagrado Coração de Jesus",
+    "content": "Ó dulcíssimo Jesus, ó Redentor do gênero humano, olhai para nós, humildemente prostrados ante o vosso altar. Nós somos vossos e queremos ser vossos; e para podermos viver mais estreitamente unidos a Vós, hoje cada um de nós se consagra espontaneamente ao vosso Sacratíssimo Coração. Muitos jamais Vos conheceram; muitos, desprezando os vossos mandamentos, Vos repeliram. Tende compaixão de uns e de outros, ó benigníssimo Jesus, e atraí a todos ao vosso Sagrado Coração. Louvado seja o Coração divino, que nos trouxe a salvação; a Ele honra e glória pelos séculos dos séculos. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "salmo-22",
+    "title": "Salmo 22",
+    "content": "O Senhor é o meu pastor: nada me faltará. Em verdes pastagens me faz repousar. Conduz-me às águas refrescantes, restaura as forças de minha alma. Ainda que eu atravesse o vale escuro, nada temerei, pois estais comigo. A vossa bondade e misericórdia hão de seguir-me por todos os dias da minha vida. E habitarei na casa do Senhor por longos dias.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "outras-devocoes"
+    ],
+    "saints": []
+  },
+  {
+    "id": "ladainha-de-todos-os-santos",
+    "title": "Ladainha de Todos os Santos",
+    "content": "Senhor, tende piedade de nós. Cristo, tende piedade de nós. Santa Maria, Mãe de Deus, rogai por nós. São Miguel, rogai por nós. Santos anjos de Deus, rogai por nós. São João Batista, rogai por nós. São José, rogai por nós. São Pedro e São Paulo, rogai por nós. Todos os santos e santas de Deus, rogai por nós. De todo o mal, livrai-nos, Senhor. Cordeiro de Deus, que tirais o pecado do mundo, tende piedade de nós.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
     "id": "preparacao-sagrada-comunhao",
     "title": "Primeira Preparação para a Sagrada Comunhão",
     "content": "Vinde! dizeis, ó Jesus, vinde a mim todos os que sofreis e estais oprimidos, e eu vos aliviarei.",
@@ -1763,6 +1915,906 @@
     "theme": [
       "preparacao-santa-missa",
       "eucaristia"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pela-unidade-da-igreja",
+    "title": "Pela unidade da Igreja",
+    "content": "Para que todos sejam um; como tu, Pai, estás em mim e eu em ti, que também eles sejam um em nós, a fim de que o mundo creia que tu me enviaste. ℣. E eu te digo: Tu és Pedro. ℟. E sobre esta pedra edificarei a minha Igreja. Oremos. Senhor Jesus Cristo, que dissestes aos vossos Apóstolos: «Deixo-vos a paz, dou-vos a minha paz», não olheis os nossos pecados, mas a fé que anima a vossa Igreja, e dai-lhe, segundo o vosso desejo, a paz e a unidade. Vós, que viveis e reinais por todos os séculos dos séculos. Amém. Deus, que corrigis o que está errado, reunis o que está disperso e conservai o que está unido, nós vos pedimos que, por vossa clemência, derrameis sobre o vosso povo a graça da vossa união, de modo que, rejeitando toda divisão e unindo-se ao verdadeiro pastor da vossa Igreja, vos possa servir dignamente. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pela-paz-da-igreja",
+    "title": "Pela paz da Igreja",
+    "content": "Dai à vossa Igreja, nós vos pedimos, Deus de misericórdia, que, reunida no Espírito Santo, de modo algum seja perturbada por perseguições hostis. Sufocai, Senhor, a soberba dos nossos inimigos, e com a força do vosso braço prostrai-lhes a obstinação. Não desprezeis, Deus todo-poderoso, o vosso povo, que a vós clama aflito; mas, pela glória do vosso nome, socorrei de rosto sereno os atribulados. Por Nosso Senhor Jesus Cristo, vosso Filho, que convosco vive e reina pelos séculos dos séculos. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-sacerdotes",
+    "title": "Pelos sacerdotes",
+    "content": "Deus, que constituístes o vosso Filho unigênito sumo e eterno sacerdote, dai aos que ele escolheu por ministros e dispensadores dos vossos mistérios fidelidade no cumprimento da missão que receberam. Pelo mesmo Cristo, Senhor nosso. Amém. Jesus, Salvador do mundo, santificai os vossos sacerdotes e levitas!",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-doentes",
+    "title": "Pelos doentes",
+    "content": "Deus, singular proteção da debilidade humana, mostrai a força do vosso auxílio sobre os vossos servos doentes, para que, ajudados por vossa misericórdia, mereçam apresentar-se incólumes aos olhos da vossa santa Igreja. Por Cristo, Senhor nosso. Amém. Deus eterno e todo-poderoso, salvação eterna dos que creem: ouvi nossas preces pelos vossos servos doentes, para os quais imploramos o auxílio da vossa misericórdia; a fim de que, havendo recuperado a saúde, vos rendam graças na vossa Igreja. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-agonizantes",
+    "title": "Pelos agonizantes",
+    "content": "Ó clementíssimo Jesus, amante das almas, eu vos imploro, pela agonia do vosso santíssimo Coração e pelas dores de vossa Mãe Imaculada: lavai no vosso sangue os pecadores de todo o mundo que agora estão em agonia e hoje hão de morrer. Amém. Coração agonizante de Jesus, tende piedade dos moribundos.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "o-salutaris-hostia",
+    "title": "Ó Hóstia salutar",
+    "content": "Ó Hóstia salutar, que abris a porta do céu: as guerras hostis nos oprimem; dai-nos força, trazei-nos auxílio. A vós, que nos alimentais com a vossa carne, seja dado louvor, ó bom Pastor, com o Pai e com o Espírito, pelos séculos sem fim. Amém.",
+    "section_id": "adoracao-eucaristica",
+    "section_title": "Adoração Eucarística",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "eucaristia"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-fieis-defuntos",
+    "title": "Pelos fiéis defuntos",
+    "content": "Ó Deus, Criador e Redentor de todos os fiéis, concedei às almas de todos os vossos servos e servas o perdão de todos os seus pecados, e fazei que as nossas piedosas súplicas lhes alcancem a misericórdia que sempre desejaram. Vós, que viveis e reinais pelos séculos dos séculos. Amém.",
+    "section_id": "oracoes-pelos-defuntos",
+    "section_title": "Orações pelos Defuntos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "defuntos"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-benfeitores",
+    "title": "Pelos benfeitores",
+    "content": "Dignai-vos, Senhor, retribuir com a vida eterna todos aqueles que nos fazem bem por amor ao vosso santo nome. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-pais",
+    "title": "Pelos pais",
+    "content": "Deus, que nos mandastes honrar pai e mãe, tende misericórdia das almas de meu pai e de minha mãe e perdoai-lhes os seus pecados; concedei-me a graça de os ver na alegria da luz eterna. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-pecadores",
+    "title": "Pelos pecadores",
+    "content": "Ó clementíssima Maria, refúgio dos pecadores, eu vos imploro, pelas dores do vosso Coração cheio de compaixão e pela morte do vosso amado Filho, Jesus: impetrai a todos os pecadores do mundo, sobretudo aos que, por escândalos e falsas doutrinas, induzem outros ao pecado, a graça de sinceramente se converterem. Amém. Coração compassivo de Maria, socorrei os pecadores.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-infieis",
+    "title": "Pelos infiéis",
+    "content": "Eterno Deus, criador de todas as coisas, lembrai-vos de que as almas dos infiéis foram por vós criadas e feitas à vossa imagem e semelhança. Lembrai-vos de que o vosso Filho Jesus, pela salvação delas, se sujeitou a atrocíssima morte. Não permitais, Senhor, que o vosso Filho seja por mais tempo desprezado dos infiéis; antes, aplacado pelas preces dos santos e da Igreja, esposa do vosso santíssimo Filho, lembrai-vos de vossa misericórdia e fazei que também eles reconheçam um dia ao que enviastes, o Senhor Jesus Cristo, que é nossa salvação, vida e ressurreição, pelo qual fomos libertos e salvos, ao qual seja a glória pelos séculos dos séculos sem fim. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-hereges-e-cismaticos",
+    "title": "Pelos hereges e cismáticos",
+    "content": "Deus eterno e todo-poderoso, que a todos salvais nem quereis que ninguém pereça, olhai para as almas enganadas por diabólica astúcia, a fim de que, deposta toda perversidade herética, os corações dos que erram tornem arrependidos à unidade da vossa verdade. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-judeus",
+    "title": "Pelos judeus",
+    "content": "Deus eterno e todo-poderoso, que tampouco à infidelidade dos judeus negais a vossa misericórdia, atendei às preces que pela cegueira daquele povo vos apresentamos, a fim de que, reconhecida a luz da vossa verdade, que é Cristo, sejam libertos de suas trevas. Pelo mesmo Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-pagaos",
+    "title": "Pelos pagãos",
+    "content": "Deus eterno e todo-poderoso, que buscais sempre não a morte mas a vida dos pecadores, acolhei propício a nossa oração, e libertai os pagãos da idolatria e agregai-os à vossa santa Igreja, para louvor e glória do vosso nome. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-inimigos",
+    "title": "Pelos inimigos",
+    "content": "Deus da paz, amante e custódio da caridade, dai a todos os nossos inimigos paz e caridade verdadeira, e concedei-lhes a remissão de todos os pecados, e livrai-nos, por vosso poder, de suas insídias. Por Cristo, Senhor nosso. Amém. Senhor, tende piedade dos que me odeiam e invejam, e também dos que me caluniam e detratam. Que nem um deles sequer padeça algum mal por causa de mim, imundo, nem neste século nem no futuro. Santificai-os em vossa misericórdia e protegei-os por vossa benignidade, ó Santíssimo.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pela-propria-salvacao",
+    "title": "Pela própria salvação",
+    "content": "Ó Deus todo-poderoso e eterno, que quisestes que eu, pecador, nascesse no seio da Igreja Católica Romana e me destes chegar assim ao conhecimento do vosso nome, concedei-me, propício, que, tendo-vos conhecido pela fé, seja levado a contemplar face a face vossa grandeza. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pela-graca-da-boa-morte",
+    "title": "Pela graça da boa morte",
+    "content": "Ó Deus, sob cujos olhos todo coração trepida e todas as consciências estremecem, infundi em nós a vossa misericórdia, para que, sem presumirmos do valor de nossas boas obras, experimentemos não o vosso juízo numa morte repentina, mas sim o vosso perdão. Por Cristo, Senhor nosso. Amém. Ó Maria concebida sem pecado, rogai por nós que recorremos a vós! Ó refúgio dos pecadores, Mãe dos agonizantes, não nos desampareis na hora da nossa morte, mas impetrai-nos dor perfeita e contrição sincera, a remissão de nossos pecados, a digna recepção do santíssimo Viático e a força do sacramento da Extrema-Unção, a fim de que nos possamos apresentar com maior segurança ao trono do justo mas misericordioso juiz, nosso Deus e redentor. Amém. Ó São José, que partistes desta vida no doce regaço de Jesus e de Maria, vinde em meu socorro, ó santo patriarca, sobretudo quando a morte vier dar cabo de minha vida, e alcançai-me o consolo de expirar nos mesmos braços santíssimos de Jesus e de Maria. Em vossas mãos, na vida e na morte, ó Jesus, Maria e José, entrego o meu espírito. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelo-perdao-dos-pecados",
+    "title": "Pelo perdão dos pecados",
+    "content": "Ó Deus, que a ninguém rejeitais, mas por misericórdia vos deixais aplacar o quanto quereis pela penitência dos pecadores: olhai propício para as nossas humildes preces e iluminai o nosso coração, a fim de podermos cumprir os vossos preceitos. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pelos-meritos-de-maria",
+    "title": "Pelos méritos de Maria",
+    "content": "Nós vos oferecemos, Senhor Jesus Cristo, os méritos de Maria, Mãe vossa e nossa, de pé junto à cruz, a fim de que, por sua piíssima intercessão, alcancemos o feliz efeito de vossa paixão e morte. Amém.",
+    "section_id": "oracoes-a-nossa-senhora",
+    "section_title": "Orações a Nossa Senhora",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "mariano"
+    ],
+    "saints": []
+  },
+  {
+    "id": "em-qualquer-necessidade",
+    "title": "Em qualquer necessidade",
+    "content": "Deus, nosso refúgio e fortaleza, escutai as piedosas preces de vossa Igreja, vós, que sois o autor da piedade, e concedei-nos alcançar de fato o que confiantes vos pedimos. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "para-pedir-pureza",
+    "title": "Para pedir pureza",
+    "content": "Purificai, Senhor, com o fogo do Espírito Santo os nossos rins e o nosso coração, para que vos sirvamos de corpo casto e de coração puro vos sejamos gratos. Por Cristo, Senhor nosso. Amém. Por vossa imaculada conceição e perpétua virgindade, ó puríssima Virgem Maria, purificai o meu coração e a minha carne. Dai-nos, Deus eterno e todo-poderoso, alcançar pela inviolável virgindade da puríssima Virgem Maria pureza de mente e de corpo. Amém. — Coração de Maria, refúgio dos pecadores, rogai por nós que recorremos a vós!",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "para-pedir-paciencia",
+    "title": "Para pedir paciência",
+    "content": "Ó Deus, que pela paciência do vosso Unigênito esmagastes a soberba do antigo inimigo, dai-nos recordar dignamente o que ele por nós padeceu e assim, a seu exemplo, tolerar de ânimo igual nossas adversidades. Pelo mesmo Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "para-pedir-caridade",
+    "title": "Para pedir caridade",
+    "content": "Deus, que tudo fazeis concorrer para o bem dos que vos amam, dai a nossos corações o inviolável afeto de vossa caridade, de modo que tentação alguma altere os desejos que nos inspirais. Por Cristo, Senhor nosso. Amém. Deus eterno e todo-poderoso, aumentai em nós a fé, a esperança e a caridade, e, para merecermos alcançar o que prometeis, fazei-nos amar o que ordenais. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "contra-maus-pensamentos",
+    "title": "Contra maus pensamentos",
+    "content": "Ó Deus todo-poderoso e mansíssimo: olhai propício para as nossas preces e livrai nossos corações da tentação dos maus pensamentos, a fim de que mereçamos nos tornar digna morada do Espírito Santo. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "dom-de-lagrimas",
+    "title": "Pelo dom de lágrimas",
+    "content": "Infundi clemente em nossos corações, Senhor Deus, a graça do Espírito Santo, a qual nos purifique, com gemidos e lágrimas, das manchas dos nossos pecados e nos alcance, por vossa liberalidade, o efeito do tão almejado perdão. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "livrai-me-senhor-jesus",
+    "title": "Livrai-me, Senhor Jesus",
+    "content": "Senhor Jesus Cristo, Filho do Deus vivo, que, obediente à vontade do Pai, com a cooperação do Espírito Santo, por vossa morte vivificastes o mundo, livrai-me de todas as minhas iniquidades e de todos os males; fazei-me observar sempre os vossos mandamentos, e nunca permitais que me separe de vós. Vós, que sois Deus e com o Pai e o Espírito Santo viveis e reinais pelos séculos dos séculos. Amém.",
+    "section_id": "adoracao-eucaristica",
+    "section_title": "Adoração Eucarística",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "eucaristia"
+    ],
+    "saints": []
+  },
+  {
+    "id": "nos-vos-damos-gracas",
+    "title": "Nós vos damos graças",
+    "content": "Nós vos damos graças, Deus onipotente, por todos os vossos benefícios. Vós, que viveis e reinais pelos séculos dos séculos. Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "maria-mae-de-graca",
+    "title": "Maria, Mãe de graça",
+    "content": "Maria, Mãe de graça, Mãe de misericórdia, do inimigo defendei-nos e na hora da morte acolhei-nos.",
+    "section_id": "oracoes-a-nossa-senhora",
+    "section_title": "Orações a Nossa Senhora",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "mariano"
+    ],
+    "saints": []
+  },
+  {
+    "id": "santa-maria-socorrei",
+    "title": "Santa Maria, socorrei",
+    "content": "Santa Maria, socorrei os pobres, ajudai os fracos, consolai os tristes, rogai pelo povo, auxiliai o clero, intercedei por todas as mulheres; sintam todos a vossa ajuda, todos os que celebram a vossa memória.",
+    "section_id": "oracoes-a-nossa-senhora",
+    "section_title": "Orações a Nossa Senhora",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "mariano"
+    ],
+    "saints": []
+  },
+  {
+    "id": "faca-se-cumpra-se-seja-louvada",
+    "title": "Faça-se, cumpra-se, seja louvada",
+    "content": "Faça-se, cumpra-se, seja louvada e eternamente glorificada a justíssima, altíssima e amabilíssima vontade de Deus em todas as coisas.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "que-vos-seja-agradavel",
+    "title": "Que vos seja agradável",
+    "content": "Que vos seja agradável, Santíssima Trindade, o obséquio da minha servidão, e concedei que o sacrifício que eu, indigno, ofereci aos olhos de vossa majestade vos seja agradável e, pela vossa misericórdia, propício a mim e a todos aqueles por quem o ofereci. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "olhai-senhor-do-vosso-santuario",
+    "title": "Olhai, Senhor, do vosso santuário",
+    "content": "Olhai, Senhor, do vosso santuário e da excelsa morada dos céus, e vede esta sacrossanta Hóstia que o nosso sumo Pontífice e Senhor Jesus, vosso santo Filho, vos oferece pelos pecados de seus irmãos. Aplaque-se a vossa ira, e perdoai nossa iniquidade. Eis que a voz do sangue de nosso irmão Jesus ergue da cruz até vós o seu clamor: «Ouvi, Senhor. Aplacai-vos, Senhor. Atendei e ponde mãos à obra; não tardeis mais, Deus meu, por amor de vós mesmo», e tratai-nos segundo a vossa misericórdia. Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-vespertina",
+    "title": "Oração vespertina",
+    "content": "Ó clementíssimo Deus, criador, protetor e redentor meu, bendigo-vos com todos os vossos anjos e eleitos e do mais íntimo do coração vos rendo graças por todos os dons e benefícios de corpo e de alma que hoje e sempre, com suma liberalidade, me haveis concedido. Mas que vos hei de retribuir, Senhor, por tudo o que me tendes dado? A mim mesmo e tudo o que me destes, assim como os louvores e afetos de amor de todos os santos, unido à Paixão e aos méritos de Cristo, como devida ação de graças: eis o que vos ofereço. Recebei, ó Pai eterno, esta minha oblação; oxalá pudesse eu, com maior afeto, vos louvar e glorificar agora e para sempre com todas as criaturas!",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-do-incenso",
+    "title": "Oração do incenso",
+    "content": "Deus eterno, sem princípio nem fim, grande em conselho e poderoso em obras, presente a tudo e em todos, acompanhai-nos nesta hora e ponde-vos no nosso meio; purificai os nossos corações e santificai as nossas almas; limpai-nos de todo pecado voluntário e involuntário, e dai-nos oferecer na vossa presença os sacrifícios racionais, hóstia de bênção, incenso espiritual que, penetrando o véu, suba até o Santo dos Santos.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "depois-da-confissao",
+    "title": "Depois da Confissão",
+    "content": "Senhor, eu vos suplico que, pelos méritos da bem-aventurada sempre Virgem Maria, vossa Mãe, e de todos os santos, vos seja grata e aceitável esta minha confissão. Supra vossa piedade e misericórdia o que me houver faltado de suficiência de contrição, de pureza e integridade de confissão, e dignai-vos acolher-me plena e perfeitamente absolvido no céu. Vós, que viveis e reinais com Deus Pai na unidade do Espírito Santo e sois Deus pelos séculos dos séculos. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "pos-comunhao",
+    "title": "Pós-comunhão",
+    "content": "Nós vos damos graças, ó Senhor filantropo, benfeitor de nossas almas, porque também no presente dia nos fizestes dignos dos vossos celestes e imortais Mistérios. Endireitai o nosso caminho, confirmai no vosso temor a todos nós, guardai a nossa vida e tornai seguros os nossos passos, pelas preces e súplicas da gloriosa Teótoco e sempre Virgem Maria e de todos os vossos santos. Nós vos damos graças, Deus e Pai de Jesus Cristo, nosso Salvador, pelo vosso santo nome, que fizestes habitar em nós, e pelo conhecimento, pela fé, pela caridade e pela imortalidade que nos destes por Jesus, vosso Filho. Lembrai-vos por Ele, também agora, da vossa santa Igreja, que adquiristes pelo precioso sangue do vosso Cristo; livrai-a de todo mal e consumai-a na vossa caridade e na vossa verdade, e reuni-nos a todos no vosso reino, que nos haveis preparado.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "ao-deitar-se",
+    "title": "Ao deitar-se",
+    "content": "Salvai-nos, Senhor, durante a vigília e guardai-nos durante o sono, para que vigiemos com Cristo e descansemos em paz. Guardai-nos, Senhor, como à pupila dos olhos; à sombra de vossas asas protegei-nos. Dignai-vos, Senhor, conservar-nos sem pecado esta noite. Oremos. Visitai, Senhor, esta casa e afastai dela todas as insídias do inimigo. Que os vossos santos anjos nela habitem e nos guardem sempre na paz, e que a vossa bênção esteja sobre nós sempre. Por Cristo, Senhor nosso. Amém. Em vossas benditas mãos, Senhor Deus; no seio de vossa misericórdia, ó Virgem Maria; e também à vossa proteção, ó santos anjos e eleitos de Deus, entrego agora e sempre meu corpo e minha alma. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "ao-levantar-se",
+    "title": "Ao levantar-se",
+    "content": "Ó Deus, vós sois o meu Deus, com ardor vos procuro. Minha alma está sedenta de vós, e minha carne por vós anseia. Bendita seja a santa e indivisa Trindade, agora e sempre, por todos os séculos dos séculos. Amém. Em nome de Nosso Senhor Jesus Cristo, levanto-me. Que ele me abençoe, governe, guarde e conduza à vida eterna. Amém. — Com vosso divino Filho, abençoai-nos, Virgem Maria!",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "antes-de-qualquer-atividade",
+    "title": "Antes de qualquer atividade",
+    "content": "Dai-nos, Senhor, o auxílio da vossa graça, a fim de cumprirmos, sob a vossa operação, o que por vossa autoridade sabemos ser o nosso dever. Por Cristo, Senhor nosso. Amém. Dai-nos, Deus todo-poderoso, que, meditando sempre o que é conforme à razão, levemos a cabo por palavras e obras o que é do vosso agrado. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "antes-e-depois-do-oficio",
+    "title": "Antes e depois do Ofício",
+    "content": "A sacrossanta e indivisa Trindade, à beatíssima e gloriosíssima humanidade de Nosso Senhor Jesus Cristo crucificado, à fecunda integridade de Maria sempre Virgem e a todo o coro dos santos sejam dados louvor, honra, poder e glória por toda a criatura, e a nós a remissão dos nossos pecados, por todos os séculos dos séculos. Amém. ℣. Benditas as entranhas da Virgem Maria, que portaram o Filho do eterno Pai. ℟. E benditos os seios que amamentaram o Cristo Senhor.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "a-deus-uno-e-trino",
+    "title": "A Deus uno e trino",
+    "content": "Ao Deus único, rei dos séculos imortal e invisível, honra e glória pelos séculos dos séculos. Amém. Bendita seja a santa e indivisa Trindade, agora e sempre, por todos os séculos dos séculos. Amém. Santo Deus, santo forte, santo imortal, tende piedade de nós. Santíssima Trindade, tende piedade de nós; Senhor, sede propício aos nossos pecados; Senhor, perdoai-nos as nossas iniquidades, por causa do vosso nome.",
+    "section_id": "oracoes-santissima-trindade",
+    "section_title": "Orações à Santíssima Trindade",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "santissima-trindade"
+    ],
+    "saints": []
+  },
+  {
+    "id": "a-todos-os-santos",
+    "title": "A todos os santos",
+    "content": "Santos todos de Deus, dignai-vos interceder pela nossa salvação e pela de todo o mundo. ℣. Alegrai-vos no Senhor e exultai, justos. ℟. Gloriai-vos, todos os retos de coração. Oremos. Protegei, Senhor, o vosso povo, e conservai com proteção perpétua os que confiamos no patrocínio dos vossos Apóstolos Pedro e Paulo e no dos outros Apóstolos. Que todos os vossos santos nos assistam em toda a parte, a fim de que, comemorando os seus méritos, experimentemos o seu patrocínio. Concedei a vossa paz aos nossos dias, e repeli da vossa Igreja toda iniquidade. Retribuí a nossos benfeitores os bens que não se acabam, e a todos os fiéis defuntos concedei o descanso eterno. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "a-imaculada-conceicao",
+    "title": "À Imaculada Conceição",
+    "content": "Deus, que pela Imaculada Conceição da Virgem Maria preparastes uma digna morada para o vosso Filho e, em atenção aos méritos futuros da morte de Cristo, a preservastes de toda mancha, concedei-nos, por sua intercessão, a graça de chegarmos purificados junto de vós. Pelo mesmo Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-a-nossa-senhora",
+    "section_title": "Orações a Nossa Senhora",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "mariano"
+    ],
+    "saints": []
+  },
+  {
+    "id": "a-santa-cruz",
+    "title": "À santa Cruz",
+    "content": "Ó Cruz, certeza de salvação. Ó Cruz, à qual sempre adoro. Ó Cruz do Senhor, que estás sempre comigo. Ó Cruz, na qual me refugio. Salve, ó cruz, única esperança! Pelo sinal da santa cruz, livrai-nos, Deus nosso Senhor, dos nossos inimigos.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "ave-jose",
+    "title": "Ave-José",
+    "content": "Ave, José, cheio de graça, Jesus e Maria são convosco; bendito sois vós entre os homens, e bendito é o fruto de vossa esposa, Jesus. São José, pai nutrício de Jesus e da bem-aventurada Virgem Maria, vossa esposa, rogai por nós vossos devotos, agora e na hora da nossa morte. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracao-da-medalha-milagrosa",
+    "title": "Oração da Medalha Milagrosa",
+    "content": "Ó Maria, concebida sem pecado, rogai por nós que recorremos a vós.",
+    "section_id": "oracoes-a-nossa-senhora",
+    "section_title": "Orações a Nossa Senhora",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "mariano"
+    ],
+    "saints": []
+  },
+  {
+    "id": "tomai-senhor-e-recebei",
+    "title": "Tomai, Senhor, e recebei",
+    "content": "Tomai, Senhor, e recebei toda a minha liberdade, a minha memória, o meu entendimento e toda a minha vontade. Tudo o que tenho e possuo, de vós o recebi; por isso a vós, Senhor, o entrego e restituo, para que disponhais de tudo segundo a vossa vontade. Concedei-me somente o vosso amor e a vossa graça, que isto me basta, e não desejo outra coisa da vossa misericórdia infinita. Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "a-santa-teresinha",
+    "title": "A Santa Teresinha",
+    "content": "Senhor, que dissestes: «Se não vos tornardes como crianças, não entrareis no reino dos céus», dai-nos seguir de tal modo os exemplos de Santa Teresa, virgem, em humildade e simplicidade de coração, que alcancemos os prêmios eternos. Vós, que viveis e reinais pelos séculos dos séculos. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "a-sao-gabriel-arcanjo",
+    "title": "A São Gabriel Arcanjo",
+    "content": "Ó Deus, que dentre todos os anjos escolhestes o Arcanjo Gabriel para anunciar o mistério de vossa Encarnação, concedei propício que, celebrando a sua festa na terra, experimentemos o efeito de seu patrocínio no céu. Vós, que viveis e reinais pelos séculos dos séculos. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "a-sao-rafael-arcanjo",
+    "title": "A São Rafael Arcanjo",
+    "content": "Ó Deus, que destes o bem-aventurado Rafael Arcanjo como guia ao vosso servo Tobias em seu caminho, concedei a nós, vossos servos, que ele sempre nos guarde e nos preste o auxílio de sua proteção. Por Cristo, Senhor nosso. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "o-divino-coracao-de-jesus",
+    "title": "Ó divino Coração de Jesus",
+    "content": "Ó divino Coração de Jesus, dai às almas do purgatório o descanso eterno; aos que hoje hão de morrer, a graça da perseverança final; aos pecadores, arrependimento verdadeiro; aos pagãos, a luz da fé; a mim e a todos os meus, a vossa bênção. A vós, pois, Coração misericordioso de Jesus, encomendo todas estas almas e por elas vos ofereço todos os vossos méritos juntamente com os de vossa santíssima Mãe, de todos os santos e anjos, e com todos os sacrifícios da Missa, as sagradas Comunhões, as orações e boas obras que ao redor de todo o mundo cristão estão sendo feitas hoje.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "ao-sagrado-coracao",
+    "title": "Ao Sagrado Coração",
+    "content": "Jesus, manso e humilde de coração, fazei o nosso coração semelhante ao vosso. Sacratíssimo Coração de Jesus, tende piedade de nós. Coração sacratíssimo e misericordioso de Jesus, dai-nos a paz.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "ao-santissimo-nome",
+    "title": "Ao santíssimo Nome",
+    "content": "Senhor Jesus Cristo, que dissestes: «Pedi, e recebereis; buscai, e achareis; batei, e abrir-se-vos-á», nós vos suplicamos: dai aos que vo-lo pedimos o afeto do vosso diviníssimo amor, para que vos amemos de todo o coração, por palavras e obras, e nunca cessemos de vos louvar. Fazei-nos, Senhor, ter sempre igual amor e temor ao vosso santo nome, pois não deixais de governar os que estabeleceis na firmeza do vosso amor. Vós, que viveis e reinais pelos séculos dos séculos. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "ao-santissimo-sacramento",
+    "title": "Ao santíssimo Sacramento",
+    "content": "Graças e louvores se deem a todo momento ao santíssimo e diviníssimo Sacramento. Salve, ó Vítima salutar, oferecida no patíbulo da cruz por mim e por todo o gênero humano. Salve, ó Sangue precioso, que jorrais das chagas de Nosso Senhor Jesus Cristo crucificado e purificais os pecados de todo o mundo. Lembrai-vos, Senhor, da vossa criatura, que redimistes com o vosso preciosíssimo Sangue.",
+    "section_id": "adoracao-eucaristica",
+    "section_title": "Adoração Eucarística",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "eucaristia"
+    ],
+    "saints": []
+  },
+  {
+    "id": "comunhao-espiritual",
+    "title": "Comunhão espiritual",
+    "content": "Creio, ó meu Jesus, que estais presente no Santíssimo Sacramento. Amo-vos sobre todas as coisas e desejo-vos possuir em minha alma. Mas como agora não vos posso receber sacramentalmente, vinde espiritualmente ao meu coração. E, como se já vos tivesse recebido, uno-me inteiramente a vós; não consintais que de vós me aparte.",
+    "section_id": "preparacao-santa-missa",
+    "section_title": "Preparação para a Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "preparacao-santa-missa"
+    ],
+    "saints": []
+  },
+  {
+    "id": "por-intercessao-de-sao-jose",
+    "title": "Por intercessão de São José",
+    "content": "Senhor, nós vos pedimos que, ajudados pelos méritos do esposo de vossa santíssima Mãe, alcancemos por intercessão dele o que às nossas forças é impossível. Vós, que viveis e reinais pelos séculos dos séculos. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "santo-anjo-amparo-de-minh-alma",
+    "title": "Santo anjo, amparo de minh'alma",
+    "content": "Santo anjo, amparo de minh'alma miserável e de minha vida desvairada, não me abandones a mim, pecador, nem te afastes de mim por causa de minha fraqueza; não deixes o espírito maligno assenhorear-se de mim. Segura-me pela mão, miserável e fraca, e conduze-me à senda da salvação. Sim, santo anjo de Deus, guarda e protetor de minh'alma miserável e de meu corpo, perdoa-me tudo em que te haja ofendido todos os dias de minha vida e se em algo pequei neste dia. Protege-me esta noite e guarda-me de toda tentação do adversário, para que eu não ofenda a Deus com pecado algum. Roga por mim ao Senhor que me confirme no seu temor e me faça digno servo da sua bondade. Amém.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "eu-vos-imploro-dulcissimo-jesus",
+    "title": "Eu vos imploro, dulcíssimo Jesus",
+    "content": "Eu vos imploro, dulcíssimo Jesus Cristo, que a vossa paixão seja para mim a virtude de que eu esteja munido, protegido e defendido; que as vossas chagas sejam para mim a comida e a bebida de que eu esteja alimentado, inebriado e deliciado; que a aspersão do vosso sangue seja para mim a purificação de todos os meus delitos; que a vossa morte seja para mim glória sempiterna. Nisso esteja o meu alimento e a minha alegria, a minha salvação e a doçura de meu coração. Vós, que viveis e reinais pelos séculos dos séculos. Amém.",
+    "section_id": "acao-de-gracas-santa-missa",
+    "section_title": "Ação de Graças depois da Santa Missa",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "missa-acao-de-gracas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "oracoes-de-santo-andre",
+    "title": "Ó boa cruz (Orações de Santo André)",
+    "content": "Salve, cruz, que no corpo de Cristo foste consagrada e das pérolas de seus membros adornada! Antes que em ti subisse o Senhor, infundias temor terreno; mas agora, fonte de amor celeste, és com gosto recebida. Sabem os fiéis quantos gozos em ti guardas, quantos dons preparados! Seguro, pois, e ledo a ti venho, para que, exultante, tu me recebas a mim, discípulo daquele que de ti pendeu. Ó boa cruz, que do corpo de Jesus recebeste a formosura, tanto tempo desejada, tão ardentemente amada, sem descanso procurada! Para a minha alma ansiosa estás por fim preparada! Retira-me dentre os homens e devolve minha vida ao Mestre a quem pertenço! Por ti me receba aquele que por ti me resgatou.",
+    "section_id": "oracoes-diversas",
+    "section_title": "Orações Diversas",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "oracoes-diversas"
+    ],
+    "saints": []
+  },
+  {
+    "id": "laudate-dominum",
+    "title": "Laudate Dominum (Salmo 116)",
+    "content": "Louvai o Senhor, todas as nações; louvai-o, todos os povos, porque se confirmou sobre nós a sua misericórdia, e a verdade do Senhor permanece eternamente. Glória ao Pai e ao Filho e ao Espírito Santo, assim como era no princípio, agora e sempre, e pelos séculos dos séculos. Amém.",
+    "section_id": "outras-devocoes",
+    "section_title": "Outras Devoções, Hinos e Salmos",
+    "languages": [
+      "pt-br",
+      "la"
+    ],
+    "theme": [
+      "outras-devocoes"
     ],
     "saints": []
   }

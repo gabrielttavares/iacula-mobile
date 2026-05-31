@@ -2,7 +2,8 @@
   "slug": "oracao-de-sao-bento",
   "default_language": "pt-br",
   "titles": {
-    "pt-br": "Oração de São Bento"
+    "pt-br": "Oração de São Bento",
+    "la": "Oratio Sancti Patris Benedicti"
   },
   "blocks": {
     "pt-br": [
@@ -12,6 +13,14 @@
       "Nunca me aconselhes coisas vãs.",
       "É mau o que me ofereces.",
       "Bebe tu mesmo os teus venenos. Amém."
+    ],
+    "la": [
+      "Crux sacra sit mihi lux.",
+      "Non draco sit mihi dux.",
+      "Vade retro, Satana.",
+      "Nunquam suadeas mihi vana.",
+      "Sunt mala quæ libas.",
+      "Ipse venena bibas. Amen."
     ]
   }
 }

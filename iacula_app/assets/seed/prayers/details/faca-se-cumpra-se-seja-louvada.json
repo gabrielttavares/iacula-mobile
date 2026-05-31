@@ -1,0 +1,16 @@
+{
+  "slug": "faca-se-cumpra-se-seja-louvada",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Faça-se, cumpra-se, seja louvada",
+    "la": "Fiat voluntas Dei"
+  },
+  "blocks": {
+    "pt-br": [
+      "Faça-se, cumpra-se, seja louvada e eternamente glorificada a justíssima, altíssima e amabilíssima vontade de Deus em todas as coisas."
+    ],
+    "la": [
+      "Fiat, laudetur atque in æternum superexaltetur iustissima, altissima et amabilissima voluntas Dei in omnibus."
+    ]
+  }
+}

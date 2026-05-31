@@ -1,0 +1,16 @@
+{
+  "slug": "pela-paz-da-igreja",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pela paz da Igreja",
+    "la": "Pro pace Ecclesiae"
+  },
+  "blocks": {
+    "pt-br": [
+      "Dai à vossa Igreja, nós vos pedimos, Deus de misericórdia, que, reunida no Espírito Santo, de modo algum seja perturbada por perseguições hostis. Sufocai, Senhor, a soberba dos nossos inimigos, e com a força do vosso braço prostrai-lhes a obstinação. Não desprezeis, Deus todo-poderoso, o vosso povo, que a vós clama aflito; mas, pela glória do vosso nome, socorrei de rosto sereno os atribulados. Por Nosso Senhor Jesus Cristo, vosso Filho, que convosco vive e reina pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Da, quæsumus, Ecclesiæ tuæ, misericors Deus, ut, sancto Spiritu congregata, hostili nullatenus incursione turbetur. Hostium nostrorum, quæsumus Domine, elide superbiam, et eorum contumaciam dexteræ tuæ virtute prosterne. Ne despicias, omnipotens Deus, populum tuum in afflictione clamantem; sed, propter gloriam nominis tui, tribulatis succurre placatus. Per Dominum nostrum Iesum Christum, Filium tuum, qui tecum vivit et regnat in sæcula sæculorum. Amen."
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "slug": "eu-vos-imploro-dulcissimo-jesus",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Eu vos imploro, dulcíssimo Jesus",
+    "la": "Obsecro te, dulcissime Iesu"
+  },
+  "blocks": {
+    "pt-br": [
+      "Eu vos imploro, dulcíssimo Jesus Cristo, que a vossa paixão seja para mim a virtude de que eu esteja munido, protegido e defendido; que as vossas chagas sejam para mim a comida e a bebida de que eu esteja alimentado, inebriado e deliciado; que a aspersão do vosso sangue seja para mim a purificação de todos os meus delitos; que a vossa morte seja para mim glória sempiterna. Nisso esteja o meu alimento e a minha alegria, a minha salvação e a doçura de meu coração. Vós, que viveis e reinais pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Obsecro te, dulcissime Iesu Christe, ut passio tua sit mihi virtus qua muniar, protegar atque defendar; vulnera tua sint mihi cibus potusque quibus pascar, inebrier atque delecter; aspersio sanguinis tui sit mihi ablutio omnium delictorum meorum; mors tua sit mihi gloria sempiterna. In his sit mihi refectio, exultatio, sanitas et dulcedo cordis mei. Qui vivis et regnas in sæcula sæculorum. Amen."
+    ]
+  }
+}

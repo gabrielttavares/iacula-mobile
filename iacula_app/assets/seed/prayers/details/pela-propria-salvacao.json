@@ -1,0 +1,16 @@
+{
+  "slug": "pela-propria-salvacao",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pela própria salvação",
+    "la": "Pro propria salute"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus todo-poderoso e eterno, que quisestes que eu, pecador, nascesse no seio da Igreja Católica Romana e me destes chegar assim ao conhecimento do vosso nome, concedei-me, propício, que, tendo-vos conhecido pela fé, seja levado a contemplar face a face vossa grandeza. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Omnipotens sempiterne Deus, qui me peccatorem in sinu Ecclesiæ Catholicæ Romanæ nasci voluisti et ita ad agnitionem tui nominis venire tribuisti, concede propitius, ut qui iam te ex fide cognovi, usque ad contemplandam speciem tuæ celsitudinis perducar. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

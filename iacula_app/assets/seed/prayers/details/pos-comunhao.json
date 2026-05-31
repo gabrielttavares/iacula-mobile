@@ -1,0 +1,18 @@
+{
+  "slug": "pos-comunhao",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pós-comunhão",
+    "la": "Post communionem"
+  },
+  "blocks": {
+    "pt-br": [
+      "Nós vos damos graças, ó Senhor filantropo, benfeitor de nossas almas, porque também no presente dia nos fizestes dignos dos vossos celestes e imortais Mistérios. Endireitai o nosso caminho, confirmai no vosso temor a todos nós, guardai a nossa vida e tornai seguros os nossos passos, pelas preces e súplicas da gloriosa Teótoco e sempre Virgem Maria e de todos os vossos santos.",
+      "Nós vos damos graças, Deus e Pai de Jesus Cristo, nosso Salvador, pelo vosso santo nome, que fizestes habitar em nós, e pelo conhecimento, pela fé, pela caridade e pela imortalidade que nos destes por Jesus, vosso Filho. Lembrai-vos por Ele, também agora, da vossa santa Igreja, que adquiristes pelo precioso sangue do vosso Cristo; livrai-a de todo mal e consumai-a na vossa caridade e na vossa verdade, e reuni-nos a todos no vosso reino, que nos haveis preparado."
+    ],
+    "la": [
+      "Gratias agimus tibi, benigne Domine, benefactor animarum nostrarum, quod etiam præsenti die nos dignos fecisti cælestibus tuis et immortalibus Sacramentis. Viam nostram dirige, confirma nos omnes in timore tuo, custodi vitam nostram, tutos fac gressus nostros precibus et supplicationibus gloriosæ Deiparæ et semper Virginis Mariæ et omnium sanctorum tuorum.",
+      "Gratias agimus tibi, Deus et Pater Iesu Salvatoris nostri, pro sancto nomine tuo, quod habitare fecisti in nobis, et pro cognitione, fide, caritate et immortalitate quas dedisti nobis per Iesum Filium tuum. Ipse et nunc per eum memento huiusce sanctæ Ecclesiæ tuæ, quam acquisisti pretioso sanguine Christi tui, atque eam ab omni malo libera et perfice illam in caritate tua et veritate tua, nosque omnes congrega in regnum tuum quod præparasti."
+    ]
+  }
+}

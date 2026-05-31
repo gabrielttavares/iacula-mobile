@@ -1,0 +1,16 @@
+{
+  "slug": "pelo-perdao-dos-pecados",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelo perdão dos pecados",
+    "la": "Pro remissione peccatorum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus, que a ninguém rejeitais, mas por misericórdia vos deixais aplacar o quanto quereis pela penitência dos pecadores: olhai propício para as nossas humildes preces e iluminai o nosso coração, a fim de podermos cumprir os vossos preceitos. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Deus, qui nullum respuis, sed quantum vis peccantibus per pænitentiam pia miseratione placaris, respice propitius ad preces humilitatis nostræ et illumina corda nostra, ut tua valeamus implere præcepta. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

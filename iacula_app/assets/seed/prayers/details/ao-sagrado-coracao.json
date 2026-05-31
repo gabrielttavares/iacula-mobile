@@ -1,0 +1,16 @@
+{
+  "slug": "ao-sagrado-coracao",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ao Sagrado Coração",
+    "la": "Ad Sacratissimum Cor Iesu"
+  },
+  "blocks": {
+    "pt-br": [
+      "Jesus, manso e humilde de coração, fazei o nosso coração semelhante ao vosso. Sacratíssimo Coração de Jesus, tende piedade de nós. Coração sacratíssimo e misericordioso de Jesus, dai-nos a paz."
+    ],
+    "la": [
+      "Iesu, mitis et humilis corde, fac cor nostrum secundum cor tuum. Cor Iesu sacratissimum, miserere nobis. Cor Iesu sacratissimum et misericors, dona nobis pacem."
+    ]
+  }
+}

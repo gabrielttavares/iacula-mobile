@@ -1,0 +1,16 @@
+{
+  "slug": "pelos-pais",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos pais",
+    "la": "Pro parentibus"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus, que nos mandastes honrar pai e mãe, tende misericórdia das almas de meu pai e de minha mãe e perdoai-lhes os seus pecados; concedei-me a graça de os ver na alegria da luz eterna. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Deus, qui nos patrem et matrem honorare præcepisti, miserere clementer animabus patris et matris meæ eorumque peccata dimitte, meque eos in æternæ claritatis gaudio fac videre. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "slug": "pelos-hereges-e-cismaticos",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos hereges e cismáticos",
+    "la": "Pro haereticis et schismaticis"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus eterno e todo-poderoso, que a todos salvais nem quereis que ninguém pereça, olhai para as almas enganadas por diabólica astúcia, a fim de que, deposta toda perversidade herética, os corações dos que erram tornem arrependidos à unidade da vossa verdade. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Omnipotens sempiterne Deus, qui salvas omnes et neminem vis perire, respice ad animas diabolica fraude deceptas, ut, omni hæretica pravitate deposita, errantium corda resipiscant et ad veritatis tuæ redeant unitatem. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

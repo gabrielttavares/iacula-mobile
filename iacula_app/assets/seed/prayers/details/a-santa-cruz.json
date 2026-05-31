@@ -1,0 +1,16 @@
+{
+  "slug": "a-santa-cruz",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "À santa Cruz",
+    "la": "Ad sanctam Crucem"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Cruz, certeza de salvação. Ó Cruz, à qual sempre adoro. Ó Cruz do Senhor, que estás sempre comigo. Ó Cruz, na qual me refugio. Salve, ó cruz, única esperança! Pelo sinal da santa cruz, livrai-nos, Deus nosso Senhor, dos nossos inimigos."
+    ],
+    "la": [
+      "Crux mihi certa salus. Crux est quam semper adoro. Crux Domini mecum. Crux mihi refugium. O crux, ave, spes unica! Per signum crucis de inimicis nostris libera nos, Deus noster."
+    ]
+  }
+}

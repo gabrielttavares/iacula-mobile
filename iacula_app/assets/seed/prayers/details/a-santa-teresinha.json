@@ -1,0 +1,16 @@
+{
+  "slug": "a-santa-teresinha",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "A Santa Teresinha",
+    "la": "Ad sanctam Teresiam a Iesu Infante"
+  },
+  "blocks": {
+    "pt-br": [
+      "Senhor, que dissestes: «Se não vos tornardes como crianças, não entrareis no reino dos céus», dai-nos seguir de tal modo os exemplos de Santa Teresa, virgem, em humildade e simplicidade de coração, que alcancemos os prêmios eternos. Vós, que viveis e reinais pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Domine, qui dixisti: «Nisi efficiamini sicut parvuli, non intrabitis in regnum cælorum», da nobis, quæsumus, ita sanctæ Teresiæ Virginis in humilitate et simplicitate cordis vestigia sectari, ut præmia consequamur æterna. Qui vivis et regnas in sæcula sæculorum. Amen."
+    ]
+  }
+}

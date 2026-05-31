@@ -1,0 +1,16 @@
+{
+  "slug": "por-intercessao-de-sao-jose",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Por intercessão de São José",
+    "la": "Per intercessionem S. Ioseph"
+  },
+  "blocks": {
+    "pt-br": [
+      "Senhor, nós vos pedimos que, ajudados pelos méritos do esposo de vossa santíssima Mãe, alcancemos por intercessão dele o que às nossas forças é impossível. Vós, que viveis e reinais pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Sanctissimæ Genitricis tuæ sponsi, quæsumus Domine, meritis adiuvemur, ut quod possibilitas nostra non obtinet, eius nobis intercessione donetur. Qui vivis et regnas in sæcula sæculorum. Amen."
+    ]
+  }
+}

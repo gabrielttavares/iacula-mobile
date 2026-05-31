@@ -1,0 +1,16 @@
+{
+  "slug": "nos-vos-damos-gracas",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Nós vos damos graças",
+    "la": "Agimus tibi gratias"
+  },
+  "blocks": {
+    "pt-br": [
+      "Nós vos damos graças, Deus onipotente, por todos os vossos benefícios. Vós, que viveis e reinais pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Agimus tibi gratias, omnipotens Deus, pro universis beneficiis tuis. Qui vivis et regnas in sæcula sæculorum. Amen."
+    ]
+  }
+}

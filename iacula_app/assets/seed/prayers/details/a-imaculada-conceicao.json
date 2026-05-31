@@ -1,0 +1,16 @@
+{
+  "slug": "a-imaculada-conceicao",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "À Imaculada Conceição",
+    "la": "Ad Immaculatam Conceptionem"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus, que pela Imaculada Conceição da Virgem Maria preparastes uma digna morada para o vosso Filho e, em atenção aos méritos futuros da morte de Cristo, a preservastes de toda mancha, concedei-nos, por sua intercessão, a graça de chegarmos purificados junto de vós. Pelo mesmo Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Deus, qui per immaculatam Virginis conceptionem dignum Filio tuo habitaculum præparasti, quæsumus, ut, sicut ex morte eiusdem Filii tui prævisa eam ab omni labe præservasti, ita nos quoque mundos eius intercessione ad te pervenire concedas. Per eundem Christum Dominum nostrum. Amen."
+    ]
+  }
+}

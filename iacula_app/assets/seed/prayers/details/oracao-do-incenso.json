@@ -1,0 +1,16 @@
+{
+  "slug": "oracao-do-incenso",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração do incenso",
+    "la": "Oratio incensi"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus eterno, sem princípio nem fim, grande em conselho e poderoso em obras, presente a tudo e em todos, acompanhai-nos nesta hora e ponde-vos no nosso meio; purificai os nossos corações e santificai as nossas almas; limpai-nos de todo pecado voluntário e involuntário, e dai-nos oferecer na vossa presença os sacrifícios racionais, hóstia de bênção, incenso espiritual que, penetrando o véu, suba até o Santo dos Santos."
+    ],
+    "la": [
+      "Deus æternus, absque principio et fine, magnus in præceptis tuis et potens in operibus tuis, qui es ubicumque et in omnibus, esto nobiscum peccatoribus, Domine, in hac hora; consiste in medio omnium nostrum; purifica corda nostra et sanctifica animas nostras; munda nos ab omnibus peccatis quæ commisimus voluntarie aut involuntarie; concede nobis, ut offeramus coram te sacrificia rationabilia, sacrificia benedictionis et incensum spirituale quod ingrediatur intra velum in locum Sancti Sanctorum."
+    ]
+  }
+}

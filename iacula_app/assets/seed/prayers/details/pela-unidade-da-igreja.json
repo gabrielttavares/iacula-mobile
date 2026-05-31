@@ -1,0 +1,22 @@
+{
+  "slug": "pela-unidade-da-igreja",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pela unidade da Igreja",
+    "la": "Pro unitate Ecclesiae"
+  },
+  "blocks": {
+    "pt-br": [
+      "Para que todos sejam um; como tu, Pai, estás em mim e eu em ti, que também eles sejam um em nós, a fim de que o mundo creia que tu me enviaste.",
+      "℣. E eu te digo: Tu és Pedro.\n℟. E sobre esta pedra edificarei a minha Igreja.",
+      "Oremos. Senhor Jesus Cristo, que dissestes aos vossos Apóstolos: «Deixo-vos a paz, dou-vos a minha paz», não olheis os nossos pecados, mas a fé que anima a vossa Igreja, e dai-lhe, segundo o vosso desejo, a paz e a unidade. Vós, que viveis e reinais por todos os séculos dos séculos. Amém.",
+      "Deus, que corrigis o que está errado, reunis o que está disperso e conservai o que está unido, nós vos pedimos que, por vossa clemência, derrameis sobre o vosso povo a graça da vossa união, de modo que, rejeitando toda divisão e unindo-se ao verdadeiro pastor da vossa Igreja, vos possa servir dignamente. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Ut omnes unum sint, sicut tu, Pater, in me et ego in te, ut et ipsi in nobis unum sint, ut mundus credat quia tu me misisti.",
+      "℣. Et ego dico tibi quia tu es Petrus.\n℟. Et super hanc petram ædificabo Ecclesiam meam.",
+      "Oremus. Domine Iesu Christe, qui dixisti Apostolis tuis: «Pacem relinquo vobis, pacem meam do vobis», ne respicias peccata mea sed fidem Ecclesiæ tuæ, eamque secundum voluntatem tuam pacificare et coadunare digneris. Qui vivis et regnas per omnia sæcula sæculorum. Amen.",
+      "Deus, qui errata corrigis, et dispersa congregas, et congregata conservas, quæsumus, super populum christianum tuæ unionis gratiam clementer infunde, ut, divisione reiecta, vero pastori Ecclesiæ tuæ se uniens, tibi digne valeat famulari. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

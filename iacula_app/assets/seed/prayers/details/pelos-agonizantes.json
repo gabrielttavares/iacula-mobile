@@ -1,0 +1,18 @@
+{
+  "slug": "pelos-agonizantes",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos agonizantes",
+    "la": "Pro agonizantibus"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó clementíssimo Jesus, amante das almas, eu vos imploro, pela agonia do vosso santíssimo Coração e pelas dores de vossa Mãe Imaculada: lavai no vosso sangue os pecadores de todo o mundo que agora estão em agonia e hoje hão de morrer. Amém.",
+      "Coração agonizante de Jesus, tende piedade dos moribundos."
+    ],
+    "la": [
+      "O clementissime Iesu, amator animarum, obsecro te, per agoniam Cordis tui sanctissimi et per dolores Matris tuæ immaculatæ, lava in sanguine tuo peccatores totius mundi nunc positos in agonia et hodie morituros. Amen.",
+      "Cor Iesu in agonia factum, miserere morientium."
+    ]
+  }
+}

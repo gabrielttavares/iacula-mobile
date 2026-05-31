@@ -1,0 +1,16 @@
+{
+  "slug": "para-pedir-paciencia",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Para pedir paciência",
+    "la": "Pro patientia impetranda"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus, que pela paciência do vosso Unigênito esmagastes a soberba do antigo inimigo, dai-nos recordar dignamente o que ele por nós padeceu e assim, a seu exemplo, tolerar de ânimo igual nossas adversidades. Pelo mesmo Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Deus, qui Unigeniti tui patientia antiqui hostis contulisti superbiam, da nobis, quæsumus, quæ idem pie pro nobis pertulit digne recolere sicque, exemplo eius, nobis adversantia æquanimiter tolerare. Per eundem Christum Dominum nostrum. Amen."
+    ]
+  }
+}

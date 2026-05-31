@@ -1,0 +1,20 @@
+{
+  "slug": "ao-deitar-se",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ao deitar-se",
+    "la": "Ad somnum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Salvai-nos, Senhor, durante a vigília e guardai-nos durante o sono, para que vigiemos com Cristo e descansemos em paz. Guardai-nos, Senhor, como à pupila dos olhos; à sombra de vossas asas protegei-nos. Dignai-vos, Senhor, conservar-nos sem pecado esta noite.",
+      "Oremos. Visitai, Senhor, esta casa e afastai dela todas as insídias do inimigo. Que os vossos santos anjos nela habitem e nos guardem sempre na paz, e que a vossa bênção esteja sobre nós sempre. Por Cristo, Senhor nosso. Amém.",
+      "Em vossas benditas mãos, Senhor Deus; no seio de vossa misericórdia, ó Virgem Maria; e também à vossa proteção, ó santos anjos e eleitos de Deus, entrego agora e sempre meu corpo e minha alma. Amém."
+    ],
+    "la": [
+      "Salva nos, Domine, vigilantes, custodi nos dormientes, ut vigilemus cum Christo et requiescamus in pace. Custodi nos, Domine, ut pupillam oculi; sub umbra alarum tuarum protege nos. Dignare, Domine, nocte ista sine peccato nos custodire.",
+      "Oremus. Visita, quæsumus Domine, habitationem istam et omnes insidias inimici ab ea longe repelle. Angeli tui sancti habitent in ea qui nos in pace custodiant, et benedictio tua sit super nos semper. Per Christum Dominum nostrum. Amen.",
+      "In benedictas manus tuas, Domine Deus, et in sinum misericordiæ tuæ, o Virgo Maria, in vestram quoque protectionem, o sancti angeli et electi Dei, corpus et animam nunc et semper committo. Amen."
+    ]
+  }
+}

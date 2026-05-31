@@ -1,0 +1,16 @@
+{
+  "slug": "que-vos-seja-agradavel",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Que vos seja agradável",
+    "la": "Placeat tibi, sancta Trinitas"
+  },
+  "blocks": {
+    "pt-br": [
+      "Que vos seja agradável, Santíssima Trindade, o obséquio da minha servidão, e concedei que o sacrifício que eu, indigno, ofereci aos olhos de vossa majestade vos seja agradável e, pela vossa misericórdia, propício a mim e a todos aqueles por quem o ofereci. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Placeat tibi, sancta Trinitas, obsequium servitutis meæ, et præsta, ut sacrificium quod oculis tuæ maiestatis indignus obtuli tibi sit acceptabile, mihique et omnibus pro quibus illud obtuli sit, te miserante, propitiabile. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

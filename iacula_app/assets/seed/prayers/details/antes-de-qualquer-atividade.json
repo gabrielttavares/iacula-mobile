@@ -1,0 +1,18 @@
+{
+  "slug": "antes-de-qualquer-atividade",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Antes de qualquer atividade",
+    "la": "Ante omne opus"
+  },
+  "blocks": {
+    "pt-br": [
+      "Dai-nos, Senhor, o auxílio da vossa graça, a fim de cumprirmos, sob a vossa operação, o que por vossa autoridade sabemos ser o nosso dever. Por Cristo, Senhor nosso. Amém.",
+      "Dai-nos, Deus todo-poderoso, que, meditando sempre o que é conforme à razão, levemos a cabo por palavras e obras o que é do vosso agrado. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Præsta nobis, quæsumus Domine, auxilium gratiæ tuæ, ut quæ, te auctore, facienda cognovimus, te operante impleamus. Per Christum Dominum nostrum. Amen.",
+      "Præsta, quæsumus omnipotens Deus, ut semper rationabilia meditantes, quæ tibi sunt placita et dictis exequamur et factis. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "slug": "dom-de-lagrimas",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelo dom de lágrimas",
+    "la": "Pro dono lacrimarum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Infundi clemente em nossos corações, Senhor Deus, a graça do Espírito Santo, a qual nos purifique, com gemidos e lágrimas, das manchas dos nossos pecados e nos alcance, por vossa liberalidade, o efeito do tão almejado perdão. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Gratiam Spiritus sancti, Domine Deus, cordibus nostris clementer infunde, quæ nos gemitibus lacrymarum efficiat maculas nostrorum diluere peccatorum, atque optatæ nobis, te largiente, indulgentiæ præstet effectum. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

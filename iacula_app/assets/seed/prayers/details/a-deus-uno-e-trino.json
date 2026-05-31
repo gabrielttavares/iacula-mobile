@@ -1,0 +1,22 @@
+{
+  "slug": "a-deus-uno-e-trino",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "A Deus uno e trino",
+    "la": "Ad Deum unum et trinum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ao Deus único, rei dos séculos imortal e invisível, honra e glória pelos séculos dos séculos. Amém.",
+      "Bendita seja a santa e indivisa Trindade, agora e sempre, por todos os séculos dos séculos. Amém.",
+      "Santo Deus, santo forte, santo imortal, tende piedade de nós.",
+      "Santíssima Trindade, tende piedade de nós; Senhor, sede propício aos nossos pecados; Senhor, perdoai-nos as nossas iniquidades, por causa do vosso nome."
+    ],
+    "la": [
+      "Regi sæculorum immortali et invisibili, soli Deo honor et gloria in sæcula sæculorum. Amen.",
+      "Benedicta sit sancta atque individua Trinitas, nunc et semper et per infinita sæcula sæculorum. Amen.",
+      "Sanctus Deus, sanctus fortis, sanctus immortalis, miserere nostri.",
+      "Sanctissima Trinitas, miserere nostri; Domine, propitius esto peccatis nostris; Domine, indulge iniquitatibus nostris, propter nomen tuum."
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "slug": "livrai-me-senhor-jesus",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Livrai-me, Senhor Jesus",
+    "la": "Domine Iesu Christe, libera me"
+  },
+  "blocks": {
+    "pt-br": [
+      "Senhor Jesus Cristo, Filho do Deus vivo, que, obediente à vontade do Pai, com a cooperação do Espírito Santo, por vossa morte vivificastes o mundo, livrai-me de todas as minhas iniquidades e de todos os males; fazei-me observar sempre os vossos mandamentos, e nunca permitais que me separe de vós. Vós, que sois Deus e com o Pai e o Espírito Santo viveis e reinais pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Domine Iesu Christe, Fili Dei vivi, qui ex voluntate Patris, cooperante Spiritu sancto, per mortem tuam mundum vivificasti, libera me ab omnibus iniquitatibus meis et universis malis; fac me tuis semper inhærere mandatis, et a te nunquam separari permittas. Qui cum eodem Deo Patre et Spiritu sancto vivis et regnas Deus in sæcula sæculorum. Amen."
+    ]
+  }
+}

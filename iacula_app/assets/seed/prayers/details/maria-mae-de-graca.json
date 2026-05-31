@@ -1,0 +1,16 @@
+{
+  "slug": "maria-mae-de-graca",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Maria, Mãe de graça",
+    "la": "Maria, Mater gratiae"
+  },
+  "blocks": {
+    "pt-br": [
+      "Maria, Mãe de graça, Mãe de misericórdia, do inimigo defendei-nos e na hora da morte acolhei-nos."
+    ],
+    "la": [
+      "Maria, Mater gratiæ, Mater misericordiæ, tu nos ab hoste protege et hora mortis suscipe."
+    ]
+  }
+}

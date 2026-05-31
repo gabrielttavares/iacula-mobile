@@ -1,0 +1,18 @@
+{
+  "slug": "oracao-a-sao-paulo",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração a São Paulo",
+    "la": "Oratio ad S. Paulum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó glorioso São Paulo Apóstolo, que de perseguidor do nome cristão vos tornastes um zeloso apóstolo, e que, para fazer conhecer o Salvador Jesus Cristo até os confins da terra, sofrestes prisões, açoites, lapidações, naufrágios e perseguições de toda espécie, e por fim derramastes o vosso sangue até a última gota:",
+      "alcançai-nos a graça de receber, como favores da divina misericórdia, as enfermidades, as tribulações e as desgraças da vida presente, a fim de que as vicissitudes do tempo não nos esfriem no serviço de Deus, mas nos tornem cada vez mais fiéis e fervorosos. Amém."
+    ],
+    "la": [
+      "Sancte Paule Apostole, qui ex persecutore nominis christiani electionis factus es vas, intercessor sis pro nobis apud Deum, qui te elegit, ut omnes gentes audirent evangelium et crederent.",
+      "Concede nobis, quaesumus, ut infirmitates et tribulationes vitae praesentis tamquam dona divinae misericordiae suscipiamus, et numquam a Dei servitio refrigescamus, sed in dies fideliores ferventioresque efficiamur. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

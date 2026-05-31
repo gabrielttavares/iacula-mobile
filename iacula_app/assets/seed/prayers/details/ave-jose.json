@@ -1,0 +1,16 @@
+{
+  "slug": "ave-jose",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ave-José",
+    "la": "Ave Ioseph"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ave, José, cheio de graça, Jesus e Maria são convosco; bendito sois vós entre os homens, e bendito é o fruto de vossa esposa, Jesus. São José, pai nutrício de Jesus e da bem-aventurada Virgem Maria, vossa esposa, rogai por nós vossos devotos, agora e na hora da nossa morte. Amém."
+    ],
+    "la": [
+      "Ave Ioseph, gratia plene, Iesus et Maria tecum; benedictus tu inter homines, et benedictus fructus sponsæ tuæ, Iesus. Sancte Ioseph, pater nutritie Iesu et beatissimæ Virginis Mariæ, sponsæ tuæ, ora pro nobis clientibus tuis, nunc et in hora mortis nostræ. Amen."
+    ]
+  }
+}

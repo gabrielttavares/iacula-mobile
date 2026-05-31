@@ -1,0 +1,16 @@
+{
+  "slug": "pelos-benfeitores",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos benfeitores",
+    "la": "Pro benefactoribus"
+  },
+  "blocks": {
+    "pt-br": [
+      "Dignai-vos, Senhor, retribuir com a vida eterna todos aqueles que nos fazem bem por amor ao vosso santo nome. Amém."
+    ],
+    "la": [
+      "Retribuire dignare, Domine, omnibus nobis bona facientibus propter sanctum nomen tuum vitam æternam. Amen."
+    ]
+  }
+}

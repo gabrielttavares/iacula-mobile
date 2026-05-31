@@ -1,0 +1,16 @@
+{
+  "slug": "ao-santissimo-nome",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ao santíssimo Nome",
+    "la": "Ad sanctissimum Nomen Iesu"
+  },
+  "blocks": {
+    "pt-br": [
+      "Senhor Jesus Cristo, que dissestes: «Pedi, e recebereis; buscai, e achareis; batei, e abrir-se-vos-á», nós vos suplicamos: dai aos que vo-lo pedimos o afeto do vosso diviníssimo amor, para que vos amemos de todo o coração, por palavras e obras, e nunca cessemos de vos louvar. Fazei-nos, Senhor, ter sempre igual amor e temor ao vosso santo nome, pois não deixais de governar os que estabeleceis na firmeza do vosso amor. Vós, que viveis e reinais pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Domine Iesu Christe, qui dixisti: «Petite, et accipietis; quærite, et invenietis; pulsate, et aperietur vobis», quæsumus, da nobis petentibus divinissimi tui amoris affectum, ut te toto corde, ore et opere diligamus et a tua nunquam laude cessemus. Sancti nominis tui, Domine, timorem pariter et amorem fac nos habere perpetuum, quia nunquam tua gubernatione destituis quos in soliditate tuæ dilectionis instituis. Qui vivis et regnas in sæcula sæculorum. Amen."
+    ]
+  }
+}

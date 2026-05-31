@@ -1,0 +1,20 @@
+{
+  "slug": "a-todos-os-santos",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "A todos os santos",
+    "la": "Ad omnes sanctos"
+  },
+  "blocks": {
+    "pt-br": [
+      "Santos todos de Deus, dignai-vos interceder pela nossa salvação e pela de todo o mundo.",
+      "℣. Alegrai-vos no Senhor e exultai, justos.\n℟. Gloriai-vos, todos os retos de coração.",
+      "Oremos. Protegei, Senhor, o vosso povo, e conservai com proteção perpétua os que confiamos no patrocínio dos vossos Apóstolos Pedro e Paulo e no dos outros Apóstolos. Que todos os vossos santos nos assistam em toda a parte, a fim de que, comemorando os seus méritos, experimentemos o seu patrocínio. Concedei a vossa paz aos nossos dias, e repeli da vossa Igreja toda iniquidade. Retribuí a nossos benfeitores os bens que não se acabam, e a todos os fiéis defuntos concedei o descanso eterno. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Sancti Dei omnes, intercedere dignemini pro nostra omniumque salute.",
+      "℣. Lætamini in Domino et exultate, iusti.\n℟. Et gloriamini, omnes recti corde.",
+      "Oremus. Protege, Domine, populum tuum, et Apostolorum tuorum Petri et Pauli et aliorum Apostolorum patrocinio confidentem perpetua defensione conserva. Omnes sancti tui, quæsumus Domine, nos ubique adiuvent, ut, dum eorum merita recolimus, patrocinia sentiamus. Pacem tuam nostris concede temporibus, et ab Ecclesia tua cunctam repelle nequitiam. Benefactoribus nostris sempiterna bona retribue, et omnibus fidelibus defunctis requiem æternam concede. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

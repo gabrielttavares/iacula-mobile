@@ -1,0 +1,16 @@
+{
+  "slug": "a-sao-gabriel-arcanjo",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "A São Gabriel Arcanjo",
+    "la": "Ad sanctum Gabrielem Archangelum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus, que dentre todos os anjos escolhestes o Arcanjo Gabriel para anunciar o mistério de vossa Encarnação, concedei propício que, celebrando a sua festa na terra, experimentemos o efeito de seu patrocínio no céu. Vós, que viveis e reinais pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Deus, qui inter cæteros angelos, ad annuntiandum incarnationis tuæ mysterium, Gabrielem Archangelum elegisti, concede propitius, ut qui festum eius celebramus in terris, ipsius patrocinium sentiamus in cælis. Qui vivis et regnas in sæcula sæculorum. Amen."
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "slug": "santa-maria-socorrei",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Santa Maria, socorrei",
+    "la": "Sancta Maria, succurre miseris"
+  },
+  "blocks": {
+    "pt-br": [
+      "Santa Maria, socorrei os pobres, ajudai os fracos, consolai os tristes, rogai pelo povo, auxiliai o clero, intercedei por todas as mulheres; sintam todos a vossa ajuda, todos os que celebram a vossa memória."
+    ],
+    "la": [
+      "Sancta Maria, succurre miseris, iuva pusillanimes, refove flebiles, ora pro populo, interveni pro clero, intercede pro devoto femineo sexu; sentiant omnes tuum iuvamen, quicumque celebrant tuam sanctam commemorationem."
+    ]
+  }
+}

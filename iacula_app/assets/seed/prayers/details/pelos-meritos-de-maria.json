@@ -1,0 +1,16 @@
+{
+  "slug": "pelos-meritos-de-maria",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos méritos de Maria",
+    "la": "Per merita Mariae"
+  },
+  "blocks": {
+    "pt-br": [
+      "Nós vos oferecemos, Senhor Jesus Cristo, os méritos de Maria, Mãe vossa e nossa, de pé junto à cruz, a fim de que, por sua piíssima intercessão, alcancemos o feliz efeito de vossa paixão e morte. Amém."
+    ],
+    "la": [
+      "Tibi offerimus, Domine Iesu Christe, merita Mariæ, Matris tuæ et nostræ, stantis iuxta crucem, ut, suo piissimo interventu, passionis ac mortis tuæ effectum felicem consequamur. Amen."
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "slug": "pelos-pecadores",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos pecadores",
+    "la": "Pro peccatoribus"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó clementíssima Maria, refúgio dos pecadores, eu vos imploro, pelas dores do vosso Coração cheio de compaixão e pela morte do vosso amado Filho, Jesus: impetrai a todos os pecadores do mundo, sobretudo aos que, por escândalos e falsas doutrinas, induzem outros ao pecado, a graça de sinceramente se converterem. Amém.",
+      "Coração compassivo de Maria, socorrei os pecadores."
+    ],
+    "la": [
+      "O clementissima Maria, refugium peccatorum, obsecro te, per dolores Cordis tui compassione pleni et per mortem dilecti Filii tui Iesu, impetra omnibus peccatoribus mundi, iis præsertim qui scandalis et pravis doctrinis alios in peccatum adducunt, gratiam ut sincere convertantur. Amen.",
+      "Cor Mariæ compatiens, succurre peccatoribus."
+    ]
+  }
+}

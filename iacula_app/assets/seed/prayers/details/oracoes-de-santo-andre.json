@@ -1,0 +1,18 @@
+{
+  "slug": "oracoes-de-santo-andre",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ó boa cruz (Orações de Santo André)",
+    "la": "O bona crux"
+  },
+  "blocks": {
+    "pt-br": [
+      "Salve, cruz, que no corpo de Cristo foste consagrada e das pérolas de seus membros adornada! Antes que em ti subisse o Senhor, infundias temor terreno; mas agora, fonte de amor celeste, és com gosto recebida. Sabem os fiéis quantos gozos em ti guardas, quantos dons preparados! Seguro, pois, e ledo a ti venho, para que, exultante, tu me recebas a mim, discípulo daquele que de ti pendeu.",
+      "Ó boa cruz, que do corpo de Jesus recebeste a formosura, tanto tempo desejada, tão ardentemente amada, sem descanso procurada! Para a minha alma ansiosa estás por fim preparada! Retira-me dentre os homens e devolve minha vida ao Mestre a quem pertenço! Por ti me receba aquele que por ti me resgatou."
+    ],
+    "la": [
+      "Salve crux, quæ in corpore Christi dedicata es et ex membrorum eius margaritis ornata. Antequam te ascenderet Dominus, timorem terrenum habuisti, modo vero, amorem cælestem obtinens, pro voto susciperis. Sciris enim a credentibus quanta intra te gaudia habeas, quanta munera præparata. Securus ergo et gaudens venio ad te, ita ut et tu exultans suscipias me discipulum eius qui pependit in te.",
+      "O bona crux, quæ decorem et pulchritudinem de membris Domini suscepisti, diu desiderata, sollicite amata, sine intermissione quæsita et aliquando iam concupiscenti animo præparata. Accipe me ab hominibus et redde me Magistro meo, ut per te me recipiat qui per te redemit me."
+    ]
+  }
+}

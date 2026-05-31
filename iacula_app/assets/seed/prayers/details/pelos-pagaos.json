@@ -1,0 +1,16 @@
+{
+  "slug": "pelos-pagaos",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos pagãos",
+    "la": "Pro paganis"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus eterno e todo-poderoso, que buscais sempre não a morte mas a vida dos pecadores, acolhei propício a nossa oração, e libertai os pagãos da idolatria e agregai-os à vossa santa Igreja, para louvor e glória do vosso nome. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Omnipotens sempiterne Deus, qui non mortem peccatorum, sed vitam semper inquiris, suscipe propitius orationem nostram et libera paganos ab idolorum cultura et aggrega Ecclesiæ tuæ sanctæ, ad laudem et gloriam nominis tui. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

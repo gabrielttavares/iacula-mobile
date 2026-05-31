@@ -1,0 +1,16 @@
+{
+  "slug": "o-divino-coracao-de-jesus",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ó divino Coração de Jesus",
+    "la": "O divinum Cor Iesu"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó divino Coração de Jesus, dai às almas do purgatório o descanso eterno; aos que hoje hão de morrer, a graça da perseverança final; aos pecadores, arrependimento verdadeiro; aos pagãos, a luz da fé; a mim e a todos os meus, a vossa bênção. A vós, pois, Coração misericordioso de Jesus, encomendo todas estas almas e por elas vos ofereço todos os vossos méritos juntamente com os de vossa santíssima Mãe, de todos os santos e anjos, e com todos os sacrifícios da Missa, as sagradas Comunhões, as orações e boas obras que ao redor de todo o mundo cristão estão sendo feitas hoje."
+    ],
+    "la": [
+      "O divinum Cor Iesu, præsta, quæso, animabus purgantibus requiem æternam, hodie morituris gratiam finalem, peccatoribus veram pænitentiam, paganis fidei lucem, mihi meisque omnibus tuam benedictionem. Tibi ergo, Cor Iesu misericordissimum, omnes has animas commendo et pro ipsis tibi offero omnia tua merita una cum meritis beatissimæ Matris tuæ omniumque sanctorum et angelorum et una cum omnibus Missarum sacrificiis, sacris Communionibus, orationibus et bonis operibus quæ hodie in toto christianorum orbe peraguntur."
+    ]
+  }
+}

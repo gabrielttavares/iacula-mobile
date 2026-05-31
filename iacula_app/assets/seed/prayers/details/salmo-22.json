@@ -1,0 +1,30 @@
+{
+  "slug": "salmo-22",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Salmo 22",
+    "la": "Psalmus XXII"
+  },
+  "blocks": {
+    "pt-br": [
+      "1. O Senhor é o meu pastor: nada me faltará.",
+      "2. Em verdes pastagens me faz repousar. Conduz-me às águas refrescantes,",
+      "3. restaura as forças de minha alma. Pelos caminhos retos me leva, por amor do seu nome.",
+      "4. Ainda que eu atravesse o vale escuro, nada temerei, pois estais comigo. O vosso bastão e o vosso báculo são o meu amparo.",
+      "5. Preparais para mim uma mesa à vista dos meus adversários. Derramais o perfume sobre a minha cabeça, e o meu cálice transborda.",
+      "6. A vossa bondade e misericórdia hão de seguir-me por todos os dias da minha vida. E habitarei na casa do Senhor por longos dias.",
+      "Glória ao Pai, e ao Filho e ao Espírito Santo.",
+      "Assim como era no princípio, agora e sempre. Amém."
+    ],
+    "la": [
+      "1. Dóminus regit me, et nihil mihi déerit:",
+      "2. in loco páscuæ ibi me collocávit. Super aquam refectiónis educávit me;",
+      "3. ánimam meam convértit. Dedúxit me super sémitas iustítiæ propter nomen suum.",
+      "4. Nam et si ambulávero in médio umbræ mortis, non timébo mala, quóniam tu mecum es. Virga tua et báculus tuus, ipsa me consoláta sunt.",
+      "5. Parásti in conspéctu meo mensam advérsus eos qui tríbulant me. Impinguásti in óleo caput meum; et calix meus inébrians quam præclárus est!",
+      "6. Et misericórdia tua subsequétur me ómnibus diébus vitæ meæ; et ut inhábitem in domo Dómini in longitúdinem diérum.",
+      "Glória Patri, et Fílio, et Spirítui Sancto.",
+      "Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen."
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "slug": "o-salutaris-hostia",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ó Hóstia salutar",
+    "la": "O salutaris Hostia"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Hóstia salutar, que abris a porta do céu: as guerras hostis nos oprimem; dai-nos força, trazei-nos auxílio.",
+      "A vós, que nos alimentais com a vossa carne, seja dado louvor, ó bom Pastor, com o Pai e com o Espírito, pelos séculos sem fim. Amém."
+    ],
+    "la": [
+      "O salutáris Hóstia, quæ cæli pandis óstium: bella premunt hostília; da robur, fer auxílium.",
+      "Uni trinóque Dómino sit sempitérna glória, qui vitam sine término nobis donet in pátria. Amen."
+    ]
+  }
+}

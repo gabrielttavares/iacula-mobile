@@ -1,0 +1,22 @@
+{
+  "slug": "ao-santissimo-sacramento",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Ao santíssimo Sacramento",
+    "la": "Ad sanctissimum Sacramentum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Graças e louvores se deem a todo momento ao santíssimo e diviníssimo Sacramento.",
+      "Salve, ó Vítima salutar, oferecida no patíbulo da cruz por mim e por todo o gênero humano.",
+      "Salve, ó Sangue precioso, que jorrais das chagas de Nosso Senhor Jesus Cristo crucificado e purificais os pecados de todo o mundo.",
+      "Lembrai-vos, Senhor, da vossa criatura, que redimistes com o vosso preciosíssimo Sangue."
+    ],
+    "la": [
+      "Adoremus in æternum sanctissimum Sacramentum.",
+      "Salve, salutaris Victima, pro me et omni humano genere in patibulo crucis oblata.",
+      "Salve, pretiose Sanguis, de vulneribus crucifixi Domini nostri Iesu Christi profluens et peccata totius mundi abluens.",
+      "Recordare, Domine, creaturæ tuæ, quam tuo pretioso sanguine redemisti."
+    ]
+  }
+}

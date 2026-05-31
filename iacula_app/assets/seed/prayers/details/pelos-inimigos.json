@@ -1,0 +1,18 @@
+{
+  "slug": "pelos-inimigos",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos inimigos",
+    "la": "Pro inimicis"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus da paz, amante e custódio da caridade, dai a todos os nossos inimigos paz e caridade verdadeira, e concedei-lhes a remissão de todos os pecados, e livrai-nos, por vosso poder, de suas insídias. Por Cristo, Senhor nosso. Amém.",
+      "Senhor, tende piedade dos que me odeiam e invejam, e também dos que me caluniam e detratam. Que nem um deles sequer padeça algum mal por causa de mim, imundo, nem neste século nem no futuro. Santificai-os em vossa misericórdia e protegei-os por vossa benignidade, ó Santíssimo."
+    ],
+    "la": [
+      "Deus pacis caritatisque amator et custos, da omnibus inimicis nostris pacem caritatemque veram, et cunctorum eis remissionem tribue peccatorum, nosque ab eorum insidiis potenter eripe. Per Christum Dominum nostrum. Amen.",
+      "Domine, miserere omnium eorum qui me oderunt et qui mihi invident, et qui me calumniantur similiter et qui mihi obtrectant. Et ne quis omnino ex iis propter me immundum mali quippiam patiatur, neque in hoc neque in futuro sæculo; sed sanctifica illos miserationibus tuis et protege eos propter benignitatem tuam, Sanctissime."
+    ]
+  }
+}

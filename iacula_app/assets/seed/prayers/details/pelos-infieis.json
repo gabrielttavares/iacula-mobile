@@ -1,0 +1,16 @@
+{
+  "slug": "pelos-infieis",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos infiéis",
+    "la": "Pro infidelibus"
+  },
+  "blocks": {
+    "pt-br": [
+      "Eterno Deus, criador de todas as coisas, lembrai-vos de que as almas dos infiéis foram por vós criadas e feitas à vossa imagem e semelhança. Lembrai-vos de que o vosso Filho Jesus, pela salvação delas, se sujeitou a atrocíssima morte. Não permitais, Senhor, que o vosso Filho seja por mais tempo desprezado dos infiéis; antes, aplacado pelas preces dos santos e da Igreja, esposa do vosso santíssimo Filho, lembrai-vos de vossa misericórdia e fazei que também eles reconheçam um dia ao que enviastes, o Senhor Jesus Cristo, que é nossa salvação, vida e ressurreição, pelo qual fomos libertos e salvos, ao qual seja a glória pelos séculos dos séculos sem fim. Amém."
+    ],
+    "la": [
+      "Æterne rerum omnium effector Deus, memento abs te animas infidelium procreatas easque ad imaginem et similitudinem tuam conditas. Memento Iesum, Filium tuum, pro illorum salute atrocissimam subiisse necem. Noli, quæso Domine, ultra permittere ut Filius tuus ab infidelibus contemnatur; sed, precibus sanctorum virorum et Ecclesiæ, sanctissimi Filii tui sponsæ, placatus, recordare misericordiæ tuæ et effice ut ipsi quoque agnoscant aliquando quem misisti, Dominum Iesum Christum, qui est salus, vita et resurrectio nostra, per quem salvati et liberati sumus, cui sit gloria per infinita sæcula sæculorum. Amen."
+    ]
+  }
+}

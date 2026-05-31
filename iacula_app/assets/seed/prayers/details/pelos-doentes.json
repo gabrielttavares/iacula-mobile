@@ -1,0 +1,18 @@
+{
+  "slug": "pelos-doentes",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos doentes",
+    "la": "Pro infirmis"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus, singular proteção da debilidade humana, mostrai a força do vosso auxílio sobre os vossos servos doentes, para que, ajudados por vossa misericórdia, mereçam apresentar-se incólumes aos olhos da vossa santa Igreja. Por Cristo, Senhor nosso. Amém.",
+      "Deus eterno e todo-poderoso, salvação eterna dos que creem: ouvi nossas preces pelos vossos servos doentes, para os quais imploramos o auxílio da vossa misericórdia; a fim de que, havendo recuperado a saúde, vos rendam graças na vossa Igreja. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Deus, infirmitatis humanæ singulare præsidium, auxilii tui virtutem super infirmos famulos tuos clementer ostende, ut, ope misericordiæ tuæ adiuti, Ecclesiæ tuæ sanctæ incolumes repræsentari mereantur. Per Christum Dominum nostrum. Amen.",
+      "Omnipotens sempiterne Deus, salus æterna credentium, exaudi nos pro infirmis famulis tuis, pro quibus misericordiæ tuæ imploramus auxilium, ut, reddita sibi sanitate, gratiarum tibi in Ecclesia tua referant actiones. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

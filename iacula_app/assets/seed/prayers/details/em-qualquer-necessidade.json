@@ -1,0 +1,16 @@
+{
+  "slug": "em-qualquer-necessidade",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Em qualquer necessidade",
+    "la": "In omni necessitate"
+  },
+  "blocks": {
+    "pt-br": [
+      "Deus, nosso refúgio e fortaleza, escutai as piedosas preces de vossa Igreja, vós, que sois o autor da piedade, e concedei-nos alcançar de fato o que confiantes vos pedimos. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Deus, refugium nostrum et virtus, adesto piis Ecclesiæ tuæ precibus, auctor ipse pietatis, et præsta, ut quod fideliter petimus efficaciter consequamur. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

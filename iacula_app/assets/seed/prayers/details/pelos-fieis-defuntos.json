@@ -1,0 +1,16 @@
+{
+  "slug": "pelos-fieis-defuntos",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Pelos fiéis defuntos",
+    "la": "Pro fidelibus defunctis"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus, Criador e Redentor de todos os fiéis, concedei às almas de todos os vossos servos e servas o perdão de todos os seus pecados, e fazei que as nossas piedosas súplicas lhes alcancem a misericórdia que sempre desejaram. Vós, que viveis e reinais pelos séculos dos séculos. Amém."
+    ],
+    "la": [
+      "Fidelium, Deus, omnium Conditor et Redemptor, animabus famulorum famularumque tuarum remissionem cunctorum tribue peccatorum, ut indulgentiam quam semper optaverunt piis supplicationibus consequantur. Qui vivis et regnas in sæcula sæculorum. Amen."
+    ]
+  }
+}

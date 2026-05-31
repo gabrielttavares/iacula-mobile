@@ -1,0 +1,16 @@
+{
+  "slug": "oracao-da-medalha-milagrosa",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração da Medalha Milagrosa",
+    "la": "Oratio Numismatis Mirabilis"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Maria, concebida sem pecado, rogai por nós que recorremos a vós."
+    ],
+    "la": [
+      "O Maria, sine labe concepta, ora pro nobis qui confugimus ad te."
+    ]
+  }
+}

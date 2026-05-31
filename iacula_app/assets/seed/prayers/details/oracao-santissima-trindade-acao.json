@@ -1,0 +1,18 @@
+{
+  "slug": "oracao-santissima-trindade-acao",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Oração à Santíssima Trindade",
+    "la": "Oratio ad Sanctissimam Trinitatem"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Trindade Santíssima, Pai, Filho e Espírito Santo, eu Vos adoro profundamente e Vos agradeço todos os benefícios com que me cumulastes. Por Jesus Cristo, vosso Filho, recebido nesta Comunhão, fazei de mim um templo vivo da vossa glória.",
+      "Concedei-me que Vos ame com todo o coração, com toda a alma e com todas as forças, e que sirva fielmente até a morte, para Vos louvar e bendizer eternamente no Céu. Amém."
+    ],
+    "la": [
+      "Sanctissima Trinitas, Pater, Fili et Spiritus Sancte, profunde Te adoro et gratias ago pro omnibus beneficiis quibus me cumulasti. Per Iesum Christum, Filium tuum, in hac Communione susceptum, fac me templum vivum gloriae tuae.",
+      "Concede mihi ut Te diligam ex toto corde, ex tota anima et ex omnibus viribus, et Tibi fideliter usque ad mortem serviam, ut Te in aeternum in caelis laudem et benedicam. Amen."
+    ]
+  }
+}

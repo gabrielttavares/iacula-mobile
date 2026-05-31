@@ -1,0 +1,16 @@
+{
+  "slug": "a-sao-rafael-arcanjo",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "A São Rafael Arcanjo",
+    "la": "Ad sanctum Raphaelem Archangelum"
+  },
+  "blocks": {
+    "pt-br": [
+      "Ó Deus, que destes o bem-aventurado Rafael Arcanjo como guia ao vosso servo Tobias em seu caminho, concedei a nós, vossos servos, que ele sempre nos guarde e nos preste o auxílio de sua proteção. Por Cristo, Senhor nosso. Amém."
+    ],
+    "la": [
+      "Deus, qui beatum Raphaëlem Archangelum Tobiæ famulo tuo comitem dedisti in via, concede nobis famulis tuis, ut eiusdem semper protegamur custodia et muniamur auxilio. Per Christum Dominum nostrum. Amen."
+    ]
+  }
+}

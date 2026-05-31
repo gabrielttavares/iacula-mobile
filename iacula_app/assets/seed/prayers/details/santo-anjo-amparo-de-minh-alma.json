@@ -1,0 +1,18 @@
+{
+  "slug": "santo-anjo-amparo-de-minh-alma",
+  "default_language": "pt-br",
+  "titles": {
+    "pt-br": "Santo anjo, amparo de minh'alma",
+    "la": "Sancte angele, custos animae meae"
+  },
+  "blocks": {
+    "pt-br": [
+      "Santo anjo, amparo de minh'alma miserável e de minha vida desvairada, não me abandones a mim, pecador, nem te afastes de mim por causa de minha fraqueza; não deixes o espírito maligno assenhorear-se de mim. Segura-me pela mão, miserável e fraca, e conduze-me à senda da salvação.",
+      "Sim, santo anjo de Deus, guarda e protetor de minh'alma miserável e de meu corpo, perdoa-me tudo em que te haja ofendido todos os dias de minha vida e se em algo pequei neste dia. Protege-me esta noite e guarda-me de toda tentação do adversário, para que eu não ofenda a Deus com pecado algum. Roga por mim ao Senhor que me confirme no seu temor e me faça digno servo da sua bondade. Amém."
+    ],
+    "la": [
+      "Sancte angele, custos meæ miseræ animæ et infelicis vitæ meæ, ne derelinquas me peccatorem, neve recedas a me propter meam iniquitatem; ne des locum maligno spiritui dominare in me. Complectere miseram atque languentem manum meam, et deduc me in viam salutis.",
+      "Eia, sancte angele Dei, custos meæ miseræ animæ et corporis, omnia mihi ignosce, quidquid te contristavi cunctis diebus vitæ meæ, et si quid peccavi hodierna die. Custodi me hac nocte, et serva me ab omni maleficio et insusurratione adversarii, ne ullo peccato lacessam Deum. Et ora pro me ad Dominum, ut corroboret me in timore ipsius, et dignum reddat me servum sanctitatis suæ. Amen."
+    ]
+  }
+}
