@@ -90,7 +90,7 @@ final class SqliteNotificationHistoryRepository
     final db = await _database.database;
     final rows = await db.query(
       'notification_history_entries',
-      where: 'delivered_at > ? AND delivered_at < ?',
+      where: 'delivered_at >= ? AND delivered_at < ?',
       whereArgs: [instant.toIso8601String(), end.toIso8601String()],
       orderBy: 'delivered_at ASC',
     );

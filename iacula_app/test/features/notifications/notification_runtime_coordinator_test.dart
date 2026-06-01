@@ -51,6 +51,14 @@ void main() {
       expect(delegate.rebuildCalls, 0);
     });
 
+    test('skips rebuild when today-layer IDs exist', () async {
+      delegate.nextPendingIds = [9100, 9101];
+
+      await coordinator.handleAppResume();
+
+      expect(delegate.rebuildCalls, 0);
+    });
+
     test('throttles rebuild to one per 120 seconds', () async {
       delegate.nextPendingIds = [];
 

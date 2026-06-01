@@ -82,10 +82,14 @@ final class NotificationRuntimeCoordinator {
     final pendingIds = await _pendingQuoteIds();
     final hasQuotes = pendingIds.any(
       (id) =>
-          id >= ScheduleCoreRemindersUseCase.quoteScheduleIdBase &&
-          id <
-              ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
-                  ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders,
+          (id >= ScheduleCoreRemindersUseCase.quoteScheduleIdBase &&
+              id <
+                  ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
+                      ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders) ||
+          (id >= ScheduleCoreRemindersUseCase.todayLayerIdBase &&
+              id <
+                  ScheduleCoreRemindersUseCase.todayLayerIdBase +
+                      ScheduleCoreRemindersUseCase.maxTodayLayerSlots),
     );
 
     if (hasQuotes) return;

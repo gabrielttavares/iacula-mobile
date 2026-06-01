@@ -61,7 +61,7 @@ final class InMemoryNotificationHistoryRepository
         _entries
             .where(
               (entry) =>
-                  entry.deliveredAt.isAfter(instant) &&
+                  !entry.deliveredAt.isBefore(instant) &&
                   entry.deliveredAt.isBefore(end),
             )
             .toList(growable: false)

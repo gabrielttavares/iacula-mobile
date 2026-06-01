@@ -109,5 +109,28 @@ void main() {
         reason: 'notifications at 60-min intervals should span multiple days',
       );
     });
+
+    test('rebuilding at exactly a slot time reuses cached assignment', () async {
+      // Schedule at 07:30, creating an 08:00 assignment.
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 60),
+        now: DateTime(2026, 3, 10, 7, 30),
+        showImmediate: false,
+      );
+
+      final beforeRebuild = await history.listForDay(DateTime(2026, 3, 10));
+      expect(beforeRebuild, hasLength(13));
+
+      // Rebuild at exactly 08:00:00 — the 08:00 slot must be reused, not
+      // recreated, so the history count stays the same.
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 60),
+        now: DateTime(2026, 3, 10, 8, 0),
+        showImmediate: false,
+      );
+
+      final afterRebuild = await history.listForDay(DateTime(2026, 3, 10));
+      expect(afterRebuild, hasLength(13));
+    });
   });
 }
