@@ -67,10 +67,12 @@ final class _InMemoryNotificationHistoryRepository
       instant.month,
       instant.day,
     ).add(const Duration(days: 1));
+    // Inclusive lower bound mirrors the production repositories: a row at
+    // exactly `instant` is a future slot to reuse, not an excluded past one.
     return entries
         .where(
           (entry) =>
-              entry.deliveredAt.isAfter(instant) &&
+              !entry.deliveredAt.isBefore(instant) &&
               entry.deliveredAt.isBefore(end),
         )
         .toList()
@@ -387,6 +389,52 @@ void main() {
 
     // The elapsed rows (08/09/10) are past deliveries and must survive.
     final eightAm = DateTime(2026, 5, 31, 8, 0);
+    expect(
+      history.entries.where((entry) => entry.deliveredAt == eightAm),
+      hasLength(1),
+    );
+  });
+
+  test(
+      'rebuild at exactly a slot instant reuses that slot, does not redraw',
+      () async {
+    // The reported bug: a notification fired at 08:00 carrying quote A, but the
+    // app showed quote B. Root cause was a rebuild landing on exactly the slot
+    // instant — the strict `> now` boundary hid the 08:00 assignment row, so the
+    // slot was treated as new, redrawn (advancing the bag), and a duplicate row
+    // with a different quote was written. The 08:00 slot must be reused instead.
+    final scheduler = InMemoryNotificationSchedulerRepository();
+    final history = _InMemoryNotificationHistoryRepository();
+    final counter = makeTodayDrawCounter(DateTime(2026, 5, 31));
+    final useCase = makeUseCase(scheduler, history, fetcher: counter.fetcher);
+    final settings = Settings.defaults.copyWith(intervalMinutes: 60);
+
+    final eightAm = DateTime(2026, 5, 31, 8, 0);
+
+    // First pass at 08:00 assigns and persists a quote for the 08:00 slot.
+    await useCase(settings, now: eightAm, showImmediate: false);
+    final drawsAfterFirstPass = counter.todayDraws();
+    final originalEightAmQuote = quoteEventsOf(scheduler)
+        .firstWhere((event) => event.scheduledAt == eightAm)
+        .body;
+
+    // Rebuild at the SAME instant (08:00:00) — the boundary case.
+    for (var id = 9100; id < 9100 + 27; id++) {
+      await scheduler.cancelById(id);
+    }
+    await useCase(settings, now: eightAm, showImmediate: false);
+
+    // The 08:00 slot reused its cached assignment: no extra bag draw for it.
+    expect(counter.todayDraws(), drawsAfterFirstPass);
+
+    // The rescheduled 08:00 event still carries the original quote (matches what
+    // a notification fired at 08:00 would have delivered), not a redraw.
+    final rescheduledEightAmQuote = quoteEventsOf(scheduler)
+        .firstWhere((event) => event.scheduledAt == eightAm)
+        .body;
+    expect(rescheduledEightAmQuote, originalEightAmQuote);
+
+    // Exactly one history row exists at 08:00 — no duplicate carrying quote B.
     expect(
       history.entries.where((entry) => entry.deliveredAt == eightAm),
       hasLength(1),

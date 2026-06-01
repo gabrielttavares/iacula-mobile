@@ -59,6 +59,30 @@ void main() {
       expect(delegate.rebuildCalls, 0);
     });
 
+    test('skips rebuild when only the last today-layer slot remains', () async {
+      // After most of today's one-shots have fired, the OS may hold only the
+      // tail slot. That single 9100-block id must still count as "quotes exist"
+      // so a resume does not trigger a full rebuild (the original bug rebuilt on
+      // every resume once the weekly-grid ids were the only ones being checked).
+      const lastTodaySlotId = 9100 + 27;
+      delegate.nextPendingIds = [lastTodaySlotId];
+
+      await coordinator.handleAppResume();
+
+      expect(delegate.rebuildCalls, 0);
+    });
+
+    test('rebuilds when pending IDs are all outside the quote ranges', () async {
+      // 9200 is past the today-layer block (9100-9127) and the weekly grid floor
+      // (9000-9063). Such ids are not quotes, so the app still has no live quotes
+      // and must rebuild — the range check must be bounded on both ends.
+      delegate.nextPendingIds = [200, 8999, 9200];
+
+      await coordinator.handleAppResume();
+
+      expect(delegate.rebuildCalls, 1);
+    });
+
     test('throttles rebuild to one per 120 seconds', () async {
       delegate.nextPendingIds = [];
 
