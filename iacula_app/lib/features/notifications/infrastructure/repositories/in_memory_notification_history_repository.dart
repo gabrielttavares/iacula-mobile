@@ -57,6 +57,12 @@ final class InMemoryNotificationHistoryRepository
       instant.day,
     ).add(const Duration(days: 1));
 
+    // Inclusive lower bound (`!isBefore`) on purpose: a rebuild can run at
+    // exactly a slot's fire instant, and the row at that instant is the slot's
+    // cached assignment to reuse — `isAfter` would hide it, so the slot gets
+    // redrawn and the app shows a different quote than the OS already scheduled.
+    // This intentionally differs from clearFrom/clearFromExcept above, which use
+    // strict isAfter so they can never delete the just-fired row. Do not align.
     final entries =
         _entries
             .where(

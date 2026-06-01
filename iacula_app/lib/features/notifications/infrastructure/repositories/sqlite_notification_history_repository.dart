@@ -88,6 +88,12 @@ final class SqliteNotificationHistoryRepository
       instant.day,
     ).add(const Duration(days: 1));
     final db = await _database.database;
+    // Inclusive lower bound (`>=`) on purpose: a rebuild can run at exactly a
+    // slot's fire instant, and the row at that instant is the slot's cached
+    // assignment to reuse — a strict `>` would hide it, so the slot gets
+    // redrawn and the app shows a different quote than the OS already scheduled.
+    // This intentionally differs from clearFrom/clearFromExcept below, which use
+    // strict `>` so they can never delete the just-fired row. Do not align them.
     final rows = await db.query(
       'notification_history_entries',
       where: 'delivered_at >= ? AND delivered_at < ?',
