@@ -6,7 +6,6 @@ import 'package:iacula_app/features/custom_phrases/domain/repositories/custom_ph
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
-import 'package:iacula_app/features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_history_entry.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
 import 'package:iacula_app/features/notifications/domain/repositories/notification_history_repository.dart';
@@ -262,7 +261,6 @@ RebuildNotificationsUseCase _makeRebuild(
     scheduler: scheduler,
     notificationHistoryRepository: history,
     lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-    scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(scheduler),
     schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
       scheduler,
       phraseRepository,
@@ -294,7 +292,6 @@ RebuildNotificationsUseCase _makeRebuildWithQuoteUseCase(
     scheduler: scheduler,
     notificationHistoryRepository: history,
     lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-    scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(scheduler),
     schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
       scheduler,
       _InMemoryCustomPhraseRepository(),
@@ -688,40 +685,6 @@ void main() {
       },
     );
 
-    test('liturgy hour alarms are scheduled with repeatDaily', () async {
-      final scheduler = InMemoryNotificationSchedulerRepository();
-      final history = _InMemoryHistoryRepository();
-      final rebuild = _makeRebuild(scheduler, history);
-
-      final settings = _baseSettings().copyWith(
-        laudesEnabled: true,
-        vespersEnabled: true,
-        complineEnabled: true,
-      );
-
-      await rebuild.call(settings, isEasterSeason: false);
-
-      final liturgyEvents = scheduler.events.where(
-        (e) =>
-            e.type == ReminderEventType.laudes ||
-            e.type == ReminderEventType.vespers ||
-            e.type == ReminderEventType.compline,
-      );
-
-      for (final event in liturgyEvents) {
-        expect(
-          event.repeatDaily,
-          isTrue,
-          reason: '${event.type.name} should repeat daily',
-        );
-        expect(
-          event.isAlarm,
-          isTrue,
-          reason: '${event.type.name} should be an alarm',
-        );
-      }
-    });
-
     test('custom phrase notifications are scheduled', () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
@@ -806,9 +769,7 @@ void main() {
 
       final rebuild = _makeRebuild(scheduler, history, phraseRepo: phraseRepo);
 
-      final settings = _baseSettings(
-        angelusEnabled: true,
-      ).copyWith(laudesEnabled: true, vespersEnabled: true);
+      final settings = _baseSettings(angelusEnabled: true);
 
       await rebuild.call(settings, isEasterSeason: false);
 
@@ -829,8 +790,6 @@ void main() {
       final types = scheduler.events.map((e) => e.type).toSet();
       expect(types, contains(ReminderEventType.quoteInterval));
       expect(types, contains(ReminderEventType.angelusNoon));
-      expect(types, contains(ReminderEventType.laudes));
-      expect(types, contains(ReminderEventType.vespers));
       expect(types, contains(ReminderEventType.customPhrase));
     });
 
@@ -869,9 +828,7 @@ void main() {
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
 
-      final settings = _baseSettings(
-        angelusEnabled: true,
-      ).copyWith(laudesEnabled: true);
+      final settings = _baseSettings(angelusEnabled: true);
 
       await rebuild.call(settings, isEasterSeason: false);
 
@@ -882,9 +839,6 @@ void main() {
           case ReminderEventType.angelusNoon:
             expect(event.routeTarget, NotificationRouteTarget.prayer);
             expect(event.prayerSlug, isNotNull);
-          case ReminderEventType.laudes:
-          case ReminderEventType.vespers:
-            expect(event.routeTarget, NotificationRouteTarget.alarm);
           case ReminderEventType.customPhrase:
             expect(event.routeTarget, NotificationRouteTarget.home);
           case ReminderEventType.prayerIntentionReminder:

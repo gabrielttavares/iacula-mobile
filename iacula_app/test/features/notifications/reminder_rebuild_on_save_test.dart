@@ -8,7 +8,6 @@ import 'package:iacula_app/features/custom_phrases/application/use_cases/schedul
 import 'package:iacula_app/features/custom_phrases/domain/entities/custom_phrase.dart';
 import 'package:iacula_app/features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
-import 'package:iacula_app/features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
@@ -184,7 +183,7 @@ final class _EmptySpiritualEntryRepository implements SpiritualEntryRepository {
 
 void main() {
   test('saving settings cancels and rebuilds reminders', () async {
-    final settings = Settings.defaults.copyWith(laudesEnabled: true);
+    final settings = Settings.defaults;
     final schedulerRepo = _FakeNotificationSchedulerRepository();
 
     final season = await _FakeLiturgicalSeasonService().getCurrentSeason();
@@ -192,7 +191,6 @@ void main() {
       scheduler: schedulerRepo,
       notificationHistoryRepository: InMemoryNotificationHistoryRepository(),
       lastDeliveredCardRepository: _InMemoryLastDeliveredCardRepository(),
-      scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(schedulerRepo),
       schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
         schedulerRepo,
         _EmptyCustomPhraseRepository(),
@@ -225,10 +223,6 @@ void main() {
       schedulerRepo.scheduled.any(
         (e) => e.type == ReminderEventType.angelusNoon,
       ),
-      isTrue,
-    );
-    expect(
-      schedulerRepo.scheduled.any((e) => e.type == ReminderEventType.laudes),
       isTrue,
     );
   });

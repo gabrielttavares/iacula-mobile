@@ -14,10 +14,6 @@ final class InMemoryNotificationSchedulerRepository
     return switch (type) {
       ReminderEventType.quoteInterval => 100,
       ReminderEventType.angelusNoon => 200,
-      ReminderEventType.laudes => 301,
-      ReminderEventType.vespers => 302,
-      ReminderEventType.compline => 303,
-      ReminderEventType.oraMedia => 304,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
       ReminderEventType.seasonTransition => 400,

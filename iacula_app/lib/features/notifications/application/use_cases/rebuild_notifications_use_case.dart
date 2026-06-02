@@ -13,7 +13,6 @@ import '../../domain/repositories/notification_scheduler_repository.dart';
 import '../../domain/services/active_window.dart';
 import '../../domain/services/notification_budget.dart';
 import 'schedule_core_reminders_use_case.dart';
-import 'schedule_liturgy_reminders_use_case.dart';
 import 'schedule_season_transitions_use_case.dart';
 
 final class RebuildNotificationsUseCase {
@@ -25,14 +24,12 @@ final class RebuildNotificationsUseCase {
     required NotificationSchedulerRepository scheduler,
     required NotificationHistoryRepository notificationHistoryRepository,
     required LastDeliveredCardRepository lastDeliveredCardRepository,
-    required ScheduleLiturgyRemindersUseCase scheduleLiturgyReminders,
     required SchedulePhraseNotificationsUseCase schedulePhraseNotifications,
     required ScheduleIntentionNotificationsUseCase scheduleIntentionNotifications,
     required QuoteFetcher quoteFetcher,
   }) : _scheduler = scheduler,
        _notificationHistoryRepository = notificationHistoryRepository,
        _lastDeliveredCardRepository = lastDeliveredCardRepository,
-       _scheduleLiturgyReminders = scheduleLiturgyReminders,
        _schedulePhraseNotifications = schedulePhraseNotifications,
        _scheduleIntentionNotifications = scheduleIntentionNotifications,
        _quoteFetcher = quoteFetcher;
@@ -40,7 +37,6 @@ final class RebuildNotificationsUseCase {
   final NotificationSchedulerRepository _scheduler;
   final NotificationHistoryRepository _notificationHistoryRepository;
   final LastDeliveredCardRepository _lastDeliveredCardRepository;
-  final ScheduleLiturgyRemindersUseCase _scheduleLiturgyReminders;
   final SchedulePhraseNotificationsUseCase _schedulePhraseNotifications;
   final ScheduleIntentionNotificationsUseCase _scheduleIntentionNotifications;
   final QuoteFetcher _quoteFetcher;
@@ -100,16 +96,15 @@ final class RebuildNotificationsUseCase {
     );
     bool isQuietAt(DateTime time) => !effectiveWindow.allows(time);
 
-    // Tiers that schedule by fixed id (season transitions + bridge, liturgy)
-    // run first and own their slots. The quote pass later also schedules the
-    // Angelus daily repeat and the immediate notification, so reserve those up
-    // front too — otherwise intentions/phrases could fill the slots they need.
+    // Tiers that schedule by fixed id (season transitions + bridge) run first
+    // and own their slots. The quote pass later also schedules the Angelus daily
+    // repeat and the immediate notification, so reserve those up front too —
+    // otherwise intentions/phrases could fill the slots they need.
     await ScheduleSeasonTransitionsUseCase(_scheduler).call(
       now: now,
       angelusEnabled: settings.angelusEnabled,
       isQuietAt: isQuietAt,
     );
-    await _scheduleLiturgyReminders.call(settings, now: now);
     final fixedIdTierCount = (await _scheduler.pendingNotificationIds()).length;
     final quotePassSelfSlots =
         (settings.angelusEnabled ? 1 : 0) + (showImmediate ? 1 : 0);

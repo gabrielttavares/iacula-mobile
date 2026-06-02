@@ -248,10 +248,6 @@ final class LocalNotificationSchedulerRepository
       ReminderEventType.angelusNoon ||
       ReminderEventType.customPhrase ||
       ReminderEventType.prayerIntentionReminder => true,
-      ReminderEventType.laudes ||
-      ReminderEventType.vespers ||
-      ReminderEventType.compline ||
-      ReminderEventType.oraMedia ||
       ReminderEventType.seasonTransition => false,
     };
   }
@@ -426,10 +422,6 @@ final class LocalNotificationSchedulerRepository
     return switch (type) {
       ReminderEventType.quoteInterval => 100,
       ReminderEventType.angelusNoon => 200,
-      ReminderEventType.laudes => 301,
-      ReminderEventType.vespers => 302,
-      ReminderEventType.compline => 303,
-      ReminderEventType.oraMedia => 304,
       ReminderEventType.customPhrase => 1000,
       ReminderEventType.prayerIntentionReminder => 500,
       ReminderEventType.seasonTransition => 400,
@@ -440,10 +432,6 @@ final class LocalNotificationSchedulerRepository
     return switch (type) {
       ReminderEventType.quoteInterval => 'quotes_reminder',
       ReminderEventType.angelusNoon => 'angelus_noon',
-      ReminderEventType.laudes ||
-      ReminderEventType.vespers ||
-      ReminderEventType.compline ||
-      ReminderEventType.oraMedia => 'liturgy_hours_alarm',
       ReminderEventType.customPhrase => 'custom_phrases',
       ReminderEventType.prayerIntentionReminder => 'prayer_intention_reminder',
       ReminderEventType.seasonTransition => 'season_transition',
@@ -454,10 +442,6 @@ final class LocalNotificationSchedulerRepository
     return switch (type) {
       ReminderEventType.quoteInterval => 'Jaculatórias',
       ReminderEventType.angelusNoon => 'Angelus',
-      ReminderEventType.laudes ||
-      ReminderEventType.vespers ||
-      ReminderEventType.compline ||
-      ReminderEventType.oraMedia => 'Liturgia das Horas',
       ReminderEventType.customPhrase => 'Minhas frases',
       ReminderEventType.prayerIntentionReminder => 'Intenções',
       ReminderEventType.seasonTransition => 'Transição litúrgica',
@@ -468,10 +452,6 @@ final class LocalNotificationSchedulerRepository
     return switch (type) {
       ReminderEventType.quoteInterval => 'Lembretes de jaculatórias',
       ReminderEventType.angelusNoon => 'Lembrete do meio-dia',
-      ReminderEventType.laudes ||
-      ReminderEventType.vespers ||
-      ReminderEventType.compline ||
-      ReminderEventType.oraMedia => 'Alarmes da Liturgia das Horas',
       ReminderEventType.customPhrase => 'Notificações de frases personalizadas',
       ReminderEventType.prayerIntentionReminder =>
         'Lembretes para rezar por intenções',

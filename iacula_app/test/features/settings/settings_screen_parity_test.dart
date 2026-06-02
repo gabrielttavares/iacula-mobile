@@ -9,7 +9,6 @@ import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
-import 'package:iacula_app/features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
@@ -88,7 +87,6 @@ RebuildNotificationsUseCase _makeNoopRebuildUseCase() {
     scheduler: scheduler,
     notificationHistoryRepository: InMemoryNotificationHistoryRepository(),
     lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
-    scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(scheduler),
     schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
       scheduler,
       _EmptyCustomPhraseRepository(),

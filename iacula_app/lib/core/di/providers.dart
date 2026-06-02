@@ -17,7 +17,6 @@ import '../../features/liturgical/domain/services/liturgical_season_service.dart
 import '../../features/liturgical/infrastructure/repositories/in_memory_liturgical_season_cache_repository.dart';
 import '../../features/liturgical/infrastructure/services/fallback_liturgical_season_service.dart';
 import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
-import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/prayer_intentions/application/use_cases/schedule_intention_notifications_use_case.dart';
 import '../../features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import '../../features/notifications/domain/repositories/notification_history_repository.dart';
@@ -596,9 +595,6 @@ final rebuildNotificationsUseCaseProvider =
         ),
         lastDeliveredCardRepository: ref.watch(
           lastDeliveredCardRepositoryProvider,
-        ),
-        scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(
-          ref.watch(notificationSchedulerRepositoryProvider),
         ),
         schedulePhraseNotifications: ref.watch(
           schedulePhraseNotificationsUseCaseProvider,

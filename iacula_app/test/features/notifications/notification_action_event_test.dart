@@ -5,10 +5,10 @@ import 'package:iacula_app/features/notifications/domain/entities/reminder_event
 void main() {
   test('serializes and restores notification payload', () {
     final event = ReminderEvent(
-      type: ReminderEventType.laudes,
-      title: 'Laudes',
-      body: 'Oficio do dia',
-      scheduledAt: DateTime(2026, 2, 21, 6, 0),
+      type: ReminderEventType.angelusNoon,
+      title: 'Angelus',
+      body: 'Hora de rezar o Angelus.',
+      scheduledAt: DateTime(2026, 2, 21, 12, 0),
       withVibration: true,
       isAlarm: true,
       repeatDaily: true,
@@ -25,7 +25,7 @@ void main() {
 
     expect(restored, isNotNull);
     expect(restored!.actionId, NotificationActionEvent.snooze10Action);
-    expect(restored.event.type, ReminderEventType.laudes);
+    expect(restored.event.type, ReminderEventType.angelusNoon);
     expect(restored.event.repeatDaily, isTrue);
   });
 

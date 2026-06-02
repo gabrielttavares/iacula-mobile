@@ -184,25 +184,5 @@ void main() {
       expect(details.actions, hasLength(2));
     });
 
-    test('keeps alarm actions and liturgy channel mapping unchanged', () {
-      final event = ReminderEvent(
-        type: ReminderEventType.oraMedia,
-        title: 'Hora Média',
-        body: 'Hora de rezar',
-        scheduledAt: DateTime(2026, 2, 22, 9),
-        withVibration: true,
-        isAlarm: true,
-      );
-
-      final details =
-          LocalNotificationSchedulerRepository.buildAndroidNotificationDetails(
-            event,
-          );
-
-      expect(details.channelId, 'liturgy_hours_alarm');
-      expect(details.actions, isNull);
-      expect(details.fullScreenIntent, isTrue);
-      expect(details.ongoing, isFalse);
-    });
   });
 }

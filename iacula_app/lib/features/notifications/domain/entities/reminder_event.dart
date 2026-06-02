@@ -1,10 +1,6 @@
 enum ReminderEventType {
   quoteInterval,
   angelusNoon,
-  laudes,
-  vespers,
-  compline,
-  oraMedia,
   customPhrase,
   prayerIntentionReminder,
   seasonTransition,
@@ -186,10 +182,6 @@ final class ReminderEvent {
     return switch (type) {
       ReminderEventType.quoteInterval => NotificationRouteTarget.home,
       ReminderEventType.angelusNoon => NotificationRouteTarget.prayer,
-      ReminderEventType.laudes ||
-      ReminderEventType.vespers => NotificationRouteTarget.liturgyHours,
-      ReminderEventType.compline => NotificationRouteTarget.nightPrayer,
-      ReminderEventType.oraMedia ||
       ReminderEventType.customPhrase => NotificationRouteTarget.home,
       ReminderEventType.prayerIntentionReminder =>
         NotificationRouteTarget.prayerIntention,

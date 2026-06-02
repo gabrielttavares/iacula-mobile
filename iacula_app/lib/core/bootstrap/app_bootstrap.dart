@@ -20,7 +20,6 @@ import '../../features/liturgical/infrastructure/services/remote_liturgical_seas
 import '../../features/leituras/data/repositories/leitura_repository.dart';
 import '../../features/leituras/data/sources/leitura_local_source.dart';
 import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
-import '../../features/notifications/application/use_cases/schedule_liturgy_reminders_use_case.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_notification_history_repository.dart';
@@ -170,9 +169,6 @@ final class AppBootstrap {
             scheduler: scheduler,
             notificationHistoryRepository: notificationHistoryRepo,
             lastDeliveredCardRepository: lastDeliveredCardRepo,
-            scheduleLiturgyReminders: ScheduleLiturgyRemindersUseCase(
-              scheduler,
-            ),
             schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
               scheduler,
               localCustomPhraseRepo,
