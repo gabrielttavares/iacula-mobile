@@ -10,8 +10,8 @@ import '../../../settings/domain/entities/settings.dart';
 import '../../domain/repositories/last_delivered_card_repository.dart';
 import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
+import '../../domain/services/active_window.dart';
 import '../../domain/services/notification_budget.dart';
-import '../../domain/services/quiet_hours_checker.dart';
 import 'schedule_core_reminders_use_case.dart';
 import 'schedule_liturgy_reminders_use_case.dart';
 import 'schedule_season_transitions_use_case.dart';
@@ -70,14 +70,15 @@ final class RebuildNotificationsUseCase {
       return;
     }
 
-    // Cancel only quote notification IDs instead of wiping everything. This must
-    // span the immediate id (8999), the weekly grid floor (9000+), AND the dense
-    // today layer (9100+), so reopening replaces quotes rather than accumulating.
-    // Alarm-type notifications (Angelus, liturgy hours) reschedule by fixed ID,
-    // so re-scheduling naturally replaces them without needing a cancel step.
+    // Cancel only quote notification IDs instead of wiping everything. This
+    // spans the immediate id (8999) and the contiguous pre-rolled quote block
+    // (9000 .. 9000+maxQueuedQuoteReminders), so reopening replaces quotes
+    // rather than accumulating. Alarm-type notifications (Angelus, liturgy
+    // hours) reschedule by fixed ID, so re-scheduling naturally replaces them
+    // without needing a cancel step.
     for (var id = ScheduleCoreRemindersUseCase.quoteScheduleIdBase - 1;
-        id < ScheduleCoreRemindersUseCase.todayLayerIdBase +
-            ScheduleCoreRemindersUseCase.maxTodayLayerSlots;
+        id < ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
+            ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders;
         id++) {
       await _scheduler.cancelById(id);
     }
@@ -90,13 +91,14 @@ final class RebuildNotificationsUseCase {
     // liturgy hours → prayer intentions (promises) → custom phrases → quotes.
     final budget = NotificationBudget(capacity: maxPendingNotifications);
 
-    bool isQuietAt(DateTime time) =>
-        settings.quietHoursEnabled &&
-        QuietHoursChecker.isDuringQuietHours(
-          time,
-          settings.quietHoursStart,
-          settings.quietHoursEnd,
-        );
+    // A time is "quiet" (no notification) when it falls OUTSIDE the active
+    // window — the single source of truth shared with the quote scheduler, so
+    // the season-transition noon bridge honors the same hours.
+    final effectiveWindow = ActiveWindow.fromQuietHours(
+      quietStart: settings.quietHoursStart,
+      quietEnd: settings.quietHoursEnd,
+    );
+    bool isQuietAt(DateTime time) => !effectiveWindow.allows(time);
 
     // Tiers that schedule by fixed id (season transitions + bridge, liturgy)
     // run first and own their slots. The quote pass later also schedules the

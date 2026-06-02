@@ -173,74 +173,61 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             onChanged: (preset) => setState(() => _intervalMinutes = preset.intervalMinutes),
                           ),
                           const SizedBox(height: IaculaRadius.elementSpacing),
+                          // Quiet hours — no toggle: the user picks when to pause
+                          // and resume notifications. Notifications fire every
+                          // hour EXCEPT this range. Fields persist via the
+                          // quietHours* columns.
+                          Text(
+                            'Horário silencioso',
+                            style: context.textStyles.cardTitle.copyWith(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Notificações pausadas das $_quietHoursStart às $_quietHoursEnd.',
+                            style: context.textStyles.secondary,
+                          ),
+                          const SizedBox(height: IaculaSpacing.sm),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                child: Text(
-                                  'Horário silencioso',
-                                  style: context.textStyles.cardTitle.copyWith(
-                                    fontSize: 16,
-                                  ),
+                                child: _buildQuietTimeButton(
+                                  context,
+                                  label: 'Início',
+                                  value: _quietHoursStart,
+                                  onTap: () async {
+                                    final selected = await _pickTime(
+                                      _quietHoursStart,
+                                    );
+                                    if (selected != null && selected != _quietHoursEnd) {
+                                      setState(() {
+                                        _quietHoursStart = selected;
+                                      });
+                                    }
+                                  },
                                 ),
                               ),
-                              CupertinoSwitch(
-                                value: _quietHoursEnabled,
-                                activeTrackColor: context.colors.primaryButton,
-                                onChanged: (value) {
-                                  HapticFeedback.selectionClick();
-                                  setState(() => _quietHoursEnabled = value);
-                                },
+                              const SizedBox(width: IaculaSpacing.sm),
+                              Expanded(
+                                child: _buildQuietTimeButton(
+                                  context,
+                                  label: 'Fim',
+                                  value: _quietHoursEnd,
+                                  onTap: () async {
+                                    final selected = await _pickTime(
+                                      _quietHoursEnd,
+                                    );
+                                    if (selected != null && selected != _quietHoursStart) {
+                                      setState(() {
+                                        _quietHoursEnd = selected;
+                                      });
+                                    }
+                                  },
+                                ),
                               ),
                             ],
                           ),
-                          if (_quietHoursEnabled) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              'Notificações pausadas das $_quietHoursStart às $_quietHoursEnd.',
-                              style: context.textStyles.secondary,
-                            ),
-                            const SizedBox(height: IaculaSpacing.sm),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildQuietTimeButton(
-                                    context,
-                                    label: 'Início',
-                                    value: _quietHoursStart,
-                                    onTap: () async {
-                                      final selected = await _pickTime(
-                                        _quietHoursStart,
-                                      );
-                                      if (selected != null) {
-                                        setState(() {
-                                          _quietHoursStart = selected;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: IaculaSpacing.sm),
-                                Expanded(
-                                  child: _buildQuietTimeButton(
-                                    context,
-                                    label: 'Fim',
-                                    value: _quietHoursEnd,
-                                    onTap: () async {
-                                      final selected = await _pickTime(
-                                        _quietHoursEnd,
-                                      );
-                                      if (selected != null) {
-                                        setState(() {
-                                          _quietHoursEnd = selected;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
                         ],
                       ],
                     ),

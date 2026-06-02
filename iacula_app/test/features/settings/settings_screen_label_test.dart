@@ -16,14 +16,21 @@ void main() {
     // Liturgia das Horas section removed
     expect(find.text('Liturgia das Horas'), findsNothing);
 
-    // New section headers present
-    expect(find.text('Aparência'), findsOneWidget);
-
-    final notifFinder = find.text('Notificações');
-    for (var i = 0; i < 20 && notifFinder.evaluate().isEmpty; i++) {
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
-      await tester.pumpAndSettle();
+    Future<void> scrollTo(Finder finder) async {
+      for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+        await tester.pumpAndSettle();
+      }
     }
+
+    // New section headers present (scroll to them — the settings list is taller
+    // than the test viewport now that the active-window block is always shown).
+    final notifFinder = find.text('Notificações');
+    await scrollTo(notifFinder);
     expect(notifFinder, findsOneWidget);
+
+    final aparenciaFinder = find.text('Aparência');
+    await scrollTo(aparenciaFinder);
+    expect(aparenciaFinder, findsOneWidget);
   });
 }

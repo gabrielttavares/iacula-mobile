@@ -28,7 +28,11 @@ void main() {
     );
   });
 
-  test('skips liturgy reminders that fall within quiet hours', () async {
+  test('liturgy reminders always fire regardless of the active window',
+      () async {
+    // Liturgy hours are user-set fixed-time alarms (a promise that is always
+    // kept), so the active notification window does not suppress them — even one
+    // set to a time outside the window still schedules.
     final repo = InMemoryNotificationSchedulerRepository();
     final useCase = ScheduleLiturgyRemindersUseCase(repo);
 
@@ -37,14 +41,15 @@ void main() {
       vespersEnabled: true,
       laudesTime: '06:00',
       vespersTime: '18:00',
-      quietHoursEnabled: true,
-      quietHoursStart: '05:00',
-      quietHoursEnd: '07:00',
+      // Active window 07:00-21:00 (default) excludes 06:00 Laudes, but liturgy
+      // alarms ignore the window.
+      quietHoursStart: '07:00',
+      quietHoursEnd: '21:00',
     );
 
     await useCase(settings, now: DateTime(2026, 2, 21, 5, 0));
 
-    expect(repo.events.any((e) => e.type == ReminderEventType.laudes), isFalse);
+    expect(repo.events.any((e) => e.type == ReminderEventType.laudes), isTrue);
     expect(repo.events.any((e) => e.type == ReminderEventType.vespers), isTrue);
   });
 }

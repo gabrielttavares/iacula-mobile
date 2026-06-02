@@ -77,6 +77,40 @@ final class InMemoryNotificationHistoryRepository
   }
 
   @override
+  Future<List<NotificationHistoryEntry>> listBetween(
+    DateTime from,
+    DateTime until,
+  ) async {
+    // Inclusive on both ends, matching listFromUntilEndOfDay's lower bound: a
+    // rebuild at exactly a slot's fire instant must still see that slot's row.
+    final entries =
+        _entries
+            .where(
+              (entry) =>
+                  !entry.deliveredAt.isBefore(from) &&
+                  !entry.deliveredAt.isAfter(until),
+            )
+            .toList(growable: false)
+          ..sort((a, b) => a.deliveredAt.compareTo(b.deliveredAt));
+    return entries;
+  }
+
+  @override
+  Future<void> clearBetweenExcept(
+    DateTime from,
+    DateTime until,
+    Set<String> keepTimestamps,
+  ) async {
+    // Strict lower bound so the just-fired row at `from` is never deleted.
+    _entries.removeWhere(
+      (entry) =>
+          entry.deliveredAt.isAfter(from) &&
+          !entry.deliveredAt.isAfter(until) &&
+          !keepTimestamps.contains(entry.deliveredAt.toIso8601String()),
+    );
+  }
+
+  @override
   Future<List<NotificationHistoryEntry>> listForDay(DateTime day) async {
     final start = DateTime(day.year, day.month, day.day);
     final end = start.add(const Duration(days: 1));

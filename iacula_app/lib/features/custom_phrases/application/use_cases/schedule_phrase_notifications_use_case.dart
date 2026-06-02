@@ -1,7 +1,7 @@
 import '../../../../features/notifications/domain/entities/reminder_event.dart';
 import '../../../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
+import '../../../../features/notifications/domain/services/active_window.dart';
 import '../../../../features/notifications/domain/services/notification_budget.dart';
-import '../../../../features/notifications/domain/services/quiet_hours_checker.dart';
 import '../../../../features/settings/domain/entities/settings.dart';
 import '../../domain/entities/custom_phrase.dart';
 import '../../domain/entities/phrase_schedule.dart';
@@ -61,14 +61,15 @@ class SchedulePhraseNotificationsUseCase {
         now,
       );
       if (nextOccurrence == null) continue;
-      if (settings != null &&
-          settings.quietHoursEnabled &&
-          QuietHoursChecker.isDuringQuietHours(
-            nextOccurrence,
-            settings.quietHoursStart,
-            settings.quietHoursEnd,
-          )) {
-        continue;
+      // Personal phrases honor the same active window as quotes: a fire time
+      // outside the window is skipped. Prayer alarms are exact user-set times
+      // and are never suppressed (a promise is kept regardless of the window).
+      if (settings != null && !phrase.isPrayerAlarm) {
+        final effectiveWindow = ActiveWindow.fromQuietHours(
+          quietStart: settings.quietHoursStart,
+          quietEnd: settings.quietHoursEnd,
+        );
+        if (!effectiveWindow.allows(nextOccurrence)) continue;
       }
 
       // Stop once the shared notification budget is spent — do not push the app

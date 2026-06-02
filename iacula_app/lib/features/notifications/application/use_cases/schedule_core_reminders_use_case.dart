@@ -2,6 +2,7 @@ import 'dart:math' show max, min;
 
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/utils/datetime_slot.dart';
 import '../../../home_widget/home_widget_service.dart';
 import '../../../liturgical/domain/easter_calculator.dart';
 import '../../../prayers/domain/services/prayer_scheduler.dart';
@@ -14,28 +15,36 @@ import '../../domain/entities/reminder_event.dart';
 import '../../domain/repositories/last_delivered_card_repository.dart';
 import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
-import '../../domain/services/quiet_hours_checker.dart';
+import '../../domain/services/active_window.dart';
 import '../../domain/services/quote_slot_planner.dart';
 
 typedef QuoteFetcher =
     Future<Quote> Function({required String language, required DateTime now});
 
 final class ScheduleCoreRemindersUseCase {
+  /// First id of the single contiguous quote one-shot block. The pre-rolled
+  /// multi-day queue occupies [quoteScheduleIdBase] .. +[maxQueuedQuoteReminders).
   static const int quoteScheduleIdBase = 9000;
   static const int maxQueuedQuoteReminders = 64;
 
-  /// Reserved id block for the dense "today" one-shot layer (Layer A), distinct
-  /// from the weekly grid floor (9000-9034), Angelus (200), immediate (8999).
-  /// 28 covers a full-window 30-min day (27 slots) without the id ceiling
-  /// clipping it; the binding limit is the reserved-budget guard below.
-  static const int todayLayerIdBase = 9100;
-  static const int maxTodayLayerSlots = 28;
+  /// Closed-app coverage guarantee: pre-roll quotes for this many days ahead so
+  /// a never-opened app keeps delivering for at least a week. The per-day quote
+  /// count is the shared quote budget divided across these days (see below).
+  static const int runwayDays = 7;
 
-  /// Pending notifications reserved for non-quote consumers so the today layer
-  /// never pushes the app over the 64-pending iOS cap: 1 Angelus + ~9 headroom
-  /// for custom phrases and prayer intentions. (Liturgy hours are not a live
-  /// consumer — no settings toggle — so they are not counted.)
+  /// Quotes never drop to zero even under heavy alarm load: always schedule at
+  /// least this many per day so the app's core feature keeps a pulse.
+  static const int minQuotesPerDay = 1;
+
+  /// Pending notifications reserved for non-quote consumers when no live count
+  /// is supplied: 1 Angelus + ~9 headroom for custom phrases / prayer
+  /// intentions. (RebuildNotificationsUseCase passes the real pending count.)
   static const int kReservedNonQuoteBudget = 10;
+
+  /// Whether [id] belongs to the rotating quote one-shot block.
+  static bool isQuoteReminderId(int id) =>
+      id >= quoteScheduleIdBase &&
+      id < quoteScheduleIdBase + maxQueuedQuoteReminders;
 
   const ScheduleCoreRemindersUseCase(
     this._scheduler, {
@@ -125,42 +134,23 @@ final class ScheduleCoreRemindersUseCase {
 
     final preset =
         JaculatoriaCadencePreset.fromIntervalMinutes(settings.intervalMinutes);
-
-    // ---- Layer A: today's dense one-shots ----
-    // Fill the rest of today at the preset's cadence with fresh one-shot quotes
-    // (not OS-repeating). Past hours are left untouched and future hours refilled
-    // on each pass, so reopening the app never re-rolls a slot that hasn't fired.
-    // The grid floor (Layer B) skips today's weekday so today isn't double-fired.
-    final todaySlots = QuoteSlotPlanner.todaySlotsFrom(
-      now: current,
-      cadenceMinutes: preset.todayCadenceMinutes,
-      windowStartMinutes: kQuoteWindowStartMinutes,
-      windowEndMinutes: kQuoteWindowEndMinutes,
-      quietHoursEnabled: settings.quietHoursEnabled,
-      quietHoursStart: settings.quietHoursStart,
-      quietHoursEnd: settings.quietHoursEnd,
+    final effectiveWindow = ActiveWindow.fromQuietHours(
+      quietStart: settings.quietHoursStart,
+      quietEnd: settings.quietHoursEnd,
     );
 
-    // Weekly grid floor slot times (Layer B), computed up front because the
-    // today layer's budget depends on how many grid cells we will register.
-    final gridSlotMinutes = QuoteSlotPlanner.slotMinutesOfDay(
-      intervalMinutes: preset.todayCadenceMinutes,
-      windowStartMinutes: kQuoteWindowStartMinutes,
-      windowEndMinutes: kQuoteWindowEndMinutes,
-      quietHoursEnabled: settings.quietHoursEnabled,
-      quietHoursStart: settings.quietHoursStart,
-      quietHoursEnd: settings.quietHoursEnd,
-      maxSlots: preset.weeklyFloorSlotsPerWeekday,
-    );
-    // 6 weekdays carry the grid floor (today's weekday is covered by Layer A).
-    const gridFloorWeekdays = 6;
-    final plannedGridFloorCount = gridFloorWeekdays * gridSlotMinutes.length;
+    // ---- Pre-rolled multi-day quote queue ----
+    // One layer of plain one-shots covering the next [runwayDays] days (today
+    // first), each pre-assigned a distinct shuffle-bag draw at schedule time so
+    // the OS fires theme-correct, rotating quotes even while the app stays closed
+    // for days. Replaces the old Layer A (today-only, needed the app open) +
+    // Layer B (weekly grid that skipped today). Every day, including today, is
+    // now covered identically whether or not the app is opened.
 
-    // Total slots quotes may occupy = the 64 cap minus everything reserved for
-    // higher-priority (sacred) consumers, minus the Angelus daily repeat this
-    // same pass also schedules (so it is not double-spent). Grid floor fills
-    // first, then the today layer takes whatever is left. Under heavy sacred
-    // load this shrinks quotes to zero before it would ever push past the cap.
+    // Quote budget = the 64 cap minus everything reserved for higher-priority
+    // (sacred) consumers and this pass's own Angelus + immediate slots. Quotes
+    // absorb whatever is left; under heavy alarm load this shrinks toward the
+    // per-day floor rather than pushing past the cap.
     final angelusOwnSlot = settings.angelusEnabled ? 1 : 0;
     final immediateOwnSlot = showImmediate ? 1 : 0;
     final quoteSlotBudget = max(
@@ -170,35 +160,49 @@ final class ScheduleCoreRemindersUseCase {
           angelusOwnSlot -
           immediateOwnSlot,
     );
-    final gridFloorCount = min(plannedGridFloorCount, quoteSlotBudget);
 
-    // Reserved-budget guard: keep the today layer below the iOS 64-pending cap
-    // with headroom for the grid floor and non-quote consumers. The denser the
-    // preset, the more this binds (e.g. 30-min full window: min(28, 64-30-10)=24).
-    // The max(0, …) floor is defensive: if the reserve/grid constants are ever
-    // tuned so the budget goes negative, the loop schedules zero today slots
-    // rather than passing a negative count to take().
-    final effectiveTodayCap = max(
-      0,
-      min(maxTodayLayerSlots, quoteSlotBudget - gridFloorCount),
+    // Per-day count honors the user's cadence but is capped so the budget
+    // stretches across the whole runway; never below the floor unless the budget
+    // is fully exhausted.
+    final naturalSlotsPerDay = effectiveWindow.slotCount(
+      cadenceMinutes: preset.todayCadenceMinutes,
     );
+    final runwayCap = quoteSlotBudget ~/ runwayDays;
+    final slotsPerDay = quoteSlotBudget <= 0
+        ? 0
+        : max(minQuotesPerDay, min(naturalSlotsPerDay, runwayCap));
 
-    // Assignment cache: a today slot (identified by its concrete fire DateTime)
-    // is assigned a quote once and persisted as a future history row. While that
-    // fire time is still ahead, re-running this pass on a same-day reopen reuses
-    // the cached assignment instead of drawing again — so the shuffle bag advances
-    // ~once per delivered quote, not once per scheduled slot per reopen. Rows whose
-    // fire time has already passed are real past deliveries and are never reused
-    // for a future slot, so an elapsed-then-recreated slot redraws exactly once.
-    final existingAssignments =
-        await _notificationHistoryRepository.listFromUntilEndOfDay(current);
+    final plannedSlots = QuoteSlotPlanner.multiDaySlots(
+      now: current,
+      window: effectiveWindow,
+      cadenceMinutes: preset.todayCadenceMinutes,
+      slotsPerDay: slotsPerDay,
+      days: runwayDays,
+    ).map((slot) => slot.flooredToMinute()).toList();
+
+    // Cap to the absolute budget (defensive: per-day math already keeps us under).
+    final scheduledSlots = plannedSlots.take(quoteSlotBudget).toList();
+
+    // Reuse/prune horizon = the full runway from `current`, independent of where
+    // this pass's slots happen to end. Anchoring to the runway (not the last
+    // scheduled slot) means a pass that shrinks the queue — e.g. the window
+    // narrowed — still reaches and prunes stale rows left by an earlier, wider
+    // pass that lay beyond the new last slot.
+    final horizonEnd = current.add(const Duration(days: runwayDays + 1));
+
+    // Assignment cache: a slot (identified by its floored fire DateTime) is
+    // assigned a quote once and persisted as a future history row. While that
+    // fire time is still ahead, a later rebuild reuses the cached assignment
+    // instead of drawing again — so the shuffle bag advances ~once per delivered
+    // quote, not once per scheduled slot per reopen.
+    final existingAssignments = await _notificationHistoryRepository.listBetween(
+      current,
+      horizonEnd,
+    );
     final assignmentByFireTime = {
       for (final entry in existingAssignments)
         entry.deliveredAt.toIso8601String(): entry,
     };
-    // The fire times we will (re)schedule this pass; every other future row on
-    // today's calendar day is stale and gets pruned below.
-    final scheduledSlots = todaySlots.take(effectiveTodayCap).toList();
     final keepFireTimes = {
       for (final slot in scheduledSlots) slot.toIso8601String(),
     };
@@ -216,7 +220,8 @@ final class ScheduleCoreRemindersUseCase {
           recentQuoteTexts.removeAt(0);
         }
       } else {
-        // New (or newly elapsed) slot: draw once and persist the assignment.
+        // New (or newly elapsed) slot: draw once (keyed on the slot's DATE so it
+        // picks that weekday's theme and advances the bag) and persist it.
         quote = await fetchNonRepeatingQuote(
           language: settings.language,
           slot: fireAt,
@@ -226,73 +231,28 @@ final class ScheduleCoreRemindersUseCase {
         );
       }
 
-      final scheduledId = todayLayerIdBase + slotIndex;
+      final scheduledId = quoteScheduleIdBase + slotIndex;
       await _scheduler.scheduleWithId(
         scheduledId,
         _buildQuoteEvent(id: scheduledId, fireAt: fireAt, quote: quote),
       );
     }
 
-    // Prune stale future assignment rows (e.g. cadence changed so a previously
-    // scheduled fire time no longer exists). clearFromExcept only touches rows
-    // after `current` on today's calendar day, so real past deliveries survive.
-    await _notificationHistoryRepository.clearFromExcept(current, keepFireTimes);
-
-    debugPrint(
-      '[ScheduleCoreRemindersUseCase] registered today layer: '
-      '${scheduledSlots.length} one-shots '
-      '(of ${todaySlots.length} natural, cadence=${preset.todayCadenceMinutes}m)',
+    // Prune stale future assignment rows across the whole queue (e.g. window or
+    // cadence changed so previously scheduled fire times no longer exist).
+    // Strict lower bound means real past deliveries (and the just-fired row)
+    // survive.
+    await _notificationHistoryRepository.clearBetweenExcept(
+      current,
+      horizonEnd,
+      keepFireTimes,
     );
 
-    // ---- Layer B: weekly grid floor ----
-    // (each weekday 1..7 EXCEPT today) x (each daily slot time). Each cell
-    // repeats weekly via DateTimeComponents.dayOfWeekAndTime, so iOS fires the
-    // correct weekday's quote even if the app is never reopened. Today's weekday
-    // is skipped because Layer A already covers today densely. The slot times
-    // (gridSlotMinutes) were computed above to size the today-layer budget.
-    final skipWeekday = current.weekday;
-    var gridFloorScheduled = 0;
-    for (var weekdayIndex = 0; weekdayIndex < 7; weekdayIndex++) {
-      // Dart DateTime.weekday is 1=Mon..7=Sun. weekdayIndex 0..6 maps to that.
-      final weekday = weekdayIndex + 1;
-      if (weekday == skipWeekday) continue; // today is covered by Layer A
-      for (var slotIndex = 0; slotIndex < gridSlotMinutes.length; slotIndex++) {
-        // Respect the quote slot budget — grid cells beyond it are dropped so
-        // sacred reminders keep their slots under the 64-pending cap.
-        if (gridFloorScheduled >= gridFloorCount) break;
-        gridFloorScheduled++;
-        final minutesOfDay = gridSlotMinutes[slotIndex];
-        final fireAt = _nextOccurrenceOnWeekday(
-          current,
-          weekday,
-          minutesOfDay ~/ 60,
-          minutesOfDay % 60,
-        );
-
-        final quote = await fetchNonRepeatingQuote(
-          language: settings.language,
-          slot: fireAt,
-        );
-
-        final scheduledId = quoteScheduleIdBase +
-            (weekdayIndex * kMaxQuoteSlotsPerWeekday) +
-            slotIndex;
-
-        await _scheduler.scheduleWithId(
-          scheduledId,
-          _buildQuoteEvent(
-            id: scheduledId,
-            fireAt: fireAt,
-            quote: quote,
-            repeatWeekly: true,
-          ),
-        );
-      }
-    }
-
     debugPrint(
-      '[ScheduleCoreRemindersUseCase] registered weekly grid floor: '
-      '${gridSlotMinutes.length} slots x 6 weekdays (skipped today=$skipWeekday)',
+      '[ScheduleCoreRemindersUseCase] registered pre-rolled queue: '
+      '${scheduledSlots.length} one-shots over $runwayDays days '
+      '($slotsPerDay/day cap, cadence=${preset.todayCadenceMinutes}m, '
+      'budget=$quoteSlotBudget)',
     );
 
     // Schedule the daily noon repeat (Angelus / Regina Caeli) for the season
@@ -308,14 +268,11 @@ final class ScheduleCoreRemindersUseCase {
       final noonBody = repeatIsEasterSeason
           ? 'Hora de rezar a Regina Caeli.'
           : 'Hora de rezar o Angelus.';
-      final noonInQuietHours =
-          settings.quietHoursEnabled &&
-          QuietHoursChecker.isDuringQuietHours(
-            noon,
-            settings.quietHoursStart,
-            settings.quietHoursEnd,
-          );
-      if (!noonInQuietHours) {
+      // Angelus respects the single active window (no separate quiet-hours
+      // concept): if noon falls outside the window the user has chosen to be
+      // silent then, so the daily repeat is not scheduled.
+      final noonInsideWindow = effectiveWindow.allows(noon);
+      if (noonInsideWindow) {
         final prayerSlug = repeatIsEasterSeason ? 'regina-coeli' : 'angelus';
         await _scheduler.schedule(
           ReminderEvent(
@@ -337,32 +294,14 @@ final class ScheduleCoreRemindersUseCase {
   bool _isDateWithinEasterSeason(DateTime date) =>
       EasterCalculator.isWithinEasterSeason(date);
 
-  /// Next DateTime at the given weekday (1=Mon..7=Sun) and clock time, at or
-  /// after [from]. Used as the first fire time for a weekly-repeating slot.
-  DateTime _nextOccurrenceOnWeekday(
-    DateTime from,
-    int weekday,
-    int hour,
-    int minute,
-  ) {
-    var candidate = DateTime(from.year, from.month, from.day, hour, minute);
-    final dayDelta = (weekday - candidate.weekday + 7) % 7;
-    candidate = candidate.add(Duration(days: dayDelta));
-    if (!candidate.isAfter(from)) {
-      candidate = candidate.add(const Duration(days: 7));
-    }
-    return candidate;
-  }
-
   /// Builds a quote-interval [ReminderEvent] from a fetched quote. Shared by the
-  /// immediate notification, the today layer, and the weekly grid floor so the
-  /// 13 shared fields live in one place; [repeatWeekly] is the only behavioural
-  /// difference (true for grid-floor cells, false for one-shots).
+  /// immediate notification and every pre-rolled queue slot so the shared fields
+  /// live in one place. Quote events are always plain one-shots (the OS fires
+  /// the pre-assigned quote at its time); there is no repeating quote anymore.
   ReminderEvent _buildQuoteEvent({
     required int id,
     required DateTime fireAt,
     required Quote quote,
-    bool repeatWeekly = false,
   }) {
     return ReminderEvent(
       type: ReminderEventType.quoteInterval,
@@ -371,7 +310,6 @@ final class ScheduleCoreRemindersUseCase {
       scheduledAt: fireAt,
       withVibration: true,
       isAlarm: false,
-      repeatWeekly: repeatWeekly,
       routeTarget: NotificationRouteTarget.home,
       scheduledId: id,
       quoteTheme: quote.theme,

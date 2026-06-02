@@ -32,6 +32,20 @@ final class _FakeNotificationHistoryRepository
       const [];
 
   @override
+  Future<List<NotificationHistoryEntry>> listBetween(
+    DateTime from,
+    DateTime until,
+  ) async =>
+      const [];
+
+  @override
+  Future<void> clearBetweenExcept(
+    DateTime from,
+    DateTime until,
+    Set<String> keepTimestamps,
+  ) async {}
+
+  @override
   Future<List<NotificationHistoryEntry>> listForDay(DateTime day) async {
     final start = DateTime(day.year, day.month, day.day);
     final end = start.add(const Duration(days: 1));

@@ -30,19 +30,20 @@ void main() {
 
     await tester.pumpAndSettle();
 
+    final previewFinder = find.text(
+      'Pelo sinal da santa cruz, livrai-nos, Deus, nosso Senhor, dos nossos inimigos.',
+    );
+    // The preview lives in the Aparência section, below the (now always-visible)
+    // notification window block, so scroll it into view first.
+    for (var i = 0; i < 20 && previewFinder.evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+      await tester.pumpAndSettle();
+    }
+
     // Verify initial preview text
-    expect(
-      find.text(
-        'Pelo sinal da santa cruz, livrai-nos, Deus, nosso Senhor, dos nossos inimigos.',
-      ),
-      findsOneWidget,
-    );
+    expect(previewFinder, findsOneWidget);
     
-    final textWidget = tester.widget<Text>(
-      find.text(
-        'Pelo sinal da santa cruz, livrai-nos, Deus, nosso Senhor, dos nossos inimigos.',
-      ),
-    );
+    final textWidget = tester.widget<Text>(previewFinder);
     expect(textWidget.style?.fontSize, 15.0);
   });
 }

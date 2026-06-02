@@ -61,10 +61,11 @@ void main() {
         showImmediate: true,
       );
 
-      // The today layer persists one assignment row per future slot (used as
-      // the per-delivery shuffle-bag cache); the immediate delivery is one of
-      // them, recorded at `now`. From 20:00 the hourly today slots are 20:00 and
-      // 21:00; the 20:00 slot shares its row with the immediate, so 2 distinct.
+      // The queue persists one assignment row per future slot (the per-delivery
+      // shuffle-bag cache); the immediate delivery is recorded at `now`. Default
+      // quiet hours 22:00-07:00 leave 07:00-22:00 active, so from 20:00 the
+      // hourly slots are 20:00 and 21:00; the 20:00 slot shares its row with the
+      // immediate -> 2 distinct rows.
       final allEntries = await history.listForDay(DateTime(2026, 3, 10));
       expect(allEntries, hasLength(2));
       expect(
@@ -81,10 +82,11 @@ void main() {
         showImmediate: false,
       );
 
-      // No immediate delivery, but the today layer still writes its future slot
-      // assignments (08:00..21:00 skipping noon = 13 rows).
+      // No immediate delivery, but the pre-rolled queue still writes this day's
+      // future slot assignments. Hourly cadence over the 07:00-21:00 window
+      // would be 13 slots, but the 7-day runway cap trims each day to 7.
       final todayEntries = await history.listForDay(DateTime(2026, 3, 10));
-      expect(todayEntries, hasLength(13));
+      expect(todayEntries, hasLength(7));
       expect(
         todayEntries.every((entry) => entry.deliveredAt.day == 10),
         isTrue,
@@ -119,7 +121,7 @@ void main() {
       );
 
       final beforeRebuild = await history.listForDay(DateTime(2026, 3, 10));
-      expect(beforeRebuild, hasLength(13));
+      expect(beforeRebuild, hasLength(7));
 
       // Rebuild at exactly 08:00:00 — the 08:00 slot must be reused, not
       // recreated, so the history count stays the same.
@@ -130,7 +132,7 @@ void main() {
       );
 
       final afterRebuild = await history.listForDay(DateTime(2026, 3, 10));
-      expect(afterRebuild, hasLength(13));
+      expect(afterRebuild, hasLength(7));
     });
   });
 }

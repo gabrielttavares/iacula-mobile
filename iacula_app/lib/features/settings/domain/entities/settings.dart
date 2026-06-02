@@ -55,6 +55,10 @@ final class Settings {
   final String quietHoursEnd;
   final bool customPhrasesOnly;
 
+  /// Quiet-hours bounds: notifications are PAUSED between these times and fire
+  /// everywhere else. The quiet period always applies (there is no enable flag in
+  /// the UI); `quietHoursEnabled` is retained only for storage compatibility.
+
   static const defaults = Settings(
     intervalMinutes: 15,
     durationSeconds: 10,
@@ -78,6 +82,9 @@ final class Settings {
     notificationsEnabled: true,
     angelusEnabled: true,
     quietHoursEnabled: false,
+    // Quiet-hours bounds: notifications are paused overnight by default
+    // (22:00-07:00) and fire the rest of the day — the app's long-standing
+    // 07:00-21:00-ish active behavior, now expressed as the complement.
     quietHoursStart: '22:00',
     quietHoursEnd: '07:00',
     customPhrasesOnly: false,

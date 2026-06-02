@@ -1,126 +1,85 @@
-import 'quiet_hours_checker.dart';
+import 'active_window.dart';
 
-/// Default daily active window for quote notifications.
-const int kQuoteWindowStartMinutes = 7 * 60; // 07:00
-const int kQuoteWindowEndMinutes = 21 * 60; // 21:00
-
-/// Weekly grid floor density (cells per weekday). The 7-weekday grid is the
-/// "fires while closed" layer; capping at 5 keeps it at 7 * 5 = 35 cells, well
-/// under the iOS 64-pending limit once the dense today layer and Angelus share
-/// the budget.
-const int kMaxQuoteSlotsPerWeekday = 5;
-
-/// The noon hour (12:00-12:59) is reserved for the Angelus / Regina Caeli alarm.
-/// Quote slots never schedule here, on any layer.
-const int _noonHourStartMinutes = 12 * 60;
-const int _noonHourEndMinutes = 13 * 60;
-
-/// Computes quote notification clock times. Pure and deterministic.
-///
-/// Used by both notification layers:
-/// - [slotMinutesOfDay] returns minutes-of-day for the weekly grid floor.
-/// - [todaySlotsFrom] returns concrete [DateTime]s for the dense "today" layer.
+/// Computes concrete fire times for the pre-rolled multi-day quote queue.
+/// Pure and deterministic.
 final class QuoteSlotPlanner {
   const QuoteSlotPlanner._();
 
-  /// Weekly-grid slot clock-times (minutes-of-day) for any weekday.
-  static List<int> slotMinutesOfDay({
-    required int intervalMinutes,
-    required int windowStartMinutes,
-    required int windowEndMinutes,
-    required bool quietHoursEnabled,
-    required String quietHoursStart,
-    required String quietHoursEnd,
-    required int maxSlots,
-  }) {
-    if (intervalMinutes <= 0 || windowEndMinutes <= windowStartMinutes) {
-      return const <int>[];
-    }
-
-    final slots = <int>[];
-    var cursor = windowStartMinutes;
-    while (cursor <= windowEndMinutes && slots.length < maxSlots) {
-      if (!_isExcluded(
-        minutesOfDay: cursor,
-        quietHoursEnabled: quietHoursEnabled,
-        quietHoursStart: quietHoursStart,
-        quietHoursEnd: quietHoursEnd,
-      )) {
-        slots.add(cursor);
-      }
-      cursor += intervalMinutes;
-    }
-    return slots;
-  }
-
-  /// Concrete fire times for today's dense one-shot layer.
+  /// Concrete fire times for the pre-rolled multi-day quote queue.
   ///
-  /// Walks from the first cadence-aligned slot at or after [now] through the
-  /// window end, on the same calendar day as [now], skipping the noon hour and
-  /// quiet hours. Slots align to the window-start grid (e.g. 07:00 + k*cadence)
-  /// so they land on stable clock times regardless of when the pass runs.
-  static List<DateTime> todaySlotsFrom({
+  /// Produces up to [slotsPerDay] slots for each of the next [days] calendar
+  /// days (today first), spaced by [cadenceMinutes] and confined to [window].
+  /// Today's slots start at the first cadence-aligned time at or after `now`;
+  /// future days start at the window's opening. The noon hour (reserved for
+  /// Angelus) is always skipped. Slots never land in the past and are returned
+  /// strictly increasing.
+  ///
+  /// Slots align to the window-start grid so they sit on stable clock times
+  /// regardless of when the pass runs, which lets a later rebuild reuse an
+  /// already-assigned slot by its timestamp.
+  static List<DateTime> multiDaySlots({
     required DateTime now,
+    required ActiveWindow window,
     required int cadenceMinutes,
-    required int windowStartMinutes,
-    required int windowEndMinutes,
-    required bool quietHoursEnabled,
-    required String quietHoursStart,
-    required String quietHoursEnd,
+    required int slotsPerDay,
+    required int days,
   }) {
-    if (cadenceMinutes <= 0 || windowEndMinutes <= windowStartMinutes) {
+    if (cadenceMinutes <= 0 || slotsPerDay <= 0 || days <= 0) {
       return const <DateTime>[];
     }
 
-    final nowMinutes = now.hour * 60 + now.minute;
-
-    // First aligned slot at or after max(now, windowStart).
-    final lowerBound =
-        nowMinutes > windowStartMinutes ? nowMinutes : windowStartMinutes;
-    var cursor = windowStartMinutes;
-    while (cursor < lowerBound) {
-      cursor += cadenceMinutes;
-    }
-
+    final startHour = window.startMinutes ~/ 60;
+    final startMinute = window.startMinutes % 60;
+    final perDayCount = <DateTime, int>{};
     final slots = <DateTime>[];
-    while (cursor <= windowEndMinutes) {
-      if (!_isExcluded(
-        minutesOfDay: cursor,
-        quietHoursEnabled: quietHoursEnabled,
-        quietHoursStart: quietHoursStart,
-        quietHoursEnd: quietHoursEnd,
-      )) {
-        slots.add(DateTime(
-          now.year,
-          now.month,
-          now.day,
-          cursor ~/ 60,
-          cursor % 60,
-        ));
+
+    // Walk a continuous cadence timeline from the window opening on `now`'s day.
+    // A continuous walk (rather than resetting per day) handles overnight
+    // windows that cross midnight cleanly: the grid simply keeps stepping and
+    // the window membership test decides what is admitted.
+    var cursor = DateTime(now.year, now.month, now.day, startHour, startMinute);
+
+    // The horizon is `days` calendar days from today. An overnight window's
+    // last night spills past midnight into the following morning, so extend the
+    // walk one extra day to reach those after-midnight slots (they are still
+    // bucketed to the last logical day via _windowBucketDay).
+    final overnight = window.startMinutes > window.endMinutes;
+    final horizon = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).add(Duration(days: overnight ? days + 1 : days));
+
+    while (cursor.isBefore(horizon)) {
+      final inPast = cursor.isBefore(now);
+      final inNoonHour = cursor.hour == 12;
+      if (!inPast && !inNoonHour && window.allows(cursor)) {
+        // Attribute the slot to the calendar day the window OPENED on, so an
+        // overnight window's after-midnight slots still count toward the same
+        // logical day's budget rather than starting a new day's allocation.
+        final bucketDay = _windowBucketDay(cursor, window);
+        final used = perDayCount[bucketDay] ?? 0;
+        if (used < slotsPerDay) {
+          slots.add(cursor);
+          perDayCount[bucketDay] = used + 1;
+        }
       }
-      cursor += cadenceMinutes;
+      cursor = cursor.add(Duration(minutes: cadenceMinutes));
     }
+
     return slots;
   }
 
-  static bool _isExcluded({
-    required int minutesOfDay,
-    required bool quietHoursEnabled,
-    required String quietHoursStart,
-    required String quietHoursEnd,
-  }) {
-    // Noon hour is always reserved for Angelus.
-    if (minutesOfDay >= _noonHourStartMinutes &&
-        minutesOfDay < _noonHourEndMinutes) {
-      return true;
+  /// The calendar day a slot's logical "active window day" opened on. For a
+  /// same-day window this is just the slot's date; for an overnight window an
+  /// after-midnight slot belongs to the previous calendar day's window.
+  static DateTime _windowBucketDay(DateTime slot, ActiveWindow window) {
+    final overnight = window.startMinutes > window.endMinutes;
+    final minutesOfDay = slot.hour * 60 + slot.minute;
+    if (overnight && minutesOfDay < window.endMinutes) {
+      final previous = slot.subtract(const Duration(days: 1));
+      return DateTime(previous.year, previous.month, previous.day);
     }
-    if (!quietHoursEnabled) return false;
-    // Reference date is arbitrary: the quiet-hours check only reads hour/minute.
-    final referenceDate = DateTime(2026);
-    return QuietHoursChecker.isDuringQuietHours(
-      referenceDate.add(Duration(minutes: minutesOfDay)),
-      quietHoursStart,
-      quietHoursEnd,
-    );
+    return DateTime(slot.year, slot.month, slot.day);
   }
 }

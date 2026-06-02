@@ -85,11 +85,40 @@ final class _InMemoryHistoryRepository
     return entries
         .where(
           (entry) =>
-              entry.deliveredAt.isAfter(instant) &&
+              !entry.deliveredAt.isBefore(instant) &&
               entry.deliveredAt.isBefore(end),
         )
         .toList()
       ..sort((a, b) => a.deliveredAt.compareTo(b.deliveredAt));
+  }
+
+  @override
+  Future<List<NotificationHistoryEntry>> listBetween(
+    DateTime from,
+    DateTime until,
+  ) async {
+    return entries
+        .where(
+          (entry) =>
+              !entry.deliveredAt.isBefore(from) &&
+              !entry.deliveredAt.isAfter(until),
+        )
+        .toList()
+      ..sort((a, b) => a.deliveredAt.compareTo(b.deliveredAt));
+  }
+
+  @override
+  Future<void> clearBetweenExcept(
+    DateTime from,
+    DateTime until,
+    Set<String> keepTimestamps,
+  ) async {
+    entries.removeWhere(
+      (entry) =>
+          entry.deliveredAt.isAfter(from) &&
+          !entry.deliveredAt.isAfter(until) &&
+          !keepTimestamps.contains(entry.deliveredAt.toIso8601String()),
+    );
   }
 }
 
@@ -206,18 +235,18 @@ Settings _baseSettings({
   int intervalMinutes = 30,
   bool notificationsEnabled = true,
   bool angelusEnabled = true,
-  bool quietHoursEnabled = false,
-  String quietHoursStart = '22:00',
-  String quietHoursEnd = '07:00',
+  // Quiet hours: notifications are PAUSED in this range and fire everywhere
+  // else. Default 22:00-07:00 keeps the daytime (incl. noon) active.
+  String quietStart = '22:00',
+  String quietEnd = '07:00',
 }) => Settings.defaults.copyWith(
   intervalMinutes: intervalMinutes,
   language: 'pt-br',
   onboardingCompleted: true,
   notificationsEnabled: notificationsEnabled,
   angelusEnabled: angelusEnabled,
-  quietHoursEnabled: quietHoursEnabled,
-  quietHoursStart: quietHoursStart,
-  quietHoursEnd: quietHoursEnd,
+  quietHoursStart: quietStart,
+  quietHoursEnd: quietEnd,
 );
 
 RebuildNotificationsUseCase _makeRebuild(
@@ -282,14 +311,15 @@ RebuildNotificationsUseCase _makeRebuildWithQuoteUseCase(
 
 void main() {
   group('Full notification scheduling pipeline', () {
-    test('schedules a dense today layer plus a weekly grid floor', () async {
+    test('schedules a single multi-day queue covering today and ahead',
+        () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
 
       final now = DateTime(2026, 5, 12, 8, 0); // Tuesday (weekday 2)
       await rebuild.call(
-        _baseSettings(intervalMinutes: 180), // Suave -> 2h today cadence
+        _baseSettings(intervalMinutes: 180), // Suave -> 2h cadence
         isEasterSeason: false,
         showImmediate: false,
         now: now,
@@ -299,24 +329,21 @@ void main() {
           .where((e) => e.type == ReminderEventType.quoteInterval)
           .toList();
 
-      // Today layer: one-shots in 9100+, all on today, not weekly-repeating.
-      final todayLayer =
-          quoteEvents.where((e) => e.scheduledId! >= 9100).toList();
-      expect(todayLayer, isNotEmpty);
-      expect(todayLayer.every((e) => !e.repeatWeekly), isTrue);
-      expect(todayLayer.every((e) => e.scheduledAt.day == 12), isTrue);
-
-      // Grid floor: weekly repeats in 9000-9099, covering the other 6 weekdays.
-      final gridFloor = quoteEvents
-          .where((e) => e.scheduledId! >= 9000 && e.scheduledId! < 9100)
-          .toList();
-      expect(gridFloor.every((e) => e.repeatWeekly), isTrue);
-      // 6 weekdays x 5 slots.
-      expect(gridFloor.length, 30);
-      // Today's weekday is not in the floor (it is covered by the today layer).
+      expect(quoteEvents, isNotEmpty);
+      // All quotes are plain one-shots in the single contiguous block.
+      expect(quoteEvents.every((e) => !e.repeatWeekly), isTrue);
       expect(
-        gridFloor.every((e) => e.scheduledAt.weekday != now.weekday),
+        quoteEvents.every(
+          (e) => ScheduleCoreRemindersUseCase.isQuoteReminderId(e.scheduledId!),
+        ),
         isTrue,
+      );
+      // Today is covered (the old skip-today bug is gone)...
+      expect(quoteEvents.any((e) => e.scheduledAt.day == now.day), isTrue);
+      // ...and so are future days.
+      expect(
+        quoteEvents.map((e) => e.scheduledAt.day).toSet().length,
+        greaterThan(1),
       );
     });
 
@@ -394,19 +421,19 @@ void main() {
     });
 
     test(
-      'respects quiet hours — skips notifications during quiet window',
+      'quiet hours confine notifications to the waking hours',
       () async {
         final scheduler = InMemoryNotificationSchedulerRepository();
         final history = _InMemoryHistoryRepository();
         final rebuild = _makeRebuild(scheduler, history);
 
         final now = DateTime(2026, 5, 12, 20, 0);
+        // Quiet 22:00-07:00, so notifications fire only 07:00-21:59.
         await rebuild.call(
           _baseSettings(
             intervalMinutes: 60,
-            quietHoursEnabled: true,
-            quietHoursStart: '22:00',
-            quietHoursEnd: '07:00',
+            quietStart: '22:00',
+            quietEnd: '07:00',
           ),
           isEasterSeason: false,
           showImmediate: false,
@@ -419,15 +446,14 @@ void main() {
 
         expect(quoteEvents, isNotEmpty);
 
-        // No cell may fire inside the 22:00-06:59 quiet window, on any weekday.
+        // No quote may fire inside the 22:00-06:59 quiet range, on any day.
         for (final event in quoteEvents) {
           final hour = event.scheduledAt.hour;
           final inQuietHours = hour >= 22 || hour < 7;
           expect(
             inQuietHours,
             isFalse,
-            reason:
-                'Notification at ${event.scheduledAt} is during quiet hours',
+            reason: 'Notification at ${event.scheduledAt} is in quiet hours',
           );
         }
       },
@@ -515,21 +541,21 @@ void main() {
         );
         expect(hasImmediate, isTrue);
 
-        // The immediate delivery is recorded at `now`, alongside the today
-        // layer's future slot assignments (the per-delivery shuffle-bag cache).
+        // The immediate delivery is recorded at `now`, alongside the queue's
+        // future slot assignments (the per-delivery shuffle-bag cache).
         expect(
           history.entries.where((entry) => entry.deliveredAt == now),
           isNotEmpty,
         );
-        // Today-layer rows exist beyond the immediate one (future slots).
+        // Future slot rows exist beyond the immediate one, spanning multiple
+        // days now that the queue pre-rolls ahead.
         expect(
           history.entries.where((entry) => entry.deliveredAt.isAfter(now)),
           isNotEmpty,
         );
-        // All rows are today's; the grid (other weekdays) writes none.
         expect(
-          history.entries.every((entry) => entry.deliveredAt.day == now.day),
-          isTrue,
+          history.entries.map((entry) => entry.deliveredAt.day).toSet().length,
+          greaterThan(1),
         );
       },
     );
@@ -550,14 +576,12 @@ void main() {
           .map((e) => e.scheduledId!)
           .toSet();
 
-      // Grid floor ids in 9000..9034; today-layer ids in 9100..9126.
+      // All quote ids live in the single contiguous block from 9000.
       for (final id in quoteIds) {
-        final inGrid = id >= 9000 && id < 9000 + 7 * 5;
-        final inTodayLayer = id >= 9100 && id < 9100 + 27;
         expect(
-          inGrid || inTodayLayer,
+          ScheduleCoreRemindersUseCase.isQuoteReminderId(id),
           isTrue,
-          reason: 'id $id outside both reserved quote ranges',
+          reason: 'id $id outside the reserved quote range',
         );
       }
     });
@@ -731,10 +755,11 @@ void main() {
       expect(phraseEvents.first.body, 'Minha frase pessoal');
     });
 
-    test('denser preset schedules more today-layer one-shots', () async {
+    test('denser preset schedules at least as many quotes on day one',
+        () async {
       final now = DateTime(2026, 5, 12, 7, 0);
 
-      Future<int> todayCountFor(int intervalMinutes) async {
+      Future<int> firstDayCountFor(int intervalMinutes) async {
         final scheduler = InMemoryNotificationSchedulerRepository();
         final history = _InMemoryHistoryRepository();
         final rebuild = _makeRebuild(scheduler, history);
@@ -747,14 +772,15 @@ void main() {
         return scheduler.events
             .where((e) =>
                 e.type == ReminderEventType.quoteInterval &&
-                e.scheduledId! >= 9100)
+                e.scheduledAt.day == now.day)
             .length;
       }
 
-      // Suave (180 -> 2h cadence) vs Frequente (60 -> hourly).
-      final suave = await todayCountFor(180);
-      final frequente = await todayCountFor(60);
-      expect(frequente, greaterThan(suave));
+      // Suave (180 -> 2h cadence) vs Frequente (60 -> hourly). Frequente packs
+      // at least as many into day one (capped by the runway budget).
+      final suave = await firstDayCountFor(180);
+      final frequente = await firstDayCountFor(60);
+      expect(frequente, greaterThanOrEqualTo(suave));
     });
 
     test('all notification types coexist without ID collision', () async {
@@ -808,18 +834,20 @@ void main() {
       expect(types, contains(ReminderEventType.customPhrase));
     });
 
-    test('Angelus not scheduled during quiet hours at noon', () async {
+    test('Angelus not scheduled when noon is outside the active window',
+        () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
       final rebuild = _makeRebuild(scheduler, history);
 
       final now = DateTime(2026, 5, 12, 8, 0);
+      // Quiet 11:00-07:00 -> allowed only 07:00-11:00, which excludes noon, so
+      // the Angelus repeat is suppressed.
       await rebuild.call(
         _baseSettings(
           angelusEnabled: true,
-          quietHoursEnabled: true,
-          quietHoursStart: '11:00',
-          quietHoursEnd: '13:00',
+          quietStart: '11:00',
+          quietEnd: '07:00',
         ),
         isEasterSeason: false,
         now: now,
@@ -869,8 +897,8 @@ void main() {
   });
 
 
-  group('Weekly-grid quote scheduling', () {
-    test('only the today layer writes future history rows, never the grid',
+  group('Pre-rolled multi-day quote scheduling', () {
+    test('future history rows span multiple days (closed-app coverage)',
         () async {
       final scheduler = InMemoryNotificationSchedulerRepository();
       final history = _InMemoryHistoryRepository();
@@ -888,15 +916,14 @@ void main() {
       final futureEntries = history.entries
           .where((entry) => entry.deliveredAt.isAfter(now))
           .toList();
-      // The today layer caches its future slot assignments, so future rows
-      // exist ...
       expect(futureEntries, isNotEmpty);
-      // ... but every one is on TODAY; the weekly grid (other weekdays) writes
-      // no history rows, so nothing lands on a different day.
+      // The queue pre-rolls ahead, so future assignment rows now land on more
+      // than one calendar day — this is what gives a closed app coverage past
+      // today (the old skip-today gap is gone).
       expect(
-        futureEntries.every((entry) => entry.deliveredAt.day == now.day),
-        isTrue,
-        reason: 'weekly-grid cells must not predict cross-day history rows',
+        futureEntries.map((entry) => entry.deliveredAt.day).toSet().length,
+        greaterThan(1),
+        reason: 'pre-rolled queue must predict cross-day history rows',
       );
     });
 
