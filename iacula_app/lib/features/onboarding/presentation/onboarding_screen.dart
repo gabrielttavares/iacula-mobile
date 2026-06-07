@@ -6,10 +6,11 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/shell_screen.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
-import '../../../core/presentation/widgets/interval_selector.dart';
+import '../../../core/presentation/widgets/cadence_preset_selector.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
+import '../../settings/domain/jaculatoria_cadence_preset.dart';
 import '../../settings/domain/jaculatoria_interval.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -291,6 +292,9 @@ class _NotificationSetupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cadencePreset =
+        JaculatoriaCadencePreset.fromIntervalMinutes(selectedInterval);
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 460),
@@ -333,16 +337,26 @@ class _NotificationSetupPage extends StatelessWidget {
                   ),
                   const SizedBox(height: IaculaSpacing.sm),
                   Text(
-                    'Você vai receber uma notificação ${formatJaculatoriaIntervalEveryPhrase(selectedInterval)} com uma jaculatória diferente.',
+                    'Você vai receber uma notificação ${cadencePreset.cadencePhrasePtBr} com uma jaculatória diferente.',
                     textAlign: TextAlign.center,
                     style: context.textStyles.secondary,
                   ),
                   const SizedBox(height: IaculaSpacing.md),
-                  IntervalSelector(
-                    selectedMinutes: selectedInterval,
-                    onChanged: onIntervalChanged,
-                    showCustomLabel: false,
+                  CadencePresetSelector(
+                    selected: cadencePreset,
+                    onChanged: (preset) =>
+                        onIntervalChanged(preset.intervalMinutes),
                   ),
+                  if (cadencePreset.isClosedAppCapConstrained) ...[
+                    const SizedBox(height: IaculaSpacing.sm),
+                    Text(
+                      closedAppCadenceNotePtBr(),
+                      textAlign: TextAlign.center,
+                      style: context.textStyles.secondary.copyWith(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

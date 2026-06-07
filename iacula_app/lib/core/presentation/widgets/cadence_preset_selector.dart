@@ -1,8 +1,27 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../../../features/settings/domain/jaculatoria_cadence_preset.dart';
 import '../../theme/cupertino_tokens.dart';
+
+/// Honest, platform-specific explanation of what happens to a short cadence
+/// (see [JaculatoriaCadencePreset.isClosedAppCapConstrained]) while the app
+/// stays closed. iOS holds a hard cap on pending notifications, so the tight
+/// spacing only fully applies while the app is in use; closed, the day receives
+/// a reduced number spread out. Android keeps delivering at the chosen cadence
+/// for a few days, then at half cadence until reopened. Shared by Settings and
+/// Onboarding so both surfaces tell the user the same thing.
+String closedAppCadenceNotePtBr() {
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    return 'Você recebe nessa frequência mesmo com o app fechado por alguns '
+        'dias; depois disso, a frequência diminui pela metade até você abrir '
+        'o app de novo.';
+  }
+  return 'No iPhone, essa frequência vale enquanto você usa o app. Com ele '
+      'fechado, você recebe algumas jaculatórias por dia, espalhadas ao '
+      'longo do dia.';
+}
 
 /// A grid of selectable preset buttons for jaculatória notification cadence.
 ///
