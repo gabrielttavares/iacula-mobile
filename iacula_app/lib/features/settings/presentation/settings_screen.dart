@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -172,6 +173,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             selected: cadencePreset,
                             onChanged: (preset) => setState(() => _intervalMinutes = preset.intervalMinutes),
                           ),
+                          if (cadencePreset.isClosedAppCapConstrained) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              _closedAppCadenceNote(),
+                              style: context.textStyles.secondary.copyWith(
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                           const SizedBox(height: IaculaRadius.elementSpacing),
                           // Quiet hours — no toggle: the user picks when to pause
                           // and resume notifications. Notifications fire every
@@ -458,6 +468,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(label, style: context.textStyles.secondary),
     );
+  }
+
+  /// Honest, platform-specific explanation of what happens to a short cadence
+  /// while the app stays closed. iOS holds a hard cap on pending notifications,
+  /// so the tight spacing only fully applies while the app is in use; closed,
+  /// the day receives a reduced number spread out. Android keeps delivering
+  /// without that cap.
+  String _closedAppCadenceNote() {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return 'Você recebe nessa frequência mesmo com o app fechado por alguns '
+          'dias; depois disso, a frequência diminui pela metade até você abrir '
+          'o app de novo.';
+    }
+    return 'No iPhone, essa frequência vale enquanto você usa o app. Com ele '
+        'fechado, você recebe algumas jaculatórias por dia, espalhadas ao '
+        'longo do dia.';
   }
 
   Widget _buildPermissionWarning(BuildContext context) {

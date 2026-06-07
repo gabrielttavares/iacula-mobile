@@ -16,6 +16,7 @@ import '../../domain/repositories/last_delivered_card_repository.dart';
 import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 import '../../domain/services/active_window.dart';
+import '../../domain/services/notification_capacity_policy.dart';
 import '../../domain/services/quote_slot_planner.dart';
 
 typedef QuoteFetcher =
@@ -23,14 +24,16 @@ typedef QuoteFetcher =
 
 final class ScheduleCoreRemindersUseCase {
   /// First id of the single contiguous quote one-shot block. The pre-rolled
-  /// multi-day queue occupies [quoteScheduleIdBase] .. +[maxQueuedQuoteReminders).
+  /// multi-day queue occupies [quoteScheduleIdBase] .. +[quoteIdBlockSize).
   static const int quoteScheduleIdBase = 9000;
-  static const int maxQueuedQuoteReminders = 64;
 
-  /// Closed-app coverage guarantee: pre-roll quotes for this many days ahead so
-  /// a never-opened app keeps delivering for at least a week. The per-day quote
-  /// count is the shared quote budget divided across these days (see below).
-  static const int runwayDays = 7;
+  /// Size of the contiguous quote id address space (and the [isQuoteReminderId]
+  /// range). Deliberately oversized and FIXED — independent of any capacity
+  /// policy — so tuning the cadence, runway, or tail never shifts the cancelable
+  /// id range and orphans previously-scheduled notifications. It only needs to
+  /// stay larger than any plausible slot count on any platform (Android's
+  /// worst-case multi-day dense + tail is well under this).
+  static const int quoteIdBlockSize = 1024;
 
   /// Quotes never drop to zero even under heavy alarm load: always schedule at
   /// least this many per day so the app's core feature keeps a pulse.
@@ -44,21 +47,24 @@ final class ScheduleCoreRemindersUseCase {
   /// Whether [id] belongs to the rotating quote one-shot block.
   static bool isQuoteReminderId(int id) =>
       id >= quoteScheduleIdBase &&
-      id < quoteScheduleIdBase + maxQueuedQuoteReminders;
+      id < quoteScheduleIdBase + quoteIdBlockSize;
 
   const ScheduleCoreRemindersUseCase(
     this._scheduler, {
     required QuoteFetcher quoteFetcher,
     required NotificationHistoryRepository notificationHistoryRepository,
     required LastDeliveredCardRepository lastDeliveredCardRepository,
+    NotificationCapacityPolicy capacityPolicy = NotificationCapacityPolicy.ios,
   }) : _quoteFetcher = quoteFetcher,
        _notificationHistoryRepository = notificationHistoryRepository,
-       _lastDeliveredCardRepository = lastDeliveredCardRepository;
+       _lastDeliveredCardRepository = lastDeliveredCardRepository,
+       _capacityPolicy = capacityPolicy;
 
   final NotificationSchedulerRepository _scheduler;
   final QuoteFetcher _quoteFetcher;
   final NotificationHistoryRepository _notificationHistoryRepository;
   final LastDeliveredCardRepository _lastDeliveredCardRepository;
+  final NotificationCapacityPolicy _capacityPolicy;
 
   Future<void> call(
     Settings settings, {
@@ -147,48 +153,64 @@ final class ScheduleCoreRemindersUseCase {
     // Layer B (weekly grid that skipped today). Every day, including today, is
     // now covered identically whether or not the app is opened.
 
-    // Quote budget = the 64 cap minus everything reserved for higher-priority
-    // (sacred) consumers and this pass's own Angelus + immediate slots. Quotes
-    // absorb whatever is left; under heavy alarm load this shrinks toward the
-    // per-day floor rather than pushing past the cap.
+    // Quote budget = the platform's pending capacity minus everything reserved
+    // for higher-priority (sacred) consumers and this pass's own Angelus +
+    // immediate slots. Quotes absorb whatever is left; under heavy alarm load
+    // this shrinks toward the per-day floor rather than pushing past the cap.
     final angelusOwnSlot = settings.angelusEnabled ? 1 : 0;
     final immediateOwnSlot = showImmediate ? 1 : 0;
     final quoteSlotBudget = max(
       0,
-      maxQueuedQuoteReminders -
+      _capacityPolicy.pendingQuoteCapacity -
           reservedForOthers -
           angelusOwnSlot -
           immediateOwnSlot,
     );
 
-    // Per-day count honors the user's cadence but is capped so the budget
-    // stretches across the whole runway; never below the floor unless the budget
-    // is fully exhausted.
-    final naturalSlotsPerDay = effectiveWindow.slotCount(
-      cadenceMinutes: preset.todayCadenceMinutes,
-    );
-    final runwayCap = quoteSlotBudget ~/ runwayDays;
-    final slotsPerDay = quoteSlotBudget <= 0
-        ? 0
-        : max(minQuotesPerDay, min(naturalSlotsPerDay, runwayCap));
+    final denseRunwayDays = _capacityPolicy.denseRunwayDays;
+    final cadenceMinutes = preset.todayCadenceMinutes;
+    final naturalSlotsPerDay =
+        effectiveWindow.slotCount(cadenceMinutes: cadenceMinutes);
 
-    final plannedSlots = QuoteSlotPlanner.multiDaySlots(
+    // Per-day count. On a capped platform (iOS) the budget is spread across the
+    // runway so the cadence is thinned to fit the 64-pending cap. On an uncapped
+    // platform (Android) the full cadence is honored each day. A single planner
+    // call covers both: the policy's tail params collapse to a plain multi-day
+    // plan on iOS (tailHorizon == denseRunway) and add the reduced tail on
+    // Android, so a long-closed app keeps delivering.
+    final int slotsPerDay;
+    if (quoteSlotBudget <= 0) {
+      slotsPerDay = 0;
+    } else if (_capacityPolicy.spreadAcrossRunway) {
+      final runwayCap = quoteSlotBudget ~/ denseRunwayDays;
+      slotsPerDay = max(minQuotesPerDay, min(naturalSlotsPerDay, runwayCap));
+    } else {
+      slotsPerDay = max(minQuotesPerDay, naturalSlotsPerDay);
+    }
+
+    final plannedSlots = QuoteSlotPlanner.multiDaySlotsWithTail(
       now: current,
       window: effectiveWindow,
-      cadenceMinutes: preset.todayCadenceMinutes,
+      cadenceMinutes: cadenceMinutes,
       slotsPerDay: slotsPerDay,
-      days: runwayDays,
+      denseRunwayDays: denseRunwayDays,
+      tailCadenceMinutes: _capacityPolicy.tailCadenceMinutes(cadenceMinutes),
+      tailHorizonDays: _capacityPolicy.tailHorizonDays,
     ).map((slot) => slot.flooredToMinute()).toList();
 
-    // Cap to the absolute budget (defensive: per-day math already keeps us under).
+    // Cap to the absolute budget (defensive: per-day math already keeps us under
+    // on iOS; on Android this clamps an unusually dense cadence to the block).
     final scheduledSlots = plannedSlots.take(quoteSlotBudget).toList();
 
-    // Reuse/prune horizon = the full runway from `current`, independent of where
-    // this pass's slots happen to end. Anchoring to the runway (not the last
-    // scheduled slot) means a pass that shrinks the queue — e.g. the window
-    // narrowed — still reaches and prunes stale rows left by an earlier, wider
-    // pass that lay beyond the new last slot.
-    final horizonEnd = current.add(const Duration(days: runwayDays + 1));
+    // Reuse/prune horizon = the furthest day any slot can reach (the tail
+    // horizon, which equals the dense runway when there is no tail), independent
+    // of where this pass's slots happen to end. Anchoring to the horizon (not
+    // the last scheduled slot) means a pass that shrinks the queue — e.g. the
+    // window narrowed — still reaches and prunes stale rows left by an earlier,
+    // wider pass that lay beyond the new last slot.
+    final horizonEnd = current.add(
+      Duration(days: _capacityPolicy.tailHorizonDays + 1),
+    );
 
     // Assignment cache: a slot (identified by its floored fire DateTime) is
     // assigned a quote once and persisted as a future history row. While that
@@ -250,8 +272,9 @@ final class ScheduleCoreRemindersUseCase {
 
     debugPrint(
       '[ScheduleCoreRemindersUseCase] registered pre-rolled queue: '
-      '${scheduledSlots.length} one-shots over $runwayDays days '
-      '($slotsPerDay/day cap, cadence=${preset.todayCadenceMinutes}m, '
+      '${scheduledSlots.length} one-shots, dense=${denseRunwayDays}d '
+      'tailHorizon=${_capacityPolicy.tailHorizonDays}d '
+      '(cadence=${cadenceMinutes}m, spread=${_capacityPolicy.spreadAcrossRunway}, '
       'budget=$quoteSlotBudget)',
     );
 

@@ -23,11 +23,18 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('renders all four presets in a density-ordered 2x2 grid',
+  testWidgets('renders all six presets in a density-ordered 3x2 grid',
       (tester) async {
     await pumpSelector(tester, selected: JaculatoriaCadencePreset.frequente);
 
-    for (final label in ['Suave', 'Regular', 'Frequente', 'Mais frequente']) {
+    for (final label in [
+      'Suave',
+      'Regular',
+      'Frequente',
+      'Mais frequente',
+      'Intenso',
+      'Muito intenso',
+    ]) {
       expect(find.text(label), findsOneWidget);
     }
 
@@ -35,14 +42,20 @@ void main() {
     final regularCenter = tester.getCenter(find.text('Regular'));
     final frequenteCenter = tester.getCenter(find.text('Frequente'));
     final maisCenter = tester.getCenter(find.text('Mais frequente'));
+    final intensoCenter = tester.getCenter(find.text('Intenso'));
+    final muitoCenter = tester.getCenter(find.text('Muito intenso'));
 
-    // 2x2 grid in increasing-density reading order:
-    // row 1: Suave (left) , Regular (right)
-    // row 2: Frequente (left), Mais frequente (right)
-    expect(suaveCenter.dx, lessThan(regularCenter.dx)); // row 1 left-to-right
-    expect(frequenteCenter.dx, lessThan(maisCenter.dx)); // row 2 left-to-right
-    expect(suaveCenter.dy, lessThan(frequenteCenter.dy)); // left column top-to-bottom
-    expect(regularCenter.dy, lessThan(maisCenter.dy)); // right column top-to-bottom
+    // 3x2 grid in increasing-density reading order:
+    // row 1: Suave (left)     , Regular (right)
+    // row 2: Frequente (left)  , Mais frequente (right)
+    // row 3: Intenso (left)    , Muito intenso (right)
+    expect(suaveCenter.dx, lessThan(regularCenter.dx));
+    expect(frequenteCenter.dx, lessThan(maisCenter.dx));
+    expect(intensoCenter.dx, lessThan(muitoCenter.dx));
+    expect(suaveCenter.dy, lessThan(frequenteCenter.dy));
+    expect(frequenteCenter.dy, lessThan(intensoCenter.dy));
+    expect(regularCenter.dy, lessThan(maisCenter.dy));
+    expect(maisCenter.dy, lessThan(muitoCenter.dy));
   });
 
   testWidgets('Mais frequente card shows the 30-min cadence subtitle',
@@ -53,5 +66,15 @@ void main() {
     );
 
     expect(find.text('A cada 30min'), findsOneWidget);
+  });
+
+  testWidgets('Muito intenso card shows the 10-min cadence subtitle',
+      (tester) async {
+    await pumpSelector(
+      tester,
+      selected: JaculatoriaCadencePreset.muitoIntenso,
+    );
+
+    expect(find.text('A cada 10min'), findsOneWidget);
   });
 }

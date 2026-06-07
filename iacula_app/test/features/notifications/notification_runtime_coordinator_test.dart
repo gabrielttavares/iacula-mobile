@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/notifications/application/services/notification_runtime_coordinator.dart';
+import 'package:iacula_app/features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 
 void main() {
@@ -73,10 +74,14 @@ void main() {
     });
 
     test('rebuilds when pending IDs are all outside the quote range', () async {
-      // 9200 is past the contiguous quote block (9000-9063). Such ids are not
-      // quotes, so the app still has no live quotes and must rebuild — the range
-      // check must be bounded on both ends.
-      delegate.nextPendingIds = [200, 8999, 9200];
+      // An id just past the contiguous quote block is not a quote, so the app
+      // still has no live quotes and must rebuild — the range check must be
+      // bounded on both ends. Expressed relative to the block size so it stays
+      // correct if the block grows.
+      const pastBlockId = ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
+          ScheduleCoreRemindersUseCase.quoteIdBlockSize +
+          1;
+      delegate.nextPendingIds = [200, 8999, pastBlockId];
 
       await coordinator.handleAppResume();
 

@@ -36,81 +36,61 @@ class PrayerCatalogDetailScreen extends ConsumerStatefulWidget {
 class _PrayerCatalogDetailScreenState
     extends ConsumerState<PrayerCatalogDetailScreen> {
   String _selectedLanguage = 'pt-br';
-  Future<double>? _fontSizeFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadFontSize();
-  }
-
-  void _loadFontSize() {
-    _fontSizeFuture = ref
-        .read(getSettingsUseCaseProvider)
-        .call()
-        .then((settings) => settings.prayerFontSize);
-  }
 
   @override
   Widget build(BuildContext context) {
     final detailAsync = ref.watch(_prayerDetailProvider(widget.entry.slug));
+    final fontSize = ref.watch(prayerFontSizeProvider).valueOrNull ?? 15.0;
+    final navigationTitle = _resolveNavigationTitle(detailAsync);
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
-      child: FutureBuilder<double>(
-        future: _fontSizeFuture,
-        builder: (context, fontSizeSnapshot) {
-          final fontSize = fontSizeSnapshot.data ?? 15.0;
-          final navigationTitle = _resolveNavigationTitle(detailAsync);
-
-          return CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              CupertinoSliverNavigationBar(
-                backgroundColor: context.colors.background,
-                border: null,
-                largeTitle: const SizedBox.shrink(),
-                middle: Text(
-                  navigationTitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                alwaysShowMiddle: false,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _PrayerAlarmButton(entry: widget.entry),
-                    _PrayerBookmarkButton(entry: widget.entry),
-                  ],
-                ),
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          CupertinoSliverNavigationBar(
+            backgroundColor: context.colors.background,
+            border: null,
+            largeTitle: const SizedBox.shrink(),
+            middle: Text(
+              navigationTitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            alwaysShowMiddle: false,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _PrayerAlarmButton(entry: widget.entry),
+                _PrayerBookmarkButton(entry: widget.entry),
+              ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                IaculaSpacing.md,
+                0,
+                IaculaSpacing.md,
+                IaculaSpacing.sm,
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    IaculaSpacing.md,
-                    0,
-                    IaculaSpacing.md,
-                    IaculaSpacing.sm,
-                  ),
-                  child: Text(
-                    navigationTitle,
-                    style: CupertinoTheme.of(context)
-                        .textTheme
-                        .navLargeTitleTextStyle,
-                  ),
-                ),
+              child: Text(
+                navigationTitle,
+                style: CupertinoTheme.of(context)
+                    .textTheme
+                    .navLargeTitleTextStyle,
               ),
-              ...detailAsync.when(
-                loading: () => _buildLoadingContentSlivers(),
-                error: (error, stackTrace) => _buildErrorContentSlivers(),
-                data: (detail) => _buildLoadedContentSlivers(
-                  detail: detail,
-                  fontSize: fontSize,
-                ),
-              ),
-            ],
-          );
-        },
+            ),
+          ),
+          ...detailAsync.when(
+            loading: () => _buildLoadingContentSlivers(),
+            error: (error, stackTrace) => _buildErrorContentSlivers(),
+            data: (detail) => _buildLoadedContentSlivers(
+              detail: detail,
+              fontSize: fontSize,
+            ),
+          ),
+        ],
       ),
     );
   }

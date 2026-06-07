@@ -70,6 +70,53 @@ final class QuoteSlotPlanner {
     return slots;
   }
 
+  /// Dense leading days at [cadenceMinutes] followed by a reduced-cadence tail
+  /// at [tailCadenceMinutes], out to [tailHorizonDays].
+  ///
+  /// Days `[0, denseRunwayDays)` are planned exactly like [multiDaySlots] at the
+  /// full cadence. Days `[denseRunwayDays, tailHorizonDays)` are planned at the
+  /// wider tail cadence so a long-closed app keeps delivering (gently) instead
+  /// of going silent. When [tailHorizonDays] is not greater than
+  /// [denseRunwayDays] there is no tail and the result equals [multiDaySlots].
+  /// Used by platforms with no pending-notification cap (Android).
+  static List<DateTime> multiDaySlotsWithTail({
+    required DateTime now,
+    required ActiveWindow window,
+    required int cadenceMinutes,
+    required int slotsPerDay,
+    required int denseRunwayDays,
+    required int tailCadenceMinutes,
+    required int tailHorizonDays,
+  }) {
+    final dense = multiDaySlots(
+      now: now,
+      window: window,
+      cadenceMinutes: cadenceMinutes,
+      slotsPerDay: slotsPerDay,
+      days: denseRunwayDays,
+    );
+
+    if (tailHorizonDays <= denseRunwayDays || tailCadenceMinutes <= 0) {
+      return dense;
+    }
+
+    // The tail walks the wider cadence over the full horizon, then keeps only
+    // the days beyond the dense runway. Planning over the full horizon (rather
+    // than starting mid-window) keeps the tail aligned to the same window-start
+    // grid as the dense days, so slot timestamps stay stable across rebuilds.
+    final tailStartDay = DateTime(now.year, now.month, now.day)
+        .add(Duration(days: denseRunwayDays));
+    final tail = multiDaySlots(
+      now: now,
+      window: window,
+      cadenceMinutes: tailCadenceMinutes,
+      slotsPerDay: slotsPerDay,
+      days: tailHorizonDays,
+    ).where((slot) => !slot.isBefore(tailStartDay)).toList();
+
+    return [...dense, ...tail];
+  }
+
   /// The calendar day a slot's logical "active window day" opened on. For a
   /// same-day window this is just the slot's date; for an overnight window an
   /// after-midnight slot belongs to the previous calendar day's window.

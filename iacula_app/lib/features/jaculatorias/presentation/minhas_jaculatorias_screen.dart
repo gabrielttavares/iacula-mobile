@@ -87,6 +87,14 @@ class _MinhasJaculatoriasScreenState
                       ),
                       const SizedBox(height: IaculaSpacing.lg),
                       _SectionHeader(title: 'FRASES PESSOAIS'),
+                      _AddButton(
+                        label: 'Adicionar frase',
+                        onTap: () => Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const EditTextPhraseScreen(),
+                          ),
+                        ),
+                      ),
                       if (textPhrases.isEmpty)
                         _EmptySectionHint(
                           message: 'Nenhuma frase pessoal ainda',
@@ -106,14 +114,6 @@ class _MinhasJaculatoriasScreenState
                             ),
                           ),
                         ),
-                      _AddButton(
-                        label: 'Adicionar frase',
-                        onTap: () => Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const EditTextPhraseScreen(),
-                          ),
-                        ),
-                      ),
                       const SizedBox(height: IaculaSpacing.lg),
                       Center(
                         child: CupertinoButton(

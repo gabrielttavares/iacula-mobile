@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
@@ -19,6 +20,7 @@ import '../../features/liturgical/infrastructure/services/fallback_liturgical_se
 import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
 import '../../features/prayer_intentions/application/use_cases/schedule_intention_notifications_use_case.dart';
 import '../../features/notifications/domain/repositories/last_delivered_card_repository.dart';
+import '../../features/notifications/domain/services/notification_capacity_policy.dart';
 import '../../features/notifications/domain/repositories/notification_history_repository.dart';
 import '../../features/notifications/domain/repositories/notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
@@ -47,6 +49,7 @@ import '../../features/quotes/infrastructure/repositories/in_memory_disabled_quo
 import '../../features/quotes/infrastructure/repositories/in_memory_quote_indices_repository.dart';
 import '../../features/settings/application/use_cases/get_settings_use_case.dart';
 import '../../features/settings/application/use_cases/update_settings_use_case.dart';
+import '../../features/settings/domain/entities/settings.dart';
 import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../features/settings/infrastructure/repositories/in_memory_settings_repository.dart';
 import '../../features/storage/domain/repositories/media_catalog_repository.dart';
@@ -383,6 +386,27 @@ final updateSettingsUseCaseProvider = Provider<UpdateSettingsUseCase>((ref) {
   return UpdateSettingsUseCase(ref.watch(settingsRepositoryProvider));
 });
 
+/// Cached snapshot of the user's settings, shared by every screen that needs to
+/// react to a settings change. Reads storage once per invalidation; derived
+/// providers (e.g. [prayerFontSizeProvider]) project a single field off this
+/// cache instead of each issuing its own full-row read. Invalidate this after a
+/// settings write to refresh all watchers at once.
+final settingsProvider = FutureProvider<Settings>((ref) async {
+  return ref.watch(getSettingsUseCaseProvider).call();
+});
+
+/// Reactive provider for the user's preferred prayer font size.
+///
+/// Screens that display prayer text should watch this instead of calling
+/// [getSettingsUseCaseProvider] directly, so the UI rebuilds live when the
+/// user changes the font size via [FontSizeControls]. Projects the field off
+/// the shared [settingsProvider] cache, so changing it costs no extra read.
+final prayerFontSizeProvider = Provider<AsyncValue<double>>((ref) {
+  return ref.watch(settingsProvider.select(
+    (settings) => settings.whenData((value) => value.prayerFontSize),
+  ));
+});
+
 final getNextQuoteUseCaseProvider = Provider<GetNextQuoteUseCase>((ref) {
   return GetNextQuoteUseCase(
     contentRepository: ref.watch(quoteContentRepositoryProvider),
@@ -644,6 +668,13 @@ final rebuildNotificationsUseCaseProvider =
                   .read(getNextQuoteUseCaseProvider)
                   .call(language: language, now: now);
             },
+        // Android has no pending-notification cap and fires exact alarms while
+        // idle, so it gets true closed-app cadence plus a reduced tail; iOS is
+        // bound by the 64-pending cap. Resolved here at the composition root so
+        // the scheduling domain stays platform-agnostic and deterministic.
+        capacityPolicy: defaultTargetPlatform == TargetPlatform.android
+            ? NotificationCapacityPolicy.android
+            : NotificationCapacityPolicy.ios,
       );
     });
 

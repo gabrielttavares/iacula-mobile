@@ -7,18 +7,36 @@ void main() {
     expect(JaculatoriaCadencePreset.regular.intervalMinutes, 90);
     expect(JaculatoriaCadencePreset.frequente.intervalMinutes, 60);
     expect(JaculatoriaCadencePreset.maisFrequente.intervalMinutes, 30);
+    expect(JaculatoriaCadencePreset.intenso.intervalMinutes, 15);
+    expect(JaculatoriaCadencePreset.muitoIntenso.intervalMinutes, 10);
   });
 
-  test('today cadence is the real slot spacing (2h / 90min / 1h / 30min)', () {
+  test('today cadence is the real slot spacing', () {
     expect(JaculatoriaCadencePreset.suave.todayCadenceMinutes, 120);
     expect(JaculatoriaCadencePreset.regular.todayCadenceMinutes, 90);
     expect(JaculatoriaCadencePreset.frequente.todayCadenceMinutes, 60);
     expect(JaculatoriaCadencePreset.maisFrequente.todayCadenceMinutes, 30);
+    expect(JaculatoriaCadencePreset.intenso.todayCadenceMinutes, 15);
+    expect(JaculatoriaCadencePreset.muitoIntenso.todayCadenceMinutes, 10);
   });
 
   test('minutes map to the nearest preset (migration thresholds)', () {
-    // <= 45 -> Mais frequente
+    // <= 12 -> Muito intenso (10min)
     expect(JaculatoriaCadencePreset.fromIntervalMinutes(5),
+        JaculatoriaCadencePreset.muitoIntenso);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(10),
+        JaculatoriaCadencePreset.muitoIntenso);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(12),
+        JaculatoriaCadencePreset.muitoIntenso);
+    // <= 22 -> Intenso (15min)
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(13),
+        JaculatoriaCadencePreset.intenso);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(15),
+        JaculatoriaCadencePreset.intenso);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(22),
+        JaculatoriaCadencePreset.intenso);
+    // <= 45 -> Mais frequente (30min)
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(23),
         JaculatoriaCadencePreset.maisFrequente);
     expect(JaculatoriaCadencePreset.fromIntervalMinutes(30),
         JaculatoriaCadencePreset.maisFrequente);
@@ -63,9 +81,10 @@ void main() {
     }
   });
 
-  test('weekly floor is 5 slots per weekday for every preset', () {
+  test('every preset exposes a non-empty pt-BR label and phrase', () {
     for (final preset in JaculatoriaCadencePreset.values) {
-      expect(preset.weeklyFloorSlotsPerWeekday, 5);
+      expect(preset.cadenceLabelPtBr, isNotEmpty);
+      expect(preset.cadencePhrasePtBr, isNotEmpty);
     }
   });
 }

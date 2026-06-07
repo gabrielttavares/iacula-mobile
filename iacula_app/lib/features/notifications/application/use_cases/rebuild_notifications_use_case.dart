@@ -12,14 +12,11 @@ import '../../domain/repositories/notification_history_repository.dart';
 import '../../domain/repositories/notification_scheduler_repository.dart';
 import '../../domain/services/active_window.dart';
 import '../../domain/services/notification_budget.dart';
+import '../../domain/services/notification_capacity_policy.dart';
 import 'schedule_core_reminders_use_case.dart';
 import 'schedule_season_transitions_use_case.dart';
 
 final class RebuildNotificationsUseCase {
-  /// iOS holds at most 64 pending local notifications app-wide; beyond this the
-  /// OS silently drops the excess. Every feature draws from this one budget.
-  static const int maxPendingNotifications = 64;
-
   RebuildNotificationsUseCase({
     required NotificationSchedulerRepository scheduler,
     required NotificationHistoryRepository notificationHistoryRepository,
@@ -27,12 +24,14 @@ final class RebuildNotificationsUseCase {
     required SchedulePhraseNotificationsUseCase schedulePhraseNotifications,
     required ScheduleIntentionNotificationsUseCase scheduleIntentionNotifications,
     required QuoteFetcher quoteFetcher,
+    NotificationCapacityPolicy capacityPolicy = NotificationCapacityPolicy.ios,
   }) : _scheduler = scheduler,
        _notificationHistoryRepository = notificationHistoryRepository,
        _lastDeliveredCardRepository = lastDeliveredCardRepository,
        _schedulePhraseNotifications = schedulePhraseNotifications,
        _scheduleIntentionNotifications = scheduleIntentionNotifications,
-       _quoteFetcher = quoteFetcher;
+       _quoteFetcher = quoteFetcher,
+       _capacityPolicy = capacityPolicy;
 
   final NotificationSchedulerRepository _scheduler;
   final NotificationHistoryRepository _notificationHistoryRepository;
@@ -40,6 +39,7 @@ final class RebuildNotificationsUseCase {
   final SchedulePhraseNotificationsUseCase _schedulePhraseNotifications;
   final ScheduleIntentionNotificationsUseCase _scheduleIntentionNotifications;
   final QuoteFetcher _quoteFetcher;
+  final NotificationCapacityPolicy _capacityPolicy;
 
   Future<void> call(
     Settings settings, {
@@ -66,26 +66,31 @@ final class RebuildNotificationsUseCase {
       return;
     }
 
-    // Cancel only quote notification IDs instead of wiping everything. This
-    // spans the immediate id (8999) and the contiguous pre-rolled quote block
-    // (9000 .. 9000+maxQueuedQuoteReminders), so reopening replaces quotes
-    // rather than accumulating. Alarm-type notifications (Angelus, liturgy
-    // hours) reschedule by fixed ID, so re-scheduling naturally replaces them
-    // without needing a cancel step.
-    for (var id = ScheduleCoreRemindersUseCase.quoteScheduleIdBase - 1;
-        id < ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
-            ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders;
-        id++) {
+    // Cancel only quote notification IDs instead of wiping everything, and only
+    // the ones actually pending — the quote id block is large (sized for
+    // Android's uncapped queue) so iterating the whole range would be wasteful.
+    // This spans the immediate id (8999) and the contiguous pre-rolled quote
+    // block, so reopening replaces quotes rather than accumulating. Alarm-type
+    // notifications (Angelus, liturgy hours) reschedule by fixed ID, so
+    // re-scheduling naturally replaces them without needing a cancel step.
+    const immediateQuoteId = ScheduleCoreRemindersUseCase.quoteScheduleIdBase - 1;
+    final pendingQuoteIds = (await _scheduler.pendingNotificationIds()).where(
+      (id) => id == immediateQuoteId ||
+          ScheduleCoreRemindersUseCase.isQuoteReminderId(id),
+    );
+    for (final id in pendingQuoteIds) {
       await _scheduler.cancelById(id);
     }
 
     // Priority-ordered, single shared budget so the app never silently exceeds
-    // the iOS 64-pending cap (where excess notifications are dropped at random).
-    // Sacred, user-set reminders are scheduled FIRST and win their slots;
-    // substitutable quotes are scheduled LAST and absorb any squeeze. The order
-    // here is the priority order: season transitions (liturgical correctness) →
-    // liturgy hours → prayer intentions (promises) → custom phrases → quotes.
-    final budget = NotificationBudget(capacity: maxPendingNotifications);
+    // the platform's pending cap (on iOS, excess notifications are dropped at
+    // random; Android has no real cap, so this ceiling is high). Sacred,
+    // user-set reminders are scheduled FIRST and win their slots; substitutable
+    // quotes are scheduled LAST and absorb any squeeze. The order here is the
+    // priority order: season transitions (liturgical correctness) → liturgy
+    // hours → prayer intentions (promises) → custom phrases → quotes.
+    final budget =
+        NotificationBudget(capacity: _capacityPolicy.pendingTotalCapacity);
 
     // A time is "quiet" (no notification) when it falls OUTSIDE the active
     // window — the single source of truth shared with the quote scheduler, so
@@ -119,13 +124,14 @@ final class RebuildNotificationsUseCase {
     // never exceed the 64 cap.
     final reservedForOthers =
         (await _scheduler.pendingNotificationIds()).length
-            .clamp(0, maxPendingNotifications);
+            .clamp(0, _capacityPolicy.pendingTotalCapacity);
 
     await ScheduleCoreRemindersUseCase(
       _scheduler,
       quoteFetcher: _quoteFetcher,
       notificationHistoryRepository: _notificationHistoryRepository,
       lastDeliveredCardRepository: _lastDeliveredCardRepository,
+      capacityPolicy: _capacityPolicy,
     ).call(
       settings,
       now: now,

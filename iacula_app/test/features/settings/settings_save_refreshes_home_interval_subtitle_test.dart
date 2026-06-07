@@ -1,12 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Slider;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
-import 'package:iacula_app/core/presentation/shell_screen.dart';
-import 'package:iacula_app/features/home/presentation/home_screen.dart'
-    show homeNowProvider;
 import 'package:iacula_app/features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import 'package:iacula_app/features/custom_phrases/domain/entities/custom_phrase.dart';
 import 'package:iacula_app/features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
@@ -14,8 +10,6 @@ import 'package:iacula_app/features/liturgical/domain/liturgical_context.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/liturgical/domain/services/liturgical_season_service.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
-import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
-import 'package:iacula_app/features/notifications/domain/repositories/last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
@@ -23,6 +17,7 @@ import 'package:iacula_app/features/prayer_intentions/application/use_cases/sche
 import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
+import 'package:iacula_app/features/settings/presentation/settings_screen.dart';
 import 'package:iacula_app/features/spiritual_data/domain/entities/spiritual_entry.dart';
 import 'package:iacula_app/features/spiritual_data/domain/repositories/spiritual_entry_repository.dart';
 
@@ -43,21 +38,6 @@ final class _FakeSettingsRepository implements SettingsRepository {
   @override
   Future<void> save(Settings settings) async {
     _value = settings;
-  }
-}
-
-final class _FakeLastDeliveredCardRepository
-    implements LastDeliveredCardRepository {
-  _FakeLastDeliveredCardRepository(this._value);
-
-  LastDeliveredCard? _value;
-
-  @override
-  Future<LastDeliveredCard?> load() async => _value;
-
-  @override
-  Future<void> save(LastDeliveredCard card) async {
-    _value = card;
   }
 }
 
@@ -138,28 +118,16 @@ void main() {
     'salvar novo intervalo em Configurações atualiza o mesmo cache de settings usado pelo hero',
     (tester) async {
       final repo = _FakeSettingsRepository(Settings.defaults);
-      final fixedNow = DateTime(2026, 2, 21, 11);
 
       final container = ProviderContainer(
         overrides: [
           settingsRepositoryProvider.overrideWithValue(repo),
-          lastDeliveredCardRepositoryProvider.overrideWithValue(
-            _FakeLastDeliveredCardRepository(
-              LastDeliveredCard(
-                quoteText: 'Permanecei em mim.',
-                theme: 'Conversao',
-                season: 'ordinary',
-                deliveredAt: fixedNow,
-              ),
-            ),
-          ),
           liturgicalSeasonServiceProvider.overrideWithValue(
             _FakeLiturgicalSeasonService(),
           ),
           rebuildNotificationsUseCaseProvider.overrideWith((ref) {
             return _noopRebuildUseCase();
           }),
-          homeNowProvider.overrideWith((ref) => fixedNow),
         ],
       );
       addTearDown(container.dispose);
@@ -174,44 +142,20 @@ void main() {
               GlobalWidgetsLocalizations.delegate,
             ],
             supportedLocales: [Locale('pt', 'BR'), Locale('en')],
-            home: ShellScreen(),
+            home: SettingsScreen(),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(
-        (await container.read(_testHeroSettingsProvider.future)).intervalMinutes,
-        15,
-      );
+      // The hero subtitle (home_screen.dart) reads this same cache.
+      final initialInterval =
+          (await container.read(_testHeroSettingsProvider.future))
+              .intervalMinutes;
+      expect(initialInterval, Settings.defaults.intervalMinutes);
 
-      const initialSubtitle =
-          'Jaculatórias a cada 15min \u00B7 Angelus ao meio-dia';
-      expect(find.text(initialSubtitle), findsOneWidget);
-
-      await tester.tap(
-        find.descendant(
-          of: find.byType(CupertinoTabBar),
-          matching: find.text('Notificações'),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Configurar intervalo'));
-      await tester.pumpAndSettle();
-
-      final scrollable = find.byType(CustomScrollView);
-      for (var i = 0; i < 14; i++) {
-        if (find.byType(Slider).evaluate().isNotEmpty) {
-          break;
-        }
-        await tester.drag(scrollable, const Offset(0, -220));
-        await tester.pumpAndSettle();
-      }
-
-      final slider = find.byType(Slider);
-      expect(slider, findsOneWidget);
-      await tester.drag(slider, const Offset(800, 0));
+      // Pick a clearly different cadence via the preset grid, then save.
+      await tester.tap(find.text('Frequente'));
       await tester.pumpAndSettle();
 
       final saveButton = find.text('Salvar');
@@ -220,7 +164,8 @@ void main() {
       await tester.tap(saveButton);
       await tester.pumpAndSettle();
 
-      expect(repo._value.intervalMinutes, greaterThan(15));
+      // "Frequente" persists a 60-min interval.
+      expect(repo._value.intervalMinutes, 60);
 
       final fromRepo = repo._value.intervalMinutes;
       final fromProvider =

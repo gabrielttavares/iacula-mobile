@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
 import 'package:iacula_app/features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
 import 'package:iacula_app/features/notifications/domain/entities/reminder_event.dart';
+import 'package:iacula_app/features/notifications/domain/services/notification_capacity_policy.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_history_repository.dart';
 import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_notification_scheduler_repository.dart';
@@ -168,7 +169,7 @@ void main() {
       for (var id = ScheduleCoreRemindersUseCase.quoteScheduleIdBase;
           id <
               ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
-                  ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders;
+                  ScheduleCoreRemindersUseCase.quoteIdBlockSize;
           id++) {
         await scheduler.cancelById(id);
       }
@@ -200,7 +201,7 @@ void main() {
       for (var id = ScheduleCoreRemindersUseCase.quoteScheduleIdBase;
           id <
               ScheduleCoreRemindersUseCase.quoteScheduleIdBase +
-                  ScheduleCoreRemindersUseCase.maxQueuedQuoteReminders;
+                  ScheduleCoreRemindersUseCase.quoteIdBlockSize;
           id++) {
         await scheduler.cancelById(id);
       }
@@ -313,6 +314,107 @@ void main() {
       final quotes = quoteEventsOf(scheduler);
       expect(quotes, isNotEmpty);
       expect(scheduler.events.length, lessThanOrEqualTo(64));
+    });
+  });
+
+  group('platform capacity policy', () {
+    ScheduleCoreRemindersUseCase makeWithPolicy(
+      InMemoryNotificationSchedulerRepository scheduler,
+      InMemoryNotificationHistoryRepository history,
+      NotificationCapacityPolicy policy,
+    ) {
+      return ScheduleCoreRemindersUseCase(
+        scheduler,
+        quoteFetcher: weekdayQuote,
+        notificationHistoryRepository: history,
+        lastDeliveredCardRepository: InMemoryLastDeliveredCardRepository(),
+        capacityPolicy: policy,
+      );
+    }
+
+    test('iOS spreads a tight cadence within the 64 budget (no full cadence)',
+        () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = InMemoryNotificationHistoryRepository();
+      final useCase =
+          makeWithPolicy(scheduler, history, NotificationCapacityPolicy.ios);
+
+      // Muito intenso (10 min) at window open: a 14h window holds ~75/day, but
+      // the 64 cap forces a thinned spread.
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 10),
+        now: DateTime(2026, 5, 31, 7, 0),
+        showImmediate: false,
+      );
+
+      final quotes = quoteEventsOf(scheduler);
+      expect(quotes.length, lessThanOrEqualTo(64));
+      // Spread across the runway, so the first day is far below the ~75 the
+      // window could hold at 10-min cadence.
+      final firstDay = quotes.where((e) => e.scheduledAt.day == 31).length;
+      expect(firstDay, lessThan(30));
+    });
+
+    test('Android honors full cadence and exceeds the iOS 64 cap', () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = InMemoryNotificationHistoryRepository();
+      final useCase = makeWithPolicy(
+        scheduler,
+        history,
+        NotificationCapacityPolicy.android,
+      );
+
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 10),
+        now: DateTime(2026, 5, 31, 7, 0),
+        showImmediate: false,
+      );
+
+      final quotes = quoteEventsOf(scheduler);
+      // No 64 cap: a tight multi-day cadence schedules far more than iOS allows.
+      expect(quotes.length, greaterThan(64));
+      // The dense first day runs at the full 10-min cadence (~70+ in a 14h
+      // window minus the noon hour), not a thinned spread.
+      final firstDay = quotes.where((e) => e.scheduledAt.day == 31).length;
+      expect(firstDay, greaterThan(60));
+    });
+
+    test('Android tail thins out after the dense runway but keeps delivering',
+        () async {
+      final scheduler = InMemoryNotificationSchedulerRepository();
+      final history = InMemoryNotificationHistoryRepository();
+      final useCase = makeWithPolicy(
+        scheduler,
+        history,
+        NotificationCapacityPolicy.android,
+      );
+
+      final now = DateTime(2026, 5, 31, 7, 0);
+      await useCase(
+        Settings.defaults.copyWith(intervalMinutes: 10),
+        now: now,
+        showImmediate: false,
+      );
+
+      final quotes = quoteEventsOf(scheduler);
+      int countOnDayOffset(int offset) {
+        final day = now.add(Duration(days: offset));
+        return quotes
+            .where((e) =>
+                e.scheduledAt.year == day.year &&
+                e.scheduledAt.month == day.month &&
+                e.scheduledAt.day == day.day)
+            .length;
+      }
+
+      // Dense days (0..2) deliver more than tail days (3+), but the tail is
+      // non-empty — a long-closed app still receives quotes.
+      final denseDay = countOnDayOffset(1);
+      final tailDay = countOnDayOffset(5);
+      expect(denseDay, greaterThan(tailDay));
+      expect(tailDay, greaterThan(0));
+      // Coverage reaches the Android tail horizon (14 days).
+      expect(countOnDayOffset(10), greaterThan(0));
     });
   });
 

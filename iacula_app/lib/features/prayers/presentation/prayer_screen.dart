@@ -31,18 +31,13 @@ class PrayerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingsAsync = ref.watch(getSettingsUseCaseProvider).call();
+    final fontSize = ref.watch(prayerFontSizeProvider).valueOrNull ?? 15.0;
 
-    return FutureBuilder(
-      future: settingsAsync,
-      builder: (context, snapshot) {
-        final fontSize = snapshot.data?.prayerFontSize ?? 15.0;
-
-        return CupertinoPageScaffold(
-          backgroundColor: context.colors.background,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
+    return CupertinoPageScaffold(
+      backgroundColor: context.colors.background,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
               if (prayer.imagePath != null)
                 Image.asset(
                   prayer.imagePath!,
@@ -194,7 +189,5 @@ class PrayerScreen extends ConsumerWidget {
             ],
           ),
         );
-      },
-    );
   }
 }

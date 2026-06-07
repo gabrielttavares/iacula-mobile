@@ -4,23 +4,16 @@ import 'package:flutter/services.dart';
 import '../../../features/settings/domain/jaculatoria_cadence_preset.dart';
 import '../../theme/cupertino_tokens.dart';
 
-/// Display names shown to the user for each cadence preset. The cadence
-/// subtitle ("A cada 2 horas" …) lives on the enum ([cadenceLabelPtBr]).
-const _presetLabels = {
-  JaculatoriaCadencePreset.suave: 'Suave',
-  JaculatoriaCadencePreset.regular: 'Regular',
-  JaculatoriaCadencePreset.frequente: 'Frequente',
-  JaculatoriaCadencePreset.maisFrequente: 'Mais frequente',
-};
-
-/// A 2×2 grid of selectable preset buttons for jaculatória notification cadence.
+/// A grid of selectable preset buttons for jaculatória notification cadence.
 ///
 /// Mirrors the visual language of `_IntervalButton` in `interval_selector.dart`:
 /// animated container with selected highlight, haptic feedback on tap.
 ///
-/// Presets are laid out in density order (left-to-right, top-to-bottom):
+/// Presets are laid out two-per-row in density order (left-to-right,
+/// top-to-bottom):
 /// Suave | Regular
 /// Frequente | Mais frequente
+/// Intenso | Muito intenso
 class CadencePresetSelector extends StatelessWidget {
   const CadencePresetSelector({
     super.key,
@@ -67,7 +60,7 @@ class CadencePresetSelector extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.only(right: isLastColumn ? 0 : _columnGap),
                     child: _CadencePresetButton(
-                      label: _presetLabels[preset]!,
+                      label: preset.displayNamePtBr,
                       subtitle: preset.cadenceLabelPtBr,
                       isSelected: preset == selected,
                       onPressed: () {
