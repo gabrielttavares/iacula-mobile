@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/di/providers.dart';
 import '../core/presentation/shell_screen.dart';
 import '../core/theme/app_theme.dart';
-import '../core/theme/lora_font_loader.dart';
+import '../core/theme/app_font_loader.dart';
 import '../features/liturgical/domain/liturgical_season.dart';
 import '../features/home_widget/application/use_cases/get_current_widget_quote_use_case.dart';
 import '../features/home_widget/application/use_cases/refresh_widget_from_timeline_use_case.dart';
@@ -60,7 +60,7 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final connectivity = ref.read(connectivityProvider);
-      unawaited(loadLoraFontsWhenOnline(connectivity));
+      unawaited(loadAppFontsWhenOnline(connectivity));
 
       final syncService = ref.read(connectivitySyncServiceProvider);
       syncService.start();

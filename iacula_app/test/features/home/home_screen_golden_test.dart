@@ -8,6 +8,8 @@ import 'package:iacula_app/features/notifications/domain/repositories/last_deliv
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
 
+import '../../support/load_bundled_fonts.dart';
+
 final class _FakeSettingsRepository implements SettingsRepository {
   _FakeSettingsRepository(this.value);
 
@@ -61,6 +63,8 @@ Widget _buildGoldenApp() {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(loadBundledFontsForGolden);
 
   testWidgets('home golden default width', (tester) async {
     await tester.binding.setSurfaceSize(const Size(390, 844));
