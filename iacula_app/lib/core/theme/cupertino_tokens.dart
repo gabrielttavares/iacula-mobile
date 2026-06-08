@@ -157,13 +157,13 @@ class IaculaTextScheme {
         height: 1.25,
         color: colors.title,
       ),
-      cardTitle: GoogleFonts.lora(
+      cardTitle: GoogleFonts.inter(
         fontSize: scaler.scale(16), // Adjusted to 15-16 as requested
         fontWeight: FontWeight.w600,
         height: 1.25,
         color: colors.title,
       ),
-      secondary: GoogleFonts.lora(
+      secondary: GoogleFonts.inter(
         fontSize: scaler.scale(15),
         fontWeight: FontWeight.w400,
         color: colors.textSecondary,
@@ -174,7 +174,7 @@ class IaculaTextScheme {
         height: 1.6,
         color: colors.textPrimary,
       ),
-      tabLabel: GoogleFonts.lora(
+      tabLabel: GoogleFonts.inter(
         fontSize: scaler.scale(11),
         fontWeight: FontWeight.w500,
       ),
@@ -195,13 +195,13 @@ class IaculaTextScheme {
           height: 1.25,
           color: colors.title,
         ),
-        cardTitle: GoogleFonts.lora(
+        cardTitle: GoogleFonts.inter(
           fontSize: 16, // Adjusted
           fontWeight: FontWeight.w600,
           height: 1.25,
           color: colors.title,
         ),
-        secondary: GoogleFonts.lora(
+        secondary: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w400,
           color: colors.textSecondary,
@@ -212,7 +212,7 @@ class IaculaTextScheme {
           height: 1.6,
           color: colors.textPrimary,
         ),
-        tabLabel: GoogleFonts.lora(fontSize: 11, fontWeight: FontWeight.w500),
+        tabLabel: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w500),
       );
 }
 
@@ -235,14 +235,14 @@ final class IaculaText {
     color: const Color(0xFFF7F5EC),
   );
 
-  static final cardTitle = GoogleFonts.lora(
+  static final cardTitle = GoogleFonts.inter(
     fontSize: 16, // Adjusted
     fontWeight: FontWeight.w600,
     height: 1.25,
     color: const Color(0xFFF7F5EC),
   );
 
-  static final secondary = GoogleFonts.lora(
+  static final secondary = GoogleFonts.inter(
     fontSize: 15,
     fontWeight: FontWeight.w400,
     color: IaculaColorScheme.dark.textSecondary,
@@ -255,7 +255,7 @@ final class IaculaText {
     color: IaculaColorScheme.dark.textPrimary,
   );
 
-  static final tabLabel = GoogleFonts.lora(
+  static final tabLabel = GoogleFonts.inter(
     fontSize: 11,
     fontWeight: FontWeight.w500,
   );
@@ -309,8 +309,8 @@ final class IaculaRadius {
   IaculaRadius._();
 
   static const small = 12.0;
-  static const card = 24.0;
-  static const banner = 24.0;
+  static const card = 18.0;
+  static const banner = 18.0;
   static const innerPadding = 24.0; // Added for internal card padding
   static const cardSpacing = 24.0; // Added for spacing between cards
   static const elementSpacing = 16.0; // Added for spacing between elements inside card

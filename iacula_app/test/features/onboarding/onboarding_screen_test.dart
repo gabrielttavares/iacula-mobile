@@ -43,8 +43,10 @@ void main() {
 
     Future<void> reveal(String text) async {
       final finder = find.text(text);
+      // Use .first to target only the vertical page-scroll ListView, not the
+      // horizontal chip-row ListView that is present on the notification page.
       for (var i = 0; i < 8 && finder.evaluate().isEmpty; i++) {
-        await tester.drag(find.byType(ListView), const Offset(0, -180));
+        await tester.drag(find.byType(ListView).first, const Offset(0, -180));
         await tester.pumpAndSettle();
       }
       expect(finder, findsOneWidget);

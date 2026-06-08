@@ -417,7 +417,7 @@ class _FeatureCardsList extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
           child: ImageBackgroundCard(
             key: const Key('home_custom_phrases_card'),
-            title: 'Jaculatórias',
+            title: 'Lembretes',
             imageAsset:
                 'assets/placeholders/sections/minhas-frases/minhas-frases.jpeg',
             imageAlignment: const Alignment(0, -0.45),

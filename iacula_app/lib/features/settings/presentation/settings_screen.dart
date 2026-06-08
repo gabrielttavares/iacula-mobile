@@ -6,7 +6,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_section_header.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
-import '../../../core/presentation/widgets/cadence_preset_selector.dart';
+import '../../../core/presentation/widgets/cadence_chip_selector.dart';
 import '../../../core/presentation/widgets/keyboard_dismiss.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../jaculatorias/presentation/minhas_jaculatorias_screen.dart';
@@ -168,7 +168,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           const SizedBox(height: IaculaRadius.elementSpacing),
                           _fieldLabel(context, 'Frequência das jaculatórias'),
                           const SizedBox(height: 8),
-                          CadencePresetSelector(
+                          CadenceChipSelector(
                             selected: cadencePreset,
                             onChanged: (preset) => setState(() => _intervalMinutes = preset.intervalMinutes),
                           ),

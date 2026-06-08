@@ -35,7 +35,7 @@ class ImageBackgroundCard extends StatelessWidget {
     this.height = 180.0,
     this.trailing,
     this.imageAlignment = Alignment.center,
-    this.overlayOpacity = 0.0,
+    this.overlayOpacity = ImageBackgroundCard.defaultImageOverlayOpacity,
   });
 
   @override

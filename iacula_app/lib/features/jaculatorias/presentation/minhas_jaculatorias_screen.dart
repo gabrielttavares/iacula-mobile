@@ -37,7 +37,7 @@ class _MinhasJaculatoriasScreenState
           CupertinoSliverNavigationBar(
             backgroundColor: context.colors.background,
             border: null,
-            largeTitle: const Text('Minhas Jaculatórias'),
+            largeTitle: const Text('Meus lembretes'),
           ),
           SliverPadding(
             padding: EdgeInsets.fromLTRB(

@@ -6,7 +6,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/shell_screen.dart';
 import '../../../core/presentation/widgets/iacula_buttons.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
-import '../../../core/presentation/widgets/cadence_preset_selector.dart';
+import '../../../core/presentation/widgets/cadence_chip_selector.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../liturgical/domain/liturgical_season.dart';
 import '../../notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
@@ -342,7 +342,7 @@ class _NotificationSetupPage extends StatelessWidget {
                     style: context.textStyles.secondary,
                   ),
                   const SizedBox(height: IaculaSpacing.md),
-                  CadencePresetSelector(
+                  CadenceChipSelector(
                     selected: cadencePreset,
                     onChanged: (preset) =>
                         onIntervalChanged(preset.intervalMinutes),

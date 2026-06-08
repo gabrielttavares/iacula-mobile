@@ -167,56 +167,56 @@ class _HomeHeroCardState extends ConsumerState<HomeHeroCard> {
                     padding: isEscrivaPoints
                         ? const EdgeInsets.fromLTRB(18, 58, 18, 28)
                         : const EdgeInsets.all(18),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Center(
-                              child: _isTruncated
-                                  ? ShaderMask(
-                                      key: const Key('home_hero_text_fade'),
-                                      shaderCallback: (bounds) {
-                                        return LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            context.colors.homeHeroText,
-                                            context.colors.homeHeroText,
-                                            context.colors.homeHeroText
-                                                .withValues(alpha: 0.0),
-                                          ],
-                                          stops: const [0.0, 0.78, 1.0],
-                                        ).createShader(bounds);
-                                      },
-                                      blendMode: BlendMode.dstIn,
-                                      child: _AutoSizingQuoteText(
-                                        text: quote.text,
-                                        onTruncationChanged:
-                                            _handleTruncationChanged,
-                                      ),
-                                    )
-                                  : _AutoSizingQuoteText(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: _isTruncated
+                                ? ShaderMask(
+                                    key: const Key('home_hero_text_fade'),
+                                    shaderCallback: (bounds) {
+                                      return LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          context.colors.homeHeroText,
+                                          context.colors.homeHeroText,
+                                          context.colors.homeHeroText
+                                              .withValues(alpha: 0.0),
+                                        ],
+                                        stops: const [0.0, 0.78, 1.0],
+                                      ).createShader(bounds);
+                                    },
+                                    blendMode: BlendMode.dstIn,
+                                    child: _AutoSizingQuoteText(
                                       text: quote.text,
                                       onTruncationChanged:
                                           _handleTruncationChanged,
                                     ),
+                                  )
+                                : _AutoSizingQuoteText(
+                                    text: quote.text,
+                                    onTruncationChanged:
+                                        _handleTruncationChanged,
+                                  ),
+                          ),
+                        ),
+                        if (_isTruncated) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            'Continuar lendo',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.primaryButton,
                             ),
                           ),
-                          if (_isTruncated) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              'Continuar lendo',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: context.colors.primaryButton,
-                              ),
-                            ),
-                          ] else
-                            const SizedBox(height: 12),
-                        ],
-                      ),
+                        ] else
+                          const SizedBox(height: 12),
+                      ],
                     ),
                   ),
                 ),
@@ -277,7 +277,7 @@ class _AutoSizingQuoteText extends StatelessWidget {
                 height: lineHeight,
               ),
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left,
             textDirection: TextDirection.ltr,
             maxLines: maxLines,
           )..layout(maxWidth: constraints.maxWidth);
@@ -302,7 +302,7 @@ class _AutoSizingQuoteText extends StatelessWidget {
 
         return Text(
           text,
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.left,
           maxLines: maxLines,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(

@@ -154,12 +154,18 @@ void main() {
               .intervalMinutes;
       expect(initialInterval, Settings.defaults.intervalMinutes);
 
-      // Pick a clearly different cadence via the preset grid, then save.
-      await tester.tap(find.text('Frequente'));
+      // Pick a clearly different cadence via the chip row, then save.
+      await tester.tap(find.text('1h'));
       await tester.pumpAndSettle();
 
       final saveButton = find.text('Salvar');
-      await tester.scrollUntilVisible(saveButton, 300);
+      // Use the first Scrollable (the outer page scroller) to avoid ambiguity
+      // with the horizontal chip-row Scrollable also in the widget tree.
+      await tester.scrollUntilVisible(
+        saveButton,
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
       await tester.pumpAndSettle();
       await tester.tap(saveButton);
       await tester.pumpAndSettle();

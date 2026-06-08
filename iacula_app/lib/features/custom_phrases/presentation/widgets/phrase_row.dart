@@ -51,16 +51,19 @@ class PhraseRow extends StatelessWidget {
                           : context.colors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    isPrayer
-                        ? 'Alarme · ${phrase.schedule.summary()}'
-                        : phrase.isRotationMode
-                            ? 'Jaculatória personalizada'
-                            : phrase.schedule.summary(),
-                    style:
-                        context.textStyles.secondary.copyWith(fontSize: 12),
-                  ),
+                  // Rotation-mode personal phrases need no subtitle (the section
+                  // header already says they're personal); only alarm and
+                  // scheduled phrases show their timing.
+                  if (isPrayer || !phrase.isRotationMode) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      isPrayer
+                          ? 'Alarme · ${phrase.schedule.summary()}'
+                          : phrase.schedule.summary(),
+                      style:
+                          context.textStyles.secondary.copyWith(fontSize: 12),
+                    ),
+                  ],
                 ],
               ),
             ),
