@@ -91,20 +91,15 @@ final class ActiveWindow {
   }
 
   /// Number of cadence-aligned slots that fit in the window for one day, given
-  /// a step of [cadenceMinutes] and skipping the noon hour (12:00-12:59, which
-  /// is reserved for the Angelus). Used to size the per-day quote density.
+  /// a step of [cadenceMinutes]. Used to size the per-day quote density.
   int slotCount({required int cadenceMinutes}) {
     if (cadenceMinutes <= 0) return 0;
     final spanMinutes = startMinutes < endMinutes
         ? endMinutes - startMinutes
         : (24 * 60 - startMinutes) + endMinutes; // overnight wrap-around
-    var count = 0;
-    for (var offset = 0; offset <= spanMinutes; offset += cadenceMinutes) {
-      final minutesOfDay = (startMinutes + offset) % (24 * 60);
-      final inNoonHour = minutesOfDay >= 12 * 60 && minutesOfDay < 13 * 60;
-      if (!inNoonHour) count++;
-    }
-    return count;
+    // Cadence-aligned offsets 0, cadence, 2*cadence ... up to and including
+    // spanMinutes.
+    return (spanMinutes ~/ cadenceMinutes) + 1;
   }
 
   static int _parseMinutes(String hhmm) {

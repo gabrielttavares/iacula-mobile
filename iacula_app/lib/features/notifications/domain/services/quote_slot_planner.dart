@@ -10,9 +10,8 @@ final class QuoteSlotPlanner {
   /// Produces up to [slotsPerDay] slots for each of the next [days] calendar
   /// days (today first), spaced by [cadenceMinutes] and confined to [window].
   /// Today's slots start at the first cadence-aligned time at or after `now`;
-  /// future days start at the window's opening. The noon hour (reserved for
-  /// Angelus) is always skipped. Slots never land in the past and are returned
-  /// strictly increasing.
+  /// future days start at the window's opening. Slots never land in the past
+  /// and are returned strictly increasing.
   ///
   /// Slots align to the window-start grid so they sit on stable clock times
   /// regardless of when the pass runs, which lets a later rebuild reuse an
@@ -52,8 +51,7 @@ final class QuoteSlotPlanner {
 
     while (cursor.isBefore(horizon)) {
       final inPast = cursor.isBefore(now);
-      final inNoonHour = cursor.hour == 12;
-      if (!inPast && !inNoonHour && window.allows(cursor)) {
+      if (!inPast && window.allows(cursor)) {
         // Attribute the slot to the calendar day the window OPENED on, so an
         // overnight window's after-midnight slots still count toward the same
         // logical day's budget rather than starting a new day's allocation.

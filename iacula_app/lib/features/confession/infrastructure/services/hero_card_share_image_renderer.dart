@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Colors;
 import 'package:flutter/rendering.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/cupertino_tokens.dart';
 
@@ -174,18 +175,18 @@ final class HeroCardSharePreview extends StatelessWidget {
           Positioned.fill(
             child: Padding(
               padding: const EdgeInsets.all(18),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: _AutoSizingQuoteText(text: payload.text),
-                      ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: _AutoSizingQuoteText(text: payload.text),
                     ),
-                    const SizedBox(height: 12),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
               ),
             ),
           ),
@@ -225,14 +226,14 @@ class _AutoSizingQuoteText extends StatelessWidget {
           final painter = TextPainter(
             text: TextSpan(
               text: text,
-              style: TextStyle(
+              style: GoogleFonts.lora(
                 fontSize: size,
                 fontWeight: FontWeight.w600,
                 color: context.colors.homeHeroText,
                 height: lineHeight,
               ),
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left,
             textDirection: TextDirection.ltr,
           )..layout(maxWidth: constraints.maxWidth);
 
@@ -244,8 +245,8 @@ class _AutoSizingQuoteText extends StatelessWidget {
 
         return Text(
           text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
+          textAlign: TextAlign.left,
+          style: GoogleFonts.lora(
             fontSize: chosenSize,
             fontWeight: FontWeight.w600,
             color: context.colors.homeHeroText,

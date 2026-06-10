@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Colors;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/presentation/widgets/image_background_card.dart';
 import '../../../../core/presentation/widgets/premium_touchable_card.dart';
@@ -270,7 +271,7 @@ class _AutoSizingQuoteText extends StatelessWidget {
           final painter = TextPainter(
             text: TextSpan(
               text: text,
-              style: TextStyle(
+              style: GoogleFonts.lora(
                 fontSize: size,
                 fontWeight: FontWeight.w600,
                 color: context.colors.homeHeroText,
@@ -305,7 +306,7 @@ class _AutoSizingQuoteText extends StatelessWidget {
           textAlign: TextAlign.left,
           maxLines: maxLines,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
+          style: GoogleFonts.lora(
             fontSize: chosenSize,
             fontWeight: FontWeight.w600,
             color: context.colors.homeHeroText,

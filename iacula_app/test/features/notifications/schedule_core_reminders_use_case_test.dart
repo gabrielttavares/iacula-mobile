@@ -77,8 +77,6 @@ void main() {
       // And future days are covered too.
       final distinctDays = quotes.map((e) => e.scheduledAt.day).toSet();
       expect(distinctDays.length, greaterThan(1));
-      // None in the noon hour (reserved for Angelus).
-      expect(quotes.every((e) => e.scheduledAt.hour != 12), isTrue);
     });
 
     test('each slot draws from its own fired weekday bucket', () async {
@@ -373,8 +371,8 @@ void main() {
       final quotes = quoteEventsOf(scheduler);
       // No 64 cap: a tight multi-day cadence schedules far more than iOS allows.
       expect(quotes.length, greaterThan(64));
-      // The dense first day runs at the full 10-min cadence (~70+ in a 14h
-      // window minus the noon hour), not a thinned spread.
+      // The dense first day runs at the full 10-min cadence (~80+ in a 14h
+      // window), not a thinned spread.
       final firstDay = quotes.where((e) => e.scheduledAt.day == 31).length;
       expect(firstDay, greaterThan(60));
     });

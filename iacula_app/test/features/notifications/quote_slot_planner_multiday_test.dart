@@ -55,8 +55,6 @@ void main() {
       );
       for (final slot in slots) {
         expect(window.allows(slot), isTrue, reason: '$slot outside window');
-        // Noon hour reserved for Angelus.
-        expect(slot.hour, isNot(12));
       }
     });
 

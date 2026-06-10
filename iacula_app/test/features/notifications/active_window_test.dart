@@ -96,21 +96,21 @@ void main() {
   });
 
   group('ActiveWindow.slotCount', () {
-    test('hourly across 07:00-21:00 skips the noon hour', () {
+    test('hourly across 07:00-21:00', () {
       const window = ActiveWindow(startMinutes: 7 * 60, endMinutes: 21 * 60);
-      // 07..21 inclusive = 15 steps, minus the 12:00 noon slot = 14.
-      expect(window.slotCount(cadenceMinutes: 60), 14);
+      // 07..21 inclusive = 15 steps (the noon hour is no longer skipped).
+      expect(window.slotCount(cadenceMinutes: 60), 15);
     });
 
     test('two-hour cadence', () {
       const window = ActiveWindow(startMinutes: 7 * 60, endMinutes: 21 * 60);
-      // 07,09,11,13,15,17,19,21 = 8 (none land in the noon hour).
+      // 07,09,11,13,15,17,19,21 = 8.
       expect(window.slotCount(cadenceMinutes: 120), 8);
     });
 
     test('overnight window counts across midnight', () {
       const window = ActiveWindow(startMinutes: 22 * 60, endMinutes: 6 * 60);
-      // 22,23,00,01,02,03,04,05,06 = 9 (noon hour never reached).
+      // 22,23,00,01,02,03,04,05,06 = 9.
       expect(window.slotCount(cadenceMinutes: 60), 9);
     });
   });

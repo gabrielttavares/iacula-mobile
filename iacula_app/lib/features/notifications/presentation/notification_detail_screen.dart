@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show Colors, SelectableText;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_animated_icon.dart';
@@ -182,12 +183,13 @@ class NotificationDetailScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   Expanded(
-                    child: Center(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
                       child: SingleChildScrollView(
                         child: SelectableText(
                           quoteText,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
+                          textAlign: TextAlign.left,
+                          style: GoogleFonts.lora(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                             color: context.colors.homeHeroText,

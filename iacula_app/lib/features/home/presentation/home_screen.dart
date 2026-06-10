@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
@@ -84,7 +85,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     width: 28,
                   ),
                 ),
-                largeTitle: Text(greeting),
+                largeTitle: Text(
+                  greeting,
+                  style: GoogleFonts.inter(
+                    fontSize: 34,
+                    fontWeight: FontWeight.w700,
+                    height: 1.25,
+                    color: context.colors.textPrimary,
+                  ),
+                ),
                 middle: const SizedBox.shrink(),
                 alwaysShowMiddle: false,
                 trailing: Row(
@@ -417,7 +426,7 @@ class _FeatureCardsList extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
           child: ImageBackgroundCard(
             key: const Key('home_custom_phrases_card'),
-            title: 'Lembretes',
+            title: 'Jaculatórias e Alarmes',
             imageAsset:
                 'assets/placeholders/sections/minhas-frases/minhas-frases.jpeg',
             imageAlignment: const Alignment(0, -0.45),

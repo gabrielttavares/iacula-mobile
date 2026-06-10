@@ -70,7 +70,7 @@ void main() {
       expect(withTail, denseOnly);
     });
 
-    test('slots are strictly increasing, in-window, and skip noon', () {
+    test('slots are strictly increasing and in-window', () {
       final now = DateTime(2026, 6, 1, 7, 0);
       final slots = QuoteSlotPlanner.multiDaySlotsWithTail(
         now: now,
@@ -86,7 +86,6 @@ void main() {
       }
       for (final slot in slots) {
         expect(window.allows(slot), isTrue);
-        expect(slot.hour, isNot(12));
       }
     });
   });

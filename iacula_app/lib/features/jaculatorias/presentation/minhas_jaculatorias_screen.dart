@@ -37,7 +37,7 @@ class _MinhasJaculatoriasScreenState
           CupertinoSliverNavigationBar(
             backgroundColor: context.colors.background,
             border: null,
-            largeTitle: const Text('Meus lembretes'),
+            largeTitle: const Text('Jaculatórias e Alarmes'),
           ),
           SliverPadding(
             padding: EdgeInsets.fromLTRB(
@@ -58,6 +58,14 @@ class _MinhasJaculatoriasScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _SectionHeader(title: 'ALARMES DE ORAÇÃO'),
+                      _AddButton(
+                        label: 'Adicionar alarme',
+                        onTap: () => Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const EditPrayerAlarmScreen(),
+                          ),
+                        ),
+                      ),
                       if (prayerAlarms.isEmpty)
                         _EmptySectionHint(
                           message: 'Nenhum alarme configurado',
@@ -77,14 +85,6 @@ class _MinhasJaculatoriasScreenState
                             ),
                           ),
                         ),
-                      _AddButton(
-                        label: 'Adicionar alarme',
-                        onTap: () => Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const EditPrayerAlarmScreen(),
-                          ),
-                        ),
-                      ),
                       const SizedBox(height: IaculaSpacing.lg),
                       _SectionHeader(title: 'FRASES PESSOAIS'),
                       _AddButton(
