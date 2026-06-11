@@ -30,7 +30,7 @@ class IntentionRow extends StatelessWidget {
       onTap: onTap,
       child: IaculaSoftCard(
         radius: 16,
-        padding: const EdgeInsets.all(IaculaSpacing.md),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
             Expanded(
@@ -79,7 +79,7 @@ class IntentionRow extends StatelessWidget {
               const SizedBox(width: IaculaSpacing.xs),
               CupertinoButton(
                 padding: EdgeInsets.zero,
-                minimumSize: const Size(44, 44),
+                minimumSize: const Size(36, 36),
                 onPressed: () {
                   HapticFeedback.mediumImpact();
                   onReminderTap?.call();
@@ -97,7 +97,7 @@ class IntentionRow extends StatelessWidget {
               const SizedBox(width: IaculaSpacing.sm),
               CupertinoButton(
                 padding: EdgeInsets.zero,
-                minimumSize: const Size(44, 44),
+                minimumSize: const Size(36, 36),
                 onPressed: () {
                   HapticFeedback.mediumImpact();
                   onRespond?.call();

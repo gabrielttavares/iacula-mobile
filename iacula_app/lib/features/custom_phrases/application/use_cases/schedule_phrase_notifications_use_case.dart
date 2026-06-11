@@ -87,7 +87,8 @@ class SchedulePhraseNotificationsUseCase {
           scheduledAt: nextOccurrence,
           withVibration: true,
           isAlarm: isPrayerAlarm,
-          repeatDaily: phrase.schedule.type != PhraseScheduleType.specificDates,
+          repeatDaily: phrase.schedule.type == PhraseScheduleType.daily,
+          repeatWeekly: phrase.schedule.type == PhraseScheduleType.weekly,
           routeTarget: isPrayerAlarm
               ? NotificationRouteTarget.prayer
               : NotificationRouteTarget.home,

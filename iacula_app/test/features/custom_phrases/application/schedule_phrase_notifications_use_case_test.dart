@@ -212,6 +212,50 @@ void main() {
     expect(scheduler.cancelledIds, hasLength(30));
   });
 
+  test('weekly phrase repeats weekly, not daily', () async {
+    // Regression: a weekly alarm (e.g. Friday) was scheduled with
+    // repeatDaily=true, so iOS/Android matched only the time component and
+    // fired every day. A weekly schedule must repeat on the day-of-week.
+    final weeklyPhrase = CustomPhrase(
+      id: 'weekly-1',
+      text: 'Pelos pais',
+      isActive: true,
+      displayAsNotification: true,
+      useFixedSchedule: true,
+      prayerSlug: 'pelos-pais',
+      prayerTitle: 'Pelos pais',
+      schedule: const PhraseSchedule(
+        type: PhraseScheduleType.weekly,
+        daysOfWeek: [DateTime.friday],
+        times: ['12:35'],
+      ),
+      createdAt: DateTime(2024, 1, 1),
+      updatedAt: DateTime(2024, 1, 1),
+    );
+
+    final repository = _FakeRepository([weeklyPhrase]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+
+    await useCase(phraseId: 'weekly-1');
+
+    expect(scheduler.scheduledEvents, hasLength(1));
+    final scheduled = scheduler.scheduledEvents.first.event;
+    expect(scheduled.repeatWeekly, isTrue);
+    expect(scheduled.repeatDaily, isFalse);
+    expect(scheduled.scheduledAt.weekday, DateTime.friday);
+  });
+
+  test('daily phrase repeats daily', () async {
+    final repository = _FakeRepository([_dailyPhrase('d', '09:00')]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+
+    await useCase(phraseId: 'd');
+
+    final scheduled = scheduler.scheduledEvents.first.event;
+    expect(scheduled.repeatDaily, isTrue);
+    expect(scheduled.repeatWeekly, isFalse);
+  });
+
   test('without a budget, scheduling is unbounded (back-compat)', () async {
     final repository = _FakeRepository([
       _dailyPhrase('a', '08:00'),

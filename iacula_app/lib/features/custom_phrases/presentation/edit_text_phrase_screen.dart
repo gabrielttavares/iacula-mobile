@@ -42,7 +42,7 @@ class _EditTextPhraseScreenState extends ConsumerState<EditTextPhraseScreen> {
       IaculaModal.showAlert(
         context: context,
         title: 'Ajuste o texto',
-        message: 'A frase precisa ter entre 5 e 300 caracteres.',
+        message: 'A jaculatória precisa ter entre 5 e 300 caracteres.',
       );
       return;
     }
@@ -72,8 +72,8 @@ class _EditTextPhraseScreenState extends ConsumerState<EditTextPhraseScreen> {
   void _delete() async {
     final confirmed = await IaculaModal.showConfirm(
       context: context,
-      title: 'Remover frase',
-      message: 'Tem certeza que deseja remover esta frase?',
+      title: 'Remover jaculatória',
+      message: 'Tem certeza que deseja remover esta jaculatória?',
       confirmLabel: 'Remover',
       destructive: true,
     );
@@ -93,8 +93,9 @@ class _EditTextPhraseScreenState extends ConsumerState<EditTextPhraseScreen> {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: context.colors.background,
         border: null,
-        middle:
-            Text(widget.existing == null ? 'Nova Frase' : 'Editar Frase'),
+        middle: Text(
+          widget.existing == null ? 'Nova Jaculatória' : 'Editar Jaculatória',
+        ),
       ),
       child: SafeArea(
         child: Column(
@@ -104,13 +105,13 @@ class _EditTextPhraseScreenState extends ConsumerState<EditTextPhraseScreen> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   ScheduleSection(
-                    title: 'FRASE',
+                    title: 'JACULATÓRIA',
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         IaculaTextInput(
                           controller: _textController,
-                          placeholder: 'Escreva uma frase espiritual...',
+                          placeholder: 'Escreva uma jaculatória...',
                           maxLines: 5,
                           padding: const EdgeInsets.all(12),
                           onChanged: (val) => setState(() {}),
@@ -129,7 +130,7 @@ class _EditTextPhraseScreenState extends ConsumerState<EditTextPhraseScreen> {
                     CupertinoButton(
                       onPressed: _delete,
                       child: const Text(
-                        'Remover Frase',
+                        'Remover Jaculatória',
                         style:
                             TextStyle(color: CupertinoColors.destructiveRed),
                       ),

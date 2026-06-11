@@ -55,6 +55,20 @@ final class PersonalPhraseFeedSelector {
     return eligible[personalOrdinal % eligible.length];
   }
 
+  /// The personal phrase for [slotIndex] in "only mine" mode, where EVERY slot
+  /// is personal: cycles the [eligible] pool in stable order so a user with one
+  /// phrase always sees it and a user with many cycles through them.
+  ///
+  /// Returns null only when [eligible] is empty (callers fall back to the
+  /// liturgical draw so the feed is never empty).
+  static CustomPhrase? phraseForExclusiveSlot({
+    required int slotIndex,
+    required List<CustomPhrase> eligible,
+  }) {
+    if (eligible.isEmpty) return null;
+    return eligible[slotIndex % eligible.length];
+  }
+
   /// Width of each fire-time bucket, in minutes. Fire times within the same
   /// bucket map to the same slot index.
   static const int _bucketMinutes = 15;

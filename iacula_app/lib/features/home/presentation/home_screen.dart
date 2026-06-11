@@ -408,7 +408,7 @@ class _FeatureCardsList extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
           child: ImageBackgroundCard(
             key: const Key('home_action_intencoes'),
-            title: 'Intenções',
+            title: 'Intenções e Alarmes',
             imageAsset: 'assets/placeholders/sections/intencoes/intencoes.jpg',
             overlayOpacity: 0.3,
             onTap: () {
@@ -426,7 +426,7 @@ class _FeatureCardsList extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
           child: ImageBackgroundCard(
             key: const Key('home_custom_phrases_card'),
-            title: 'Jaculatórias e Alarmes',
+            title: 'Jaculatórias',
             imageAsset:
                 'assets/placeholders/sections/minhas-frases/minhas-frases.jpeg',
             imageAlignment: const Alignment(0, -0.45),
@@ -518,17 +518,19 @@ final _homeQuoteProvider = FutureProvider<Quote>((ref) async {
   final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
   final phrases = phrasesAsync.valueOrNull ?? [];
 
-  // When "Use only my phrases" is enabled, show all active phrases (no schedule constraint)
+  // "Only mine" mode: the hero card shows only the user's jaculatórias,
+  // cycling the pool by fire-time slot so it stays in sync with the
+  // notification feed. An empty pool falls through to the default quotes below.
   if (settings.customPhrasesOnly) {
-    final activePhrases = phrases
-        .where((p) => p.isActive && p.displayOnHero)
-        .toList();
-    if (activePhrases.isNotEmpty) {
-      final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
-      final selected = activePhrases[dayOfYear % activePhrases.length];
+    final eligible = PersonalPhraseFeedSelector.eligibleForHero(phrases);
+    final selected = PersonalPhraseFeedSelector.phraseForExclusiveSlot(
+      slotIndex: PersonalPhraseFeedSelector.slotIndexForFireTime(now),
+      eligible: eligible,
+    );
+    if (selected != null) {
       return Quote.personal(text: selected.text, dayOfWeek: now.weekday);
     }
-    // No user phrases - fall through to default quotes
+    // No user jaculatórias - fall through to default quotes.
   }
 
   final history = await ref

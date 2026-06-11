@@ -632,27 +632,33 @@ final rebuildNotificationsUseCaseProvider =
                   .read(getSettingsUseCaseProvider)
                   .call();
 
-              // Personal phrase share: when not in the buried replace mode, a
-              // 1-in-4 slot is filled by an eligible personal phrase. An empty
-              // pool falls through to the liturgical draw, so a user with no
-              // eligible phrases gets identical scheduling to before.
-              if (!settings.customPhrasesOnly) {
-                final phrases =
-                    await ref.read(customPhraseRepositoryProvider).listAll();
-                final eligiblePhrases =
-                    PersonalPhraseFeedSelector.eligibleForNotifications(phrases);
-                final slotIndex =
-                    PersonalPhraseFeedSelector.slotIndexForFireTime(now);
-                final selectedPhrase = PersonalPhraseFeedSelector.phraseForSlot(
-                  slotIndex: slotIndex,
-                  eligible: eligiblePhrases,
+              // Personal phrase feed. Two modes share the same eligible pool and
+              // fire-time slot, differing only in cadence:
+              //   • "only mine" (customPhrasesOnly): EVERY slot is a personal
+              //     phrase, cycling the pool. An empty pool falls through to the
+              //     liturgical draw so the feed is never empty.
+              //   • default: a 1-in-4 slot is personal; the rest are liturgical.
+              // Either way, an empty pool yields identical scheduling to before.
+              final phrases =
+                  await ref.read(customPhraseRepositoryProvider).listAll();
+              final eligiblePhrases =
+                  PersonalPhraseFeedSelector.eligibleForNotifications(phrases);
+              final slotIndex =
+                  PersonalPhraseFeedSelector.slotIndexForFireTime(now);
+              final selectedPhrase = settings.customPhrasesOnly
+                  ? PersonalPhraseFeedSelector.phraseForExclusiveSlot(
+                      slotIndex: slotIndex,
+                      eligible: eligiblePhrases,
+                    )
+                  : PersonalPhraseFeedSelector.phraseForSlot(
+                      slotIndex: slotIndex,
+                      eligible: eligiblePhrases,
+                    );
+              if (selectedPhrase != null) {
+                return Quote.personal(
+                  text: selectedPhrase.text,
+                  dayOfWeek: now.weekday,
                 );
-                if (selectedPhrase != null) {
-                  return Quote.personal(
-                    text: selectedPhrase.text,
-                    dayOfWeek: now.weekday,
-                  );
-                }
               }
 
               if (settings.escrivaPointsFeedEnabled) {

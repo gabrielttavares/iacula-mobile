@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/features/notifications/domain/entities/notification_action_event.dart';
@@ -78,13 +79,24 @@ SpiritualEntry _dailyIntention(String id) {
   );
 }
 
-String _encode(IntentionSchedule schedule) {
-  final map = schedule.toJson();
-  return '{"type":"${map['type']}","times":${_jsonList(schedule.times)}}';
+SpiritualEntry _weeklyIntention(String id, List<int> daysOfWeek) {
+  final schedule = IntentionSchedule(
+    type: IntentionScheduleType.weekly,
+    daysOfWeek: daysOfWeek,
+    times: const ['12:35'],
+  );
+  return SpiritualEntry(
+    id: id,
+    module: SpiritualModule.prayerIntention,
+    title: 'Intenção $id',
+    body: 'Reze por $id',
+    scheduleJson: _encode(schedule),
+    createdAt: DateTime(2024, 1, 1),
+    updatedAt: DateTime(2024, 1, 1),
+  );
 }
 
-String _jsonList(List<String> items) =>
-    '[${items.map((t) => '"$t"').join(',')}]';
+String _encode(IntentionSchedule schedule) => jsonEncode(schedule.toJson());
 
 void main() {
   test('stops scheduling intentions once the shared budget is exhausted',
@@ -117,5 +129,33 @@ void main() {
     await useCase.call();
 
     expect(scheduler.scheduled, hasLength(3));
+  });
+
+  test('weekly intention reminder repeats weekly, not daily', () async {
+    final scheduler = _FakeScheduler();
+    final repository = _FakeEntryRepository([
+      _weeklyIntention('w', [DateTime.friday]),
+    ]);
+    final useCase = ScheduleIntentionNotificationsUseCase(scheduler, repository);
+
+    await useCase.call();
+
+    expect(scheduler.scheduled, hasLength(1));
+    final event = scheduler.scheduled.first;
+    expect(event.repeatWeekly, isTrue);
+    expect(event.repeatDaily, isFalse);
+    expect(event.scheduledAt.weekday, DateTime.friday);
+  });
+
+  test('daily intention reminder repeats daily', () async {
+    final scheduler = _FakeScheduler();
+    final repository = _FakeEntryRepository([_dailyIntention('d')]);
+    final useCase = ScheduleIntentionNotificationsUseCase(scheduler, repository);
+
+    await useCase.call();
+
+    final event = scheduler.scheduled.first;
+    expect(event.repeatDaily, isTrue);
+    expect(event.repeatWeekly, isFalse);
   });
 }

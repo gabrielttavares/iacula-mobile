@@ -119,6 +119,54 @@ void main() {
     });
   });
 
+  group('PersonalPhraseFeedSelector.phraseForExclusiveSlot', () {
+    final phraseA = _makePhrase(id: 'a');
+    final phraseB = _makePhrase(id: 'b');
+
+    test('returns null when the eligible pool is empty', () {
+      final picked = PersonalPhraseFeedSelector.phraseForExclusiveSlot(
+        slotIndex: 3,
+        eligible: const [],
+      );
+      expect(picked, isNull);
+    });
+
+    test('a single phrase is returned for every slot (only-mine, 1 phrase)', () {
+      final ids = [0, 1, 2, 3, 4, 5]
+          .map((slotIndex) =>
+              PersonalPhraseFeedSelector.phraseForExclusiveSlot(
+                slotIndex: slotIndex,
+                eligible: [phraseA],
+              )?.id)
+          .toList();
+      expect(ids, ['a', 'a', 'a', 'a', 'a', 'a']);
+    });
+
+    test('cycles the pool on EVERY slot, not just personal ones', () {
+      final ids = [0, 1, 2, 3, 4]
+          .map((slotIndex) =>
+              PersonalPhraseFeedSelector.phraseForExclusiveSlot(
+                slotIndex: slotIndex,
+                eligible: [phraseA, phraseB],
+              )?.id)
+          .toList();
+      expect(ids, ['a', 'b', 'a', 'b', 'a']);
+    });
+
+    test('is deterministic for slot 5', () {
+      final first = PersonalPhraseFeedSelector.phraseForExclusiveSlot(
+        slotIndex: 5,
+        eligible: [phraseA, phraseB],
+      );
+      final second = PersonalPhraseFeedSelector.phraseForExclusiveSlot(
+        slotIndex: 5,
+        eligible: [phraseA, phraseB],
+      );
+      expect(first?.id, second?.id);
+      expect(first?.id, 'b');
+    });
+  });
+
   group('PersonalPhraseFeedSelector.slotIndexForFireTime', () {
     test('07:00 maps to slot index 28', () {
       expect(

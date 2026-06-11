@@ -111,12 +111,14 @@ class _CadenceChip extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        width: 64,
+        height: 44,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: isSelected
               ? context.colors.primaryButton
               : context.colors.card,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected
                 ? context.colors.primaryButton

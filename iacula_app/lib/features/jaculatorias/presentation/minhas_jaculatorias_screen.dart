@@ -9,7 +9,6 @@ import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/theme/cupertino_tokens.dart';
 import '../../custom_phrases/domain/entities/custom_phrase.dart';
-import '../../custom_phrases/presentation/edit_prayer_alarm_screen.dart';
 import '../../custom_phrases/presentation/edit_text_phrase_screen.dart';
 import '../../custom_phrases/presentation/widgets/phrase_row.dart';
 import 'builtin_quotes_screen.dart';
@@ -37,7 +36,7 @@ class _MinhasJaculatoriasScreenState
           CupertinoSliverNavigationBar(
             backgroundColor: context.colors.background,
             border: null,
-            largeTitle: const Text('Jaculatórias e Alarmes'),
+            largeTitle: const Text('Jaculatórias'),
           ),
           SliverPadding(
             padding: EdgeInsets.fromLTRB(
@@ -48,8 +47,6 @@ class _MinhasJaculatoriasScreenState
             ),
             sliver: phrasesAsync.when(
               data: (phrases) {
-                final prayerAlarms =
-                    phrases.where((p) => p.isPrayerAlarm).toList();
                 final textPhrases =
                     phrases.where((p) => !p.isPrayerAlarm).toList();
 
@@ -57,38 +54,9 @@ class _MinhasJaculatoriasScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _SectionHeader(title: 'ALARMES DE ORAÇÃO'),
+                      _SectionHeader(title: 'MINHAS JACULATÓRIAS'),
                       _AddButton(
-                        label: 'Adicionar alarme',
-                        onTap: () => Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const EditPrayerAlarmScreen(),
-                          ),
-                        ),
-                      ),
-                      if (prayerAlarms.isEmpty)
-                        _EmptySectionHint(
-                          message: 'Nenhum alarme configurado',
-                        ),
-                      for (final alarm in prayerAlarms)
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(bottom: IaculaSpacing.sm),
-                          child: _DismissiblePhraseRow(
-                            phrase: alarm,
-                            notifier: notifier,
-                            onTap: () => Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (_) =>
-                                    EditPrayerAlarmScreen(existing: alarm),
-                              ),
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: IaculaSpacing.lg),
-                      _SectionHeader(title: 'FRASES PESSOAIS'),
-                      _AddButton(
-                        label: 'Adicionar frase',
+                        label: 'Adicionar jaculatória',
                         onTap: () => Navigator.of(context).push(
                           CupertinoPageRoute(
                             builder: (_) => const EditTextPhraseScreen(),
@@ -97,7 +65,7 @@ class _MinhasJaculatoriasScreenState
                       ),
                       if (textPhrases.isEmpty)
                         _EmptySectionHint(
-                          message: 'Nenhuma frase pessoal ainda',
+                          message: 'Nenhuma jaculatória ainda',
                         ),
                       for (final phrase in textPhrases)
                         Padding(
@@ -191,10 +159,11 @@ class _DismissiblePhraseRow extends StatelessWidget {
       confirmDismiss: (_) async {
         return IaculaModal.showConfirm(
           context: context,
-          title: phrase.isPrayerAlarm ? 'Remover alarme' : 'Remover frase',
+          title:
+              phrase.isPrayerAlarm ? 'Remover alarme' : 'Remover jaculatória',
           message: phrase.isPrayerAlarm
               ? 'Tem certeza que deseja remover este alarme?'
-              : 'Tem certeza que deseja remover esta frase?',
+              : 'Tem certeza que deseja remover esta jaculatória?',
           confirmLabel: 'Remover',
           destructive: true,
         );

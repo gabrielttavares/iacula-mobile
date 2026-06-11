@@ -74,6 +74,7 @@ class ScheduleIntentionNotificationsUseCase {
           withVibration: true,
           isAlarm: false,
           repeatDaily: schedule.type == IntentionScheduleType.daily,
+          repeatWeekly: schedule.type == IntentionScheduleType.weekly,
           routeTarget: NotificationRouteTarget.prayerIntention,
           scheduledId: id,
           intentionId: entry.id,

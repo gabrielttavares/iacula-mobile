@@ -8,8 +8,12 @@ import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_input.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
+import '../../../core/presentation/widgets/iacula_soft_card.dart';
 import '../../../core/presentation/widgets/iacula_toast.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../custom_phrases/domain/entities/custom_phrase.dart';
+import '../../custom_phrases/presentation/edit_prayer_alarm_screen.dart';
+import '../../custom_phrases/presentation/widgets/phrase_row.dart';
 import '../application/prayer_intentions_notifier.dart';
 import '../domain/entities/intention_schedule.dart';
 import '../domain/entities/prayer_intention.dart';
@@ -24,6 +28,12 @@ class PrayerIntentionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(prayerIntentionsNotifierProvider);
     final notifier = ref.read(prayerIntentionsNotifierProvider.notifier);
+    final phrasesAsync = ref.watch(customPhrasesNotifierProvider);
+    final phrasesNotifier = ref.read(customPhrasesNotifierProvider.notifier);
+    final prayerAlarms = phrasesAsync.maybeWhen(
+      data: (phrases) => phrases.where((p) => p.isPrayerAlarm).toList(),
+      orElse: () => const <CustomPhrase>[],
+    );
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
@@ -33,7 +43,7 @@ class PrayerIntentionsScreen extends ConsumerWidget {
           CupertinoSliverNavigationBar(
             backgroundColor: context.colors.background,
             border: null,
-            largeTitle: const Text('Intenções de Oração'),
+            largeTitle: const Text('Intenções e Alarmes'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -90,133 +100,122 @@ class PrayerIntentionsScreen extends ConsumerWidget {
                       child: IaculaShimmerList(itemCount: 4),
                     ),
                   )
-                : state.openIntentions.isEmpty
-                ? SliverFillRemaining(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              CupertinoIcons.pin,
-                              size: 48,
-                              color: context.colors.textSecondary,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Nenhuma intenção de oração',
-                              style: context.textStyles.cardTitle,
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Adicione suas intenções para rezar por elas.',
-                              style: context.textStyles.secondary,
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 24),
-                            Text(
-                              'Suas intenções ficam salvas apenas no seu celular. Ninguém terá acesso ao que você escrever.',
-                              style: context.textStyles.secondary.copyWith(
-                                fontSize: 12,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
                 : SliverToBoxAdapter(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      child: Column(
-                        key: ValueKey<int>(state.openIntentions.length),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Text(
-                              'Suas intenções ficam salvas apenas no seu celular.',
-                              style: context.textStyles.secondary.copyWith(
-                                fontSize: 12,
-                              ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SectionHeader(title: 'INTENÇÕES'),
+                        _AddButton(
+                          label: 'Adicionar intenção',
+                          onTap: () =>
+                              _showAddEditSheet(context, notifier, null),
+                        ),
+                        if (state.openIntentions.isEmpty)
+                          _EmptySectionHint(
+                            message: 'Nenhuma intenção ainda',
+                          )
+                        else
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: Column(
+                              key: ValueKey<int>(state.openIntentions.length),
+                              children: [
+                                for (
+                                  int i = 0;
+                                  i < state.openIntentions.length;
+                                  i++
+                                )
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: IaculaSpacing.sm,
+                                    ),
+                                    child: Dismissible(
+                                      key: Key(state.openIntentions[i].id),
+                                      direction: DismissDirection.endToStart,
+                                      background: Container(
+                                        alignment: Alignment.centerRight,
+                                        padding: const EdgeInsets.only(
+                                          right: 20,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: CupertinoColors.destructiveRed,
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          CupertinoIcons.delete,
+                                          color: context.colors.background,
+                                        ),
+                                      ),
+                                      confirmDismiss: (_) async {
+                                        return IaculaModal.showConfirm(
+                                          context: context,
+                                          title: 'Remover intenção',
+                                          message:
+                                              'Tem certeza que deseja remover esta intenção?',
+                                          confirmLabel: 'Remover',
+                                          destructive: true,
+                                        );
+                                      },
+                                      onDismissed: (_) {
+                                        HapticFeedback.mediumImpact();
+                                        notifier.deleteIntention(
+                                          state.openIntentions[i].id,
+                                        );
+                                      },
+                                      child: IntentionRow(
+                                        intention: state.openIntentions[i],
+                                        onTap: () => _showAddEditSheet(
+                                          context,
+                                          notifier,
+                                          state.openIntentions[i],
+                                        ),
+                                        onReminderTap: () => _showReminderSheet(
+                                          context,
+                                          notifier,
+                                          state.openIntentions[i],
+                                        ),
+                                        onRespond: () async {
+                                          final confirmed =
+                                              await IaculaModal.showConfirm(
+                                                context: context,
+                                                title: 'Marcar como respondida',
+                                                message:
+                                                    'Sua oração foi atendida?',
+                                                confirmLabel: 'Sim, respondida',
+                                              );
+                                          if (confirmed) {
+                                            notifier.markResponded(
+                                              state.openIntentions[i].id,
+                                            );
+                                            if (context.mounted) {
+                                              IaculaToast.show(
+                                                context,
+                                                'Oração atendida! 🙏',
+                                                icon: CupertinoIcons.heart_fill,
+                                              );
+                                            }
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
-                          for (int i = 0; i < state.openIntentions.length; i++)
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: IaculaSpacing.sm,
-                              ),
-                              child: Dismissible(
-                                key: Key(state.openIntentions[i].id),
-                                direction: DismissDirection.endToStart,
-                                background: Container(
-                                  alignment: Alignment.centerRight,
-                                  padding: const EdgeInsets.only(right: 20),
-                                  decoration: BoxDecoration(
-                                    color: CupertinoColors.destructiveRed,
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Icon(
-                                    CupertinoIcons.delete,
-                                    color: context.colors.background,
-                                  ),
-                                ),
-                                confirmDismiss: (_) async {
-                                  return IaculaModal.showConfirm(
-                                    context: context,
-                                    title: 'Remover intenção',
-                                    message:
-                                        'Tem certeza que deseja remover esta intenção?',
-                                    confirmLabel: 'Remover',
-                                    destructive: true,
-                                  );
-                                },
-                                onDismissed: (_) {
-                                  HapticFeedback.mediumImpact();
-                                  notifier.deleteIntention(
-                                    state.openIntentions[i].id,
-                                  );
-                                },
-                                child: IntentionRow(
-                                  intention: state.openIntentions[i],
-                                  onTap: () => _showAddEditSheet(
-                                    context,
-                                    notifier,
-                                    state.openIntentions[i],
-                                  ),
-                                  onReminderTap: () => _showReminderSheet(
-                                    context,
-                                    notifier,
-                                    state.openIntentions[i],
-                                  ),
-                                  onRespond: () async {
-                                    final confirmed =
-                                        await IaculaModal.showConfirm(
-                                          context: context,
-                                          title: 'Marcar como respondida',
-                                          message: 'Sua oração foi atendida?',
-                                          confirmLabel: 'Sim, respondida',
-                                        );
-                                    if (confirmed) {
-                                      notifier.markResponded(
-                                        state.openIntentions[i].id,
-                                      );
-                                      if (context.mounted) {
-                                        IaculaToast.show(
-                                          context,
-                                          'Oração atendida! 🙏',
-                                          icon: CupertinoIcons.heart_fill,
-                                        );
-                                      }
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                        const SizedBox(height: IaculaSpacing.lg),
+                        _PrayerAlarmsSection(
+                          alarms: prayerAlarms,
+                          notifier: phrasesNotifier,
+                        ),
+                        const SizedBox(height: IaculaSpacing.lg),
+                        Text(
+                          'Suas intenções ficam salvas apenas no seu celular. Ninguém terá acesso ao que você escrever.',
+                          style: context.textStyles.secondary
+                              .copyWith(fontSize: 12),
+                        ),
+                      ],
                     ),
                   ),
           ),
@@ -436,6 +435,160 @@ class _ReminderSheetState extends State<_ReminderSheet> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title});
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      child: Text(
+        title,
+        style: context.textStyles.secondary.copyWith(
+          fontSize: 11,
+          letterSpacing: 1.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
+
+class _AddButton extends StatelessWidget {
+  const _AddButton({required this.label, required this.onTap});
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: Row(
+        children: [
+          Icon(
+            CupertinoIcons.add_circled,
+            size: 18,
+            color: context.colors.primaryButton,
+          ),
+          const SizedBox(width: IaculaSpacing.xs),
+          Text(
+            label,
+            style: context.textStyles.secondary.copyWith(
+              color: context.colors.primaryButton,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptySectionHint extends StatelessWidget {
+  const _EmptySectionHint({required this.message});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+      child: IaculaSoftCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Center(
+          child: Text(
+            message,
+            style: context.textStyles.secondary.copyWith(fontSize: 14),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PrayerAlarmsSection extends StatelessWidget {
+  const _PrayerAlarmsSection({required this.alarms, required this.notifier});
+
+  final List<CustomPhrase> alarms;
+  final dynamic notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionHeader(title: 'ALARMES DE ORAÇÃO'),
+        _AddButton(
+          label: 'Adicionar alarme',
+          onTap: () => Navigator.of(context).push(
+            CupertinoPageRoute(builder: (_) => const EditPrayerAlarmScreen()),
+          ),
+        ),
+        if (alarms.isEmpty)
+          _EmptySectionHint(message: 'Nenhum alarme configurado'),
+        for (final alarm in alarms)
+          Padding(
+            padding: const EdgeInsets.only(bottom: IaculaSpacing.sm),
+            child: _DismissibleAlarmRow(alarm: alarm, notifier: notifier),
+          ),
+      ],
+    );
+  }
+}
+
+class _DismissibleAlarmRow extends StatelessWidget {
+  const _DismissibleAlarmRow({required this.alarm, required this.notifier});
+
+  final CustomPhrase alarm;
+  final dynamic notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: Key(alarm.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(
+          color: CupertinoColors.destructiveRed,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Icon(CupertinoIcons.delete, color: context.colors.background),
+      ),
+      confirmDismiss: (_) async {
+        return IaculaModal.showConfirm(
+          context: context,
+          title: 'Remover alarme',
+          message: 'Tem certeza que deseja remover este alarme?',
+          confirmLabel: 'Remover',
+          destructive: true,
+        );
+      },
+      onDismissed: (_) {
+        HapticFeedback.mediumImpact();
+        notifier.delete(alarm.id);
+      },
+      child: PhraseRow(
+        phrase: alarm,
+        onToggle: (val) {
+          HapticFeedback.selectionClick();
+          notifier.toggleActive(alarm.id);
+        },
+        onTap: () => Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (_) => EditPrayerAlarmScreen(existing: alarm),
+          ),
+        ),
+      ),
     );
   }
 }

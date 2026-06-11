@@ -400,13 +400,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Mostrar só minhas frases',
+                                      'Mostrar só minhas jaculatórias',
                                       style: context.textStyles.cardTitle
                                           .copyWith(fontSize: 16),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      'Substitui as frases do tempo no início.',
+                                      'No início e nas notificações, mostra apenas as suas jaculatórias.',
                                       style: context.textStyles.secondary,
                                     ),
                                   ],
