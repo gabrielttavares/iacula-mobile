@@ -31,7 +31,10 @@ class CustomPhrasesNotifier extends AsyncNotifier<List<CustomPhrase>> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       await _repository.delete(id);
-      await _scheduleUseCase(phraseId: id); // Use case handles cancellation
+      // Cancel directly by id: the row is already gone, so re-running the
+      // scheduler with this id would no-op (getById returns null) and leave
+      // the OS-level repeating notification orphaned.
+      await _scheduleUseCase.cancelForPhrase(id);
       return _repository.listAll();
     });
   }

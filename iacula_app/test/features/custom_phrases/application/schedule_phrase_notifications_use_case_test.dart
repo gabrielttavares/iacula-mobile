@@ -14,14 +14,20 @@ class _FakeScheduler implements NotificationSchedulerRepository {
   final List<({int id, ReminderEvent event})> scheduledEvents = [];
   final List<int> cancelledIds = [];
 
+  /// Ids the OS reports as still pending. Seed it to simulate notifications
+  /// scheduled on a prior run (e.g. by a since-deleted phrase).
+  final Set<int> pendingIds = {};
+
   @override
   Future<void> scheduleWithId(int id, ReminderEvent event) async {
     scheduledEvents.add((id: id, event: event));
+    pendingIds.add(id);
   }
 
   @override
   Future<void> cancelById(int id) async {
     cancelledIds.add(id);
+    pendingIds.remove(id);
   }
 
   @override
@@ -35,7 +41,7 @@ class _FakeScheduler implements NotificationSchedulerRepository {
   @override
   Future<void> cancelAll() async {}
   @override
-  Future<List<int>> pendingNotificationIds() async => [];
+  Future<List<int>> pendingNotificationIds() async => pendingIds.toList();
   @override
   Future<NotificationActionEvent?> getLaunchNotificationAction() async => null;
 }
@@ -254,6 +260,70 @@ void main() {
     final scheduled = scheduler.scheduledEvents.first.event;
     expect(scheduled.repeatDaily, isTrue);
     expect(scheduled.repeatWeekly, isFalse);
+  });
+
+  test('cancelForPhrase cancels all id slots when the phrase is gone',
+      () async {
+    // Regression: deleting a phrase removed its DB row, then called the
+    // scheduler with the now-missing id. getById returned null, so the cancel
+    // loop (which lived inside _scheduleForPhrase) never ran and the OS-level
+    // repeating notification was orphaned — it kept firing after deletion.
+    // An empty repository simulates the post-delete state.
+    final repository = _FakeRepository([]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+
+    await useCase.cancelForPhrase('serenidade-1');
+
+    expect(scheduler.scheduledEvents, isEmpty);
+    expect(scheduler.cancelledIds, hasLength(10));
+  });
+
+  test('cancelForPhrase targets the same id slots scheduling would use',
+      () async {
+    final phrase = _dailyPhrase('serenidade-1', '15:30');
+    final repository = _FakeRepository([phrase]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+
+    await useCase(phraseId: 'serenidade-1');
+    final scheduledId = scheduler.scheduledEvents.first.id;
+
+    final cancelScheduler = _FakeScheduler();
+    final cancelUseCase =
+        SchedulePhraseNotificationsUseCase(cancelScheduler, repository);
+    await cancelUseCase.cancelForPhrase('serenidade-1');
+
+    expect(cancelScheduler.cancelledIds, contains(scheduledId));
+  });
+
+  test('full rebuild sweeps orphaned phrase notifications from old installs',
+      () async {
+    // Simulate a phrase deleted on an older build: its OS notification is still
+    // pending (in the 1000-1999 block) but no phrase maps to it anymore.
+    const orphanId = 1730; // arbitrary id inside the custom-phrase block
+    scheduler.pendingIds.add(orphanId);
+
+    final repository = _FakeRepository([_dailyPhrase('survivor', '08:00')]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+
+    await useCase(); // full rebuild (phraseId == null)
+
+    expect(scheduler.cancelledIds, contains(orphanId));
+    expect(scheduler.pendingIds, isNot(contains(orphanId)));
+    // The surviving phrase is still scheduled.
+    expect(scheduler.scheduledEvents, hasLength(1));
+  });
+
+  test('full rebuild does not cancel ids outside the phrase block', () async {
+    const quoteId = 105; // quote-block id, must be left alone
+    scheduler.pendingIds.add(quoteId);
+
+    final repository = _FakeRepository([_dailyPhrase('survivor', '08:00')]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+
+    await useCase();
+
+    expect(scheduler.cancelledIds, isNot(contains(quoteId)));
+    expect(scheduler.pendingIds, contains(quoteId));
   });
 
   test('without a budget, scheduling is unbounded (back-compat)', () async {

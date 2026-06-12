@@ -65,7 +65,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     super.initState();
     final now = ref.read(notificationHistoryNowProvider);
     _selectedDate = DateTime(now.year, now.month, now.day);
-    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    // Poll every 3s so a freshly delivered notification (and the advancing
+    // "now" clock that the today-filter gates on) shows up promptly. 30s felt
+    // like the screen was stuck.
+    _refreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       ref.invalidate(notificationHistoryNowProvider);
       ref.invalidate(_availableHistoryDatesProvider);
     });

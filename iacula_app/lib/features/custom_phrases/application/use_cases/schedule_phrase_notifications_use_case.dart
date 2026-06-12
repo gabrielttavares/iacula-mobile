@@ -25,9 +25,47 @@ class SchedulePhraseNotificationsUseCase {
       }
     } else {
       final phrases = await _repository.listAll();
+      // Sweep orphans first: any pending id in the custom-phrase block that no
+      // surviving phrase maps to is a leftover from a phrase deleted on an
+      // older build (before delete canceled by id). Without this, those
+      // OS-level repeating notifications keep firing forever on existing
+      // installs. New deletes can't create orphans, but this heals old ones.
+      await _cancelOrphanedSlots(phrases);
       for (final phrase in phrases) {
         await _scheduleForPhrase(phrase, settings: settings, budget: budget);
       }
+    }
+  }
+
+  Future<void> _cancelOrphanedSlots(List<CustomPhrase> survivingPhrases) async {
+    final validIds = <int>{
+      for (final phrase in survivingPhrases)
+        for (var i = 0; i < 10; i++) _deriveId(phrase.id, i),
+    };
+    final pendingIds = await _scheduler.pendingNotificationIds();
+    for (final id in pendingIds) {
+      if (id >= phraseIdBlockStart &&
+          id <= phraseIdBlockEnd &&
+          !validIds.contains(id)) {
+        await _scheduler.cancelById(id);
+      }
+    }
+  }
+
+  /// Cancels every OS-scheduled notification slot for a phrase by its id,
+  /// without needing the phrase to still exist. The delete path calls this
+  /// directly: the DB row is already gone, so [_scheduleForPhrase] (which is
+  /// guarded on the phrase being found) can no longer reach its cancel loop.
+  /// Custom phrase notifications repeat at the OS level, so a skipped cancel
+  /// orphans them and they keep firing forever.
+  Future<void> cancelForPhrase(String phraseId) async {
+    await _cancelSlots(phraseId);
+  }
+
+  Future<void> _cancelSlots(String phraseId) async {
+    // IDs 1000-1999, 10 slots per phrase.
+    for (var i = 0; i < 10; i++) {
+      await _scheduler.cancelById(_deriveId(phraseId, i));
     }
   }
 
@@ -36,11 +74,8 @@ class SchedulePhraseNotificationsUseCase {
     Settings? settings,
     NotificationBudget? budget,
   }) async {
-    // 1. Cancel existing notifications for this phrase (IDs 1000-1999)
-    for (var i = 0; i < 10; i++) {
-      final id = _deriveId(phrase.id, i);
-      await _scheduler.cancelById(id);
-    }
+    // 1. Cancel existing notifications for this phrase before rescheduling.
+    await _cancelSlots(phrase.id);
 
     if (!phrase.isActive || !phrase.displayAsNotification || !phrase.useFixedSchedule) return;
 
@@ -97,6 +132,10 @@ class SchedulePhraseNotificationsUseCase {
       );
     }
   }
+
+  // Custom phrase notifications occupy ids 1000-1999 (100 phrases × 10 slots).
+  static const int phraseIdBlockStart = 1000;
+  static const int phraseIdBlockEnd = 1999;
 
   int _deriveId(String phraseId, int timeIndex) {
     // ID space: 1000-1999 (1000 slots). With 10 time slots per phrase,
