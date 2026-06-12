@@ -326,6 +326,34 @@ void main() {
     expect(scheduler.pendingIds, contains(quoteId));
   });
 
+  test('sweepOrphanedSlots cancels orphans without scheduling anything',
+      () async {
+    // Bootstrap calls this unconditionally to heal orphans from older builds,
+    // even when the full rebuild is skipped (notifications off / no permission).
+    const orphanId = 1730;
+    scheduler.pendingIds.add(orphanId);
+
+    final repository = _FakeRepository([_dailyPhrase('survivor', '08:00')]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+
+    await useCase.sweepOrphanedSlots();
+
+    expect(scheduler.cancelledIds, contains(orphanId));
+    // Pure cleanup: it must not schedule the surviving phrase (that is the
+    // rebuild's job), so it is safe to run regardless of notification settings.
+    expect(scheduler.scheduledEvents, isEmpty);
+  });
+
+  test('sweepOrphanedSlots is a no-op when there are no orphans', () async {
+    final repository = _FakeRepository([_dailyPhrase('survivor', '08:00')]);
+    final useCase = SchedulePhraseNotificationsUseCase(scheduler, repository);
+
+    await useCase.sweepOrphanedSlots();
+
+    expect(scheduler.cancelledIds, isEmpty);
+    expect(scheduler.scheduledEvents, isEmpty);
+  });
+
   test('without a budget, scheduling is unbounded (back-compat)', () async {
     final repository = _FakeRepository([
       _dailyPhrase('a', '08:00'),

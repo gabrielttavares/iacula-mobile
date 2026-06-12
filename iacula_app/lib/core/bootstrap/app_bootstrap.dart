@@ -152,6 +152,22 @@ final class AppBootstrap {
         return quoteUseCase.call(language: language, now: now);
       }
 
+      // Heal custom-phrase notifications orphaned by an older build, where
+      // deleting a phrase left its OS-level repeating notification scheduled
+      // with no UI to cancel it. Runs unconditionally so users with
+      // notifications enabled but permission denied (who hit neither branch
+      // below) are still cleaned up. Idempotent: a no-op once orphans are gone.
+      if (currentSettings.onboardingCompleted) {
+        try {
+          await SchedulePhraseNotificationsUseCase(
+            scheduler,
+            localCustomPhraseRepo,
+          ).sweepOrphanedSlots();
+        } catch (e) {
+          debugPrint('[Bootstrap] Orphaned phrase notification sweep failed: $e');
+        }
+      }
+
       if (currentSettings.onboardingCompleted &&
           !currentSettings.notificationsEnabled) {
         try {

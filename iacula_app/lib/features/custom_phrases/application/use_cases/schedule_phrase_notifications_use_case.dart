@@ -37,6 +37,15 @@ class SchedulePhraseNotificationsUseCase {
     }
   }
 
+  /// Cancels any pending notification in the custom-phrase id block that no
+  /// surviving phrase maps to. Reads the current phrases itself so callers
+  /// (e.g. app bootstrap) can heal orphans unconditionally, even when the full
+  /// rebuild is skipped because notifications are off or permission is denied.
+  /// Idempotent: once orphans are gone this is a no-op.
+  Future<void> sweepOrphanedSlots() async {
+    await _cancelOrphanedSlots(await _repository.listAll());
+  }
+
   Future<void> _cancelOrphanedSlots(List<CustomPhrase> survivingPhrases) async {
     final validIds = <int>{
       for (final phrase in survivingPhrases)
