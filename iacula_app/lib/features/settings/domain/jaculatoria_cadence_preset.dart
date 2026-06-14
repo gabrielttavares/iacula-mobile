@@ -7,9 +7,9 @@
 /// far that cadence reaches while the app stays closed depends on the platform
 /// notification capacity (iOS caps pending notifications; Android does not).
 enum JaculatoriaCadencePreset {
-  /// ~every 2h across the active window. Representative interval sits inside the
-  /// suave bucket (> 135) so preset⇄minutes round-trips; the today layer treats
-  /// it as a 120-min (2h) cadence (see [todayCadenceMinutes]).
+  /// ~every 3h across the active window. The representative interval (180) and
+  /// the real cadence ([todayCadenceMinutes]) now agree at 3h, and 180 sits in
+  /// the suave bucket (> 135) so preset⇄minutes round-trips.
   suave(intervalMinutes: 180),
 
   /// ~every 90min.
@@ -36,7 +36,7 @@ enum JaculatoriaCadencePreset {
 
   /// Actual spacing (minutes) between quote slots for this preset.
   int get todayCadenceMinutes => switch (this) {
-        JaculatoriaCadencePreset.suave => 120,
+        JaculatoriaCadencePreset.suave => 180,
         JaculatoriaCadencePreset.regular => 90,
         JaculatoriaCadencePreset.frequente => 60,
         JaculatoriaCadencePreset.maisFrequente => 30,
@@ -65,7 +65,7 @@ enum JaculatoriaCadencePreset {
   /// pt-BR cadence label for a standalone subtitle (capitalized).
   /// Kept short so no preset card wraps onto a second line.
   String get cadenceLabelPtBr => switch (this) {
-        JaculatoriaCadencePreset.suave => 'A cada 2h',
+        JaculatoriaCadencePreset.suave => 'A cada 3h',
         JaculatoriaCadencePreset.regular => 'A cada 1h30',
         JaculatoriaCadencePreset.frequente => 'A cada hora',
         JaculatoriaCadencePreset.maisFrequente => 'A cada 30min',
@@ -76,7 +76,7 @@ enum JaculatoriaCadencePreset {
   /// pt-BR cadence phrase for inline use (lowercase), e.g.
   /// "Jaculatórias a cada hora e Angelus ao meio-dia.".
   String get cadencePhrasePtBr => switch (this) {
-        JaculatoriaCadencePreset.suave => 'a cada 2 horas',
+        JaculatoriaCadencePreset.suave => 'a cada 3 horas',
         JaculatoriaCadencePreset.regular => 'a cada 1h30',
         JaculatoriaCadencePreset.frequente => 'a cada hora',
         JaculatoriaCadencePreset.maisFrequente => 'a cada 30 minutos',

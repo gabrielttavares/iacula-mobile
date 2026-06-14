@@ -273,7 +273,7 @@ void main() {
             .length;
       }
 
-      final suave = await firstDayCount(180); // 2h
+      final suave = await firstDayCount(180); // 3h
       final frequente = await firstDayCount(60); // 1h
       expect(frequente, greaterThanOrEqualTo(suave));
     });

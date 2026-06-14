@@ -12,7 +12,7 @@ void main() {
   });
 
   test('today cadence is the real slot spacing', () {
-    expect(JaculatoriaCadencePreset.suave.todayCadenceMinutes, 120);
+    expect(JaculatoriaCadencePreset.suave.todayCadenceMinutes, 180);
     expect(JaculatoriaCadencePreset.regular.todayCadenceMinutes, 90);
     expect(JaculatoriaCadencePreset.frequente.todayCadenceMinutes, 60);
     expect(JaculatoriaCadencePreset.maisFrequente.todayCadenceMinutes, 30);

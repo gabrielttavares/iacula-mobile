@@ -316,7 +316,7 @@ void main() {
 
       final now = DateTime(2026, 5, 12, 8, 0); // Tuesday (weekday 2)
       await rebuild.call(
-        _baseSettings(intervalMinutes: 180), // Suave -> 2h cadence
+        _baseSettings(intervalMinutes: 180), // Suave -> 3h cadence
         isEasterSeason: false,
         showImmediate: false,
         now: now,
@@ -739,7 +739,7 @@ void main() {
             .length;
       }
 
-      // Suave (180 -> 2h cadence) vs Frequente (60 -> hourly). Frequente packs
+      // Suave (180 -> 3h cadence) vs Frequente (60 -> hourly). Frequente packs
       // at least as many into day one (capped by the runway budget).
       final suave = await firstDayCountFor(180);
       final frequente = await firstDayCountFor(60);
