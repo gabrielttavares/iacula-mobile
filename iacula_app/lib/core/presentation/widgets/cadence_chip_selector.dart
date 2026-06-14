@@ -23,25 +23,40 @@ String closedAppCadenceNotePtBr() {
       'longo do dia.';
 }
 
-/// Ordered list of cadence chips, gentlest → tightest.
+/// Ordered list of cadence chips, gentlest → tightest — one chip per preset.
 ///
-/// Each entry pairs a display label with the representative [intervalMinutes]
-/// that maps to a [JaculatoriaCadencePreset] via
-/// [JaculatoriaCadencePreset.fromIntervalMinutes]. One chip per distinct preset
-/// so no two chips collide to the same bucket.
-const List<_CadenceChipDefinition> _orderedChips = [
-  _CadenceChipDefinition(label: '3h', intervalMinutes: 180),
-  _CadenceChipDefinition(label: '2h', intervalMinutes: 120),
-  _CadenceChipDefinition(label: '1h30', intervalMinutes: 90),
-  _CadenceChipDefinition(label: '1h', intervalMinutes: 60),
-  _CadenceChipDefinition(label: '30min', intervalMinutes: 30),
-  _CadenceChipDefinition(label: '15min', intervalMinutes: 15),
-  _CadenceChipDefinition(label: '10min', intervalMinutes: 10),
+/// Each chip IS a [JaculatoriaCadencePreset]; its label is that preset's real
+/// delivered cadence ([JaculatoriaCadencePreset.todayCadenceMinutes]). There is
+/// deliberately no "3h" chip: the gentlest preset (`suave`) delivers every 2h,
+/// so advertising 3h would be a cadence the scheduler never produces. Driving
+/// chips off the enum (instead of arbitrary minute values run back through
+/// `fromIntervalMinutes`) guarantees each chip selects exactly itself with no
+/// two chips collapsing into the same bucket.
+final List<JaculatoriaCadencePreset> _orderedChips = [
+  JaculatoriaCadencePreset.suave, // a cada 2h
+  JaculatoriaCadencePreset.regular, // a cada 1h30
+  JaculatoriaCadencePreset.frequente, // a cada hora
+  JaculatoriaCadencePreset.maisFrequente, // a cada 30min
+  JaculatoriaCadencePreset.intenso, // a cada 15min
+  JaculatoriaCadencePreset.muitoIntenso, // a cada 10min
 ];
 
+/// Short chip label for a preset, e.g. "2h", "1h30", "30min". Built from the
+/// preset's real delivered cadence. Deliberately renders a whole-hour cadence
+/// as "2h" (not "2h00" like the badge formatter) so the chip stays compact.
+String _chipLabel(JaculatoriaCadencePreset preset) {
+  final cadenceMinutes = preset.todayCadenceMinutes;
+  if (cadenceMinutes < 60) return '${cadenceMinutes}min';
+  final hours = cadenceMinutes ~/ 60;
+  final minutes = cadenceMinutes % 60;
+  return minutes == 0
+      ? '${hours}h'
+      : '${hours}h${minutes.toString().padLeft(2, '0')}';
+}
+
 /// A horizontal, scrollable row of minute chips for selecting jaculatória
-/// notification cadence. One chip per distinct preset (3h / 2h / 1h30 / 1h /
-/// 30min / 15min / 10min), ordered gentlest → tightest.
+/// notification cadence. One chip per distinct preset (2h / 1h30 / 1h / 30min /
+/// 15min / 10min), ordered gentlest → tightest.
 ///
 /// Visual language mirrors [_IntervalButton] in `interval_selector.dart`:
 /// animated container, selected highlight uses primaryButton background with
@@ -65,12 +80,10 @@ class CadenceChipSelector extends StatelessWidget {
         itemCount: _orderedChips.length,
         separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final chip = _orderedChips[index];
-          final chipPreset =
-              JaculatoriaCadencePreset.fromIntervalMinutes(chip.intervalMinutes);
+          final chipPreset = _orderedChips[index];
           final isSelected = chipPreset == selected;
           return _CadenceChip(
-            label: chip.label,
+            label: _chipLabel(chipPreset),
             isSelected: isSelected,
             onPressed: () {
               HapticFeedback.selectionClick();
@@ -81,16 +94,6 @@ class CadenceChipSelector extends StatelessWidget {
       ),
     );
   }
-}
-
-class _CadenceChipDefinition {
-  const _CadenceChipDefinition({
-    required this.label,
-    required this.intervalMinutes,
-  });
-
-  final String label;
-  final int intervalMinutes;
 }
 
 class _CadenceChip extends StatelessWidget {

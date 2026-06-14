@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,27 +54,39 @@ class NotificationsScreen extends ConsumerStatefulWidget {
       _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
+class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
+    with WidgetsBindingObserver {
   late DateTime _selectedDate;
-  Timer? _refreshTimer;
 
   @override
   void initState() {
     super.initState();
     final now = ref.read(notificationHistoryNowProvider);
     _selectedDate = DateTime(now.year, now.month, now.day);
-    // Poll every 3s so a freshly delivered notification (and the advancing
-    // "now" clock that the today-filter gates on) shows up promptly. 30s felt
-    // like the screen was stuck.
-    _refreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-      ref.invalidate(notificationHistoryNowProvider);
-      ref.invalidate(_availableHistoryDatesProvider);
-    });
+    // Refresh on the events that matter — first open and returning to the
+    // foreground — instead of polling on a timer. A periodic invalidate
+    // rebuilds the list and yanks the user's horizontal scroll back to the
+    // start mid-gesture, which reads as the screen "flashing". New
+    // notifications while the screen is already open are rare enough that
+    // refresh-on-resume is the better UX trade.
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refresh();
+    }
+  }
+
+  void _refresh() {
+    ref.invalidate(notificationHistoryNowProvider);
+    ref.invalidate(_availableHistoryDatesProvider);
   }
 
   @override
   void dispose() {
-    _refreshTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
