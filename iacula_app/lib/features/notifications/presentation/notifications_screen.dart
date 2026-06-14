@@ -84,6 +84,18 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
     ref.invalidate(_availableHistoryDatesProvider);
   }
 
+  /// Pull-to-refresh handler: re-pull the clock, the available days, and the
+  /// currently shown day's history, then await the reloads so the Cupertino
+  /// refresh spinner stays until fresh data has actually arrived.
+  Future<void> _pullToRefresh() async {
+    _refresh();
+    ref.invalidate(_historyForDayProvider(_selectedDate));
+    await Future.wait([
+      ref.read(_availableHistoryDatesProvider.future),
+      ref.read(_historyForDayProvider(_selectedDate).future),
+    ]);
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -121,103 +133,117 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen>
                   _historyForDayProvider(selectedDate),
                 );
 
-                return ListView(
-                  padding: EdgeInsets.fromLTRB(
-                    IaculaSpacing.md,
-                    IaculaSpacing.md,
-                    IaculaSpacing.md,
-                    IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
-                  ),
-                  children: [
-                    // -- STATUS --
-                    _NotificationStatusCard(
-                      enabled: settings.notificationsEnabled,
-                      permissionGranted: permissionGranted,
-                      intervalMinutes: settings.intervalMinutes,
-                      onToggle: (value) async {
-                        HapticFeedback.selectionClick();
-                        final updated = settings.copyWith(
-                          notificationsEnabled: value,
-                        );
-                        await ref
-                            .read(updateSettingsUseCaseProvider)
-                            .call(updated);
+                return CustomScrollView(
+                  slivers: [
+                    CupertinoSliverRefreshControl(onRefresh: _pullToRefresh),
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(
+                        IaculaSpacing.md,
+                        IaculaSpacing.md,
+                        IaculaSpacing.md,
+                        IaculaSpacing.md + MediaQuery.paddingOf(context).bottom,
+                      ),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          // -- STATUS --
+                          _NotificationStatusCard(
+                            enabled: settings.notificationsEnabled,
+                            permissionGranted: permissionGranted,
+                            intervalMinutes: settings.intervalMinutes,
+                            onToggle: (value) async {
+                              HapticFeedback.selectionClick();
+                              final updated = settings.copyWith(
+                                notificationsEnabled: value,
+                              );
+                              await ref
+                                  .read(updateSettingsUseCaseProvider)
+                                  .call(updated);
 
-                        final season = await ref
-                            .read(liturgicalSeasonServiceProvider)
-                            .getCurrentSeason();
-                        await ref
-                            .read(rebuildNotificationsUseCaseProvider)
-                            .call(
-                              updated,
-                              isEasterSeason: season == LiturgicalSeason.easter,
-                              showImmediate: false,
-                            );
+                              final season = await ref
+                                  .read(liturgicalSeasonServiceProvider)
+                                  .getCurrentSeason();
+                              await ref
+                                  .read(rebuildNotificationsUseCaseProvider)
+                                  .call(
+                                    updated,
+                                    isEasterSeason:
+                                        season == LiturgicalSeason.easter,
+                                    showImmediate: false,
+                                  );
 
-                        ref.invalidate(_settingsProvider);
-                        ref.invalidate(_availableHistoryDatesProvider);
-                      },
-                      onOpenSettings: () {
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const SettingsScreen(),
+                              ref.invalidate(_settingsProvider);
+                              ref.invalidate(_availableHistoryDatesProvider);
+                            },
+                            onOpenSettings: () {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (_) => const SettingsScreen(),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
 
-                    const SizedBox(height: IaculaRadius.cardSpacing),
+                          const SizedBox(height: IaculaRadius.cardSpacing),
 
-                    _HistoryDateSelector(
-                      dates: availableDates,
-                      selectedDate: selectedDate,
-                      today: today,
-                      onSelect: (date) => setState(() => _selectedDate = date),
-                    ),
-                    const SizedBox(height: IaculaSpacing.sm),
-                    IaculaSectionHeader(
-                      title: isTodaySelected
-                          ? 'Citações de hoje'
-                          : 'Citações do dia selecionado',
-                    ),
-                    const SizedBox(height: IaculaSpacing.sm),
-                    historyAsync.when(
-                      data: (entries) {
-                        final visibleEntries = isTodaySelected
-                            ? entries
-                                  .where(
-                                    (entry) => !entry.deliveredAt.isAfter(now),
-                                  )
-                                  .toList(growable: false)
-                            : entries;
-                        final dedupedEntries = _collapseNearbyDuplicateQuotes(
-                          visibleEntries,
-                          intervalMinutes: settings.intervalMinutes,
-                        );
-                        final sanitizedEntries = _collapseLegacyBurstEntries(
-                          dedupedEntries,
-                        );
+                          _HistoryDateSelector(
+                            dates: availableDates,
+                            selectedDate: selectedDate,
+                            today: today,
+                            onSelect: (date) =>
+                                setState(() => _selectedDate = date),
+                          ),
+                          const SizedBox(height: IaculaSpacing.sm),
+                          IaculaSectionHeader(
+                            title: isTodaySelected
+                                ? 'Citações de hoje'
+                                : 'Citações do dia selecionado',
+                          ),
+                          const SizedBox(height: IaculaSpacing.sm),
+                          historyAsync.when(
+                            data: (entries) {
+                              final visibleEntries = isTodaySelected
+                                  ? entries
+                                        .where(
+                                          (entry) =>
+                                              !entry.deliveredAt.isAfter(now),
+                                        )
+                                        .toList(growable: false)
+                                  : entries;
+                              final dedupedEntries =
+                                  _collapseNearbyDuplicateQuotes(
+                                    visibleEntries,
+                                    intervalMinutes: settings.intervalMinutes,
+                                  );
+                              final sanitizedEntries =
+                                  _collapseLegacyBurstEntries(dedupedEntries);
 
-                        if (sanitizedEntries.isEmpty) {
-                          return IaculaSoftCard(
-                            child: Text(
-                              isTodaySelected
-                                  ? 'As citações programadas para hoje aparecerão aqui conforme o dia avança.'
-                                  : 'Não há citações registradas para este dia.',
-                              style: context.textStyles.secondary,
+                              if (sanitizedEntries.isEmpty) {
+                                return IaculaSoftCard(
+                                  child: Text(
+                                    isTodaySelected
+                                        ? 'As citações programadas para hoje aparecerão aqui conforme o dia avança.'
+                                        : 'Não há citações registradas para este dia.',
+                                    style: context.textStyles.secondary,
+                                  ),
+                                );
+                              }
+                              return _NotificationsRail(
+                                entries: sanitizedEntries,
+                              );
+                            },
+                            loading: () => const Center(
+                              child: CupertinoActivityIndicator(),
                             ),
-                          );
-                        }
-                        return _NotificationsRail(entries: sanitizedEntries);
-                      },
-                      loading: () =>
-                          const Center(child: CupertinoActivityIndicator()),
-                      error: (error, stackTrace) => IaculaErrorState(
-                        title: 'Erro ao carregar citacoes',
-                        message: 'Tente novamente para atualizar o historico.',
-                        onRetry: () => ref.invalidate(
-                          _historyForDayProvider(selectedDate),
-                        ),
+                            error: (error, stackTrace) => IaculaErrorState(
+                              title: 'Erro ao carregar citacoes',
+                              message:
+                                  'Tente novamente para atualizar o historico.',
+                              onRetry: () => ref.invalidate(
+                                _historyForDayProvider(selectedDate),
+                              ),
+                            ),
+                          ),
+                        ]),
                       ),
                     ),
                   ],
