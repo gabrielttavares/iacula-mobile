@@ -33,7 +33,8 @@ String closedAppCadenceNotePtBr() {
 /// `fromIntervalMinutes`) guarantees each chip selects exactly itself with no
 /// two chips collapsing into the same bucket.
 final List<JaculatoriaCadencePreset> _orderedChips = [
-  JaculatoriaCadencePreset.suave, // a cada 2h
+  JaculatoriaCadencePreset.suave, // a cada 3h
+  JaculatoriaCadencePreset.moderado, // a cada 2h
   JaculatoriaCadencePreset.regular, // a cada 1h30
   JaculatoriaCadencePreset.frequente, // a cada hora
   JaculatoriaCadencePreset.maisFrequente, // a cada 30min
@@ -55,8 +56,8 @@ String _chipLabel(JaculatoriaCadencePreset preset) {
 }
 
 /// A horizontal, scrollable row of minute chips for selecting jaculatória
-/// notification cadence. One chip per distinct preset (2h / 1h30 / 1h / 30min /
-/// 15min / 10min), ordered gentlest → tightest.
+/// notification cadence. One chip per distinct preset (3h / 2h / 1h30 / 1h /
+/// 30min / 15min / 10min), ordered gentlest → tightest.
 ///
 /// Visual language mirrors [_IntervalButton] in `interval_selector.dart`:
 /// animated container, selected highlight uses primaryButton background with

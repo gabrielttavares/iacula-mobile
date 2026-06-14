@@ -27,7 +27,15 @@ void main() {
       _host(selected: JaculatoriaCadencePreset.suave, onChanged: (_) {}),
     );
 
-    for (final label in const ['3h', '1h30', '1h', '30min', '15min', '10min']) {
+    for (final label in const [
+      '3h',
+      '2h',
+      '1h30',
+      '1h',
+      '30min',
+      '15min',
+      '10min',
+    ]) {
       expect(find.text(label), findsOneWidget, reason: 'missing chip $label');
     }
   });
@@ -45,7 +53,11 @@ void main() {
     await tester.tap(find.text('3h'));
     expect(taps.last, JaculatoriaCadencePreset.suave);
 
-    // "1h30" must report regular, distinct from the 3h chip.
+    // "2h" must report moderado — distinct from both 3h and 1h30.
+    await tester.tap(find.text('2h'));
+    expect(taps.last, JaculatoriaCadencePreset.moderado);
+
+    // "1h30" must report regular, distinct from the 2h chip.
     await tester.tap(find.text('1h30'));
     expect(taps.last, JaculatoriaCadencePreset.regular);
 

@@ -8,9 +8,12 @@
 /// notification capacity (iOS caps pending notifications; Android does not).
 enum JaculatoriaCadencePreset {
   /// ~every 3h across the active window. The representative interval (180) and
-  /// the real cadence ([todayCadenceMinutes]) now agree at 3h, and 180 sits in
-  /// the suave bucket (> 135) so preset⇄minutes round-trips.
+  /// the real cadence ([todayCadenceMinutes]) agree at 3h, and 180 sits in the
+  /// suave bucket (> 150) so preset⇄minutes round-trips.
   suave(intervalMinutes: 180),
+
+  /// ~every 2h.
+  moderado(intervalMinutes: 120),
 
   /// ~every 90min.
   regular(intervalMinutes: 90),
@@ -37,6 +40,7 @@ enum JaculatoriaCadencePreset {
   /// Actual spacing (minutes) between quote slots for this preset.
   int get todayCadenceMinutes => switch (this) {
         JaculatoriaCadencePreset.suave => 180,
+        JaculatoriaCadencePreset.moderado => 120,
         JaculatoriaCadencePreset.regular => 90,
         JaculatoriaCadencePreset.frequente => 60,
         JaculatoriaCadencePreset.maisFrequente => 30,
@@ -55,6 +59,7 @@ enum JaculatoriaCadencePreset {
   /// as the subtitle via [cadenceLabelPtBr]).
   String get displayNamePtBr => switch (this) {
         JaculatoriaCadencePreset.suave => 'Suave',
+        JaculatoriaCadencePreset.moderado => 'Moderado',
         JaculatoriaCadencePreset.regular => 'Regular',
         JaculatoriaCadencePreset.frequente => 'Frequente',
         JaculatoriaCadencePreset.maisFrequente => 'Mais frequente',
@@ -66,6 +71,7 @@ enum JaculatoriaCadencePreset {
   /// Kept short so no preset card wraps onto a second line.
   String get cadenceLabelPtBr => switch (this) {
         JaculatoriaCadencePreset.suave => 'A cada 3h',
+        JaculatoriaCadencePreset.moderado => 'A cada 2h',
         JaculatoriaCadencePreset.regular => 'A cada 1h30',
         JaculatoriaCadencePreset.frequente => 'A cada hora',
         JaculatoriaCadencePreset.maisFrequente => 'A cada 30min',
@@ -77,6 +83,7 @@ enum JaculatoriaCadencePreset {
   /// "Jaculatórias a cada hora e Angelus ao meio-dia.".
   String get cadencePhrasePtBr => switch (this) {
         JaculatoriaCadencePreset.suave => 'a cada 3 horas',
+        JaculatoriaCadencePreset.moderado => 'a cada 2 horas',
         JaculatoriaCadencePreset.regular => 'a cada 1h30',
         JaculatoriaCadencePreset.frequente => 'a cada hora',
         JaculatoriaCadencePreset.maisFrequente => 'a cada 30 minutos',
@@ -87,16 +94,17 @@ enum JaculatoriaCadencePreset {
   /// Maps a stored/legacy interval to the nearest preset.
   ///
   /// Thresholds are midpoints between adjacent representative intervals
-  /// (10/15/30/60/90/180): `<= 12 -> muitoIntenso`, `<= 22 -> intenso`,
-  /// `<= 45 -> maisFrequente`, `<= 75 -> frequente`, `<= 135 -> regular`,
-  /// else `suave`. Each preset's representative interval lands in its own band,
-  /// so preset⇄minutes round-trips without collision.
+  /// (10/15/30/60/90/120/180): `<= 12 -> muitoIntenso`, `<= 22 -> intenso`,
+  /// `<= 45 -> maisFrequente`, `<= 75 -> frequente`, `<= 105 -> regular`,
+  /// `<= 150 -> moderado`, else `suave`. Each preset's representative interval
+  /// lands in its own band, so preset⇄minutes round-trips without collision.
   static JaculatoriaCadencePreset fromIntervalMinutes(int minutes) {
     if (minutes <= 12) return JaculatoriaCadencePreset.muitoIntenso;
     if (minutes <= 22) return JaculatoriaCadencePreset.intenso;
     if (minutes <= 45) return JaculatoriaCadencePreset.maisFrequente;
     if (minutes <= 75) return JaculatoriaCadencePreset.frequente;
-    if (minutes <= 135) return JaculatoriaCadencePreset.regular;
+    if (minutes <= 105) return JaculatoriaCadencePreset.regular;
+    if (minutes <= 150) return JaculatoriaCadencePreset.moderado;
     return JaculatoriaCadencePreset.suave;
   }
 }

@@ -4,6 +4,7 @@ import 'package:iacula_app/features/settings/domain/jaculatoria_cadence_preset.d
 void main() {
   test('each preset persists a representative interval inside its bucket', () {
     expect(JaculatoriaCadencePreset.suave.intervalMinutes, 180);
+    expect(JaculatoriaCadencePreset.moderado.intervalMinutes, 120);
     expect(JaculatoriaCadencePreset.regular.intervalMinutes, 90);
     expect(JaculatoriaCadencePreset.frequente.intervalMinutes, 60);
     expect(JaculatoriaCadencePreset.maisFrequente.intervalMinutes, 30);
@@ -13,6 +14,7 @@ void main() {
 
   test('today cadence is the real slot spacing', () {
     expect(JaculatoriaCadencePreset.suave.todayCadenceMinutes, 180);
+    expect(JaculatoriaCadencePreset.moderado.todayCadenceMinutes, 120);
     expect(JaculatoriaCadencePreset.regular.todayCadenceMinutes, 90);
     expect(JaculatoriaCadencePreset.frequente.todayCadenceMinutes, 60);
     expect(JaculatoriaCadencePreset.maisFrequente.todayCadenceMinutes, 30);
@@ -49,15 +51,22 @@ void main() {
         JaculatoriaCadencePreset.frequente);
     expect(JaculatoriaCadencePreset.fromIntervalMinutes(75),
         JaculatoriaCadencePreset.frequente);
-    // <= 135 -> Regular
+    // <= 105 -> Regular
     expect(JaculatoriaCadencePreset.fromIntervalMinutes(76),
         JaculatoriaCadencePreset.regular);
     expect(JaculatoriaCadencePreset.fromIntervalMinutes(90),
         JaculatoriaCadencePreset.regular);
-    expect(JaculatoriaCadencePreset.fromIntervalMinutes(135),
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(105),
         JaculatoriaCadencePreset.regular);
-    // > 135 -> Suave
-    expect(JaculatoriaCadencePreset.fromIntervalMinutes(136),
+    // <= 150 -> Moderado (2h)
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(106),
+        JaculatoriaCadencePreset.moderado);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(120),
+        JaculatoriaCadencePreset.moderado);
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(150),
+        JaculatoriaCadencePreset.moderado);
+    // > 150 -> Suave (3h)
+    expect(JaculatoriaCadencePreset.fromIntervalMinutes(151),
         JaculatoriaCadencePreset.suave);
     expect(JaculatoriaCadencePreset.fromIntervalMinutes(180),
         JaculatoriaCadencePreset.suave);
