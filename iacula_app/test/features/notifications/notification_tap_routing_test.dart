@@ -204,12 +204,20 @@ final class _FakePrayerContentRepository implements PrayerContentRepository {
   @override
   Future<String?> getReginaCaeliImagePath() async => null;
 
+  // PrayerCatalogDetailScreen titles itself from the loaded detail's
+  // localized title, so the fake mirrors the real catalog titles.
+  static const _titlesBySlug = {
+    'angelus': 'Ângelus',
+    'regina-coeli': 'Regina Caeli',
+    'lembrai-vos': 'Lembrai-Vos',
+  };
+
   @override
   Future<PrayerDetail> loadPrayerDetail({required String slug}) async {
     return PrayerDetail(
       slug: slug,
       defaultLanguage: 'pt-br',
-      titlesByLanguage: {'pt-br': slug},
+      titlesByLanguage: {'pt-br': _titlesBySlug[slug] ?? slug},
       blocksByLanguage: {
         'pt-br': ['content for $slug'],
       },

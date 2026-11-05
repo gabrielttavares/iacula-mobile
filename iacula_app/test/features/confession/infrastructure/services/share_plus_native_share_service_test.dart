@@ -15,27 +15,29 @@ void main() {
     expect(origin.height, greaterThan(0));
   });
 
-  test('buildShareParams appends canonical app url in text and omits uri', () {
+  test('buildShareParams shares trimmed text without app url or uri', () {
     const service = SharePlusNativeShareService();
 
-    final params = service.buildShareParams('Test share text');
+    final params = service.buildShareParams('  Test share text \n');
 
     expect(params.uri, isNull);
-    expect(params.text, contains('https://iacula.app'));
+    expect(params.text, 'Test share text');
+    expect(params.text, isNot(contains('https://iacula.app')));
   });
 
   test('buildImageShareParams includes image file and non-zero origin', () {
     const service = SharePlusNativeShareService();
 
     final params = service.buildImageShareParams(
-      text: 'Test share text',
+      text: '  Test share text \n',
       imageBytes: Uint8List.fromList(const [1, 2, 3]),
     );
 
     expect(params.files, hasLength(1));
     expect(params.fileNameOverrides, hasLength(1));
     expect(params.uri, isNull);
-    expect(params.text, contains('https://iacula.app'));
+    expect(params.text, 'Test share text');
+    expect(params.text, isNot(contains('https://iacula.app')));
     final origin = params.sharePositionOrigin;
     expect(origin, isNotNull);
     expect(origin!.width, greaterThan(0));

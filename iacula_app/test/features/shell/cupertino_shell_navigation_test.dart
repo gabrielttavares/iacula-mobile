@@ -25,9 +25,16 @@ void main() {
 
     expect(find.byType(CupertinoTabScaffold), findsOneWidget);
     expect(find.text('Início'), findsOneWidget);
-    expect(find.text('Notificações'), findsOneWidget);
+    expect(find.text('Bíblia'), findsOneWidget);
     expect(find.text('Favoritos'), findsOneWidget);
     expect(find.text('Mais'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(CupertinoTabBar),
+        matching: find.text('Notificações'),
+      ),
+      findsNothing,
+    );
   });
 
   testWidgets('shell switches to more tab', (tester) async {

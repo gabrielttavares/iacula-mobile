@@ -27,6 +27,7 @@ Future<void> loadBundledFontsForGolden() async {
     'Inter_regular': 'Inter-Regular.ttf',
     'Inter_500': 'Inter-Medium.ttf',
     'Inter_600': 'Inter-SemiBold.ttf',
+    'Inter_700': 'Inter-Bold.ttf',
   };
 
   for (final entry in familyToFile.entries) {

@@ -136,8 +136,11 @@ void main() {
     expect(find.text('Tamanho da fonte'), findsOneWidget);
     await expectVisible('Personalização');
     await expectVisible('Jaculatórias');
-    await expectVisible('Pontos de Caminho/Sulco/Forja');
+    await expectVisible('Mostrar só minhas jaculatórias');
     await expectVisible('Salvar');
+    // The Pontos de Caminho/Sulco/Forja toggle was intentionally hidden from
+    // the settings UI (e63b737).
+    expect(find.text('Pontos de Caminho/Sulco/Forja'), findsNothing);
   });
 
   testWidgets('settings no longer shows deprecated sync and interval inputs', (
@@ -159,69 +162,53 @@ void main() {
     expect(find.text('Sincronizar agora'), findsNothing);
   });
 
-  testWidgets(
-    'saving with Pontos switch enabled persists Escriva feed as enabled',
-    (tester) async {
-      final repo = _FakeSettingsRepository(
-        Settings.defaults.copyWith(
-          escrivaPointsFeedOptionVisible: false,
-          escrivaPointsFeedEnabled: false,
-        ),
-      );
+  // The Pontos de Caminho/Sulco/Forja switch is hidden from the UI (e63b737),
+  // so saving must carry the stored Escriva feed preference through unchanged
+  // instead of silently resetting it.
+  for (final enabled in [true, false]) {
+    testWidgets(
+      'saving preserves stored Escriva feed preference (enabled: $enabled)',
+      (tester) async {
+        final repo = _FakeSettingsRepository(
+          Settings.defaults.copyWith(
+            escrivaPointsFeedOptionVisible: enabled,
+            escrivaPointsFeedEnabled: enabled,
+          ),
+        );
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            settingsRepositoryProvider.overrideWithValue(repo),
-            liturgicalSeasonServiceProvider.overrideWithValue(
-              _FakeLiturgicalSeasonService(),
-            ),
-            rebuildNotificationsUseCaseProvider.overrideWith((ref) {
-              return _makeNoopRebuildUseCase();
-            }),
-          ],
-          child: const CupertinoApp(home: SettingsScreen()),
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              settingsRepositoryProvider.overrideWithValue(repo),
+              liturgicalSeasonServiceProvider.overrideWithValue(
+                _FakeLiturgicalSeasonService(),
+              ),
+              rebuildNotificationsUseCaseProvider.overrideWith((ref) {
+                return _makeNoopRebuildUseCase();
+              }),
+            ],
+            child: const CupertinoApp(home: SettingsScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      final scrollable = find.byType(CustomScrollView);
-      for (var i = 0; i < 12; i++) {
-        if (find.text('Pontos de Caminho/Sulco/Forja').evaluate().isNotEmpty) {
-          break;
+        expect(find.text('Pontos de Caminho/Sulco/Forja'), findsNothing);
+
+        final scrollable = find.byType(CustomScrollView);
+        final saveButton = find.text('Salvar');
+        for (var i = 0; i < 12 && saveButton.evaluate().isEmpty; i++) {
+          await tester.drag(scrollable, const Offset(0, -250));
+          await tester.pumpAndSettle();
         }
-        await tester.drag(scrollable, const Offset(0, -250));
+        expect(saveButton, findsOneWidget);
+        await tester.ensureVisible(saveButton);
         await tester.pumpAndSettle();
-      }
-
-      final pointsLabel = find.text('Pontos de Caminho/Sulco/Forja');
-      expect(pointsLabel, findsOneWidget);
-
-      final pointsRow = find.ancestor(
-        of: pointsLabel,
-        matching: find.byType(Row),
-      );
-      final pointsSwitch = find.descendant(
-        of: pointsRow,
-        matching: find.byType(CupertinoSwitch),
-      );
-      expect(pointsSwitch, findsOneWidget);
-
-      await tester.tap(pointsSwitch);
-      await tester.pumpAndSettle();
-
-      final saveButton = find.text('Salvar');
-      for (var i = 0; i < 12 && saveButton.evaluate().isEmpty; i++) {
-        await tester.drag(scrollable, const Offset(0, -250));
+        await tester.tap(saveButton);
         await tester.pumpAndSettle();
-      }
-      expect(saveButton, findsOneWidget);
-      await tester.ensureVisible(saveButton);
-      await tester.pumpAndSettle();
-      await tester.tap(saveButton);
-      await tester.pumpAndSettle();
 
-      expect(repo._value.escrivaPointsFeedEnabled, isTrue);
-    },
-  );
+        expect(repo._value.escrivaPointsFeedEnabled, enabled);
+        expect(repo._value.escrivaPointsFeedOptionVisible, enabled);
+      },
+    );
+  }
 }
