@@ -23,6 +23,20 @@ void main() {
       ),
     ]);
   });
+
+  test('registers the notification re-arm task when configured', () async {
+    final gateway = _FakeBackgroundSyncGateway();
+    final scheduler = BackgroundSyncScheduler(
+      gateway: gateway,
+      notificationRearmTaskId: 'rearm',
+      notificationRearmFrequency: const Duration(hours: 12),
+    );
+
+    await scheduler.register();
+
+    expect(gateway.calls.last, ('rearm', 'rearm', false));
+    expect(gateway.frequencies.last, const Duration(hours: 12));
+  });
 }
 
 final class _FakeBackgroundSyncGateway implements BackgroundSyncGateway {
@@ -30,6 +44,7 @@ final class _FakeBackgroundSyncGateway implements BackgroundSyncGateway {
   int registerCalls = 0;
 
   final List<(String, String, bool)> calls = [];
+  final List<Duration?> frequencies = [];
 
   @override
   Future<void> initialize() async {
@@ -41,8 +56,10 @@ final class _FakeBackgroundSyncGateway implements BackgroundSyncGateway {
     required String taskId,
     required String taskName,
     required bool requiresNetwork,
+    Duration? frequency,
   }) async {
     registerCalls += 1;
     calls.add((taskId, taskName, requiresNetwork));
+    frequencies.add(frequency);
   }
 }

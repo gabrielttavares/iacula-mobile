@@ -36,6 +36,43 @@ void main() {
   });
 
   group('handleAppResume', () {
+    group('runway refresh', () {
+      final now = DateTime(2026, 11, 4, 9);
+
+      NotificationRuntimeCoordinator withLastRebuild(DateTime lastRebuildAt) =>
+          NotificationRuntimeCoordinator(
+            loadSettings: () async => enabledSettings(),
+            rebuild: delegate.rebuild,
+            pendingQuoteIds: delegate.pendingQuoteIds,
+            refreshWidget: delegate.refreshWidget,
+            cancelAll: delegate.cancelAll,
+            now: now,
+            lastRebuildAt: lastRebuildAt,
+          );
+
+      test('re-arms a stale runway even with quotes still pending', () async {
+        // Opening the app on day 6 must push the runway forward, not wait for
+        // it to run dry on day 7.
+        delegate.nextPendingIds = [9000, 9001];
+
+        await withLastRebuild(
+          now.subtract(const Duration(days: 6)),
+        ).handleAppResume();
+
+        expect(delegate.rebuildCalls, 1);
+      });
+
+      test('leaves a fresh runway alone when quotes are pending', () async {
+        delegate.nextPendingIds = [9000, 9001];
+
+        await withLastRebuild(
+          now.subtract(const Duration(hours: 2)),
+        ).handleAppResume();
+
+        expect(delegate.rebuildCalls, 0);
+      });
+    });
+
     test('rebuilds when no pending quote IDs exist', () async {
       delegate.nextPendingIds = [];
 
