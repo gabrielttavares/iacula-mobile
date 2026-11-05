@@ -101,6 +101,8 @@ class _IaculaAppState extends ConsumerState<IaculaApp>
         pendingQuoteIds: () => scheduler.pendingNotificationIds(),
         refreshWidget: () => _makeWidgetRefreshUseCase().call().then((_) {}),
         cancelAll: () => scheduler.cancelAll(),
+        // AppBootstrap re-armed the runway just before the first frame.
+        lastRebuildAt: DateTime.now(),
       );
 
       _widgetRefreshSub = Timer.periodic(const Duration(seconds: 30), (_) {
