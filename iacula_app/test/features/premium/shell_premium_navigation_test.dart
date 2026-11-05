@@ -60,7 +60,7 @@ final class _FakePurchaseService implements PurchaseService {
 }
 
 void main() {
-  testWidgets('free user tapping Notificações tab opens directly', (
+  testWidgets('free user tapping Notificações bell opens directly', (
     tester,
   ) async {
     final premiumRepository = _FakePremiumRepository(PremiumStatus.free);
@@ -86,7 +86,8 @@ void main() {
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100)); // wait for provider
-    await tester.tap(find.text('Notificações'));
+    // Notificações moved from the tab bar to the bell in the home header.
+    await tester.tap(find.byKey(const Key('home_notifications_button')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 

@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/core/presentation/shell_screen.dart';
+import 'package:iacula_app/features/home/presentation/home_screen.dart';
+import 'package:iacula_app/features/notifications/domain/entities/last_delivered_card.dart';
+import 'package:iacula_app/features/notifications/infrastructure/repositories/in_memory_last_delivered_card_repository.dart';
 import 'package:iacula_app/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:iacula_app/features/settings/domain/entities/settings.dart';
 import 'package:iacula_app/features/settings/domain/repositories/settings_repository.dart';
@@ -21,9 +24,28 @@ final class _FakeSettingsRepository implements SettingsRepository {
   }
 }
 
+// Once onboarding completes the Shell (and HomeScreen) is shown. Seed a
+// same-day last delivered card and pin "now" so the home hero resolves from it
+// instead of falling back to bundled quote assets, which never complete under
+// the widget-test fake clock and would keep pumpAndSettle from settling.
+final _fixedNow = DateTime(2026, 2, 21, 11, 30);
+
 Widget _buildApp(_FakeSettingsRepository repo) {
+  final lastCardRepo = InMemoryLastDeliveredCardRepository()
+    ..save(
+      LastDeliveredCard(
+        quoteText: 'Permanecei em mim.',
+        theme: 'Conversao',
+        season: 'ordinary',
+        deliveredAt: _fixedNow.subtract(const Duration(minutes: 30)),
+      ),
+    );
   return ProviderScope(
-    overrides: [settingsRepositoryProvider.overrideWithValue(repo)],
+    overrides: [
+      settingsRepositoryProvider.overrideWithValue(repo),
+      homeNowProvider.overrideWithValue(_fixedNow),
+      lastDeliveredCardRepositoryProvider.overrideWithValue(lastCardRepo),
+    ],
     child: CupertinoApp(
       home: repo.value.onboardingCompleted
           ? const ShellScreen()

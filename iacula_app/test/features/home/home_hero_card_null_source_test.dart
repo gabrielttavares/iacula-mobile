@@ -5,6 +5,7 @@ import 'package:iacula_app/core/di/providers.dart';
 import 'package:iacula_app/features/favorites/infrastructure/repositories/in_memory_favorite_repository.dart';
 import 'package:iacula_app/features/home/presentation/widgets/home_hero_card.dart';
 import 'package:iacula_app/features/liturgical/domain/liturgical_season.dart';
+import 'package:iacula_app/features/notifications/presentation/notification_detail_screen.dart';
 import 'package:iacula_app/features/quotes/domain/entities/quote.dart';
 
 void main() {
@@ -88,7 +89,9 @@ void main() {
     expect(find.byKey(const Key('home_hero_text_fade')), findsNothing);
   });
 
-  testWidgets('tapping hero body opens full quote screen', (tester) async {
+  testWidgets('tapping hero body opens the quote detail screen', (
+    tester,
+  ) async {
     final quote = escrivaQuote(
       List.filled(
         18,
@@ -102,16 +105,23 @@ void main() {
     await tester.tap(find.byKey(const Key('home_hero_card')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('quote_full_text_screen')), findsOneWidget);
+    expect(find.byType(NotificationDetailScreen), findsOneWidget);
     expect(find.text(quote.text), findsWidgets);
 
-    await tester.pageBack();
+    // The detail screen uses a custom back chevron instead of the default
+    // CupertinoNavigationBarBackButton.
+    await tester.tap(
+      find.descendant(
+        of: find.byType(NotificationDetailScreen),
+        matching: find.byIcon(CupertinoIcons.back),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('home_hero_card')), findsOneWidget);
   });
 
-  testWidgets('tapping hero action does not open full quote screen', (
+  testWidgets('tapping hero action does not open the quote detail screen', (
     tester,
   ) async {
     final quote = escrivaQuote(
@@ -127,7 +137,7 @@ void main() {
     await tester.tap(find.byKey(const Key('hero_bookmark_button')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('quote_full_text_screen')), findsNothing);
+    expect(find.byType(NotificationDetailScreen), findsNothing);
     expect(find.byKey(const Key('home_hero_card')), findsOneWidget);
   });
 }

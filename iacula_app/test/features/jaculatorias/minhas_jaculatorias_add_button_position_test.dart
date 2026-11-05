@@ -60,26 +60,26 @@ Widget _buildScreenWithPhrases(List<CustomPhrase> phrases) {
 }
 
 void main() {
-  group('MinhasJaculatoriasScreen — Adicionar frase button position', () {
+  group('MinhasJaculatoriasScreen — Adicionar jaculatória button position', () {
     testWidgets('shows add-phrase button before any phrase items when list is empty', (
       tester,
     ) async {
       await tester.pumpWidget(_buildScreenWithPhrases([]));
       await tester.pumpAndSettle();
 
-      expect(find.text('Adicionar frase'), findsOneWidget);
-      expect(find.text('Nenhuma frase pessoal ainda'), findsOneWidget);
+      expect(find.text('Adicionar jaculatória'), findsOneWidget);
+      expect(find.text('Nenhuma jaculatória ainda'), findsOneWidget);
 
       final addButtonOffset =
-          tester.getTopLeft(find.text('Adicionar frase')).dy;
+          tester.getTopLeft(find.text('Adicionar jaculatória')).dy;
       final emptyHintOffset =
-          tester.getTopLeft(find.text('Nenhuma frase pessoal ainda')).dy;
+          tester.getTopLeft(find.text('Nenhuma jaculatória ainda')).dy;
 
       expect(
         addButtonOffset,
         lessThan(emptyHintOffset),
         reason:
-            'Adicionar frase button must appear above the empty-state hint',
+            'Adicionar jaculatória button must appear above the empty-state hint',
       );
     });
 
@@ -94,11 +94,11 @@ void main() {
       await tester.pumpWidget(_buildScreenWithPhrases(phrases));
       await tester.pumpAndSettle();
 
-      expect(find.text('Adicionar frase'), findsOneWidget);
+      expect(find.text('Adicionar jaculatória'), findsOneWidget);
       expect(find.text('Senhor, ficai conosco'), findsOneWidget);
 
       final addButtonOffset =
-          tester.getTopLeft(find.text('Adicionar frase')).dy;
+          tester.getTopLeft(find.text('Adicionar jaculatória')).dy;
       final firstPhraseOffset =
           tester.getTopLeft(find.text('Senhor, ficai conosco')).dy;
 
@@ -106,7 +106,7 @@ void main() {
         addButtonOffset,
         lessThan(firstPhraseOffset),
         reason:
-            'Adicionar frase button must appear above the first phrase item',
+            'Adicionar jaculatória button must appear above the first phrase item',
       );
     });
   });

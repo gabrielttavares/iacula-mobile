@@ -31,11 +31,17 @@ final class _FakeLastDeliveredCardRepository
   Future<void> save(LastDeliveredCard card) async {}
 }
 
+// Pinned to the fake last-delivered card's day so the hero resolves from it
+// instead of falling back to bundled quote assets (which never complete under
+// the widget-test fake clock and would leave the hero shimmering forever).
+final _fixedNow = DateTime(2026, 2, 21, 11, 30);
+
 void main() {
   testWidgets('search icon navigates to SearchScreen', (tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          homeNowProvider.overrideWithValue(_fixedNow),
           settingsRepositoryProvider.overrideWithValue(
             _FakeSettingsRepository(),
           ),

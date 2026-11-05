@@ -33,13 +33,19 @@ final class _FakeLastDeliveredCardRepository
   Future<void> save(LastDeliveredCard card) async {}
 }
 
+// Pinned to the fake last-delivered card's day so the hero resolves from it
+// instead of falling back to bundled quote assets (which never complete under
+// the widget-test fake clock and would leave the hero shimmering forever).
+final _fixedNow = DateTime(2026, 2, 21, 11, 30);
+
 void main() {
-  testWidgets('home nav bar trailing has search but no notifications shortcut', (
+  testWidgets('home nav bar trailing has notifications bell and search', (
     tester,
   ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          homeNowProvider.overrideWithValue(_fixedNow),
           settingsRepositoryProvider.overrideWithValue(
             _FakeSettingsRepository(),
           ),
@@ -53,14 +59,17 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.byKey(const Key('home_notifications_button')), findsNothing);
+    expect(find.byKey(const Key('home_notifications_button')), findsOneWidget);
     expect(find.byKey(const Key('home_search_button')), findsOneWidget);
   });
 
-  testWidgets('shell Notifications tab shows NotificationsScreen', (tester) async {
+  testWidgets('home notifications bell opens NotificationsScreen from shell', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          homeNowProvider.overrideWithValue(_fixedNow),
           settingsRepositoryProvider.overrideWithValue(
             _FakeSettingsRepository(),
           ),
@@ -81,12 +90,17 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 350));
 
-    await tester.tap(
+    // Notificações is no longer a bottom tab (replaced by Bíblia); it is
+    // reached through the bell in the home header.
+    expect(
       find.descendant(
         of: find.byType(CupertinoTabBar),
         matching: find.text('Notificações'),
       ),
+      findsNothing,
     );
+
+    await tester.tap(find.byKey(const Key('home_notifications_button')));
     await tester.pumpAndSettle();
 
     expect(find.byType(NotificationsScreen), findsOneWidget);
