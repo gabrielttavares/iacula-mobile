@@ -4,6 +4,13 @@ import 'package:url_launcher/url_launcher.dart';
 const _appleAppStoreId = '6761186771';
 const _androidPackageId = 'com.iacula.app';
 
+/// Public store page of the app, for links in shared content. Points at the
+/// sharer's own store; there is no universal link domain yet.
+String iaculaStoreUrl(TargetPlatform platform) =>
+    platform == TargetPlatform.android
+    ? 'https://play.google.com/store/apps/details?id=$_androidPackageId'
+    : 'https://apps.apple.com/app/id$_appleAppStoreId';
+
 /// URIs to try in order for the platform-specific app review / store flow.
 List<Uri> appStoreReviewUrisToTry(TargetPlatform platform) {
   switch (platform) {
