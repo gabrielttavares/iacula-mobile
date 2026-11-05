@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../bible/presentation/widgets/citation_linked_text.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
 import '../../../core/presentation/widgets/iacula_progress_bar.dart';
@@ -126,8 +127,11 @@ class _HourPrayerScreenState extends ConsumerState<HourPrayerScreen> {
                         ),
                         if (_current.reference != null) ...[
                           const SizedBox(height: 4),
-                          Text(
+                          CitationLinkedText(
                             _current.reference!,
+                            selectable: false,
+                            linkColor: context.colors.primaryButton,
+                            parser: liturgyReferenceParser,
                             style: context.textStyles.secondary.copyWith(
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
