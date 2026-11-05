@@ -6,6 +6,8 @@ import 'package:flutter/material.dart'
         EditableTextState,
         SelectableText,
         TextSpan;
+import 'package:flutter/gestures.dart' show TapGestureRecognizer;
+import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -17,20 +19,27 @@ import '../../prayers/presentation/widgets/font_size_controls.dart';
 import '../../reading/domain/entities/reading_highlight.dart';
 import '../../reading/presentation/widgets/annotatable_text_block.dart';
 import '../domain/bible_chapter_navigation.dart';
+import '../domain/bible_citation.dart';
 import '../domain/bible_chapter_selection.dart';
 import '../domain/entities/bible_book.dart';
 import '../domain/entities/bible_chapter_ref.dart';
 import '../domain/entities/bible_verse.dart';
+import 'bible_citation_sheet.dart';
 
 class BibleChapterScreen extends ConsumerStatefulWidget {
   const BibleChapterScreen({
     super.key,
     required this.book,
     required this.chapterNumber,
+    this.focus,
   });
 
   final BibleBook book;
   final int chapterNumber;
+
+  /// Verses to tint and scroll to, when opened from a citation. Opening with a
+  /// focus does not move the user's saved Bible reading position.
+  final BibleReference? focus;
 
   @override
   ConsumerState<BibleChapterScreen> createState() => _BibleChapterScreenState();
@@ -40,22 +49,108 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
   List<ReadingHighlight> _highlights = [];
   late final String _documentId;
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey _contentKey = GlobalKey();
+  bool _scrolledToFocus = false;
+
+  /// Cross-references inside the verses ("(Os. 10, 8)"), parsed once per
+  /// loaded chapter, with their tap recognizers.
+  List<BibleVerse>? _citationVerses;
+  Map<int, List<VerseCitationLink>> _citationsByVerse = const {};
+
+  Map<int, List<VerseCitationLink>> _citationsFor(List<BibleVerse> verses) {
+    if (identical(verses, _citationVerses)) return _citationsByVerse;
+    _disposeCitations();
+    const parser = BibleCitationParser();
+    _citationVerses = verses;
+    _citationsByVerse = {
+      for (final verse in verses)
+        if (parser.parse(verse.text) case final found when found.isNotEmpty)
+          verse.number: [
+            for (final citation in found)
+              VerseCitationLink(
+                citation,
+                TapGestureRecognizer()
+                  ..onTap = () => showBibleCitationSheet(context, citation),
+              ),
+          ],
+    };
+    return _citationsByVerse;
+  }
+
+  void _disposeCitations() {
+    for (final links in _citationsByVerse.values) {
+      for (final link in links) {
+        link.recognizer.dispose();
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _documentId = 'bible:${widget.book.abbrev}:${widget.chapterNumber}';
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(biblePrefsProvider.notifier).savePosition(
-            widget.book.abbrev,
-            widget.chapterNumber,
-          );
+      if (widget.focus == null) {
+        ref.read(biblePrefsProvider.notifier).savePosition(
+              widget.book.abbrev,
+              widget.chapterNumber,
+            );
+      }
       _loadHighlights();
+    });
+  }
+
+  /// Scrolls so the first focused verse sits near the top of the screen. The
+  /// chapter is a single selectable text, so the verse position comes from the
+  /// text layout rather than from a widget per verse.
+  void _scrollToFocusOnce(List<BibleVerse> verses) {
+    final focus = widget.focus;
+    if (focus == null || _scrolledToFocus) return;
+    _scrolledToFocus = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      final segment = buildVerseSegments(verses)
+          .where((s) => focus.containsVerse(s.verseNumber))
+          .firstOrNull;
+      final root = _contentKey.currentContext?.findRenderObject();
+      if (segment == null || root == null) return;
+
+      RenderEditable? editable;
+      void visit(RenderObject node) {
+        if (editable != null) return;
+        if (node is RenderEditable) {
+          editable = node;
+          return;
+        }
+        node.visitChildren(visit);
+      }
+
+      visit(root);
+      final target = editable;
+      final viewport = context.findRenderObject();
+      if (target == null || viewport is! RenderBox) return;
+
+      final caret = target.getLocalRectForCaret(
+        TextPosition(offset: segment.textStartGlobal),
+      );
+      final dy = target.localToGlobal(caret.topLeft, ancestor: viewport).dy;
+      final position = _scrollController.position;
+      final offset = (_scrollController.offset + dy - 120).clamp(
+        position.minScrollExtent,
+        position.maxScrollExtent,
+      );
+      _scrollController.animateTo(
+        offset,
+        duration: const Duration(milliseconds: 450),
+        curve: Curves.easeOutCubic,
+      );
     });
   }
 
   @override
   void dispose() {
+    _disposeCitations();
     _scrollController.dispose();
     super.dispose();
   }
@@ -242,6 +337,7 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
                       ),
                     );
                   }
+                  _scrollToFocusOnce(verses);
                   return ListView(
                     controller: _scrollController,
                     physics: const BouncingScrollPhysics(),
@@ -258,7 +354,10 @@ class _BibleChapterScreenState extends ConsumerState<BibleChapterScreen> {
                       ),
                       const SizedBox(height: IaculaSpacing.sm),
                       _BibleChapterSelectableContent(
+                        key: _contentKey,
                         verses: verses,
+                        citations: _citationsFor(verses),
+                        focus: widget.focus,
                         fontSize: fontSize,
                         highlights: _highlights,
                         onToggleHighlights: _toggleHighlightsForSelection,
@@ -536,7 +635,10 @@ class _ChapterEdgeSwipeDetectorState extends State<_ChapterEdgeSwipeDetector> {
 
 class _BibleChapterSelectableContent extends StatelessWidget {
   const _BibleChapterSelectableContent({
+    super.key,
     required this.verses,
+    this.citations = const {},
+    this.focus,
     required this.fontSize,
     required this.highlights,
     required this.onToggleHighlights,
@@ -544,6 +646,8 @@ class _BibleChapterSelectableContent extends StatelessWidget {
   });
 
   final List<BibleVerse> verses;
+  final Map<int, List<VerseCitationLink>> citations;
+  final BibleReference? focus;
   final double fontSize;
   final List<ReadingHighlight> highlights;
   final Future<void> Function({
@@ -562,10 +666,14 @@ class _BibleChapterSelectableContent extends StatelessWidget {
         .toList(growable: false);
   }
 
+  /// Splits a verse at every highlight and cross-reference boundary, so a
+  /// segment can be both highlighted and a tappable citation.
   TextSpan _buildVerseTextSpan({
     required String text,
     required List<ReadingHighlight> verseHighlights,
+    required List<VerseCitationLink> links,
     required TextStyle bodyStyle,
+    required TextStyle linkStyle,
   }) {
     final validHighlights = verseHighlights
         .where(
@@ -574,34 +682,49 @@ class _BibleChapterSelectableContent extends StatelessWidget {
               highlight.endOffset <= text.length &&
               highlight.startOffset < highlight.endOffset,
         )
-        .toList(growable: false)
-      ..sort((a, b) => a.startOffset.compareTo(b.startOffset));
+        .toList(growable: false);
 
-    if (validHighlights.isEmpty) {
+    if (validHighlights.isEmpty && links.isEmpty) {
       return TextSpan(style: bodyStyle, text: text);
     }
 
-    final children = <TextSpan>[];
-    var cursor = 0;
+    final cuts = <int>{0, text.length};
+    for (final h in validHighlights) {
+      cuts
+        ..add(h.startOffset)
+        ..add(h.endOffset);
+    }
+    for (final link in links) {
+      cuts
+        ..add(link.citation.start)
+        ..add(link.citation.end);
+    }
+    final sorted = cuts.toList()..sort();
 
-    for (final highlight in validHighlights) {
-      if (highlight.startOffset < cursor) continue;
-      if (highlight.startOffset > cursor) {
-        children.add(TextSpan(text: text.substring(cursor, highlight.startOffset)));
+    final children = <TextSpan>[];
+    for (var i = 0; i < sorted.length - 1; i++) {
+      final from = sorted[i];
+      final to = sorted[i + 1];
+      if (from >= to) continue;
+      final highlighted = validHighlights.any(
+        (h) => h.startOffset <= from && h.endOffset >= to,
+      );
+      final link = links
+          .where((l) => l.citation.start <= from && l.citation.end >= to)
+          .firstOrNull;
+      var style = link != null ? linkStyle : null;
+      if (highlighted) {
+        style = (style ?? bodyStyle).copyWith(
+          backgroundColor: const Color(0x66FFD54F),
+        );
       }
       children.add(
         TextSpan(
-          text: text.substring(highlight.startOffset, highlight.endOffset),
-          style: bodyStyle.copyWith(
-            backgroundColor: const Color(0x66FFD54F),
-          ),
+          text: text.substring(from, to),
+          style: style,
+          recognizer: link?.recognizer,
         ),
       );
-      cursor = highlight.endOffset;
-    }
-
-    if (cursor < text.length) {
-      children.add(TextSpan(text: text.substring(cursor)));
     }
 
     return TextSpan(style: bodyStyle, children: children);
@@ -610,6 +733,8 @@ class _BibleChapterSelectableContent extends StatelessWidget {
   TextSpan _buildChapterSpan({
     required TextStyle bodyStyle,
     required TextStyle verseNumberStyle,
+    required Color focusBackground,
+    required TextStyle linkStyle,
   }) {
     final children = <InlineSpan>[];
 
@@ -623,7 +748,11 @@ class _BibleChapterSelectableContent extends StatelessWidget {
           _buildVerseTextSpan(
             text: verse.text,
             verseHighlights: _highlightsForVerse(verse.number),
-            bodyStyle: bodyStyle,
+            links: citations[verse.number] ?? const [],
+            linkStyle: linkStyle,
+            bodyStyle: focus?.containsVerse(verse.number) ?? false
+                ? bodyStyle.copyWith(backgroundColor: focusBackground)
+                : bodyStyle,
           ),
         );
 
@@ -745,9 +874,23 @@ class _BibleChapterSelectableContent extends StatelessWidget {
       _buildChapterSpan(
         bodyStyle: bodyStyle,
         verseNumberStyle: verseNumberStyle,
+        focusBackground: context.colors.primaryButton.withValues(alpha: 0.14),
+        linkStyle: bodyStyle.copyWith(
+          color: context.colors.primaryButton,
+          decoration: TextDecoration.underline,
+          decorationStyle: TextDecorationStyle.dotted,
+        ),
       ),
       contextMenuBuilder: (context, state) =>
           _buildContextMenu(context, state, segments, combinedText),
     );
   }
+}
+
+/// A cross-reference found in a verse and the recognizer that opens it.
+final class VerseCitationLink {
+  const VerseCitationLink(this.citation, this.recognizer);
+
+  final BibleCitation citation;
+  final TapGestureRecognizer recognizer;
 }

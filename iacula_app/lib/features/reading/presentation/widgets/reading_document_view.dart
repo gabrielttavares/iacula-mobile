@@ -6,6 +6,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/di/providers.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
+import '../../../bible/domain/bible_citation.dart';
+import '../../../bible/presentation/bible_citation_sheet.dart';
 import '../../domain/entities/reading_bookmark.dart';
 import '../../domain/entities/reading_document_ref.dart';
 import '../../domain/entities/reading_highlight.dart';
@@ -30,6 +32,7 @@ class ReadingDocumentView extends ConsumerStatefulWidget {
     required this.onIncreaseFont,
     this.headerChildren = const <Widget>[],
     this.onOpenOriginal,
+    this.citationParser,
   });
 
   final ReadingDocumentRef document;
@@ -39,6 +42,9 @@ class ReadingDocumentView extends ConsumerStatefulWidget {
   final VoidCallback onIncreaseFont;
   final List<Widget> headerChildren;
   final VoidCallback? onOpenOriginal;
+
+  /// When set, Bible citations in the text open a footnote-style sheet.
+  final BibleCitationParser? citationParser;
 
   @override
   ConsumerState<ReadingDocumentView> createState() => _ReadingDocumentViewState();
@@ -119,6 +125,9 @@ class _ReadingDocumentViewState extends ConsumerState<ReadingDocumentView> {
                     ),
                     highlights:
                         _highlightsByBlock[block.id] ?? const <ReadingHighlight>[],
+                    citationParser: widget.citationParser,
+                    onCitationTap: (citation) =>
+                        showBibleCitationSheet(context, citation),
                     onHighlightSelected: ({
                       required startOffset,
                       required endOffset,

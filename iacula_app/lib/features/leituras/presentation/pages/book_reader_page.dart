@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/providers.dart';
 import '../../../../core/theme/cupertino_tokens.dart';
+import '../../../bible/domain/bible_citation.dart';
 import '../../../premium/domain/entities/premium_feature.dart';
 import '../../../premium/presentation/premium_gate.dart';
 import '../../../reading/application/leituras_reading_document_mapper.dart';
@@ -26,6 +27,16 @@ final _chapterProvider =
             .getChapter(bookId: args.bookId, chapterSlug: args.chapterSlug);
       },
     );
+
+/// Works that cite the Psalms by the Hebrew numbering (the bundled Bible uses
+/// the Vulgate's). Ambiguous citations still fall back to the other numbering.
+const _hebrewPsalmBooks = {'compendio-catecismo-da-igreja-catolica'};
+
+BibleCitationParser citationParserForBook(String bookId) {
+  return _hebrewPsalmBooks.contains(bookId)
+      ? const BibleCitationParser(psalmNumbering: PsalmNumbering.hebrew)
+      : const BibleCitationParser();
+}
 
 class BookReaderPage extends ConsumerStatefulWidget {
   const BookReaderPage({super.key, required this.bookId, this.chapterSlug});
@@ -235,6 +246,7 @@ class _ReaderView extends ConsumerWidget {
           fontSize: fontSize,
           onDecreaseFont: onDecreaseFont,
           onIncreaseFont: onIncreaseFont,
+          citationParser: citationParserForBook(bookId),
           styleBuilder: (context, block, fontSize) {
             return switch (block.type) {
               ReadingTextBlockType.title => context.textStyles.sectionTitle
