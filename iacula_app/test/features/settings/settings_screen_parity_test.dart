@@ -162,53 +162,102 @@ void main() {
     expect(find.text('Sincronizar agora'), findsNothing);
   });
 
-  // The Pontos de Caminho/Sulco/Forja switch is hidden from the UI (e63b737),
-  // so saving must carry the stored Escriva feed preference through unchanged
-  // instead of silently resetting it.
-  for (final enabled in [true, false]) {
-    testWidgets(
-      'saving preserves stored Escriva feed preference (enabled: $enabled)',
-      (tester) async {
-        final repo = _FakeSettingsRepository(
-          Settings.defaults.copyWith(
-            escrivaPointsFeedOptionVisible: enabled,
-            escrivaPointsFeedEnabled: enabled,
-          ),
+  // The Pontos de Caminho/Sulco/Forja switch was retired (e63b737). People who
+  // already had the feed on keep the switch (optionVisible, set by the v19 DB
+  // migration) so they can turn it off; everyone else never sees it.
+  final escrivaCases = [
+    (
+      description: 'new user: switch hidden, feed stays off',
+      isOptionVisible: false,
+      isFeedEnabled: false,
+      shouldTapSwitch: false,
+      expectedFeedEnabled: false,
+    ),
+    (
+      description: 'grandfathered user keeps the feed on',
+      isOptionVisible: true,
+      isFeedEnabled: true,
+      shouldTapSwitch: false,
+      expectedFeedEnabled: true,
+    ),
+    (
+      description: 'grandfathered user turns the feed off',
+      isOptionVisible: true,
+      isFeedEnabled: true,
+      shouldTapSwitch: true,
+      expectedFeedEnabled: false,
+    ),
+    (
+      description: 'hidden switch never resets a stored preference',
+      isOptionVisible: false,
+      isFeedEnabled: true,
+      shouldTapSwitch: false,
+      expectedFeedEnabled: true,
+    ),
+  ];
+  for (final escrivaCase in escrivaCases) {
+    testWidgets('Escrivá feed switch: ${escrivaCase.description}', (
+      tester,
+    ) async {
+      final repo = _FakeSettingsRepository(
+        Settings.defaults.copyWith(
+          escrivaPointsFeedOptionVisible: escrivaCase.isOptionVisible,
+          escrivaPointsFeedEnabled: escrivaCase.isFeedEnabled,
+        ),
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            settingsRepositoryProvider.overrideWithValue(repo),
+            liturgicalSeasonServiceProvider.overrideWithValue(
+              _FakeLiturgicalSeasonService(),
+            ),
+            rebuildNotificationsUseCaseProvider.overrideWith((ref) {
+              return _makeNoopRebuildUseCase();
+            }),
+          ],
+          child: const CupertinoApp(home: SettingsScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final escrivaTitle = find.text('Pontos de Caminho/Sulco/Forja');
+      final scrollable = find.byType(CustomScrollView);
+      final saveButton = find.text('Salvar');
+      for (var i = 0; i < 12 && saveButton.evaluate().isEmpty; i++) {
+        await tester.drag(scrollable, const Offset(0, -250));
+        await tester.pumpAndSettle();
+      }
+      expect(
+        escrivaTitle,
+        escrivaCase.isOptionVisible ? findsOneWidget : findsNothing,
+      );
+
+      if (escrivaCase.shouldTapSwitch) {
+        final escrivaSwitch = find.descendant(
+          of: find.ancestor(of: escrivaTitle, matching: find.byType(Row)).first,
+          matching: find.byType(CupertinoSwitch),
         );
-
-        await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              settingsRepositoryProvider.overrideWithValue(repo),
-              liturgicalSeasonServiceProvider.overrideWithValue(
-                _FakeLiturgicalSeasonService(),
-              ),
-              rebuildNotificationsUseCaseProvider.overrideWith((ref) {
-                return _makeNoopRebuildUseCase();
-              }),
-            ],
-            child: const CupertinoApp(home: SettingsScreen()),
-          ),
-        );
+        await tester.ensureVisible(escrivaSwitch);
+        await tester.tap(escrivaSwitch);
         await tester.pumpAndSettle();
+      }
 
-        expect(find.text('Pontos de Caminho/Sulco/Forja'), findsNothing);
+      expect(saveButton, findsOneWidget);
+      await tester.ensureVisible(saveButton);
+      await tester.pumpAndSettle();
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
 
-        final scrollable = find.byType(CustomScrollView);
-        final saveButton = find.text('Salvar');
-        for (var i = 0; i < 12 && saveButton.evaluate().isEmpty; i++) {
-          await tester.drag(scrollable, const Offset(0, -250));
-          await tester.pumpAndSettle();
-        }
-        expect(saveButton, findsOneWidget);
-        await tester.ensureVisible(saveButton);
-        await tester.pumpAndSettle();
-        await tester.tap(saveButton);
-        await tester.pumpAndSettle();
-
-        expect(repo._value.escrivaPointsFeedEnabled, enabled);
-        expect(repo._value.escrivaPointsFeedOptionVisible, enabled);
-      },
-    );
+      expect(
+        repo._value.escrivaPointsFeedEnabled,
+        escrivaCase.expectedFeedEnabled,
+      );
+      expect(
+        repo._value.escrivaPointsFeedOptionVisible,
+        escrivaCase.isOptionVisible,
+      );
+    });
   }
 }

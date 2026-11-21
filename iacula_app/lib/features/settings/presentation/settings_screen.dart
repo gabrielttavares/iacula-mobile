@@ -32,7 +32,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _angelusEnabled = true;
   int _intervalMinutes = 15;
   bool _permissionGranted = true;
-  bool _escrivaPointsFeedOptionVisible = false;
+  bool _escrivaPointsFeedEnabled = false;
   bool _quietHoursEnabled = false;
   String _quietHoursStart = '22:00';
   String _quietHoursEnd = '07:00';
@@ -60,7 +60,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _intervalMinutes = clampJaculatoriaIntervalMinutes(
       settings.intervalMinutes,
     );
-    _escrivaPointsFeedOptionVisible = settings.escrivaPointsFeedOptionVisible;
+    _escrivaPointsFeedEnabled = settings.escrivaPointsFeedEnabled;
     _quietHoursEnabled = settings.quietHoursEnabled;
     _quietHoursStart = settings.quietHoursStart;
     _quietHoursEnd = settings.quietHoursEnd;
@@ -83,8 +83,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       );
     }
 
-    final cadencePreset =
-        JaculatoriaCadencePreset.fromIntervalMinutes(_intervalMinutes);
+    final cadencePreset = JaculatoriaCadencePreset.fromIntervalMinutes(
+      _intervalMinutes,
+    );
 
     return CupertinoPageScaffold(
       backgroundColor: context.colors.background,
@@ -170,7 +171,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           const SizedBox(height: 8),
                           CadenceChipSelector(
                             selected: cadencePreset,
-                            onChanged: (preset) => setState(() => _intervalMinutes = preset.intervalMinutes),
+                            onChanged: (preset) => setState(
+                              () => _intervalMinutes = preset.intervalMinutes,
+                            ),
                           ),
                           if (cadencePreset.isClosedAppCapConstrained) ...[
                             const SizedBox(height: 8),
@@ -209,7 +212,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     final selected = await _pickTime(
                                       _quietHoursStart,
                                     );
-                                    if (selected != null && selected != _quietHoursEnd) {
+                                    if (selected != null &&
+                                        selected != _quietHoursEnd) {
                                       setState(() {
                                         _quietHoursStart = selected;
                                       });
@@ -227,7 +231,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     final selected = await _pickTime(
                                       _quietHoursEnd,
                                     );
-                                    if (selected != null && selected != _quietHoursStart) {
+                                    if (selected != null &&
+                                        selected != _quietHoursStart) {
                                       setState(() {
                                         _quietHoursEnd = selected;
                                       });
@@ -366,7 +371,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           onPressed: () {
                             Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (_) => const MinhasJaculatoriasScreen(),
+                                builder: (_) =>
+                                    const MinhasJaculatoriasScreen(),
                               ),
                             );
                           },
@@ -424,7 +430,49 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ],
                           ),
                         ),
-                        // Pontos de Caminho/Sulco/Forja toggle hidden from UI
+                        if (_loadedSettings.escrivaPointsFeedOptionVisible) ...[
+                          Container(height: 1, color: context.colors.separator),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: IaculaRadius.innerPadding,
+                              vertical: 14,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Pontos de Caminho/Sulco/Forja',
+                                        style: context.textStyles.cardTitle
+                                            .copyWith(fontSize: 16),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Recebe pontos de São Josemaria no lugar das jaculatórias.',
+                                        style: context.textStyles.secondary,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                CupertinoSwitch(
+                                  value: _escrivaPointsFeedEnabled,
+                                  activeTrackColor:
+                                      context.colors.primaryButton,
+                                  onChanged: (value) {
+                                    HapticFeedback.selectionClick();
+                                    setState(
+                                      () => _escrivaPointsFeedEnabled = value,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -584,8 +632,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       themeMode: _themeMode,
       notificationsEnabled: _notificationsEnabled,
       angelusEnabled: _angelusEnabled,
-      escrivaPointsFeedOptionVisible: _escrivaPointsFeedOptionVisible,
-      escrivaPointsFeedEnabled: _escrivaPointsFeedOptionVisible,
+      escrivaPointsFeedEnabled: _escrivaPointsFeedEnabled,
       quietHoursEnabled: _quietHoursEnabled,
       quietHoursStart: _quietHoursStart,
       quietHoursEnd: _quietHoursEnd,
@@ -599,7 +646,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final season = await ref
         .read(liturgicalSeasonServiceProvider)
         .getCurrentSeason();
-    final escrivaChanged = settings.escrivaPointsFeedEnabled !=
+    final escrivaChanged =
+        settings.escrivaPointsFeedEnabled !=
         _loadedSettings.escrivaPointsFeedEnabled;
     await ref
         .read(rebuildNotificationsUseCaseProvider)

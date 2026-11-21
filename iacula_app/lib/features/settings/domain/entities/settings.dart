@@ -47,6 +47,9 @@ final class Settings {
   final double prayerFontSize;
   final String themeMode;
   final bool escrivaPointsFeedEnabled;
+
+  /// Whether Settings shows the Escrivá points switch. Only people who had the
+  /// feed on before the switch was retired keep it; new installs never see it.
   final bool escrivaPointsFeedOptionVisible;
   final bool notificationsEnabled;
   final bool angelusEnabled;

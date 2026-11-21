@@ -20,7 +20,7 @@ final class AppDatabase {
 
     return openDatabase(
       path,
-      version: 18,
+      version: 19,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -241,6 +241,15 @@ final class AppDatabase {
           );
           await db.delete('quote_indices');
           await db.delete('quote_meta');
+        }
+        if (oldVersion < 19) {
+          // The Escrivá points switch left Settings in 1.2.x, but people who
+          // had it on kept receiving the points with no way to turn them off.
+          // Mark everyone currently receiving them so the switch stays visible
+          // for them (and only them) from now on.
+          await db.execute(
+            'UPDATE settings SET escriva_points_feed_option_visible = 1 WHERE escriva_points_feed_enabled = 1',
+          );
         }
       },
     );
