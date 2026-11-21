@@ -53,3 +53,23 @@ QuoteFetcher buildNotificationQuoteFetcher({
     return nextQuote.call(language: language, now: now);
   };
 }
+
+/// A fetcher for one rebuild where the settings are already known and the
+/// phrase list is read once and shared by every slot. Cold start and the
+/// background re-arm use it: Android schedules hundreds of slots per rebuild,
+/// and re-reading the stores for each one slowed launch. Build a new one per
+/// rebuild; it never sees later edits.
+QuoteFetcher buildSingleRebuildQuoteFetcher({
+  required Settings settings,
+  required Future<List<CustomPhrase>> Function() listPhrases,
+  required GetNextQuoteUseCase nextQuote,
+  required GetNextEscrivaPointsQuoteUseCase nextEscrivaPoint,
+}) {
+  Future<List<CustomPhrase>>? phrasesForThisRebuild;
+  return buildNotificationQuoteFetcher(
+    loadSettings: () async => settings,
+    listPhrases: () => phrasesForThisRebuild ??= listPhrases(),
+    nextQuote: nextQuote,
+    nextEscrivaPoint: nextEscrivaPoint,
+  );
+}

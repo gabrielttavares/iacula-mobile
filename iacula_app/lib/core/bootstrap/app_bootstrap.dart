@@ -13,7 +13,6 @@ import '../../features/favorites/infrastructure/repositories/isar_favorite_repos
 import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
 import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
 import '../../features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
-import '../../features/custom_phrases/domain/entities/custom_phrase.dart';
 import '../../features/custom_phrases/infrastructure/repositories/isar_custom_phrase_repository.dart';
 import '../../features/liturgical/domain/liturgical_season.dart';
 import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
@@ -143,13 +142,9 @@ final class AppBootstrap {
         debugPrint('[Bootstrap] Notification init failed: $e');
         permissionGranted = false;
       }
-      // Settings and phrases are read once for this rebuild, not once per
-      // scheduled slot: Android schedules hundreds of slots before runApp.
-      Future<List<CustomPhrase>>? phrasesForThisRebuild;
-      final quoteFetcher = buildNotificationQuoteFetcher(
-        loadSettings: () async => currentSettings,
-        listPhrases: () =>
-            phrasesForThisRebuild ??= localCustomPhraseRepo.listAll(),
+      final quoteFetcher = buildSingleRebuildQuoteFetcher(
+        settings: currentSettings,
+        listPhrases: localCustomPhraseRepo.listAll,
         nextQuote: quoteUseCase,
         nextEscrivaPoint: escrivaPointsUseCase,
       );
@@ -359,17 +354,15 @@ final class AppBootstrap {
       ),
     );
     final customPhraseRepo = IsarCustomPhraseRepository(spiritualStore);
-    Future<List<CustomPhrase>>? phrasesForThisRebuild;
     final liturgicalHttpClient = http.Client();
 
     try {
       await _rebuildNotifications(
         scheduler: scheduler,
         settings: settings,
-        quoteFetcher: buildNotificationQuoteFetcher(
-          loadSettings: () async => settings,
-          listPhrases: () =>
-              phrasesForThisRebuild ??= customPhraseRepo.listAll(),
+        quoteFetcher: buildSingleRebuildQuoteFetcher(
+          settings: settings,
+          listPhrases: customPhraseRepo.listAll,
           nextQuote: GetNextQuoteUseCase(
             contentRepository: const AssetQuoteContentRepository(),
             indicesRepository: SqliteQuoteIndicesRepository(db),

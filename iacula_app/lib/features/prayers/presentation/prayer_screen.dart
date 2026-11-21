@@ -21,15 +21,16 @@ const _hailMaryCueByOremusLeadIn = {
   'Let us pray': '_Hail Mary…_',
 };
 
+final _oremusLeadInPattern = RegExp(
+  '^(${_hailMaryCueByOremusLeadIn.keys.join('|')})\\.?\\s*',
+);
+
 /// Angelus / Regina Caeli as devotional blocks: ℣/℟ pairs, the Hail Mary
 /// between the Angelus versicles, and "Oremos" on its own line.
 List<String> devotionalBlocks(Prayer prayer) {
   final closing = prayer.prayer.trim();
-  final oremus = RegExp(
-    r'^(Oremos|Or[eé]mus|Let us pray)\.?\s*',
-  ).firstMatch(closing);
-  final hailMaryCue =
-      _hailMaryCueByOremusLeadIn[oremus?.group(1)] ?? '_Ave-Maria…_';
+  final oremus = _oremusLeadInPattern.firstMatch(closing);
+  final hailMaryCue = _hailMaryCueByOremusLeadIn[oremus?.group(1) ?? 'Oremos']!;
 
   final blocks = <String>[];
   for (var i = 0; i < prayer.verses.length; i++) {

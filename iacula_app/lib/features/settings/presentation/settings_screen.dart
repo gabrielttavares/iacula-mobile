@@ -394,82 +394,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                         ),
                         Container(height: 1, color: context.colors.separator),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: IaculaRadius.innerPadding,
-                            vertical: 14,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Mostrar só minhas jaculatórias',
-                                      style: context.textStyles.cardTitle
-                                          .copyWith(fontSize: 16),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'No início e nas notificações, mostra apenas as suas jaculatórias.',
-                                      style: context.textStyles.secondary,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              CupertinoSwitch(
-                                value: _customPhrasesOnly,
-                                activeTrackColor: context.colors.primaryButton,
-                                onChanged: (value) {
-                                  HapticFeedback.selectionClick();
-                                  setState(() => _customPhrasesOnly = value);
-                                },
-                              ),
-                            ],
-                          ),
+                        _buildSwitchRow(
+                          context,
+                          title: 'Mostrar só minhas jaculatórias',
+                          subtitle:
+                              'No início e nas notificações, mostra apenas as suas jaculatórias.',
+                          value: _customPhrasesOnly,
+                          onChanged: (value) =>
+                              setState(() => _customPhrasesOnly = value),
                         ),
                         if (_loadedSettings.escrivaPointsFeedOptionVisible) ...[
                           Container(height: 1, color: context.colors.separator),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: IaculaRadius.innerPadding,
-                              vertical: 14,
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Pontos de Caminho/Sulco/Forja',
-                                        style: context.textStyles.cardTitle
-                                            .copyWith(fontSize: 16),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Recebe pontos de São Josemaria no lugar das jaculatórias.',
-                                        style: context.textStyles.secondary,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                CupertinoSwitch(
-                                  value: _escrivaPointsFeedEnabled,
-                                  activeTrackColor:
-                                      context.colors.primaryButton,
-                                  onChanged: (value) {
-                                    HapticFeedback.selectionClick();
-                                    setState(
-                                      () => _escrivaPointsFeedEnabled = value,
-                                    );
-                                  },
-                                ),
-                              ],
+                          _buildSwitchRow(
+                            context,
+                            title: 'Pontos de Caminho/Sulco/Forja',
+                            subtitle:
+                                'Recebe pontos de São Josemaria no lugar das jaculatórias.',
+                            value: _escrivaPointsFeedEnabled,
+                            onChanged: (value) => setState(
+                              () => _escrivaPointsFeedEnabled = value,
                             ),
                           ),
                         ],
@@ -514,6 +457,47 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(label, style: context.textStyles.secondary),
+    );
+  }
+
+  Widget _buildSwitchRow(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: IaculaRadius.innerPadding,
+        vertical: 14,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: context.textStyles.cardTitle.copyWith(fontSize: 16),
+                ),
+                const SizedBox(height: 4),
+                Text(subtitle, style: context.textStyles.secondary),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          CupertinoSwitch(
+            value: value,
+            activeTrackColor: context.colors.primaryButton,
+            onChanged: (newValue) {
+              HapticFeedback.selectionClick();
+              onChanged(newValue);
+            },
+          ),
+        ],
+      ),
     );
   }
 
