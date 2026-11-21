@@ -7,15 +7,20 @@ abstract interface class BackgroundSyncGateway {
     required String taskId,
     required String taskName,
     required bool requiresNetwork,
+    Duration? frequency,
   });
 }
 
 final class WorkmanagerBackgroundSyncGateway implements BackgroundSyncGateway {
-  const WorkmanagerBackgroundSyncGateway();
+  const WorkmanagerBackgroundSyncGateway({required this.dispatcher});
+
+  /// Top-level `@pragma('vm:entry-point')` function run in the background
+  /// isolate (see `core/bootstrap/background_tasks.dart`).
+  final void Function() dispatcher;
 
   @override
   Future<void> initialize() {
-    return Workmanager().initialize(_callbackDispatcher, isInDebugMode: false);
+    return Workmanager().initialize(dispatcher, isInDebugMode: false);
   }
 
   @override
@@ -23,10 +28,12 @@ final class WorkmanagerBackgroundSyncGateway implements BackgroundSyncGateway {
     required String taskId,
     required String taskName,
     required bool requiresNetwork,
+    Duration? frequency,
   }) {
     return Workmanager().registerPeriodicTask(
       taskId,
       taskName,
+      frequency: frequency,
       constraints: Constraints(
         networkType: requiresNetwork
             ? NetworkType.connected
@@ -35,24 +42,27 @@ final class WorkmanagerBackgroundSyncGateway implements BackgroundSyncGateway {
       existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
     );
   }
-
-  static void _callbackDispatcher() {
-    Workmanager().executeTask((task, inputData) async {
-      await BackgroundSyncScheduler.runBackgroundTask(task, inputData);
-      return true;
-    });
-  }
 }
 
 final class BackgroundSyncScheduler {
-  BackgroundSyncScheduler({required BackgroundSyncGateway gateway})
-    : _gateway = gateway;
+  BackgroundSyncScheduler({
+    required BackgroundSyncGateway gateway,
+    this.notificationRearmTaskId,
+    this.notificationRearmFrequency,
+  }) : _gateway = gateway;
+
+  /// Periodic task that re-arms notifications with the app closed.
+  final String? notificationRearmTaskId;
+  final Duration? notificationRearmFrequency;
 
   static const String periodicTaskId = 'iacula_sync_periodic_v1';
   static const String periodicTaskName = 'iacula.sync.periodic';
   static const String widgetTaskId = 'iacula_widget_refresh_periodic_v1';
   static const String widgetTaskName = 'iacula.widget.refresh.periodic';
 
+  /// Runs only in the app's isolate: background isolates start without it, so
+  /// work that must happen with the app closed (the notification re-arm) is
+  /// dispatched directly by `backgroundTaskDispatcher` instead.
   static Future<void> Function(String task, Map<String, dynamic>? inputData)?
   _taskRunner;
 
@@ -86,6 +96,15 @@ final class BackgroundSyncScheduler {
         taskName: widgetTaskName,
         requiresNetwork: false,
       );
+      final rearmTaskId = notificationRearmTaskId;
+      if (rearmTaskId != null) {
+        await _gateway.registerPeriodicTask(
+          taskId: rearmTaskId,
+          taskName: rearmTaskId,
+          requiresNetwork: false,
+          frequency: notificationRearmFrequency,
+        );
+      }
     } catch (_) {
       // Background scheduling is best-effort and may be unavailable in tests/dev runtimes.
     }

@@ -46,6 +46,12 @@ final class NotificationCapacityPolicy {
     tailHorizonDays: 14,
   );
 
+  /// The policy for the running platform. Every place that rebuilds
+  /// notifications must go through this: the cold-start rebuild once fell back
+  /// to [ios] on Android, capping closed-app delivery at ~7 days instead of 14.
+  static NotificationCapacityPolicy forPlatform({required bool isAndroid}) =>
+      isAndroid ? android : ios;
+
   /// The OS ceiling on total pending notifications across every tier. iOS holds
   /// at most 64; Android has no real limit, so this is a sane high ceiling. The
   /// sacred-tier budget (season transitions, liturgy, intentions, phrases) is

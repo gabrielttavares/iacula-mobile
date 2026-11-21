@@ -20,6 +20,11 @@ import '../../features/liturgical/infrastructure/services/remote_liturgical_seas
 import '../../features/leituras/data/repositories/leitura_repository.dart';
 import '../../features/leituras/data/sources/leitura_local_source.dart';
 import '../../features/notifications/application/use_cases/rebuild_notifications_use_case.dart';
+import '../../features/notifications/application/services/notification_quote_fetcher.dart';
+import '../../features/notifications/application/use_cases/schedule_core_reminders_use_case.dart';
+import '../../features/notifications/domain/services/notification_capacity_policy.dart';
+import '../../features/liturgical/domain/easter_calculator.dart';
+import '../../features/settings/domain/entities/settings.dart';
 import '../../features/notifications/infrastructure/repositories/local_notification_scheduler_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_last_delivered_card_repository.dart';
 import '../../features/notifications/infrastructure/repositories/sqlite_notification_history_repository.dart';
@@ -29,7 +34,6 @@ import '../../features/premium/domain/repositories/premium_repository.dart';
 import '../../features/premium/infrastructure/always_unlocked_premium_repository.dart';
 import '../../features/premium/infrastructure/isar_premium_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
-import '../../features/quotes/domain/entities/quote.dart';
 import '../../features/quotes/infrastructure/repositories/asset_quote_content_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_disabled_quotes_repository.dart';
 import '../../features/quotes/infrastructure/repositories/sqlite_quote_indices_repository.dart';
@@ -138,19 +142,12 @@ final class AppBootstrap {
         debugPrint('[Bootstrap] Notification init failed: $e');
         permissionGranted = false;
       }
-      Future<Quote> quoteFetcher({
-        required String language,
-        required DateTime now,
-      }) {
-        if (currentSettings.escrivaPointsFeedEnabled) {
-          return escrivaPointsUseCase.call(
-            language: language,
-            now: now,
-            cadenceMinutes: currentSettings.intervalMinutes,
-          );
-        }
-        return quoteUseCase.call(language: language, now: now);
-      }
+      final quoteFetcher = buildNotificationQuoteFetcher(
+        loadSettings: settingsRepo.load,
+        listPhrases: localCustomPhraseRepo.listAll,
+        nextQuote: quoteUseCase,
+        nextEscrivaPoint: escrivaPointsUseCase,
+      );
 
       // Heal custom-phrase notifications orphaned by an older build, where
       // deleting a phrase left its OS-level repeating notification scheduled
@@ -179,26 +176,15 @@ final class AppBootstrap {
           currentSettings.notificationsEnabled &&
           permissionGranted) {
         try {
-          final currentSeason = await liturgicalSeasonService
-              .getCurrentSeason();
-          await RebuildNotificationsUseCase(
+          await _rebuildNotifications(
             scheduler: scheduler,
-            notificationHistoryRepository: notificationHistoryRepo,
-            lastDeliveredCardRepository: lastDeliveredCardRepo,
-            schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
-              scheduler,
-              localCustomPhraseRepo,
-            ),
-            scheduleIntentionNotifications:
-                ScheduleIntentionNotificationsUseCase(
-                  scheduler,
-                  prayerIntentionRepo,
-                ),
+            settings: currentSettings,
             quoteFetcher: quoteFetcher,
-          ).call(
-            currentSettings,
-            isEasterSeason: currentSeason == LiturgicalSeason.easter,
-            showImmediate: false,
+            notificationHistoryRepo: notificationHistoryRepo,
+            lastDeliveredCardRepo: lastDeliveredCardRepo,
+            customPhraseRepo: localCustomPhraseRepo,
+            prayerIntentionRepo: prayerIntentionRepo,
+            liturgicalSeasonService: liturgicalSeasonService,
           );
         } catch (e, st) {
           developer.log(
@@ -334,6 +320,110 @@ final class AppBootstrap {
       );
       return <Override>[];
     }
+  }
+
+  /// Re-arms the pre-scheduled notifications with the app closed, from the
+  /// periodic background task (Android WorkManager, iOS BGAppRefreshTask).
+  ///
+  /// Pre-scheduled local notifications run out (iOS: 64 pending ≈ 7 days;
+  /// Android: a 14-day tail) and used to be renewed only when the app was
+  /// opened, so people who stopped opening it stopped being reminded. This
+  /// opens only the local stores the scheduler needs — no Supabase, no media
+  /// seeding — and never prompts for permission.
+  static Future<void> rearmNotificationsInBackground() async {
+    final db = AppDatabase.instance;
+    final settingsRepo = SqliteSettingsRepository(db);
+    final settings = await settingsRepo.load();
+    if (!settings.onboardingCompleted || !settings.notificationsEnabled) {
+      return;
+    }
+
+    final scheduler = LocalNotificationSchedulerRepository();
+    await scheduler.initialize(requestPermission: false);
+    if (!await scheduler.checkPermission()) {
+      debugPrint('[Bootstrap] Background re-arm skipped: no permission.');
+      return;
+    }
+
+    final isarStore = IsarStore.instance;
+    final spiritualStore = SpiritualDataIsarStore(
+      keyProvider: SpiritualDataEncryptionKeyProvider(
+        store: FlutterSecureKvStore(),
+      ),
+    );
+    final customPhraseRepo = IsarCustomPhraseRepository(spiritualStore);
+
+    await _rebuildNotifications(
+      scheduler: scheduler,
+      settings: settings,
+      quoteFetcher: buildNotificationQuoteFetcher(
+        loadSettings: settingsRepo.load,
+        listPhrases: customPhraseRepo.listAll,
+        nextQuote: GetNextQuoteUseCase(
+          contentRepository: const AssetQuoteContentRepository(),
+          indicesRepository: SqliteQuoteIndicesRepository(db),
+          disabledQuotesRepository: SqliteDisabledQuotesRepository(db),
+          customPhraseRepository: customPhraseRepo,
+        ),
+        nextEscrivaPoint: GetNextEscrivaPointsQuoteUseCase(
+          LeituraRepository(localSource: LeituraLocalSource()),
+        ),
+      ),
+      notificationHistoryRepo: SqliteNotificationHistoryRepository(db),
+      lastDeliveredCardRepo: SqliteLastDeliveredCardRepository(db),
+      customPhraseRepo: customPhraseRepo,
+      prayerIntentionRepo: IsarPrayerIntentionSpiritualEntryRepository(
+        spiritualStore,
+      ),
+      liturgicalSeasonService: RemoteLiturgicalSeasonService(
+        httpClient: http.Client(),
+        cacheRepository: IsarLiturgicalSeasonCacheRepository(isarStore),
+      ),
+    );
+  }
+
+  /// The one rebuild path shared by cold start and the background re-arm, so
+  /// both use the platform's capacity policy and the same quote selection.
+  static Future<void> _rebuildNotifications({
+    required LocalNotificationSchedulerRepository scheduler,
+    required Settings settings,
+    required QuoteFetcher quoteFetcher,
+    required SqliteNotificationHistoryRepository notificationHistoryRepo,
+    required SqliteLastDeliveredCardRepository lastDeliveredCardRepo,
+    required IsarCustomPhraseRepository customPhraseRepo,
+    required IsarPrayerIntentionSpiritualEntryRepository prayerIntentionRepo,
+    required RemoteLiturgicalSeasonService liturgicalSeasonService,
+  }) async {
+    final now = DateTime.now();
+    var isEasterSeason = EasterCalculator.isWithinEasterSeason(now);
+    try {
+      // Cached per day; the network is only hit on a cache miss. Bounded so
+      // an offline background run still finishes within the OS budget.
+      final season = await liturgicalSeasonService.getCurrentSeason().timeout(
+        const Duration(seconds: 5),
+      );
+      isEasterSeason = isEasterSeason || season == LiturgicalSeason.easter;
+    } catch (e) {
+      debugPrint('[Bootstrap] Liturgical season lookup failed: $e');
+    }
+
+    await RebuildNotificationsUseCase(
+      scheduler: scheduler,
+      notificationHistoryRepository: notificationHistoryRepo,
+      lastDeliveredCardRepository: lastDeliveredCardRepo,
+      schedulePhraseNotifications: SchedulePhraseNotificationsUseCase(
+        scheduler,
+        customPhraseRepo,
+      ),
+      scheduleIntentionNotifications: ScheduleIntentionNotificationsUseCase(
+        scheduler,
+        prayerIntentionRepo,
+      ),
+      quoteFetcher: quoteFetcher,
+      capacityPolicy: NotificationCapacityPolicy.forPlatform(
+        isAndroid: Platform.isAndroid,
+      ),
+    ).call(settings, isEasterSeason: isEasterSeason, showImmediate: false);
   }
 
   static Future<void> _seedMediaCatalog(

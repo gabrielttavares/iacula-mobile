@@ -52,6 +52,11 @@
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>audio</string>
+			<string>fetch</string>
+		</array>
+		<key>BGTaskSchedulerPermittedIdentifiers</key>
+		<array>
+			<string>com.iacula.app.notifications.rearm</string>
 		</array>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>

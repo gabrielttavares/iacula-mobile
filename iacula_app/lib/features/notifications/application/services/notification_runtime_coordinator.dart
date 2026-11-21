@@ -23,12 +23,20 @@ final class NotificationRuntimeCoordinator {
     required WidgetRefresher refreshWidget,
     required NotificationCanceller cancelAll,
     DateTime? now,
+    DateTime? lastRebuildAt,
   })  : _loadSettings = loadSettings,
        _rebuild = rebuild,
        _pendingQuoteIds = pendingQuoteIds,
        _refreshWidget = refreshWidget,
        _cancelAll = cancelAll,
-       _fixedNow = now;
+       _fixedNow = now,
+       _lastRebuildTime = lastRebuildAt;
+
+  /// Pre-scheduled notifications are a finite runway (iOS ≈ 7 days). Topping
+  /// it up only once it was completely empty meant a user who opened the app
+  /// on day 6 still went silent on day 7, so a resume after this long always
+  /// re-arms, even with quotes still pending.
+  static const Duration runwayRefreshInterval = Duration(hours: 12);
 
   final SettingsLoader _loadSettings;
   final NotificationRebuilder _rebuild;
@@ -36,7 +44,6 @@ final class NotificationRuntimeCoordinator {
   final WidgetRefresher _refreshWidget;
   final NotificationCanceller _cancelAll;
   final DateTime? _fixedNow;
-
   DateTime? _lastRebuildTime;
 
   Future<void> handleAppLaunch() async {
@@ -84,10 +91,14 @@ final class NotificationRuntimeCoordinator {
       ScheduleCoreRemindersUseCase.isQuoteReminderId,
     );
 
-    if (hasQuotes) return;
+    final runwayIsFresh = _lastRebuildTime == null ||
+        now.difference(_lastRebuildTime!) < runwayRefreshInterval;
+    if (hasQuotes && runwayIsFresh) return;
 
     debugPrint(
-      '[NotificationRuntimeCoordinator] No pending quotes; rebuilding.',
+      '[NotificationRuntimeCoordinator] '
+      '${hasQuotes ? 'Runway older than $runwayRefreshInterval' : 'No pending quotes'}; '
+      'rebuilding.',
     );
 
     await _rebuild(

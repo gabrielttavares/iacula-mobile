@@ -39,7 +39,6 @@ import '../../features/prayers/domain/entities/prayer_catalog_entry.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_catalog_repository.dart';
 import '../../features/prayers/infrastructure/repositories/asset_prayer_content_repository.dart';
 import '../../features/quotes/application/use_cases/get_next_quote_use_case.dart';
-import '../../features/quotes/domain/entities/quote.dart';
 import '../../features/quotes/application/use_cases/get_next_escriva_points_quote_use_case.dart';
 import '../../features/quotes/domain/repositories/disabled_quotes_repository.dart';
 import '../../features/quotes/domain/repositories/quote_content_repository.dart';
@@ -75,7 +74,7 @@ import '../../features/custom_phrases/application/custom_phrases_notifier.dart';
 import '../../features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
 import '../../features/custom_phrases/domain/entities/custom_phrase.dart';
 import '../../features/custom_phrases/domain/repositories/custom_phrase_repository.dart';
-import '../../features/custom_phrases/domain/services/personal_phrase_feed_selector.dart';
+import '../../features/notifications/application/services/notification_quote_fetcher.dart';
 import '../../features/custom_phrases/infrastructure/repositories/isar_custom_phrase_repository.dart';
 import '../../features/prayer_activity/application/prayer_activity_logger.dart';
 import '../../features/prayer_activity/application/streak_calculator.dart';
@@ -119,6 +118,7 @@ import '../../features/sync/infrastructure/services/connectivity_sync_service.da
 import '../../features/sync/infrastructure/services/default_sync_orchestrator.dart';
 import '../../features/sync/infrastructure/services/noop_sync_orchestrator.dart';
 import '../bootstrap/bootstrap_status.dart';
+import '../bootstrap/background_tasks.dart';
 import '../config/app_env.dart';
 import '../storage/isar/isar_store.dart';
 
@@ -367,7 +367,9 @@ final connectivitySyncServiceProvider = Provider<ConnectivitySyncService>((
 });
 
 final backgroundSyncGatewayProvider = Provider<BackgroundSyncGateway>((ref) {
-  return const WorkmanagerBackgroundSyncGateway();
+  return const WorkmanagerBackgroundSyncGateway(
+    dispatcher: backgroundTaskDispatcher,
+  );
 });
 
 final backgroundSyncSchedulerProvider = Provider<BackgroundSyncScheduler>((
@@ -375,6 +377,8 @@ final backgroundSyncSchedulerProvider = Provider<BackgroundSyncScheduler>((
 ) {
   return BackgroundSyncScheduler(
     gateway: ref.watch(backgroundSyncGatewayProvider),
+    notificationRearmTaskId: notificationRearmTaskId,
+    notificationRearmFrequency: notificationRearmFrequency,
   );
 });
 
@@ -626,61 +630,19 @@ final rebuildNotificationsUseCaseProvider =
         scheduleIntentionNotifications: ref.watch(
           scheduleIntentionNotificationsUseCaseProvider,
         ),
-        quoteFetcher:
-            ({required String language, required DateTime now}) async {
-              final settings = await ref
-                  .read(getSettingsUseCaseProvider)
-                  .call();
-
-              // Personal phrase feed. Two modes share the same eligible pool and
-              // fire-time slot, differing only in cadence:
-              //   • "only mine" (customPhrasesOnly): EVERY slot is a personal
-              //     phrase, cycling the pool. An empty pool falls through to the
-              //     liturgical draw so the feed is never empty.
-              //   • default: a 1-in-4 slot is personal; the rest are liturgical.
-              // Either way, an empty pool yields identical scheduling to before.
-              final phrases =
-                  await ref.read(customPhraseRepositoryProvider).listAll();
-              final eligiblePhrases =
-                  PersonalPhraseFeedSelector.eligibleForNotifications(phrases);
-              final slotIndex =
-                  PersonalPhraseFeedSelector.slotIndexForFireTime(now);
-              final selectedPhrase = settings.customPhrasesOnly
-                  ? PersonalPhraseFeedSelector.phraseForExclusiveSlot(
-                      slotIndex: slotIndex,
-                      eligible: eligiblePhrases,
-                    )
-                  : PersonalPhraseFeedSelector.phraseForSlot(
-                      slotIndex: slotIndex,
-                      eligible: eligiblePhrases,
-                    );
-              if (selectedPhrase != null) {
-                return Quote.personal(
-                  text: selectedPhrase.text,
-                  dayOfWeek: now.weekday,
-                );
-              }
-
-              if (settings.escrivaPointsFeedEnabled) {
-                return ref
-                    .read(getNextEscrivaPointsQuoteUseCaseProvider)
-                    .call(
-                      language: language,
-                      now: now,
-                      cadenceMinutes: settings.intervalMinutes,
-                    );
-              }
-              return ref
-                  .read(getNextQuoteUseCaseProvider)
-                  .call(language: language, now: now);
-            },
+        quoteFetcher: buildNotificationQuoteFetcher(
+          loadSettings: () => ref.read(getSettingsUseCaseProvider).call(),
+          listPhrases: () => ref.read(customPhraseRepositoryProvider).listAll(),
+          nextQuote: ref.read(getNextQuoteUseCaseProvider),
+          nextEscrivaPoint: ref.read(getNextEscrivaPointsQuoteUseCaseProvider),
+        ),
         // Android has no pending-notification cap and fires exact alarms while
         // idle, so it gets true closed-app cadence plus a reduced tail; iOS is
         // bound by the 64-pending cap. Resolved here at the composition root so
         // the scheduling domain stays platform-agnostic and deterministic.
-        capacityPolicy: defaultTargetPlatform == TargetPlatform.android
-            ? NotificationCapacityPolicy.android
-            : NotificationCapacityPolicy.ios,
+        capacityPolicy: NotificationCapacityPolicy.forPlatform(
+          isAndroid: defaultTargetPlatform == TargetPlatform.android,
+        ),
       );
     });
 
