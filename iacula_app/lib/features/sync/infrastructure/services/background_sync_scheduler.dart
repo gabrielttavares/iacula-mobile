@@ -86,6 +86,25 @@ final class BackgroundSyncScheduler {
   Future<void> register() async {
     try {
       await _gateway.initialize();
+    } catch (_) {
+      // Background scheduling is best-effort and may be unavailable in tests/dev runtimes.
+      return;
+    }
+    // The re-arm goes first and on its own: on iOS the sync and widget ids are
+    // not in BGTaskSchedulerPermittedIdentifiers, so registering them can
+    // throw, and that must not stop notifications from being re-armed.
+    final rearmTaskId = notificationRearmTaskId;
+    if (rearmTaskId != null) {
+      try {
+        await _gateway.registerPeriodicTask(
+          taskId: rearmTaskId,
+          taskName: rearmTaskId,
+          requiresNetwork: false,
+          frequency: notificationRearmFrequency,
+        );
+      } catch (_) {}
+    }
+    try {
       await _gateway.registerPeriodicTask(
         taskId: periodicTaskId,
         taskName: periodicTaskName,
@@ -96,17 +115,6 @@ final class BackgroundSyncScheduler {
         taskName: widgetTaskName,
         requiresNetwork: false,
       );
-      final rearmTaskId = notificationRearmTaskId;
-      if (rearmTaskId != null) {
-        await _gateway.registerPeriodicTask(
-          taskId: rearmTaskId,
-          taskName: rearmTaskId,
-          requiresNetwork: false,
-          frequency: notificationRearmFrequency,
-        );
-      }
-    } catch (_) {
-      // Background scheduling is best-effort and may be unavailable in tests/dev runtimes.
-    }
+    } catch (_) {}
   }
 }

@@ -13,6 +13,7 @@ import '../../features/favorites/infrastructure/repositories/isar_favorite_repos
 import '../../features/auth/infrastructure/repositories/in_memory_auth_repository.dart';
 import '../../features/auth/infrastructure/repositories/supabase_auth_repository.dart';
 import '../../features/custom_phrases/application/use_cases/schedule_phrase_notifications_use_case.dart';
+import '../../features/custom_phrases/domain/entities/custom_phrase.dart';
 import '../../features/custom_phrases/infrastructure/repositories/isar_custom_phrase_repository.dart';
 import '../../features/liturgical/domain/liturgical_season.dart';
 import '../../features/liturgical/infrastructure/repositories/isar_liturgical_season_cache_repository.dart';
@@ -142,9 +143,13 @@ final class AppBootstrap {
         debugPrint('[Bootstrap] Notification init failed: $e');
         permissionGranted = false;
       }
+      // Settings and phrases are read once for this rebuild, not once per
+      // scheduled slot: Android schedules hundreds of slots before runApp.
+      Future<List<CustomPhrase>>? phrasesForThisRebuild;
       final quoteFetcher = buildNotificationQuoteFetcher(
-        loadSettings: settingsRepo.load,
-        listPhrases: localCustomPhraseRepo.listAll,
+        loadSettings: () async => currentSettings,
+        listPhrases: () =>
+            phrasesForThisRebuild ??= localCustomPhraseRepo.listAll(),
         nextQuote: quoteUseCase,
         nextEscrivaPoint: escrivaPointsUseCase,
       );
@@ -161,7 +166,9 @@ final class AppBootstrap {
             localCustomPhraseRepo,
           ).sweepOrphanedSlots();
         } catch (e) {
-          debugPrint('[Bootstrap] Orphaned phrase notification sweep failed: $e');
+          debugPrint(
+            '[Bootstrap] Orphaned phrase notification sweep failed: $e',
+          );
         }
       }
 
@@ -352,34 +359,41 @@ final class AppBootstrap {
       ),
     );
     final customPhraseRepo = IsarCustomPhraseRepository(spiritualStore);
+    Future<List<CustomPhrase>>? phrasesForThisRebuild;
+    final liturgicalHttpClient = http.Client();
 
-    await _rebuildNotifications(
-      scheduler: scheduler,
-      settings: settings,
-      quoteFetcher: buildNotificationQuoteFetcher(
-        loadSettings: settingsRepo.load,
-        listPhrases: customPhraseRepo.listAll,
-        nextQuote: GetNextQuoteUseCase(
-          contentRepository: const AssetQuoteContentRepository(),
-          indicesRepository: SqliteQuoteIndicesRepository(db),
-          disabledQuotesRepository: SqliteDisabledQuotesRepository(db),
-          customPhraseRepository: customPhraseRepo,
+    try {
+      await _rebuildNotifications(
+        scheduler: scheduler,
+        settings: settings,
+        quoteFetcher: buildNotificationQuoteFetcher(
+          loadSettings: () async => settings,
+          listPhrases: () =>
+              phrasesForThisRebuild ??= customPhraseRepo.listAll(),
+          nextQuote: GetNextQuoteUseCase(
+            contentRepository: const AssetQuoteContentRepository(),
+            indicesRepository: SqliteQuoteIndicesRepository(db),
+            disabledQuotesRepository: SqliteDisabledQuotesRepository(db),
+            customPhraseRepository: customPhraseRepo,
+          ),
+          nextEscrivaPoint: GetNextEscrivaPointsQuoteUseCase(
+            LeituraRepository(localSource: LeituraLocalSource()),
+          ),
         ),
-        nextEscrivaPoint: GetNextEscrivaPointsQuoteUseCase(
-          LeituraRepository(localSource: LeituraLocalSource()),
+        notificationHistoryRepo: SqliteNotificationHistoryRepository(db),
+        lastDeliveredCardRepo: SqliteLastDeliveredCardRepository(db),
+        customPhraseRepo: customPhraseRepo,
+        prayerIntentionRepo: IsarPrayerIntentionSpiritualEntryRepository(
+          spiritualStore,
         ),
-      ),
-      notificationHistoryRepo: SqliteNotificationHistoryRepository(db),
-      lastDeliveredCardRepo: SqliteLastDeliveredCardRepository(db),
-      customPhraseRepo: customPhraseRepo,
-      prayerIntentionRepo: IsarPrayerIntentionSpiritualEntryRepository(
-        spiritualStore,
-      ),
-      liturgicalSeasonService: RemoteLiturgicalSeasonService(
-        httpClient: http.Client(),
-        cacheRepository: IsarLiturgicalSeasonCacheRepository(isarStore),
-      ),
-    );
+        liturgicalSeasonService: RemoteLiturgicalSeasonService(
+          httpClient: liturgicalHttpClient,
+          cacheRepository: IsarLiturgicalSeasonCacheRepository(isarStore),
+        ),
+      );
+    } finally {
+      liturgicalHttpClient.close();
+    }
   }
 
   /// The one rebuild path shared by cold start and the background re-arm, so

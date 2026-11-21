@@ -34,8 +34,8 @@ void main() {
 
     await scheduler.register();
 
-    expect(gateway.calls.last, ('rearm', 'rearm', false));
-    expect(gateway.frequencies.last, const Duration(hours: 12));
+    expect(gateway.calls.first, ('rearm', 'rearm', false));
+    expect(gateway.frequencies.first, const Duration(hours: 12));
   });
 }
 
