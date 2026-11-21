@@ -131,6 +131,7 @@ class _PrayerCatalogDetailScreenState
           context: context,
           payload: HeroCardSharePayload(text: title, labelText: 'Oração'),
         );
+    if (!mounted) return;
     final shareService = ref.read(nativeShareServiceProvider);
     if (imageBytes != null) {
       await shareService.shareTextWithImage(

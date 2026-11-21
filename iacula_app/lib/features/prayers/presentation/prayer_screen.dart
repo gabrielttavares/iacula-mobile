@@ -12,20 +12,34 @@ import '../domain/services/prayer_share_text.dart';
 import 'widgets/devotional_prayer_text.dart';
 import 'widgets/font_size_controls.dart';
 
+/// The Hail Mary cue shown between the Angelus versicles, keyed by the
+/// lead-in of the closing prayer so each language gets its own wording.
+const _hailMaryCueByOremusLeadIn = {
+  'Oremos': '_Ave-Maria…_',
+  'Oremus': '_Ave Maria…_',
+  'Orémus': '_Ave Maria…_',
+  'Let us pray': '_Hail Mary…_',
+};
+
 /// Angelus / Regina Caeli as devotional blocks: ℣/℟ pairs, the Hail Mary
 /// between the Angelus versicles, and "Oremos" on its own line.
 List<String> devotionalBlocks(Prayer prayer) {
+  final closing = prayer.prayer.trim();
+  final oremus = RegExp(
+    r'^(Oremos|Or[eé]mus|Let us pray)\.?\s*',
+  ).firstMatch(closing);
+  final hailMaryCue =
+      _hailMaryCueByOremusLeadIn[oremus?.group(1)] ?? '_Ave-Maria…_';
+
   final blocks = <String>[];
   for (var i = 0; i < prayer.verses.length; i++) {
     final verse = prayer.verses[i];
     blocks.add('℣ ${verse.verse}');
     if (verse.response.isNotEmpty) blocks.add('℟ ${verse.response}');
     if (prayer.type == 'angelus' && i < prayer.verses.length - 1) {
-      blocks.add('_Ave-Maria…_');
+      blocks.add(hailMaryCue);
     }
   }
-  final closing = prayer.prayer.trim();
-  final oremus = RegExp(r'^(Oremos|Orémus)\.?\s*').firstMatch(closing);
   if (oremus != null) {
     blocks
       ..add(oremus.group(1)!)
