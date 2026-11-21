@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../bible/presentation/widgets/citation_linked_text.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/design/iacula_modal.dart';
@@ -279,8 +280,10 @@ class _NightCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          CitationLinkedText(
             title,
+            selectable: false,
+            parser: liturgyReferenceParser,
             style: const TextStyle(
               color: CupertinoColors.white,
               fontSize: 22,
@@ -289,8 +292,10 @@ class _NightCard extends StatelessWidget {
           ),
           if (subtitle != null) ...[
             const SizedBox(height: 6),
-            Text(
+            CitationLinkedText(
               subtitle!,
+              selectable: false,
+              parser: liturgyReferenceParser,
               style: const TextStyle(
                 color: Color(0xFF6366F1),
                 fontSize: 14,

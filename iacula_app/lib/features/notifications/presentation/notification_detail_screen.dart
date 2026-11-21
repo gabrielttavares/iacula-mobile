@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show Colors, SelectableText;
+import 'package:flutter/material.dart' show Colors;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../bible/presentation/widgets/citation_linked_text.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/presentation/widgets/iacula_animated_icon.dart';
 import '../../../core/theme/cupertino_tokens.dart';
@@ -186,7 +187,7 @@ class NotificationDetailScreen extends ConsumerWidget {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: SingleChildScrollView(
-                        child: SelectableText(
+                        child: CitationLinkedText(
                           quoteText,
                           textAlign: TextAlign.left,
                           style: GoogleFonts.lora(
