@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' show SelectableText;
+
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,10 +9,14 @@ import '../../../core/presentation/design/iacula_feedback.dart';
 import '../../../core/presentation/widgets/iacula_animated_icon.dart';
 import '../../../core/presentation/widgets/iacula_shimmer.dart';
 import '../../../core/theme/cupertino_tokens.dart';
+import '../../confession/infrastructure/services/hero_card_share_image_renderer.dart';
 import '../../custom_phrases/presentation/edit_prayer_alarm_screen.dart';
+import '../../more/infrastructure/app_store_review.dart';
 import '../../favorites/domain/entities/favorite_item.dart';
 import '../domain/entities/prayer_catalog_entry.dart';
 import '../domain/entities/prayer_detail.dart';
+import '../domain/services/prayer_share_text.dart';
+import 'widgets/devotional_prayer_text.dart';
 import 'widgets/font_size_controls.dart';
 
 final _prayerDetailProvider = FutureProvider.family<PrayerDetail, String>((
@@ -61,6 +66,17 @@ class _PrayerCatalogDetailScreenState
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (detailAsync.valueOrNull case final detail?)
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(32, 32),
+                    onPressed: () => _sharePrayer(detail),
+                    child: Icon(
+                      CupertinoIcons.share,
+                      color: context.colors.primaryButton,
+                      size: 21,
+                    ),
+                  ),
                 _PrayerAlarmButton(entry: widget.entry),
                 _PrayerBookmarkButton(entry: widget.entry),
               ],
@@ -76,36 +92,66 @@ class _PrayerCatalogDetailScreenState
               ),
               child: Text(
                 navigationTitle,
-                style: CupertinoTheme.of(context)
-                    .textTheme
-                    .navLargeTitleTextStyle,
+                style: CupertinoTheme.of(
+                  context,
+                ).textTheme.navLargeTitleTextStyle,
               ),
             ),
           ),
           ...detailAsync.when(
             loading: () => _buildLoadingContentSlivers(),
             error: (error, stackTrace) => _buildErrorContentSlivers(),
-            data: (detail) => _buildLoadedContentSlivers(
-              detail: detail,
-              fontSize: fontSize,
-            ),
+            data: (detail) =>
+                _buildLoadedContentSlivers(detail: detail, fontSize: fontSize),
           ),
         ],
       ),
     );
   }
 
+  /// Shares the prayer as an image card (for WhatsApp status and stories)
+  /// plus the full text and a link to the app.
+  Future<void> _sharePrayer(PrayerDetail detail) async {
+    HapticFeedback.selectionClick();
+    final available = detail.blocksByLanguage.keys.toList(growable: false);
+    final language = _resolveSelectedLanguage(
+      detail: detail,
+      available: available,
+    );
+    final title = detail.titlesByLanguage[language] ?? widget.entry.title;
+    final text = formatPrayerForSharing(
+      title: title,
+      blocks: detail.blocksByLanguage[language] ?? const <String>[],
+      appLink: iaculaStoreUrl(defaultTargetPlatform),
+    );
+
+    final imageBytes = await ref
+        .read(heroCardShareImageRendererProvider)
+        .renderPng(
+          context: context,
+          payload: HeroCardSharePayload(text: title, labelText: 'Oração'),
+        );
+    final shareService = ref.read(nativeShareServiceProvider);
+    if (imageBytes != null) {
+      await shareService.shareTextWithImage(
+        text: text,
+        imageBytes: imageBytes,
+        fileName: 'iacula-${widget.entry.slug}.png',
+      );
+      return;
+    }
+    await shareService.shareText(text);
+  }
+
   String _resolveNavigationTitle(AsyncValue<PrayerDetail> detailAsync) {
     return detailAsync.when(
       data: (detail) {
-        final available =
-            detail.blocksByLanguage.keys.toList(growable: false);
+        final available = detail.blocksByLanguage.keys.toList(growable: false);
         final selectedLanguage = _resolveSelectedLanguage(
           detail: detail,
           available: available,
         );
-        return detail.titlesByLanguage[selectedLanguage] ??
-            widget.entry.title;
+        return detail.titlesByLanguage[selectedLanguage] ?? widget.entry.title;
       },
       loading: () => widget.entry.title,
       error: (error, stackTrace) => widget.entry.title,
@@ -139,9 +185,8 @@ class _PrayerCatalogDetailScreenState
         child: IaculaErrorState(
           title: 'Erro ao carregar oracao',
           message: 'Tente novamente para abrir o conteudo.',
-          onRetry: () => ref.invalidate(
-            _prayerDetailProvider(widget.entry.slug),
-          ),
+          onRetry: () =>
+              ref.invalidate(_prayerDetailProvider(widget.entry.slug)),
         ),
       ),
     ];
@@ -215,13 +260,9 @@ class _PrayerCatalogDetailScreenState
           bottomPadding,
         ),
         sliver: SliverToBoxAdapter(
-          child: SelectableText.rich(
-            TextSpan(
-              children: _buildPrayerTextSpans(
-                blocks: contentBlocks,
-                fontSize: fontSize,
-              ),
-            ),
+          child: DevotionalPrayerText(
+            blocks: contentBlocks,
+            fontSize: fontSize,
           ),
         ),
       ),
@@ -241,65 +282,8 @@ class _PrayerCatalogDetailScreenState
     return available.isNotEmpty ? available.first : 'pt-br';
   }
 
-  List<InlineSpan> _buildPrayerTextSpans({
-    required List<String> blocks,
-    required double fontSize,
-  }) {
-    final spans = <InlineSpan>[];
-    for (var index = 0; index < blocks.length; index++) {
-      if (index > 0) {
-        spans.add(const TextSpan(text: '\n\n'));
-      }
-      final block = blocks[index];
-
-      if (_isItalicBlock(block)) {
-        spans.add(TextSpan(
-          text: block.substring(1, block.length - 1),
-          style: context.textStyles.readingBody.copyWith(
-            fontSize: fontSize,
-            fontStyle: FontStyle.italic,
-            color: context.colors.textSecondary,
-          ),
-        ));
-      } else if (block.startsWith('℣ ') || block.startsWith('℟ ')) {
-        final marker = block.substring(0, 1);
-        final text = block.substring(2);
-        spans.add(TextSpan(
-          children: [
-            TextSpan(
-              text: '$marker. ',
-              style: context.textStyles.readingBody.copyWith(
-                fontSize: fontSize,
-                color: CupertinoColors.systemRed,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            TextSpan(
-              text: text,
-              style: context.textStyles.readingBody.copyWith(
-                fontSize: fontSize,
-              ),
-            ),
-          ],
-        ));
-      } else {
-        spans.add(TextSpan(
-          text: block,
-          style: context.textStyles.readingBody.copyWith(fontSize: fontSize),
-        ));
-      }
-    }
-    return spans;
-  }
-
   bool _isLanguageAvailable(String language, List<String> available) {
     return available.contains(language);
-  }
-
-  bool _isItalicBlock(String block) {
-    return block.startsWith('*') &&
-        block.endsWith('*') &&
-        block.length > 2;
   }
 }
 
@@ -337,7 +321,9 @@ class _PrayerBookmarkButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final favoriteAsync = ref.watch(favoriteItemByPrayerSlugProvider(entry.slug));
+    final favoriteAsync = ref.watch(
+      favoriteItemByPrayerSlugProvider(entry.slug),
+    );
     final isSaved = favoriteAsync.valueOrNull != null;
     final savedItem = favoriteAsync.valueOrNull;
 

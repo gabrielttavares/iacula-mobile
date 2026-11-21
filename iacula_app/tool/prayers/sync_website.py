@@ -13,6 +13,8 @@ import re
 import sys
 import unicodedata
 
+from format_prayers import format_blocks
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DETAILS_DIR = os.path.join(BASE_DIR, "assets/seed/prayers/details")
 CATALOG_PATH = os.path.join(BASE_DIR, "assets/seed/prayers/pt-br/oracoes_catalog.json")
@@ -298,6 +300,10 @@ def main():
             # Convert '. ' markers to ℣/℟
             pt_blocks = convert_versicle_response([norm(b) for b in pt_blocks])
             la_blocks = convert_versicle_response([norm(b) for b in la_blocks])
+
+            # Devotional markup (rubrics, headings, litany responses).
+            pt_blocks = format_blocks(slug, pt_blocks)
+            la_blocks = format_blocks(slug, la_blocks)
 
             # Build detail data
             detail = {

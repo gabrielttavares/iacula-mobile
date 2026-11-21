@@ -58,7 +58,7 @@ void main() {
 
       final initialTextWidget = tester.widget<Text>(verseTextFinder);
       expect(
-        initialTextWidget.style?.fontSize,
+        _fontSize(initialTextWidget),
         15.0,
         reason: 'initial font size should be 15',
       );
@@ -70,7 +70,7 @@ void main() {
       // The verse text should now reflect 16.0 without any navigation.
       final updatedTextWidget = tester.widget<Text>(verseTextFinder);
       expect(
-        updatedTextWidget.style?.fontSize,
+        _fontSize(updatedTextWidget),
         16.0,
         reason:
             'font size should update live to 16 after tapping A+ once, '
@@ -105,10 +105,15 @@ void main() {
       final verseTextFinder = find.text('Ave, cheia de graca, o Senhor e convosco.');
       final updatedTextWidget = tester.widget<Text>(verseTextFinder);
       expect(
-        updatedTextWidget.style?.fontSize,
+        _fontSize(updatedTextWidget),
         17.0,
         reason: 'font size should decrease live from 18 to 17 after tapping A-',
       );
     },
   );
 }
+
+/// Prayer lines are rich text (℣/℟ markers, rubrics); the size lives on the
+/// root span rather than on the widget.
+double? _fontSize(Text text) =>
+    text.style?.fontSize ?? text.textSpan?.style?.fontSize;
